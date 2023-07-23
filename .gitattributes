@@ -1,0 +1,4 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+mystery/marketing/promo/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+mystery/marketing/promo/*.mp4 filter=lfs diff=lfs merge=lfs -text
