@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^launcher/run/(?P<sim_code>[\w\s-]+)/$', translator_views.run_review, name='run_review'),
     url(r'^launcher/open/(?P<sim_code>[\w\s-]+)/$', translator_views.open_run_map, name='open_run_map'),
     url(r'^launcher/console/(?P<sim_code>[\w\s-]+)/$', translator_views.run_console, name='run_console'),
+    url(r'^launcher/delete/(?P<sim_code>[\w\s-]+)/$', translator_views.delete_run, name='delete_run'),
     url(r'^launcher/status/(?P<sim_code>[\w\s-]+)/$', translator_views.run_status, name='run_status'),
     url(r'^launcher/stop/(?P<sim_code>[\w\s-]+)/$', translator_views.stop_run, name='stop_run'),
     url(r'^launcher/personas/(?P<sim_code>[\w\s-]+)/$', translator_views.get_personas, name='get_personas'),

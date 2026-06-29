@@ -31,6 +31,9 @@
   .b-empty { background: #f0eeea; color: #888; }
   .lx-actions a { font-size: 12px; margin-left: 10px; color: #1d5089; text-decoration: none; white-space: nowrap; }
   .lx-actions a:hover { text-decoration: underline; }
+  .lx-actions .del { color: #c0392b; }
+  .lx-actions .del:hover { text-decoration: underline; }
+  .lx-run.deleting { opacity: 0.4; pointer-events: none; }
   .lx-right .lx-card h2 .cnt { margin-left: auto; font-size: 12px; color: #999; font-weight: 400; }
 
   /* Persona editor */
@@ -130,6 +133,7 @@
               <span class="lx-actions">
                 <a href="{% url 'run_review' r.name %}">Review</a>
                 {% if r.has_replay %}<a href="{% url 'open_run_map' r.name %}">Map</a>{% endif %}
+                <a href="#" class="del" onclick="deleteRun(event, this, '{{ r.name|escapejs }}')">Delete</a>
               </span>
             </div>
           </div>
@@ -276,6 +280,46 @@
       setTimeout(function(){ msg.textContent = ''; }, 2500);
     })
     .catch(function(){ msg.textContent = 'Save failed.'; });
+  }
+
+  // ── Run deletion ──────────────────────────────────────────────────────────
+  function deleteRun(evt, link, simCode) {
+    evt.preventDefault();
+    // First click: ask for confirmation inline.
+    if (!link.dataset.confirm) {
+      link.dataset.confirm = '1';
+      link.textContent = 'Sure?';
+      setTimeout(function() {
+        if (link.dataset.confirm) { link.dataset.confirm = ''; link.textContent = 'Delete'; }
+      }, 3000);
+      return;
+    }
+    // Second click: confirmed — send delete request.
+    var row = link.closest('.lx-run');
+    row.classList.add('deleting');
+    fetch('/launcher/delete/' + encodeURIComponent(simCode) + '/', {
+      method: 'POST',
+      headers: {'X-CSRFToken': getCookie('csrftoken')},
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok) {
+        row.remove();
+        // Decrement the run count badge.
+        var cnt = document.querySelector('.lx-right .cnt');
+        if (cnt) {
+          var n = parseInt(cnt.textContent) - 1;
+          cnt.textContent = n + ' total';
+        }
+      } else {
+        row.classList.remove('deleting');
+        alert('Delete failed: ' + (d.error || 'unknown error'));
+      }
+    })
+    .catch(function(){
+      row.classList.remove('deleting');
+      alert('Delete failed.');
+    });
   }
 
   // Load personas when fork selection changes, and on page load.

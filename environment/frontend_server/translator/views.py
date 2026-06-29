@@ -382,9 +382,14 @@ def update_environment(request):
 
   response_data = {"<step>": -1}
   if (check_if_file_exists(f"storage/{sim_code}/movement/{step}.json")):
-    with open(f"storage/{sim_code}/movement/{step}.json") as json_file: 
-      response_data = json.load(json_file)
-      response_data["<step>"] = step
+    try:
+      with open(f"storage/{sim_code}/movement/{step}.json") as json_file:
+        content = json_file.read()
+      if content.strip():
+        response_data = json.loads(content)
+        response_data["<step>"] = step
+    except (json.JSONDecodeError, OSError):
+      pass  # file still being written — return {"<step>": -1} so the map retries
 
   return JsonResponse(response_data)
 
@@ -569,6 +574,29 @@ def launch_simulation(request):
                         "steps": steps, "profile": profile}))
 
   return redirect("run_console", sim_code=name)
+
+
+def delete_run(request, sim_code):
+  """Delete a stored run directory. Only non-base runs may be deleted."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+
+  # Safety: never delete base templates.
+  from .launcher_utils import _is_base
+  if _is_base(sim_code):
+    return JsonResponse({"error": "Cannot delete base templates"}, status=400)
+
+  sim_dir = os.path.join("storage", sim_code)
+  if not os.path.isdir(sim_dir):
+    return JsonResponse({"error": "Run not found"}, status=404)
+
+  import shutil
+  try:
+    shutil.rmtree(sim_dir)
+  except Exception as e:
+    return JsonResponse({"error": str(e)}, status=500)
+
+  return JsonResponse({"ok": True})
 
 
 def run_console(request, sim_code):
