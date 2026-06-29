@@ -13,7 +13,7 @@ This repository accompanies our research paper titled "[Generative Agents: Inter
 ## What's new in this fork
 
 ### Local LLM support
-The simulation can now run against any OpenAI-compatible local inference server (LM Studio, llama.cpp, Ollama, etc.) instead of OpenAI. Configure the endpoint and model in `start_simulation.sh` or via the graphical launcher — no code changes required.
+The simulation can now run against any OpenAI-compatible local inference server (LM Studio, llama.cpp, Ollama, etc.) instead of OpenAI. Configure the endpoint URL and model name in `utils.py` (`openai_api_base` and `local_model`) — the rest of the codebase works unchanged.
 
 ### Prompt profile system
 All 30+ prompt templates are now organised into interchangeable **profiles** under `reverie/backend_server/persona/prompt_template/profiles/`:
@@ -38,13 +38,15 @@ Navigate to `http://localhost:8000/launcher` to access a browser-based control p
 - **Run review** — browse completed runs after the fact
 
 ### Autonomous stepper (`run_stepper.py`)
-`reverie/backend_server/run_stepper.py` advances the simulation in a background process without requiring a browser tab to stay open. It replaces the manual `run <N>` REPL loop for unattended runs.
+`reverie/backend_server/run_stepper.py` advances the simulation for a fixed number of steps and exits. The graphical launcher spawns it automatically alongside `reverie.py` when you start a run from the browser, so no browser tab needs to stay open. It can also be run manually:
+
+    python run_stepper.py <sim_code> <target_steps>
 
 ### Convenience launch scripts
 Two shell scripts at the repo root handle the full startup sequence:
 
 - `start_environment.sh` — starts the Django frontend server
-- `start_simulation.sh` — interactive menu that lets you pick a profile, fork, and simulation name, then launches both servers
+- `start_simulation.sh` — interactive CLI menu that lets you pick a profile, fork, and simulation name, then launches `reverie.py` (requires `start_environment.sh` running separately)
 
 ### Crash-proofing for local models
 Local models produce malformed output far more often than GPT-3.5. A systematic pass fixed 12+ crash vectors:
@@ -62,30 +64,41 @@ Local models produce malformed output far more often than GPT-3.5. A systematic 
 To set up your environment, you will need to generate a `utils.py` file and install the required packages.
 
 ### Step 1. Generate Utils File
-In the `reverie/backend_server` folder (where `reverie.py` is located), create a new file titled `utils.py` and copy and paste the content below into the file:
+In the `reverie/backend_server` folder (where `reverie.py` is located), create a new file titled `utils.py` and copy and paste the content below:
+
 ```python
-# For OpenAI: put your key here. For local LLMs: leave as empty string.
-openai_api_key = "<Your OpenAI API key or empty string>"
-# Put your name
-key_owner = "<Name>"
+import os
+
+# OpenAI API key — set to "local" when using a local LLM gateway
+openai_api_key  = "<Your OpenAI API key>"   # or "local"
+key_owner       = "<Name>"
+
+# LLM profile: gpt | chat-small | chat-large | cloud
+# Override at startup with the PROMPT_PROFILE env var or the launcher menu.
+PROMPT_PROFILE  = os.environ.get("PROMPT_PROFILE", "gpt")
+
+# Local LLM gateway — only used when running a local model
+openai_api_base = "http://127.0.0.1:8080/v1"   # your inference server URL
+local_model     = "<your-model-name>"            # model name as your server expects it
+local_cert      = ""                             # path to self-signed cert, or ""
 
 maze_assets_loc = "../../environment/frontend_server/static_dirs/assets"
-env_matrix = f"{maze_assets_loc}/the_ville/matrix"
-env_visuals = f"{maze_assets_loc}/the_ville/visuals"
+env_matrix      = f"{maze_assets_loc}/the_ville/matrix"
+env_visuals     = f"{maze_assets_loc}/the_ville/visuals"
 
-fs_storage = "../../environment/frontend_server/storage"
+fs_storage      = "../../environment/frontend_server/storage"
 fs_temp_storage = "../../environment/frontend_server/temp_storage"
 
 collision_block_id = "32125"
 
-# Verbose 
 debug = True
 ```
 
-**For local LLMs:** also create a `.env` file at the repo root with your endpoint:
+**For cloud APIs** (OpenAI, Anthropic, Gemini), create a `.env` file at the repo root:
 ```
-LOCAL_LLM_BASE_URL=http://127.0.0.1:8080/v1
-LOCAL_LLM_MODEL=<your-model-name>
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=...
 ```
 
 ### Step 2. Install requirements.txt
@@ -100,17 +113,29 @@ pip install -r requirements.txt
 ## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Klaus_Mueller.png" alt="Generative Klaus">   Running a Simulation
 
 ### Quick start (recommended)
-Use the convenience scripts from the repo root:
+
+**Option A — Graphical launcher (browser UI)**
+
+Start the environment server, then use the browser to configure and launch runs:
 
 ```bash
-# Terminal 1 — start the frontend
+# Terminal 1 — start the Django frontend server
+./start_environment.sh
+```
+
+Then open [http://localhost:8000/launcher](http://localhost:8000/launcher) in your browser. From there you can pick a fork, set the LLM profile, edit personas, and start the simulation — all without a second terminal.
+
+**Option B — Interactive CLI launcher**
+
+```bash
+# Terminal 1 — start the Django frontend server
 ./start_environment.sh
 
-# Terminal 2 — interactive launcher (picks profile, fork, sim name)
+# Terminal 2 — CLI menu: picks profile, fork, and sim name, then runs reverie.py
 ./start_simulation.sh
 ```
 
-Then open `http://localhost:8000/launcher` in your browser for the graphical control panel.
+`start_simulation.sh` presents an interactive menu and pipes your choices into `reverie.py`, leaving the "Enter option:" prompt for `run <N>` / `fin` / `exit` commands.
 
 ### Manual start
 If you prefer the original command-line flow:
@@ -156,7 +181,7 @@ To view a simulation with correct character sprites, first compress it by runnin
     http://localhost:8000/demo/<simulation-name>/<starting-time-step>/<simulation-speed>
 
 `<simulation-speed>` ranges from 1 (slowest) to 5 (fastest). Pre-simulated example at medium speed:  
-[http://localhost:8000/demo/July1_the_ville_isabella_maria_Klaus-step-3-20/1/3/](http://localhost:8000/demo/July1_the_ville_isabella_maria_Klaus-step-3-20/1/3/)
+[http://localhost:8000/demo/July1_the_ville_isabella_maria_klaus-step-3-20/1/3/](http://localhost:8000/demo/July1_the_ville_isabella_maria_klaus-step-3-20/1/3/)
 
 ### Tips
 - Save frequently with `fin` to avoid losing progress if the LLM endpoint hangs or a crash occurs.
