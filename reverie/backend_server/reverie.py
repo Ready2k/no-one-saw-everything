@@ -65,10 +65,25 @@ class ReverieServer:
     copyanything(fork_folder, sim_folder)
     os.makedirs(os.path.join(sim_folder, "movement"), exist_ok=True)
 
-    with open(f"{sim_folder}/reverie/meta.json") as json_file:  
+    with open(f"{sim_folder}/reverie/meta.json") as json_file:
       reverie_meta = json.load(json_file)
 
-    with open(f"{sim_folder}/reverie/meta.json", "w") as outfile: 
+    # Apply per-launch overrides (start_date, sec_per_step) written by the
+    # graphical launcher before spawning the backend.
+    _overrides_path = os.path.join(fs_storage, "..", "temp_storage",
+                                   "launch_overrides.json")
+    try:
+      with open(_overrides_path) as _f:
+        _overrides = json.load(_f)
+      if "start_date" in _overrides:
+        reverie_meta["start_date"] = _overrides["start_date"]
+        reverie_meta["curr_time"] = _overrides["start_date"] + ", 00:00:00"
+      if "sec_per_step" in _overrides:
+        reverie_meta["sec_per_step"] = int(_overrides["sec_per_step"])
+    except Exception:
+      pass
+
+    with open(f"{sim_folder}/reverie/meta.json", "w") as outfile:
       reverie_meta["fork_sim_code"] = fork_sim_code
       outfile.write(json.dumps(reverie_meta, indent=2))
 

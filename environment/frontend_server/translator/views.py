@@ -490,6 +490,22 @@ def launch_simulation(request):
   except ValueError:
     steps = 8640
 
+  # Sim-level overrides: start_date (HTML date → "Month DD, YYYY") and sec_per_step.
+  overrides = {}
+  raw_date = request.POST.get("start_date", "").strip()
+  if raw_date:
+    try:
+      overrides["start_date"] = datetime.datetime.strptime(
+          raw_date, "%Y-%m-%d").strftime("%B %d, %Y")
+    except ValueError:
+      pass
+  raw_sps = request.POST.get("sec_per_step", "").strip()
+  if raw_sps:
+    try:
+      overrides["sec_per_step"] = int(raw_sps)
+    except ValueError:
+      pass
+
   if not fork or not name:
     return HttpResponse("fork and name are required", status=400)
 
@@ -508,6 +524,8 @@ def launch_simulation(request):
   log_path = os.path.abspath(safe_log_name(name))
   with open(input_path, "w") as f:
     f.write(f"{fork}\n{name}\nrun {steps}\nfin\n")
+  with open("temp_storage/launch_overrides.json", "w") as f:
+    json.dump(overrides, f)
 
   env = dict(os.environ)
   env["PROMPT_PROFILE"] = profile
@@ -615,12 +633,36 @@ PERSONA_EDITABLE_FIELDS = [
     ("daily_plan_req","Daily routine"),
 ]
 
+# Advanced cognitive / memory tuning fields (shown collapsed by default).
+PERSONA_COGNITIVE_FIELDS = [
+    ("vision_r",              "Vision radius",             "int",   "How far the persona can see (tiles)"),
+    ("att_bandwidth",         "Attention bandwidth",       "int",   "Max events noticed per step"),
+    ("retention",             "Retention",                 "int",   "Recent events kept in working memory"),
+    ("recency_decay",         "Recency decay",             "float", "How fast memory recency fades (0.99 = fast, 0.999 = slow)"),
+    ("importance_trigger_max","Reflection threshold",      "int",   "Poignancy points before a reflection fires"),
+    ("recency_w",             "Recency weight",            "float", "Weight of recency in memory retrieval scoring"),
+    ("relevance_w",           "Relevance weight",          "float", "Weight of relevance in memory retrieval scoring"),
+    ("importance_w",          "Importance weight",         "float", "Weight of importance in memory retrieval scoring"),
+]
+
 
 def get_personas(request, sim_code):
-  """Return persona scratch data for all personas in a sim (JSON)."""
+  """Return persona scratch data and sim meta for all personas in a sim (JSON)."""
   sim_dir = os.path.join("storage", sim_code)
   if not os.path.isdir(sim_dir):
     return JsonResponse({"error": f"No such sim: {sim_code}"}, status=404)
+
+  # Sim-level meta (start_date, sec_per_step) to pre-populate the launch form.
+  meta = {}
+  try:
+    with open(os.path.join(sim_dir, "reverie", "meta.json")) as f:
+      raw = json.load(f)
+    if raw.get("start_date"):
+      meta["start_date"] = datetime.datetime.strptime(
+          raw["start_date"], "%B %d, %Y").strftime("%Y-%m-%d")
+    meta["sec_per_step"] = raw.get("sec_per_step", 10)
+  except Exception:
+    pass
 
   personas = []
   pdir = os.path.join(sim_dir, "personas")
@@ -634,8 +676,9 @@ def get_personas(request, sim_code):
     personas.append({
         "name": name,
         "fields": {k: scratch.get(k, "") for k, _ in PERSONA_EDITABLE_FIELDS},
+        "cognitive": {k: scratch.get(k, "") for k, *_ in PERSONA_COGNITIVE_FIELDS},
     })
-  return JsonResponse({"personas": personas})
+  return JsonResponse({"personas": personas, "meta": meta})
 
 
 def save_persona(request, sim_code, persona_name):
@@ -658,21 +701,29 @@ def save_persona(request, sim_code, persona_name):
   with open(scratch_path) as f:
     scratch = json.load(f)
 
-  allowed = {k for k, _ in PERSONA_EDITABLE_FIELDS}
+  allowed_basic = {k for k, _ in PERSONA_EDITABLE_FIELDS}
+  cog_types = {k: typ for k, _, typ, *_ in PERSONA_COGNITIVE_FIELDS}
+  allowed = allowed_basic | set(cog_types)
+
   for key, val in updates.items():
-    if key in allowed:
-      if key == "age":
-        try:
-          scratch[key] = int(val)
-        except (ValueError, TypeError):
-          pass
-      else:
-        scratch[key] = str(val)
-      # Keep first_name / last_name in sync when name changes
-      if key == "name" and val:
-        parts = str(val).strip().split()
-        scratch["first_name"] = parts[0] if parts else ""
-        scratch["last_name"] = " ".join(parts[1:]) if len(parts) > 1 else ""
+    if key not in allowed:
+      continue
+    if key in cog_types:
+      try:
+        scratch[key] = int(val) if cog_types[key] == "int" else float(val)
+      except (ValueError, TypeError):
+        pass
+    elif key == "age":
+      try:
+        scratch[key] = int(val)
+      except (ValueError, TypeError):
+        pass
+    else:
+      scratch[key] = str(val)
+    if key == "name" and val:
+      parts = str(val).strip().split()
+      scratch["first_name"] = parts[0] if parts else ""
+      scratch["last_name"] = " ".join(parts[1:]) if len(parts) > 1 else ""
 
   with open(scratch_path, "w") as f:
     json.dump(scratch, f, indent=2)

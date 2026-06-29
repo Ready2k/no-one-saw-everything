@@ -57,6 +57,11 @@
   .px-msg { font-size: 12px; margin-left: 10px; color: #2a7a2a; }
   .px-empty { padding: 12px 18px; font-size: 13px; color: #aaa; }
   .px-loading { padding: 12px 18px; font-size: 13px; color: #aaa; }
+  .px-cog-toggle { font-size: 12px; color: #888; cursor: pointer; margin: 10px 0 4px; user-select: none; display: flex; align-items: center; gap: 5px; }
+  .px-cog-toggle:hover { color: #444; }
+  .px-cog-caret { font-size: 10px; transition: transform 0.15s; }
+  .px-cog-body { display: none; background: #fafaf8; border: 1px solid #eeece8; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
+  .px-hint { display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
 </style>
 
 <div class="lx-wrap">
@@ -86,6 +91,12 @@
             </label>
             {% endfor %}
           </div>
+
+          <label class="lx-label">Simulation start date</label>
+          <input type="date" name="start_date" id="lx-start-date" />
+
+          <label class="lx-label">Seconds per step <span style="color:#bbb">(10 = normal speed)</span></label>
+          <input type="number" name="sec_per_step" id="lx-sec-per-step" value="10" min="1" max="3600" step="1" style="width:100px" />
 
           <label class="lx-label">Steps to run <span style="color:#bbb">(8640 = one full day at 10s/step)</span></label>
           <input type="number" name="steps" value="8640" min="1" step="1" />
@@ -151,14 +162,34 @@
   };
   var MULTILINE = ["learned", "currently", "daily_plan_req"];
 
+  var COG_FIELDS = [
+    {k:"vision_r",              label:"Vision radius",        type:"int",   hint:"How far the persona can see (tiles)"},
+    {k:"att_bandwidth",         label:"Attention bandwidth",  type:"int",   hint:"Max events noticed per step"},
+    {k:"retention",             label:"Retention",            type:"int",   hint:"Recent events kept in working memory"},
+    {k:"recency_decay",         label:"Recency decay",        type:"float", hint:"How fast memory recency fades (0.99=fast, 0.999=slow)"},
+    {k:"importance_trigger_max",label:"Reflection threshold", type:"int",   hint:"Poignancy points before a reflection fires"},
+    {k:"recency_w",             label:"Recency weight",       type:"float", hint:"Weight of recency in memory retrieval"},
+    {k:"relevance_w",           label:"Relevance weight",     type:"float", hint:"Weight of relevance in memory retrieval"},
+    {k:"importance_w",          label:"Importance weight",    type:"float", hint:"Weight of importance in memory retrieval"},
+  ];
+
   function getCookie(name) {
     var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
     return v ? v.pop() : '';
   }
 
-  function renderPersonas(simCode, personas) {
+  function renderPersonas(simCode, personas, meta) {
     var body = document.getElementById('px-body');
     document.getElementById('px-fork-label').textContent = simCode;
+
+    // Pre-populate sim-level fields from this fork's meta.
+    if (meta) {
+      var sd = document.getElementById('lx-start-date');
+      var sps = document.getElementById('lx-sec-per-step');
+      if (sd && meta.start_date) sd.value = meta.start_date;
+      if (sps && meta.sec_per_step) sps.value = meta.sec_per_step;
+    }
+
     if (!personas.length) {
       body.innerHTML = '<div class="px-empty">No personas found in this sim.</div>';
       return;
@@ -173,12 +204,26 @@
             : '<input type="text" name="' + k + '" value="' + escHtml(String(val)) + '" />');
         return '<div class="px-field"><label>' + FIELD_LABELS[k] + '</label>' + input + '</div>';
       }).join('');
+
+      var cogHtml = COG_FIELDS.map(function(f) {
+        var val = (p.cognitive[f.k] == null ? '' : p.cognitive[f.k]);
+        return '<div class="px-field">'
+          + '<label>' + f.label + ' <span class="px-hint" title="' + escHtml(f.hint) + '">?</span></label>'
+          + '<input type="number" name="' + f.k + '" value="' + escHtml(String(val)) + '" step="' + (f.type === 'float' ? '0.001' : '1') + '" />'
+          + '</div>';
+      }).join('');
+
       return '<div class="px-persona" id="px-p-' + idx + '">'
         + '<div class="px-persona-hdr" onclick="togglePersona(' + idx + ')">'
         + '<span class="glyphicon glyphicon-chevron-right px-persona-caret"></span>'
         + '<span class="px-persona-name">' + escHtml(p.name) + '</span>'
         + '</div>'
-        + '<div class="px-persona-body">' + fieldsHtml
+        + '<div class="px-persona-body">'
+        + fieldsHtml
+        + '<div class="px-cog-toggle" onclick="toggleCog(' + idx + ')">'
+        + '<span class="px-cog-caret glyphicon glyphicon-chevron-right"></span> Cognitive settings'
+        + '</div>'
+        + '<div class="px-cog-body" id="px-cog-' + idx + '">' + cogHtml + '</div>'
         + '<button class="px-save" onclick="savePersona(\'' + escAttr(simCode) + '\',\'' + escAttr(p.name) + '\',' + idx + ')">Save</button>'
         + '<span class="px-msg" id="px-msg-' + idx + '"></span>'
         + '</div></div>';
@@ -191,8 +236,15 @@
   function escAttr(s) { return s.replace(/'/g,"\\'"); }
 
   function togglePersona(idx) {
-    var el = document.getElementById('px-p-' + idx);
-    el.classList.toggle('open');
+    document.getElementById('px-p-' + idx).classList.toggle('open');
+  }
+
+  function toggleCog(idx) {
+    var body = document.getElementById('px-cog-' + idx);
+    var caret = body.previousElementSibling.querySelector('.px-cog-caret');
+    var open = body.style.display === 'block';
+    body.style.display = open ? 'none' : 'block';
+    caret.style.transform = open ? '' : 'rotate(90deg)';
   }
 
   function loadPersonas(simCode) {
@@ -200,7 +252,7 @@
     body.innerHTML = '<div class="px-loading">Loading…</div>';
     fetch('/launcher/personas/' + encodeURIComponent(simCode) + '/')
       .then(function(r){ return r.json(); })
-      .then(function(d){ renderPersonas(simCode, d.personas || []); })
+      .then(function(d){ renderPersonas(simCode, d.personas || [], d.meta || {}); })
       .catch(function(){ body.innerHTML = '<div class="px-empty">Could not load personas.</div>'; });
   }
 
