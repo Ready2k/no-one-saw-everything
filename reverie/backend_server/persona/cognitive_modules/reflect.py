@@ -51,8 +51,8 @@ def generate_insights_and_evidence(persona, nodes, n=5):
       evidence_node_id = [nodes[i].node_id for i in evi_raw]
       ret[thought] = evidence_node_id
     return ret
-  except: 
-    return {"this is blank": "node_1"} 
+  except Exception:
+    return {"this is blank": "node_1"}
 
 
 def generate_action_event_triple(act_desp, persona): 

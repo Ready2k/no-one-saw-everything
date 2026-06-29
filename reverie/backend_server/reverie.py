@@ -21,11 +21,12 @@ framework.
 import json
 import numpy
 import datetime
-import pickle
 import time
 import math
 import os
 import shutil
+import signal
+import sys
 import traceback
 
 from selenium import webdriver
@@ -47,15 +48,22 @@ class ReverieServer:
     # <fork_sim_code> indicates the simulation we are forking from. 
     # Interestingly, all simulations must be forked from some initial 
     # simulation, where the first simulation is "hand-crafted".
-    self.fork_sim_code = fork_sim_code
-    fork_folder = f"{fs_storage}/{self.fork_sim_code}"
+    # Sanitise sim codes: reject any path separators or traversal sequences
+    # so a malformed sim_code like "../../etc" can't escape fs_storage.
+    for _code, _name in [(fork_sim_code, "fork_sim_code"), (sim_code, "sim_code")]:
+      if not _code or os.sep in _code or "/" in _code or ".." in _code:
+        raise ValueError(f"Invalid {_name}: {_code!r}")
 
-    # <sim_code> indicates our current simulation. The first step here is to 
-    # copy everything that's in <fork_sim_code>, but edit its 
-    # reverie/meta/json's fork variable. 
+    self.fork_sim_code = fork_sim_code
+    fork_folder = os.path.join(fs_storage, self.fork_sim_code)
+
+    # <sim_code> indicates our current simulation. The first step here is to
+    # copy everything that's in <fork_sim_code>, but edit its
+    # reverie/meta/json's fork variable.
     self.sim_code = sim_code
-    sim_folder = f"{fs_storage}/{self.sim_code}"
+    sim_folder = os.path.join(fs_storage, self.sim_code)
     copyanything(fork_folder, sim_folder)
+    os.makedirs(os.path.join(sim_folder, "movement"), exist_ok=True)
 
     with open(f"{sim_folder}/reverie/meta.json") as json_file:  
       reverie_meta = json.load(json_file)
@@ -270,7 +278,7 @@ class ReverieServer:
           outfile.write(json.dumps(s_mem, indent=2))
         print_tree(s_mem)
 
-      except:
+      except Exception:
         pass
 
       time.sleep(self.server_sleep * 10)
@@ -321,7 +329,7 @@ class ReverieServer:
           with open(curr_env_file) as json_file:
             new_env = json.load(json_file)
             env_retrieved = True
-        except: 
+        except Exception:
           pass
       
         if env_retrieved: 
@@ -401,10 +409,13 @@ class ReverieServer:
           with open(curr_move_file, "w") as outfile: 
             outfile.write(json.dumps(movements, indent=2))
 
-          # After this cycle, the world takes one step forward, and the 
-          # current time moves by <sec_per_step> amount. 
+          # After this cycle, the world takes one step forward, and the
+          # current time moves by <sec_per_step> amount.
           self.step += 1
           self.curr_time += datetime.timedelta(seconds=self.sec_per_step)
+
+          if self.step % 100 == 0:
+            self.save()
 
           int_counter -= 1
           
@@ -592,7 +603,7 @@ class ReverieServer:
 
         print (ret_str)
 
-      except:
+      except Exception:
         traceback.print_exc()
         print ("Error.")
         pass
@@ -609,6 +620,22 @@ if __name__ == '__main__':
   target = input("Enter the name of the new simulation: ").strip()
 
   rs = ReverieServer(origin, target)
+
+  # Graceful stop: on SIGTERM (sent by the launcher's Stop button), save the
+  # current state so it reflects how far the run got, then exit. All movement
+  # files and logs are already on disk, so nothing is thrown away.
+  def _graceful_stop(signum, frame):
+    print("\n[graceful stop] SIGTERM received -- saving state...")
+    try:
+      rs.save()
+      print("[graceful stop] state saved.")
+    except Exception:
+      traceback.print_exc()
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
+  signal.signal(signal.SIGTERM, _graceful_stop)
+
   rs.open_server()
 
 

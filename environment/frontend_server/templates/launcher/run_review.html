@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  .rv-wrap { max-width: 1000px; margin: 24px auto; padding: 0 16px; font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .rv-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+  .rv-h1 { font-size: 22px; font-weight: 500; margin: 0; }
+  .rv-back { font-size: 13px; color: #1d5089; text-decoration: none; }
+  .rv-sub { color: #777; font-size: 14px; margin: 0 0 18px; }
+  .rv-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .rv-stat { background: #f6f5f1; border-radius: 8px; padding: 12px 14px; }
+  .rv-stat .l { font-size: 12px; color: #888; }
+  .rv-stat .v { font-size: 22px; font-weight: 500; margin-top: 2px; }
+  .rv-card { background: #fff; border: 1px solid #e3e3e0; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; }
+  .rv-card h2 { font-size: 16px; font-weight: 500; margin: 0 0 12px; }
+  .rv-persona { border: 1px solid #eee; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .rv-persona .nm { font-weight: 500; font-size: 14px; }
+  .rv-persona .mem { font-size: 12px; color: #888; margin-top: 2px; }
+  .rv-persona .act { font-size: 13px; color: #444; margin-top: 4px; }
+  .rv-convo { border-left: 3px solid #cfe0f4; padding: 6px 0 6px 14px; margin-bottom: 16px; }
+  .rv-convo .when { font-size: 12px; color: #999; margin-bottom: 4px; }
+  .rv-line { font-size: 14px; margin: 3px 0; }
+  .rv-line .sp { font-weight: 500; color: #1d5089; }
+  .rv-open { font-size: 13px; color: #1d5089; text-decoration: none; }
+</style>
+
+<div class="rv-wrap">
+  <div class="rv-top">
+    <h1 class="rv-h1">{{ run.name }}</h1>
+    <a class="rv-back" href="{% url 'launcher' %}">&larr; All runs</a>
+  </div>
+  <p class="rv-sub">
+    Forked from {{ run.meta.fork_sim_code|default:"—" }}
+    · started {{ run.meta.start_date|default:"—" }}
+    · <a class="rv-open" href="{% url 'open_run_map' run.name %}">Open map replay &rarr;</a>
+  </p>
+
+  <div class="rv-stats">
+    <div class="rv-stat"><div class="l">Sim time</div><div class="v">{{ run.sim_time|default:"—" }}</div></div>
+    <div class="rv-stat"><div class="l">Steps</div><div class="v">{{ run.steps }}</div></div>
+    <div class="rv-stat"><div class="l">Personas</div><div class="v">{{ run.personas|length }}</div></div>
+    <div class="rv-stat"><div class="l">Conversations</div><div class="v">{{ run.conversation_count }}</div></div>
+  </div>
+
+  <div class="rv-card">
+    <h2>Personas</h2>
+    {% for p in run.personas %}
+    <div class="rv-persona">
+      <div class="nm">{{ p.name }}</div>
+      <div class="mem">{{ p.memory.event }} events · {{ p.memory.thought }} thoughts · {{ p.memory.chat }} chats · {{ p.memory.total }} total memories</div>
+      {% if p.schedule.act_description %}<div class="act">Last action: {{ p.schedule.act_description }}{% if p.schedule.act_address %} @ {{ p.schedule.act_address }}{% endif %}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="rv-card">
+    <h2>Conversations</h2>
+    {% for c in run.conversations %}
+    <div class="rv-convo">
+      <div class="when">{{ c.time }}</div>
+      {% for line in c.lines %}
+      <div class="rv-line"><span class="sp">{{ line.speaker }}:</span> {{ line.text }}</div>
+      {% endfor %}
+    </div>
+    {% empty %}
+    <p style="color:#999; font-size:13px;">No conversations recorded in this run yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

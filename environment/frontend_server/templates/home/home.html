@@ -1,11 +1,20 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block content %}
 <br>
 <br>
 <div>
-	<div id="game-container" style="text-align: center"></div>
+	<div style="position:relative; width:1500px; max-width:100%; margin:0 auto">
+		<div id="game-container" style="text-align: center"></div>
+
+		<!-- Map zoom controls, overlaid on the top-right of the map. -->
+		<div style="position:absolute; top:10px; right:10px; z-index:10; display:flex; flex-direction:column; gap:6px">
+			<button type="button" class="btn btn-default" title="Zoom in" onclick="zoomCamera(1.25)" style="width:42px; height:42px; font-size:1.4em; font-weight:bold; padding:0">+</button>
+			<button type="button" class="btn btn-default" title="Zoom out" onclick="zoomCamera(0.8)" style="width:42px; height:42px; font-size:1.4em; font-weight:bold; padding:0">&minus;</button>
+			<button type="button" class="btn btn-default" title="Reset zoom" onclick="resetZoom()" style="width:42px; height:42px; font-size:0.9em; padding:0">1:1</button>
+		</div>
+	</div>
 
 	<div style="width:55%; margin: 0 auto; margin-top:4.5em">
 		<h3 style="margin-bottom:-0.5em; font-size:1.5em">Current Time:</h3>
@@ -43,8 +52,10 @@
 			  <div class="media-body" style='padding-left:3em; padding-top:0.5em; padding-bottom:1em'>
 			  	<div class="row">
 			    	<h2 class="col-md-8" id="name__{{ p_name_os }}" style="margin-bottom:0.8em; font-size:1.85em; ">
-			    		{{p_name}} &nbsp;&nbsp;
-			    		<a href="{% url 'replay_persona_state' sim_code step p_name_os %}" style="font-size:0.6em">State Details</a>
+			    		<a href="javascript:void(0)" onclick="goToPersona('{{p_name}}')" title="Center the map on {{p_name}}" style="color:inherit; text-decoration:none">{{p_name}}</a> &nbsp;&nbsp;
+			    		<a href="javascript:void(0)" onclick="goToPersona('{{p_name}}')" title="Center the map on {{p_name}}" style="font-size:0.6em"><i class="glyphicon glyphicon-map-marker"></i> Locate</a>
+			    		&nbsp;
+			    		<a href="javascript:void(0)" onclick="openStateDetails('{{ p_name_os }}')" style="font-size:0.6em">State Details</a>
 			    	</h2>
 			    </div>
 			    <div style="">
@@ -68,6 +79,15 @@
   
 
 
+
+<!-- Click-to-inspect popout: shows what a clicked persona is doing/thinking. -->
+<div id="persona_popout" style="display:none; position:fixed; top:90px; right:24px; width:360px; max-height:78vh; overflow-y:auto; background:#fff; border:2px solid #333; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,0.3); z-index:1000; padding:1.2em">
+	<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ccc; padding-bottom:0.5em; margin-bottom:0.8em">
+		<h3 id="persona_popout_title" style="margin:0; font-size:1.4em"></h3>
+		<button type="button" onclick="closePersonaPopout()" class="btn btn-default btn-sm" style="font-weight:bold; line-height:1">&times;</button>
+	</div>
+	<div id="persona_popout_body" style="font-size:1.0em; line-height:1.45"></div>
+</div>
 
 <div style="padding-bottom:15em"> </div>
 

@@ -16,7 +16,8 @@ class MemoryTree:
   def __init__(self, f_saved): 
     self.tree = {}
     if check_if_file_exists(f_saved): 
-      self.tree = json.load(open(f_saved))
+      with open(f_saved) as _f:
+        self.tree = json.load(_f)
 
 
   def print_tree(self): 
@@ -103,7 +104,7 @@ class MemoryTree:
 
     try: 
       x = ", ".join(list(self.tree[curr_world][curr_sector][curr_arena]))
-    except: 
+    except Exception:
       x = ", ".join(list(self.tree[curr_world][curr_sector][curr_arena.lower()]))
     return x
 

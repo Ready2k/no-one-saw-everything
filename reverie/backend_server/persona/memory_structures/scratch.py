@@ -160,7 +160,8 @@ class Scratch:
 
     if check_if_file_exists(f_saved): 
       # If we have a bootstrap file, load that here. 
-      scratch_load = json.load(open(f_saved))
+      with open(f_saved) as _f:
+        scratch_load = json.load(_f)
 
       self.vision_r = scratch_load["vision_r"]
       self.att_bandwidth = scratch_load["att_bandwidth"]
@@ -248,7 +249,8 @@ class Scratch:
     scratch["att_bandwidth"] = self.att_bandwidth
     scratch["retention"] = self.retention
 
-    scratch["curr_time"] = self.curr_time.strftime("%B %d, %Y, %H:%M:%S")
+    scratch["curr_time"] = (self.curr_time.strftime("%B %d, %Y, %H:%M:%S")
+                            if self.curr_time else None)
     scratch["curr_tile"] = self.curr_tile
     scratch["daily_plan_req"] = self.daily_plan_req
 
@@ -283,8 +285,8 @@ class Scratch:
     scratch["f_daily_schedule_hourly_org"] = self.f_daily_schedule_hourly_org
 
     scratch["act_address"] = self.act_address
-    scratch["act_start_time"] = (self.act_start_time
-                                     .strftime("%B %d, %Y, %H:%M:%S"))
+    scratch["act_start_time"] = (self.act_start_time.strftime("%B %d, %Y, %H:%M:%S")
+                                  if self.act_start_time else None)
     scratch["act_duration"] = self.act_duration
     scratch["act_description"] = self.act_description
     scratch["act_pronunciatio"] = self.act_pronunciatio

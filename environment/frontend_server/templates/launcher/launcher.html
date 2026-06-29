@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  .lx-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .lx-h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px; }
+  .lx-sub { color: #777; font-size: 14px; margin: 0 0 20px; }
+  .lx-grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
+  .lx-card { background: #fff; border: 1px solid #e3e3e0; border-radius: 12px; padding: 18px 20px; }
+  .lx-card h2 { font-size: 16px; font-weight: 500; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+  .lx-label { font-size: 13px; color: #777; display: block; margin: 10px 0 4px; }
+  .lx-card select, .lx-card input[type=text], .lx-card input[type=number] {
+    width: 100%; height: 36px; border: 1px solid #ccc; border-radius: 8px; padding: 0 10px; font-size: 14px; }
+  .lx-profiles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .lx-profiles label { font-size: 13px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; margin: 0; font-weight: 400; }
+  .lx-profiles input { display: none; }
+  .lx-profiles input:checked + span { font-weight: 500; }
+  .lx-profiles label.sel { border-color: #2b6cb0; background: #ebf3fb; color: #1d5089; }
+  .lx-launch { width: 100%; margin-top: 16px; height: 40px; border: none; border-radius: 8px; background: #1d5089; color: #fff; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .lx-launch:hover { background: #16406e; }
+  .lx-meta { font-size: 12px; color: #999; margin-top: 10px; }
+  .lx-runs { display: flex; flex-direction: column; gap: 8px; max-height: 620px; overflow-y: auto; }
+  .lx-run { border: 1px solid #e3e3e0; border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; }
+  .lx-run:hover { border-color: #bbb; }
+  .lx-run .nm { font-size: 14px; font-weight: 500; color: #222; }
+  .lx-run .sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .lx-badge { font-size: 11px; padding: 2px 9px; border-radius: 11px; white-space: nowrap; }
+  .b-complete { background: #e6f0ff; color: #1d5089; }
+  .b-partial { background: #fff3df; color: #8a5a00; }
+  .b-empty { background: #f0eeea; color: #888; }
+  .lx-actions a { font-size: 12px; margin-left: 10px; color: #1d5089; text-decoration: none; white-space: nowrap; }
+  .lx-actions a:hover { text-decoration: underline; }
+  .lx-right .lx-card h2 .cnt { margin-left: auto; font-size: 12px; color: #999; font-weight: 400; }
+
+  /* Persona editor */
+  .px-card { background: #fff; border: 1px solid #e3e3e0; border-radius: 12px; margin-top: 16px; overflow: hidden; }
+  .px-card h2 { font-size: 16px; font-weight: 500; margin: 0; padding: 14px 18px; display: flex; align-items: center; gap: 8px; }
+  .px-persona { border-top: 1px solid #f0eeea; }
+  .px-persona-hdr { padding: 10px 18px; cursor: pointer; display: flex; align-items: center; gap: 8px; user-select: none; }
+  .px-persona-hdr:hover { background: #fafaf8; }
+  .px-persona-name { font-size: 14px; font-weight: 500; flex: 1; }
+  .px-persona-caret { font-size: 12px; color: #aaa; transition: transform 0.15s; }
+  .px-persona.open .px-persona-caret { transform: rotate(90deg); }
+  .px-persona-body { display: none; padding: 0 18px 14px; }
+  .px-persona.open .px-persona-body { display: block; }
+  .px-field { margin-bottom: 10px; }
+  .px-field label { font-size: 12px; color: #777; display: block; margin-bottom: 3px; }
+  .px-field input, .px-field textarea {
+    width: 100%; border: 1px solid #ccc; border-radius: 6px;
+    padding: 6px 8px; font-size: 13px; font-family: inherit; box-sizing: border-box; }
+  .px-field textarea { min-height: 56px; resize: vertical; }
+  .px-field input[type=number] { width: 80px; }
+  .px-save { margin-top: 8px; padding: 6px 16px; border: none; border-radius: 6px;
+    background: #2b6cb0; color: #fff; font-size: 13px; cursor: pointer; }
+  .px-save:hover { background: #1d5089; }
+  .px-msg { font-size: 12px; margin-left: 10px; color: #2a7a2a; }
+  .px-empty { padding: 12px 18px; font-size: 13px; color: #aaa; }
+  .px-loading { padding: 12px 18px; font-size: 13px; color: #aaa; }
+</style>
+
+<div class="lx-wrap">
+  <h1 class="lx-h1">Reverie launcher</h1>
+  <p class="lx-sub">Configure a new simulation run, or browse and review previous runs.</p>
+
+  <div class="lx-grid">
+    <div class="lx-left">
+      <div class="lx-card">
+        <h2><span class="glyphicon glyphicon-play"></span> Start a new run</h2>
+        <form method="POST" action="{% url 'launch_simulation' %}">
+          {% csrf_token %}
+          <label class="lx-label">Fork from</label>
+          <select name="fork">
+            {% for b in bases %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
+          </select>
+
+          <label class="lx-label">New name</label>
+          <input type="text" name="name" value="{{ default_name }}" />
+
+          <label class="lx-label">Profile</label>
+          <div class="lx-profiles" id="lx-profiles">
+            {% for p in profiles %}
+            <label data-val="{{ p.value }}" title="{{ p.hint }}{% if p.value == current_profile %} (active){% endif %}">
+              <input type="radio" name="profile" value="{{ p.value }}" {% if p.value == current_profile %}checked{% endif %} />
+              <span>{{ p.label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+
+          <label class="lx-label">Steps to run <span style="color:#bbb">(8640 = one full day at 10s/step)</span></label>
+          <input type="number" name="steps" value="8640" min="1" step="1" />
+
+          <button type="submit" class="lx-launch">Launch run</button>
+          <p class="lx-meta">Spawns the backend, runs the steps, then saves and exits. The map opens at <a href="{% url 'home' %}">/simulator_home</a>.</p>
+        </form>
+      </div>
+
+      <!-- Persona editor panel, loaded dynamically when fork changes -->
+      <div id="px-panel" class="px-card">
+        <h2><span class="glyphicon glyphicon-user"></span> Personas <span style="margin-left:auto;font-size:12px;color:#999;font-weight:400" id="px-fork-label"></span></h2>
+        <div id="px-body"><div class="px-loading">Select a fork above to view personas.</div></div>
+      </div>
+    </div>
+
+    <div class="lx-right">
+      <div class="lx-card">
+        <h2><span class="glyphicon glyphicon-time"></span> Previous runs <span class="cnt">{{ run_count }} total</span></h2>
+        <div class="lx-runs">
+          {% for r in runs %}
+          <div class="lx-run">
+            <div>
+              <div class="nm">{{ r.name }}</div>
+              <div class="sub">{{ r.steps }} steps
+                {% if r.sim_time %}· reached {{ r.sim_time }}{% endif %}
+                · {{ r.persona_count }} personas</div>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <span class="lx-badge b-{{ r.status }}">{{ r.status }}</span>
+              <span class="lx-actions">
+                <a href="{% url 'run_review' r.name %}">Review</a>
+                {% if r.has_replay %}<a href="{% url 'open_run_map' r.name %}">Map</a>{% endif %}
+              </span>
+            </div>
+          </div>
+          {% empty %}
+          <p style="color:#999; font-size:13px;">No runs yet. Launch one to get started.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function paintProfiles() {
+    document.querySelectorAll('#lx-profiles label').forEach(function(l) {
+      var input = l.querySelector('input');
+      l.classList.toggle('sel', input.checked);
+    });
+  }
+  document.querySelectorAll('#lx-profiles label').forEach(function(l) {
+    l.addEventListener('click', function(){ setTimeout(paintProfiles, 0); });
+  });
+  paintProfiles();
+
+  // ── Persona editor ────────────────────────────────────────────────────────
+  var FIELD_LABELS = {
+    name: "Full name", age: "Age", innate: "Innate traits",
+    learned: "Learned background", currently: "Currently",
+    lifestyle: "Lifestyle / sleep", daily_plan_req: "Daily routine"
+  };
+  var MULTILINE = ["learned", "currently", "daily_plan_req"];
+
+  function getCookie(name) {
+    var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return v ? v.pop() : '';
+  }
+
+  function renderPersonas(simCode, personas) {
+    var body = document.getElementById('px-body');
+    document.getElementById('px-fork-label').textContent = simCode;
+    if (!personas.length) {
+      body.innerHTML = '<div class="px-empty">No personas found in this sim.</div>';
+      return;
+    }
+    body.innerHTML = personas.map(function(p, idx) {
+      var fieldsHtml = Object.keys(FIELD_LABELS).map(function(k) {
+        var val = (p.fields[k] == null ? '' : p.fields[k]);
+        var input = MULTILINE.indexOf(k) !== -1
+          ? '<textarea name="' + k + '">' + escHtml(String(val)) + '</textarea>'
+          : (k === 'age'
+            ? '<input type="number" name="' + k + '" value="' + escHtml(String(val)) + '" />'
+            : '<input type="text" name="' + k + '" value="' + escHtml(String(val)) + '" />');
+        return '<div class="px-field"><label>' + FIELD_LABELS[k] + '</label>' + input + '</div>';
+      }).join('');
+      return '<div class="px-persona" id="px-p-' + idx + '">'
+        + '<div class="px-persona-hdr" onclick="togglePersona(' + idx + ')">'
+        + '<span class="glyphicon glyphicon-chevron-right px-persona-caret"></span>'
+        + '<span class="px-persona-name">' + escHtml(p.name) + '</span>'
+        + '</div>'
+        + '<div class="px-persona-body">' + fieldsHtml
+        + '<button class="px-save" onclick="savePersona(\'' + escAttr(simCode) + '\',\'' + escAttr(p.name) + '\',' + idx + ')">Save</button>'
+        + '<span class="px-msg" id="px-msg-' + idx + '"></span>'
+        + '</div></div>';
+    }).join('');
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(s) { return s.replace(/'/g,"\\'"); }
+
+  function togglePersona(idx) {
+    var el = document.getElementById('px-p-' + idx);
+    el.classList.toggle('open');
+  }
+
+  function loadPersonas(simCode) {
+    var body = document.getElementById('px-body');
+    body.innerHTML = '<div class="px-loading">Loading…</div>';
+    fetch('/launcher/personas/' + encodeURIComponent(simCode) + '/')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ renderPersonas(simCode, d.personas || []); })
+      .catch(function(){ body.innerHTML = '<div class="px-empty">Could not load personas.</div>'; });
+  }
+
+  function savePersona(simCode, personaName, idx) {
+    var panel = document.getElementById('px-p-' + idx);
+    var data = {};
+    panel.querySelectorAll('[name]').forEach(function(el){ data[el.name] = el.value; });
+    var msg = document.getElementById('px-msg-' + idx);
+    msg.textContent = 'Saving…';
+    fetch('/launcher/personas/' + encodeURIComponent(simCode) + '/' + encodeURIComponent(personaName) + '/save/', {
+      method: 'POST',
+      headers: {'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      msg.textContent = d.ok ? 'Saved!' : ('Error: ' + (d.error || '?'));
+      // Update the panel header name if it changed
+      var nameVal = data['name'];
+      if (nameVal) panel.querySelector('.px-persona-name').textContent = nameVal;
+      setTimeout(function(){ msg.textContent = ''; }, 2500);
+    })
+    .catch(function(){ msg.textContent = 'Save failed.'; });
+  }
+
+  // Load personas when fork selection changes, and on page load.
+  var forkSel = document.querySelector('select[name=fork]');
+  if (forkSel) {
+    forkSel.addEventListener('change', function(){ loadPersonas(this.value); });
+    if (forkSel.value) loadPersonas(forkSel.value);
+  }
+</script>
+{% endblock content %}

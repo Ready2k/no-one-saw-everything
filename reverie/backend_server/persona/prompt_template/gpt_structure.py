@@ -3,26 +3,69 @@ Author: Joon Sung Park (joonspk@stanford.edu)
 
 File: gpt_structure.py
 Description: Wrapper functions for calling OpenAI APIs.
+Patched to use the LocalLLM gateway (http://127.0.0.1:8080/v1) instead of
+OpenAI. Legacy openai.Completion calls are bridged to chat completions because
+local models only expose the chat endpoint. Embeddings use sentence-transformers
+so no embedding model needs to be running separately.
 """
 import json
+import os
 import random
+import signal
 import openai
-import time 
+import openai.api_requestor as _oai_req
+import time
 
 from utils import *
 
-openai.api_key = openai_api_key
+# Hard wall-clock timeout for any single LLM call. signal.alarm sends SIGALRM
+# after N seconds and interrupts blocking network I/O — unlike request_timeout
+# which only fires if no bytes arrive, this fires even when the server is slowly
+# trickling tokens back.
+LLM_TIMEOUT_S = 90
+
+def _sigalrm_handler(signum, frame):
+    raise TimeoutError(f"LLM call exceeded {LLM_TIMEOUT_S}s wall-clock limit")
+
+def _llm_call(fn):
+    """Call fn() with a hard SIGALRM timeout. Returns the result or raises."""
+    old_handler = signal.signal(signal.SIGALRM, _sigalrm_handler)
+    signal.alarm(LLM_TIMEOUT_S)
+    try:
+        return fn()
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old_handler)
+
+openai.api_key  = openai_api_key
+openai.api_base = openai_api_base  # point at local gateway
+
+# Patch only the openai session to trust the LocalLLM self-signed cert.
+# We do this surgically so other libraries (HuggingFace etc.) are unaffected.
+_orig_make_session = _oai_req._make_session
+def _local_session():
+    s = _orig_make_session()
+    # Trust the self-signed gateway cert. Fail closed: if the cert file is
+    # missing we keep verify=True (the default) rather than disabling TLS.
+    if os.path.exists(local_cert):
+        s.verify = local_cert
+    else:
+        import warnings
+        warnings.warn(
+            f"LocalLLM cert not found at {local_cert}; TLS verification may fail.",
+            RuntimeWarning, stacklevel=2,
+        )
+    return s
+_oai_req._make_session = _local_session
 
 def temp_sleep(seconds=0.1):
-  time.sleep(seconds)
+  pass  # no rate-limit delay needed for local inference
 
-def ChatGPT_single_request(prompt): 
-  temp_sleep()
-
-  completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
-  )
+def ChatGPT_single_request(prompt):
+  completion = _llm_call(lambda: openai.ChatCompletion.create(
+    model=local_model,
+    messages=[{"role": "user", "content": prompt}],
+  ))
   return completion["choices"][0]["message"]["content"]
 
 
@@ -30,54 +73,27 @@ def ChatGPT_single_request(prompt):
 # #####################[SECTION 1: CHATGPT-3 STRUCTURE] ######################
 # ============================================================================
 
-def GPT4_request(prompt): 
-  """
-  Given a prompt and a dictionary of GPT parameters, make a request to OpenAI
-  server and returns the response. 
-  ARGS:
-    prompt: a str prompt
-    gpt_parameter: a python dictionary with the keys indicating the names of  
-                   the parameter and the values indicating the parameter 
-                   values.   
-  RETURNS: 
-    a str of GPT-3's response. 
-  """
-  temp_sleep()
-
-  try: 
-    completion = openai.ChatCompletion.create(
-    model="gpt-4", 
-    messages=[{"role": "user", "content": prompt}]
-    )
+def GPT4_request(prompt):
+  try:
+    completion = _llm_call(lambda: openai.ChatCompletion.create(
+      model=local_model,
+      messages=[{"role": "user", "content": prompt}],
+    ))
     return completion["choices"][0]["message"]["content"]
-  
-  except: 
-    print ("ChatGPT ERROR")
+  except Exception as e:
+    print(f"ChatGPT ERROR: {e}")
     return "ChatGPT ERROR"
 
 
-def ChatGPT_request(prompt): 
-  """
-  Given a prompt and a dictionary of GPT parameters, make a request to OpenAI
-  server and returns the response. 
-  ARGS:
-    prompt: a str prompt
-    gpt_parameter: a python dictionary with the keys indicating the names of  
-                   the parameter and the values indicating the parameter 
-                   values.   
-  RETURNS: 
-    a str of GPT-3's response. 
-  """
-  # temp_sleep()
-  try: 
-    completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
-    )
+def ChatGPT_request(prompt):
+  try:
+    completion = _llm_call(lambda: openai.ChatCompletion.create(
+      model=local_model,
+      messages=[{"role": "user", "content": prompt}],
+    ))
     return completion["choices"][0]["message"]["content"]
-  
-  except: 
-    print ("ChatGPT ERROR")
+  except Exception as e:
+    print(f"ChatGPT ERROR: {e}")
     return "ChatGPT ERROR"
 
 
@@ -106,21 +122,22 @@ def GPT4_safe_generate_response(prompt,
       curr_gpt_response = curr_gpt_response[:end_index]
       curr_gpt_response = json.loads(curr_gpt_response)["output"]
       
-      if func_validate(curr_gpt_response, prompt=prompt): 
+      if func_validate(curr_gpt_response, prompt=prompt):
         return func_clean_up(curr_gpt_response, prompt=prompt)
-      
-      if verbose: 
+
+      if verbose:
         print ("---- repeat count: \n", i, curr_gpt_response)
         print (curr_gpt_response)
         print ("~~~~")
 
-    except: 
+    except Exception:
       pass
 
-  return False
+  print ("GPT4 FAIL SAFE TRIGGERED")
+  return fail_safe_response
 
 
-def ChatGPT_safe_generate_response(prompt, 
+def ChatGPT_safe_generate_response(prompt,
                                    example_output,
                                    special_instruction,
                                    repeat=3,
@@ -150,21 +167,24 @@ def ChatGPT_safe_generate_response(prompt,
       # print (curr_gpt_response)
       # print ("000asdfhia")
       
-      if func_validate(curr_gpt_response, prompt=prompt): 
+      if func_validate(curr_gpt_response, prompt=prompt):
         return func_clean_up(curr_gpt_response, prompt=prompt)
-      
-      if verbose: 
+
+      if verbose:
         print ("---- repeat count: \n", i, curr_gpt_response)
         print (curr_gpt_response)
         print ("~~~~")
 
-    except: 
+    except Exception:
       pass
 
-  return False
+  # All retries failed. Return the caller's fail_safe rather than False so
+  # callers that don't guard against False never crash on `result[0]`.
+  print ("CHATGPT FAIL SAFE TRIGGERED")
+  return fail_safe_response
 
 
-def ChatGPT_safe_generate_response_OLD(prompt, 
+def ChatGPT_safe_generate_response_OLD(prompt,
                                    repeat=3,
                                    fail_safe_response="error",
                                    func_validate=None,
@@ -184,7 +204,7 @@ def ChatGPT_safe_generate_response_OLD(prompt,
         print (curr_gpt_response)
         print ("~~~~")
 
-    except: 
+    except Exception:
       pass
   print ("FAIL SAFE TRIGGERED") 
   return fail_safe_response
@@ -194,33 +214,23 @@ def ChatGPT_safe_generate_response_OLD(prompt,
 # ###################[SECTION 2: ORIGINAL GPT-3 STRUCTURE] ###################
 # ============================================================================
 
-def GPT_request(prompt, gpt_parameter): 
-  """
-  Given a prompt and a dictionary of GPT parameters, make a request to OpenAI
-  server and returns the response. 
-  ARGS:
-    prompt: a str prompt
-    gpt_parameter: a python dictionary with the keys indicating the names of  
-                   the parameter and the values indicating the parameter 
-                   values.   
-  RETURNS: 
-    a str of GPT-3's response. 
-  """
-  temp_sleep()
-  try: 
-    response = openai.Completion.create(
-                model=gpt_parameter["engine"],
-                prompt=prompt,
-                temperature=gpt_parameter["temperature"],
-                max_tokens=gpt_parameter["max_tokens"],
-                top_p=gpt_parameter["top_p"],
-                frequency_penalty=gpt_parameter["frequency_penalty"],
-                presence_penalty=gpt_parameter["presence_penalty"],
-                stream=gpt_parameter["stream"],
-                stop=gpt_parameter["stop"],)
-    return response.choices[0].text
-  except: 
-    print ("TOKEN LIMIT EXCEEDED")
+def GPT_request(prompt, gpt_parameter):
+  # Local models only expose the chat endpoint, not the legacy completions
+  # endpoint, so we bridge by wrapping the prompt as a user message.
+  try:
+    completion = _llm_call(lambda: openai.ChatCompletion.create(
+      model=local_model,
+      messages=[{"role": "user", "content": prompt}],
+      temperature=gpt_parameter.get("temperature", 0.7),
+      max_tokens=gpt_parameter.get("max_tokens", 512),
+      top_p=gpt_parameter.get("top_p", 1),
+      frequency_penalty=gpt_parameter.get("frequency_penalty", 0),
+      presence_penalty=gpt_parameter.get("presence_penalty", 0),
+      stop=gpt_parameter.get("stop") or None,
+    ))
+    return completion["choices"][0]["message"]["content"]
+  except Exception as e:
+    print(f"TOKEN LIMIT EXCEEDED: {e}")
     return "TOKEN LIMIT EXCEEDED"
 
 
@@ -273,12 +283,16 @@ def safe_generate_response(prompt,
   return fail_safe_response
 
 
-def get_embedding(text, model="text-embedding-ada-002"):
-  text = text.replace("\n", " ")
-  if not text: 
-    text = "this is blank"
-  return openai.Embedding.create(
-          input=[text], model=model)['data'][0]['embedding']
+def get_embedding(text, model="all-MiniLM-L6-v2"):
+  # sentence-transformers runs entirely locally — no API call needed.
+  # all-MiniLM-L6-v2 (~80 MB) downloads once on first use.
+  from sentence_transformers import SentenceTransformer
+  text = text.replace("\n", " ") or "this is blank"
+  _model = getattr(get_embedding, "_model", None)
+  if _model is None or getattr(_model, "_name", None) != model:
+    get_embedding._model = SentenceTransformer(model)
+    get_embedding._model._name = model
+  return get_embedding._model.encode(text).tolist()
 
 
 if __name__ == '__main__':

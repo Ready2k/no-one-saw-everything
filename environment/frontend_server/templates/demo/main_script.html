@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 
 <script type="text/javascript">
 	/*
@@ -64,6 +64,31 @@
 	const game = new Phaser.Game(config);
 	let cursors;
 	let player;
+	let camera;
+
+	// Zoom limits for the map camera (1 == default 1:1 view).
+	const MIN_ZOOM = 0.2;
+	const MAX_ZOOM = 2.5;
+
+	// Multiplicatively step the camera zoom (wired to the +/- buttons).
+	function zoomCamera(factor) {
+		if (!camera) return;
+		camera.setZoom(Phaser.Math.Clamp(camera.zoom * factor, MIN_ZOOM, MAX_ZOOM));
+	}
+
+	// Reset zoom back to the default 1:1 view.
+	function resetZoom() {
+		if (camera) camera.setZoom(1);
+	}
+
+	// Recenter the camera on a persona by teleporting the (invisible) camera
+	// follow target to that persona's current position. Arrow-key panning keeps
+	// working afterward because the camera continues to follow <player>.
+	function goToPersona(persona_name) {
+		let target = personas[persona_name];
+		if (!target || !player) return;
+		player.setPosition(target.x, target.y);
+	}
 
 	// Persona related variables. This should have the name of the persona as its 
 	// keys, and the instances of the Persona class as the values.
@@ -254,11 +279,40 @@
 	                setSize(30, 40).
 	                setOffset(0, 0);
 	  player.setDepth(-1);
-	  // Setting up the camera. 
-	  const camera = this.cameras.main;
+	  // Setting up the camera.
+	  camera = this.cameras.main;
 	  camera.startFollow(player);
 	  camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	  cursors = this.input.keyboard.createCursorKeys();
+
+	  // *** ZOOM: mouse wheel zooms the camera in/out, clamped to a range. ***
+	  this.input.on("wheel", function(pointer, gameObjects, deltaX, deltaY) {
+	    let new_zoom = camera.zoom - deltaY * 0.0015;
+	    camera.setZoom(Phaser.Math.Clamp(new_zoom, MIN_ZOOM, MAX_ZOOM));
+	  });
+
+	  // *** PAN: click-and-drag the map with the mouse (grab panning). ***
+	  let isDragging = false;
+	  let dragPrevX = 0;
+	  let dragPrevY = 0;
+	  this.input.on("pointerdown", function(pointer) {
+	    isDragging = true;
+	    dragPrevX = pointer.x;
+	    dragPrevY = pointer.y;
+	    game.canvas.style.cursor = "grabbing";
+	  });
+	  this.input.on("pointerup", function() {
+	    isDragging = false;
+	    game.canvas.style.cursor = "grab";
+	  });
+	  this.input.on("pointermove", function(pointer) {
+	    if (!isDragging) return;
+	    player.x = Phaser.Math.Clamp(player.x - (pointer.x - dragPrevX) / camera.zoom, 0, map.widthInPixels);
+	    player.y = Phaser.Math.Clamp(player.y - (pointer.y - dragPrevY) / camera.zoom, 0, map.heightInPixels);
+	    dragPrevX = pointer.x;
+	    dragPrevY = pointer.y;
+	  });
+	  game.canvas.style.cursor = "grab";
 
 	  // *** SET UP PERSONAS *** 
 	  // We start by creating the game sprite objects. 

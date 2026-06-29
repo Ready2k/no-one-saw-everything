@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 
 <div id="step" style="display:none">{{step}}</div>
 <div id="sim_code" style="display:none">{{sim_code}}</div>
@@ -79,7 +79,132 @@
 	const game = new Phaser.Game(config);
 	let cursors;
 	let player;
+	let camera;
 	let showDebug = false;
+
+	// Zoom limits for the map camera (1 == default 1:1 view).
+	const MIN_ZOOM = 0.2;
+	const MAX_ZOOM = 2.5;
+
+	// Multiplicatively step the camera zoom (wired to the +/- buttons).
+	function zoomCamera(factor) {
+		if (!camera) return;
+		camera.setZoom(Phaser.Math.Clamp(camera.zoom * factor, MIN_ZOOM, MAX_ZOOM));
+	}
+
+	// Reset zoom back to the default 1:1 view.
+	function resetZoom() {
+		if (camera) camera.setZoom(1);
+	}
+
+	// Recenter the camera on a persona by teleporting the (invisible) camera
+	// follow target to that persona's current position. Arrow-key panning keeps
+	// working afterward because the camera continues to follow <player>.
+	function goToPersona(persona_name) {
+		let target = personas[persona_name];
+		if (!target || !player) return;
+		player.setPosition(target.x, target.y);
+	}
+
+	// Per-persona live snapshot of what the frontend already knows this step
+	// (current action / location / conversation), populated in the execute phase.
+	var live_state = {};
+	// Name of the persona whose popout is currently open (null if closed), so the
+	// execute phase can keep an open popout in sync as the simulation advances.
+	var popout_open_for = null;
+
+	// --- Click-to-inspect popout ---------------------------------------------
+	function _popoutEscape(s) {
+		if (s == null) return "";
+		return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	}
+	function _popoutSection(label, content, isHtml) {
+		if (content == null || content === "") return "";
+		return "<div style='margin-bottom:1em'><div style='font-weight:700; color:#555'>" + label +
+		       "</div><div style='margin-top:0.2em'>" + (isHtml ? content : _popoutEscape(content)) + "</div></div>";
+	}
+	// Last rendered strings, so we only touch the DOM when something actually
+	// changed. Re-writing identical innerHTML on every refresh is what caused the
+	// popout to flicker.
+	var _popout_last_html = "";
+	var _popout_last_title = "";
+	// Latest backend planning context per persona, kept so a live refresh can
+	// re-render without blanking the rich sections while we wait on the fetch.
+	var _popout_extra = {};
+
+	function closePersonaPopout() {
+		let p = document.getElementById("persona_popout");
+		if (p) p.style.display = "none";
+		popout_open_for = null;
+	}
+
+	// Render the popout for <persona_name>, combining the frontend's live snapshot
+	// with the most recent backend planning context. DOM writes are skipped when
+	// the content is unchanged so the panel never flickers.
+	function renderPopout(persona_name) {
+		let title = document.getElementById("persona_popout_title");
+		let body = document.getElementById("persona_popout_body");
+		if (!title || !body) return;
+		let live = live_state[persona_name] || {};
+		let extra = _popout_extra[persona_name] || {};
+
+		let emoji = extra.pronunciatio || live.pronunciatio || "";
+		let new_title = (emoji ? _popoutEscape(emoji) + " " : "") + _popoutEscape(persona_name);
+
+		let html = "";
+		html += _popoutSection("🟢 Doing now", live.doing_now || extra.doing_now || "—");
+		html += _popoutSection("📍 Location", live.location || extra.location);
+		html += _popoutSection("⏭️ Up next", extra.next_task);
+		html += _popoutSection("🧠 Mindset", extra.currently);
+		if (extra.daily_plan && extra.daily_plan.length) {
+			let items = extra.daily_plan.map(p => "<li>" + _popoutEscape(p) + "</li>").join("");
+			html += _popoutSection("🗒️ Today's plan", "<ol style='padding-left:1.2em; margin:0.3em 0'>" + items + "</ol>", true);
+		}
+		if (extra.thoughts && extra.thoughts.length) {
+			let items = extra.thoughts.map(t => "<li>" + _popoutEscape(t.description) + "</li>").join("");
+			html += _popoutSection("💭 Recent thoughts", "<ul style='padding-left:1.2em; margin:0.3em 0'>" + items + "</ul>", true);
+		}
+		if (live.chat_html && live.chat_html.indexOf("None at the moment") === -1) {
+			html += _popoutSection("💬 Conversation", live.chat_html, true);
+		}
+		html = html || "<em>No information available yet.</em>";
+
+		if (new_title !== _popout_last_title) { title.innerHTML = new_title; _popout_last_title = new_title; }
+		if (html !== _popout_last_html) { body.innerHTML = html; _popout_last_html = html; }
+	}
+
+	// Fetch the latest backend planning context for the open persona and re-render.
+	function refreshPersonaPopout(persona_name) {
+		if (!persona_name) return;
+		let name_os = persona_name.replace(/ /g, "_");
+		fetch("/persona_current_state/" + encodeURIComponent(sim_code) + "/" + name_os + "/")
+			.then(r => r.json())
+			.then(data => {
+				if (data && !data.error) _popout_extra[persona_name] = data;
+				if (popout_open_for === persona_name) renderPopout(persona_name);
+			})
+			.catch(() => {});
+	}
+
+	// Open a floating panel describing what a persona is doing now / next, their
+	// mindset, daily plan and recent thoughts. Rendered immediately from live data,
+	// then enriched from the backend; afterwards it self-refreshes every 10s.
+	function openPersonaPopout(persona_name) {
+		let popout = document.getElementById("persona_popout");
+		if (!popout) return;
+		// New persona selected: drop the dedupe cache so the panel repaints.
+		if (popout_open_for !== persona_name) { _popout_last_html = ""; _popout_last_title = ""; }
+		popout_open_for = persona_name;
+		popout.style.display = "block";
+		renderPopout(persona_name);
+		refreshPersonaPopout(persona_name);
+	}
+
+	// Refresh the open popout every 10 seconds rather than on every simulation
+	// step, so it stays current without constantly flickering.
+	setInterval(function() {
+		if (popout_open_for) refreshPersonaPopout(popout_open_for);
+	}, 10000);
 
 	// Persona related variables. This should have the name of the persona as its 
 	// keys, and the instances of the Persona class as the values.
@@ -270,11 +395,45 @@
 	                setSize(30, 40).
 	                setOffset(0, 0);
 	  player.setDepth(-1);
-	  // Setting up the camera. 
-	  const camera = this.cameras.main;
+	  // Setting up the camera.
+	  camera = this.cameras.main;
 	  camera.startFollow(player);
 	  camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	  cursors = this.input.keyboard.createCursorKeys();
+
+	  // *** ZOOM: mouse wheel zooms the camera in/out, clamped to a range. ***
+	  this.input.on("wheel", function(pointer, gameObjects, deltaX, deltaY) {
+	    let new_zoom = camera.zoom - deltaY * 0.0015;
+	    camera.setZoom(Phaser.Math.Clamp(new_zoom, MIN_ZOOM, MAX_ZOOM));
+	  });
+
+	  // *** PAN: click-and-drag the map with the mouse (grab panning). ***
+	  // <drag_moved> lets the persona click handlers tell a real click apart from
+	  // the end of a drag, so panning doesn't accidentally open the popout.
+	  let isDragging = false;
+	  let dragPrevX = 0;
+	  let dragPrevY = 0;
+	  var drag_moved = false;
+	  this.input.on("pointerdown", function(pointer) {
+	    isDragging = true;
+	    drag_moved = false;
+	    dragPrevX = pointer.x;
+	    dragPrevY = pointer.y;
+	    game.canvas.style.cursor = "grabbing";
+	  });
+	  this.input.on("pointerup", function() {
+	    isDragging = false;
+	    game.canvas.style.cursor = "grab";
+	  });
+	  this.input.on("pointermove", function(pointer) {
+	    if (!isDragging) return;
+	    if (Math.abs(pointer.x - pointer.downX) > 4 || Math.abs(pointer.y - pointer.downY) > 4) drag_moved = true;
+	    player.x = Phaser.Math.Clamp(player.x - (pointer.x - dragPrevX) / camera.zoom, 0, map.widthInPixels);
+	    player.y = Phaser.Math.Clamp(player.y - (pointer.y - dragPrevY) / camera.zoom, 0, map.heightInPixels);
+	    dragPrevX = pointer.x;
+	    dragPrevY = pointer.y;
+	  });
+	  game.canvas.style.cursor = "grab";
 
 	  // *** SET UP PERSONAS *** 
 	  // We start by creating the game sprite objects. 
@@ -288,6 +447,15 @@
 	                         .setOffset(0, 32); // DEBUG 1 --- I added 32 offset on Dec 29. 
 	    // Here, we are creating the persona and its pronunciatio sprites.
 	    personas[persona_name] = new_sprite;
+
+	    // Click a persona sprite to open the inspect popout (unless it was a drag).
+	    new_sprite.setInteractive();
+	    (function(name) {
+	      new_sprite.on("pointerup", function() {
+	        if (!drag_moved) openPersonaPopout(name);
+	      });
+	    })(persona_name);
+
 	    pronunciatios[persona_name] = this.add.text(
 	                                   new_sprite.body.x - 6, 
 	                                   new_sprite.body.y - 42 - 32, // DEBUG 1 --- I added 32 offset on Dec 29. 
@@ -539,12 +707,42 @@
 	        document.getElementById("current_action__"+curr_persona_name_os).innerHTML = description_content.split("@")[0];
 	        document.getElementById("target_address__"+curr_persona_name_os).innerHTML = description_content.split("@")[1];
 	        document.getElementById("chat__"+curr_persona_name_os).innerHTML = chat_content;
+
+	        // Cache this step's live info so the click-to-inspect popout can show it.
+	        // The popout itself refreshes on a 10s timer (see setInterval above),
+	        // not on every step, to avoid flicker.
+	        live_state[curr_persona_name] = {
+	          doing_now: description_content.split("@")[0],
+	          location: description_content.split("@")[1],
+	          chat_html: chat_content
+	        };
 	      }
 	      
 	    }
 
 	    execute_count = execute_count - 1;
 	  }
+	}
+
+	// Open the full "State Details" page for a persona. We first persist the
+	// *live* step (the JS <step> that advances as the sim plays, not the stale
+	// page-load step) into curr_step.json, then navigate using that same step.
+	// This way the state page reflects the time the user clicked, and returning
+	// to the simulation resumes the clock there instead of restarting at 00:00.
+	// Declared as a top-level function so the inline onclick in home.html can
+	// reach it (script-scoped `let` vars like <step> are not on window).
+	function openStateDetails(persona_name_os) {
+		var target_step = step;
+		var go = function() {
+			window.location.href = "/replay_persona_state/" + encodeURIComponent(sim_code)
+			                     + "/" + target_step + "/" + persona_name_os + "/";
+		};
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', "{% url 'save_home_step' %}", true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onreadystatechange = function() { if (xhr.readyState === 4) go(); };
+		xhr.onerror = go;
+		xhr.send(JSON.stringify({"step": target_step}));
 	}
 
 	// Control button binders

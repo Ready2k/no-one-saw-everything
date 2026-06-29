@@ -62,9 +62,11 @@ class AssociativeMemory:
     self.kw_strength_event = dict()
     self.kw_strength_thought = dict()
 
-    self.embeddings = json.load(open(f_saved + "/embeddings.json"))
+    with open(f_saved + "/embeddings.json") as _f:
+      self.embeddings = json.load(_f)
 
-    nodes_load = json.load(open(f_saved + "/nodes.json"))
+    with open(f_saved + "/nodes.json") as _f:
+      nodes_load = json.load(_f)
     for count in range(len(nodes_load.keys())): 
       node_id = f"node_{str(count+1)}"
       node_details = nodes_load[node_id]
@@ -102,7 +104,8 @@ class AssociativeMemory:
         self.add_thought(created, expiration, s, p, o, 
                    description, keywords, poignancy, embedding_pair, filling)
 
-    kw_strength_load = json.load(open(f_saved + "/kw_strength.json"))
+    with open(f_saved + "/kw_strength.json") as _f:
+      kw_strength_load = json.load(_f)
     if kw_strength_load["kw_strength_event"]: 
       self.kw_strength_event = kw_strength_load["kw_strength_event"]
     if kw_strength_load["kw_strength_thought"]: 
@@ -208,7 +211,7 @@ class AssociativeMemory:
     try: 
       if filling: 
         depth += max([self.id_to_node[i].depth for i in filling])
-    except: 
+    except Exception:
       pass
 
     # Creating the <ConceptNode> object.

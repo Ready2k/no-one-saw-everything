@@ -34,7 +34,7 @@ def generate_agent_chat_summarize_ideas(init_persona,
     summarized_idea = run_gpt_prompt_agent_chat_summarize_ideas(init_persona,
                         target_persona, all_embedding_key_str, 
                         curr_context)[0]
-  except:
+  except Exception:
     summarized_idea = ""
   return summarized_idea
 
@@ -123,11 +123,14 @@ def generate_one_utterance(maze, init_persona, target_persona, retrieved, curr_c
 
   return x["utterance"], x["end"]
 
-def agent_chat_v2(maze, init_persona, target_persona): 
+def agent_chat_v2(maze, init_persona, target_persona):
   curr_chat = []
   print ("July 23")
 
-  for i in range(8): 
+  # Each iteration = up to 2 utterances (one per persona), and each utterance
+  # costs ~2 large LLM calls (relationship summary + utterance generation).
+  # Reduced from 8 to 4 for local-model speed; raise for longer conversations.
+  for i in range(4):
     focal_points = [f"{target_persona.scratch.name}"]
     retrieved = new_retrieve(init_persona, focal_points, 50)
     relationship = generate_summarize_agent_relationship(init_persona, target_persona, retrieved)
