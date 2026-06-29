@@ -6,16 +6,66 @@
 <img src="cover.png" alt="Smallville" style="width: 80%; min-width: 300px; display: block; margin: auto;">
 </p>
 
-This repository accompanies our research paper titled "[Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442)." It contains our core simulation module for  generative agents—computational agents that simulate believable human behaviors—and their game environment. Below, we document the steps for setting up the simulation environment on your local machine and for replaying the simulation as a demo animation.
+This repository accompanies our research paper titled "[Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442)." It contains our core simulation module for generative agents—computational agents that simulate believable human behaviors—and their game environment. Below, we document the steps for setting up the simulation environment on your local machine and for replaying the simulation as a demo animation.
+
+> **Fork note:** This fork adds local-LLM support, a browser-based graphical launcher, a persona/cognitive editor, and a crash-proofing pass that makes the simulation reliable with small open-source models (Gemma 4B, Qwen 14B, etc.) in addition to the original OpenAI backend.
+
+## What's new in this fork
+
+### Local LLM support
+The simulation can now run against any OpenAI-compatible local inference server (LM Studio, llama.cpp, Ollama, etc.) instead of OpenAI. Configure the endpoint and model in `start_simulation.sh` or via the graphical launcher — no code changes required.
+
+### Prompt profile system
+All 30+ prompt templates are now organised into interchangeable **profiles** under `reverie/backend_server/persona/prompt_template/profiles/`:
+
+| Profile | Target model | Notes |
+|---------|-------------|-------|
+| `chat-small` | Gemma 4B and other small chat models | Simplified prompts; explicit JSON output instructions |
+| `chat-large` | Qwen 14B+ and other capable chat models | Same as `gpt` profile |
+| `gpt` | OpenAI GPT-3.5 / GPT-4 | Original v3 prompt style |
+| `cloud` | OpenAI / Anthropic / Gemini cloud APIs | Same as `gpt` profile |
+
+The active profile is selected at startup via the launcher menu or the `PROMPT_PROFILE` environment variable.
+
+### Graphical launcher
+Navigate to `http://localhost:8000/launcher` to access a browser-based control panel that replaces the command-line startup flow:
+
+- **Fork browser** — lists all existing simulations; click one to pre-fill the launch form
+- **Launch form** — set the fork, new simulation name, LLM profile, start date, and seconds-per-step
+- **Persona editor** — before launching, view and edit each agent's name, age, personality traits, background, and daily routine directly in the browser
+- **Advanced cognitive settings** — per-persona controls for vision radius, attention bandwidth, retention, recency decay, reflection threshold, and the three memory retrieval weights (recency, importance, relevance)
+- **Live console** — streams the simulation log in real time with a Stop button; no terminal required
+- **Run review** — browse completed runs after the fact
+
+### Autonomous stepper (`run_stepper.py`)
+`reverie/backend_server/run_stepper.py` advances the simulation in a background process without requiring a browser tab to stay open. It replaces the manual `run <N>` REPL loop for unattended runs.
+
+### Convenience launch scripts
+Two shell scripts at the repo root handle the full startup sequence:
+
+- `start_environment.sh` — starts the Django frontend server
+- `start_simulation.sh` — interactive menu that lets you pick a profile, fork, and simulation name, then launches both servers
+
+### Crash-proofing for local models
+Local models produce malformed output far more often than GPT-3.5. A systematic pass fixed 12+ crash vectors:
+
+- `gpt_structure.py` — `safe_generate_response` and `ChatGPT_safe_generate_response` now return the `fail_safe` value (instead of `False`) when retries are exhausted, preventing `TypeError: 'bool' object is not subscriptable` crashes throughout the codebase
+- `task_decomp` — fixed three bugs: validate function swallowed parse errors silently; fail_safe had wrong shape (`["asleep"]` instead of `[["asleep", 60]]`); empty output caused `IndexError`
+- `scratch.py` `save()` — guarded `None` values on `curr_time` / `act_start_time` that previously caused silent save failures (agent info card stayed blank)
+- `reverie.py` — auto-creates the `movement/` directory on fork; auto-saves every 100 steps so the frontend info card stays current
+- `action_arena` / `action_sector` prompts — strip echoed `{` prefix that Qwen-style models insert, preventing `KeyError` on spatial tree lookup
+- 12 prompt functions — added `return fail_safe, [...]` after exhausted retry paths that previously fell through with no return value
+
+---
 
 ## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Isabella_Rodriguez.png" alt="Generative Isabella">   Setting Up the Environment 
-To set up your environment, you will need to generate a `utils.py` file that contains your OpenAI API key and download the necessary packages.
+To set up your environment, you will need to generate a `utils.py` file and install the required packages.
 
 ### Step 1. Generate Utils File
 In the `reverie/backend_server` folder (where `reverie.py` is located), create a new file titled `utils.py` and copy and paste the content below into the file:
-```
-# Copy and paste your OpenAI API Key
-openai_api_key = "<Your OpenAI API>"
+```python
+# For OpenAI: put your key here. For local LLMs: leave as empty string.
+openai_api_key = "<Your OpenAI API key or empty string>"
 # Put your name
 key_owner = "<Name>"
 
@@ -31,58 +81,87 @@ collision_block_id = "32125"
 # Verbose 
 debug = True
 ```
-Replace `<Your OpenAI API>` with your OpenAI API key, and `<name>` with your name.
- 
+
+**For local LLMs:** also create a `.env` file at the repo root with your endpoint:
+```
+LOCAL_LLM_BASE_URL=http://127.0.0.1:8080/v1
+LOCAL_LLM_MODEL=<your-model-name>
+```
+
 ### Step 2. Install requirements.txt
-Install everything listed in the `requirements.txt` file (I strongly recommend first setting up a virtualenv as usual). A note on Python version: we tested our environment on Python 3.9.12. 
+Install everything listed in the `requirements.txt` file (strongly recommended: use a virtualenv). Python 3.9+ is required.
 
-## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Klaus_Mueller.png" alt="Generative Klaus">   Running a Simulation 
-To run a new simulation, you will need to concurrently start two servers: the environment server and the agent simulation server.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-### Step 1. Starting the Environment Server
-Again, the environment is implemented as a Django project, and as such, you will need to start the Django server. To do this, first navigate to `environment/frontend_server` (this is where `manage.py` is located) in your command line. Then run the following command:
+## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Klaus_Mueller.png" alt="Generative Klaus">   Running a Simulation
+
+### Quick start (recommended)
+Use the convenience scripts from the repo root:
+
+```bash
+# Terminal 1 — start the frontend
+./start_environment.sh
+
+# Terminal 2 — interactive launcher (picks profile, fork, sim name)
+./start_simulation.sh
+```
+
+Then open `http://localhost:8000/launcher` in your browser for the graphical control panel.
+
+### Manual start
+If you prefer the original command-line flow:
+
+#### Step 1. Starting the Environment Server
+Navigate to `environment/frontend_server` and run:
 
     python manage.py runserver
 
-Then, on your favorite browser, go to [http://localhost:8000/](http://localhost:8000/). If you see a message that says, "Your environment server is up and running," your server is running properly. Ensure that the environment server continues to run while you are running the simulation, so keep this command-line tab open! (Note: I recommend using either Chrome or Safari. Firefox might produce some frontend glitches, although it should not interfere with the actual simulation.)
+Go to [http://localhost:8000/](http://localhost:8000/) — if you see "Your environment server is up and running," it's working. Keep this terminal open.
 
-### Step 2. Starting the Simulation Server
-Open up another command line (the one you used in Step 1 should still be running the environment server, so leave that as it is). Navigate to `reverie/backend_server` and run `reverie.py`.
+#### Step 2. Starting the Simulation Server
+In a second terminal, navigate to `reverie/backend_server` and run:
 
     python reverie.py
-This will start the simulation server. A command-line prompt will appear, asking the following: "Enter the name of the forked simulation: ". To start a 3-agent simulation with Isabella Rodriguez, Maria Lopez, and Klaus Mueller, type the following:
-    
+
+When prompted for "Enter the name of the forked simulation", type:
+
     base_the_ville_isabella_maria_klaus
-The prompt will then ask, "Enter the name of the new simulation: ". Type any name to denote your current simulation (e.g., just "test-simulation" will do for now).
+
+When prompted for "Enter the name of the new simulation", type any name:
 
     test-simulation
-Keep the simulator server running. At this stage, it will display the following prompt: "Enter option: "
 
-### Step 3. Running and Saving the Simulation
-On your browser, navigate to [http://localhost:8000/simulator_home](http://localhost:8000/simulator_home). You should see the map of Smallville, along with a list of active agents on the map. You can move around the map using your keyboard arrows. Please keep this tab open. To run the simulation, type the following command in your simulation server in response to the prompt, "Enter option":
+#### Step 3. Running and Saving the Simulation
+Navigate to [http://localhost:8000/simulator_home](http://localhost:8000/simulator_home). To run the simulation, type at the "Enter option" prompt:
 
     run <step-count>
-Note that you will want to replace `<step-count>` above with an integer indicating the number of game steps you want to simulate. For instance, if you want to simulate 100 game steps, you should input `run 100`. One game step represents 10 seconds in the game.
 
+One game step represents 10 seconds of in-game time. When done, type `fin` to save or `exit` to quit without saving.
 
-Your simulation should be running, and you will see the agents moving on the map in your browser. Once the simulation finishes running, the "Enter option" prompt will re-appear. At this point, you can simulate more steps by re-entering the run command with your desired game steps, exit the simulation without saving by typing `exit`, or save and exit by typing `fin`.
+#### Step 4. Replaying a Simulation
+With the environment server running, navigate to:
 
-The saved simulation can be accessed the next time you run the simulation server by providing the name of your simulation as the forked simulation. This will allow you to restart your simulation from the point where you left off.
+    http://localhost:8000/replay/<simulation-name>/<starting-time-step>
 
-### Step 4. Replaying a Simulation
-You can replay a simulation that you have already run simply by having your environment server running and navigating to the following address in your browser: `http://localhost:8000/replay/<simulation-name>/<starting-time-step>`. Please make sure to replace `<simulation-name>` with the name of the simulation you want to replay, and `<starting-time-step>` with the integer time-step from which you wish to start the replay.
-
-For instance, by visiting the following link, you will initiate a pre-simulated example, starting at time-step 1:  
+For example, to replay a pre-simulated example starting at step 1:  
 [http://localhost:8000/replay/July1_the_ville_isabella_maria_klaus-step-3-20/1/](http://localhost:8000/replay/July1_the_ville_isabella_maria_klaus-step-3-20/1/)
 
-### Step 5. Demoing a Simulation
-You may have noticed that all character sprites in the replay look identical. We would like to clarify that the replay function is primarily intended for debugging purposes and does not prioritize optimizing the size of the simulation folder or the visuals. To properly demonstrate a simulation with appropriate character sprites, you will need to compress the simulation first. To do this, open the `compress_sim_storage.py` file located in the `reverie` directory using a text editor. Then, execute the `compress` function with the name of the target simulation as its input. By doing so, the simulation file will be compressed, making it ready for demonstration.
+#### Step 5. Demoing a Simulation
+To view a simulation with correct character sprites, first compress it by running the `compress` function in `reverie/compress_sim_storage.py`, then navigate to:
 
-To start the demo, go to the following address on your browser: `http://localhost:8000/demo/<simulation-name>/<starting-time-step>/<simulation-speed>`. Note that `<simulation-name>` and `<starting-time-step>` denote the same things as mentioned above. `<simulation-speed>` can be set to control the demo speed, where 1 is the slowest, and 5 is the fastest. For instance, visiting the following link will start a pre-simulated example, beginning at time-step 1, with a medium demo speed:  
-[http://localhost:8000/demo/July1_the_ville_isabella_maria_klaus-step-3-20/1/3/](http://localhost:8000/demo/July1_the_ville_isabella_maria_klaus-step-3-20/1/3/)
+    http://localhost:8000/demo/<simulation-name>/<starting-time-step>/<simulation-speed>
+
+`<simulation-speed>` ranges from 1 (slowest) to 5 (fastest). Pre-simulated example at medium speed:  
+[http://localhost:8000/demo/July1_the_ville_isabella_maria_Klaus-step-3-20/1/3/](http://localhost:8000/demo/July1_the_ville_isabella_maria_Klaus-step-3-20/1/3/)
 
 ### Tips
-We've noticed that OpenAI's API can hang when it reaches the hourly rate limit. When this happens, you may need to restart your simulation. For now, we recommend saving your simulation often as you progress to ensure that you lose as little of the simulation as possible when you do need to stop and rerun it. Running these simulations, at least as of early 2023, could be somewhat costly, especially when there are many agents in the environment.
+- Save frequently with `fin` to avoid losing progress if the LLM endpoint hangs or a crash occurs.
+- With local models, `sec_per_step=10` (default) takes roughly 1 hour of real time to advance from midnight to 9 AM in-game. Increase `sec_per_step` in the launcher to skip ahead faster.
+- Conversation depth is set to 4 turns per exchange (reduced from the original 8) for local-model speed. Increase `range(4)` in `converse.py:agent_chat_v2` for longer conversations.
 
 ## <img src="https://joonsungpark.s3.amazonaws.com:443/static/assets/characters/profile/Maria_Lopez.png" alt="Generative Maria">   Simulation Storage Location
 All simulations that you save will be located in `environment/frontend_server/storage`, and all compressed demos will be located in `environment/frontend_server/compressed_storage`. 
