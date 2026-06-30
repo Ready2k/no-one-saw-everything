@@ -67,7 +67,10 @@
   .px-cog-toggle:hover { color: #444; }
   .px-cog-caret { font-size: 10px; transition: transform 0.15s; }
   .px-cog-body { display: none; background: #fafaf8; border: 1px solid #eeece8; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
-  .px-hint { display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
+  .px-hint { position: relative; display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
+  .px-hint::after { content: attr(data-tip); display: none; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
+    background: #333; color: #fff; padding: 5px 8px; border-radius: 4px; font-size: 11px; line-height: 1.3; white-space: nowrap; z-index: 1000; }
+  .px-hint:hover::after { display: block; }
 </style>
 
 <div class="lx-wrap">
@@ -229,7 +232,7 @@
       var cogHtml = COG_FIELDS.map(function(f) {
         var val = (p.cognitive[f.k] == null ? '' : p.cognitive[f.k]);
         return '<div class="px-field">'
-          + '<label>' + f.label + ' <span class="px-hint" title="' + escHtml(f.hint) + '">?</span></label>'
+          + '<label>' + f.label + ' <span class="px-hint" data-tip="' + escHtml(f.hint) + '">?</span></label>'
           + '<input type="number" name="' + f.k + '" value="' + escHtml(String(val)) + '" step="' + (f.type === 'float' ? '0.001' : '1') + '" />'
           + '</div>';
       }).join('');

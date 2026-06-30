@@ -61,7 +61,10 @@
   .sl-cog-toggle:hover { color: #444; }
   .sl-cog-body { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; grid-column: 1 / -1; margin-bottom: 6px; }
   .sl-cog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 14px; }
-  .sl-hint { display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
+  .sl-hint { position: relative; display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
+  .sl-hint::after { content: attr(data-tip); display: none; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
+    background: #333; color: #fff; padding: 5px 8px; border-radius: 4px; font-size: 11px; line-height: 1.3; white-space: nowrap; z-index: 1000; }
+  .sl-hint:hover::after { display: block; }
 
   /* Import-from-run section */
   .sl-runs-hdr { font-size: 16px; font-weight: 500; margin: 28px 0 10px; }
@@ -199,7 +202,7 @@ function renderForm(data) {
   var cogHtml = COG.map(function(f) {
     var val = esc(_current[f.k] != null ? _current[f.k] : '');
     return '<div class="sl-field">'
-      + '<label>'+f.label+' <span class="sl-hint" title="'+esc(f.hint)+'">?</span></label>'
+      + '<label>'+f.label+' <span class="sl-hint" data-tip="'+esc(f.hint)+'">?</span></label>'
       + '<input type="number" name="'+f.k+'" value="'+val+'" step="'+(f.type==='float'?'0.001':'1')+'"/>'
       + '</div>';
   }).join('');
