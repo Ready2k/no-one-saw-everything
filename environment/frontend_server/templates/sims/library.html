@@ -131,7 +131,7 @@
       <div class="sl-run-name">{{ r.name }}</div>
       <div class="sl-run-personas">
         {% for p in r.personas %}
-        <button class="sl-import-btn" data-sim="{{ r.name|escapejs }}" data-persona="{{ p|escapejs }}"
+        <button class="sl-import-btn" data-sim="{{ r.name }}" data-persona="{{ p }}"
                 onclick="importPersona(this)">+ {{ p }}</button>
         {% endfor %}
       </div>
