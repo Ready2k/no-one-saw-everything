@@ -420,7 +420,7 @@ import subprocess
 import sys
 import signal
 from .launcher_utils import (scan_runs, run_review_data, live_run_status,
-                             safe_log_name)
+                             safe_log_name, prefork_directory, library_get)
 
 # Profiles offered in the launcher; value is the PROMPT_PROFILE env var.
 LAUNCHER_PROFILES = [
@@ -518,6 +518,33 @@ def launch_simulation(request):
   if os.path.isdir(f"storage/{name}"):
     return HttpResponse(f"A run named '{name}' already exists.", status=400)
 
+  # ── Persona roster ────────────────────────────────────────────────────────
+  # keep_personas: JSON list of existing persona names to keep (None = keep all)
+  # add_personas:  JSON list of library slugs to inject as new personas
+  keep_personas_raw  = request.POST.get("keep_personas", "").strip()
+  add_personas_raw   = request.POST.get("add_personas",  "").strip()
+  try:
+    keep_personas = json.loads(keep_personas_raw) if keep_personas_raw else None
+  except (ValueError, TypeError):
+    keep_personas = None
+  try:
+    add_slugs = json.loads(add_personas_raw) if add_personas_raw else []
+  except (ValueError, TypeError):
+    add_slugs = []
+  add_profiles = [p for s in add_slugs for p in [library_get(s)] if p]
+
+  # If the roster differs from the fork's default, pre-build the target
+  # directory here and pass fork=name so reverie.py does a self-fork no-op.
+  effective_fork = fork
+  if keep_personas is not None or add_profiles:
+    try:
+      prefork_directory(fork, name,
+                        keep_personas=keep_personas,
+                        add_profiles=add_profiles)
+      effective_fork = name  # copyanything self-fork skips the copy
+    except Exception as e:
+      return HttpResponse(f"Pre-fork failed: {e}", status=500)
+
   # Paths relative to the frontend_server cwd.
   backend_dir = os.path.abspath("../../reverie/backend_server")
   venv_python = os.path.abspath("../../.venv/bin/python")
@@ -528,7 +555,7 @@ def launch_simulation(request):
   input_path = os.path.abspath("temp_storage/launcher_input.txt")
   log_path = os.path.abspath(safe_log_name(name))
   with open(input_path, "w") as f:
-    f.write(f"{fork}\n{name}\nrun {steps}\nfin\n")
+    f.write(f"{effective_fork}\n{name}\nrun {steps}\nfin\n")
   with open("temp_storage/launch_overrides.json", "w") as f:
     json.dump(overrides, f)
 

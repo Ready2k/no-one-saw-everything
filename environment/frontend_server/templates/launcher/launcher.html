@@ -107,6 +107,8 @@
           <label class="lx-label">Steps to run <span style="color:#bbb">(8640 = one full day at 10s/step)</span></label>
           <input type="number" name="steps" value="8640" min="1" step="1" />
 
+          <input type="hidden" name="keep_personas" id="lx-keep-personas" value="" />
+          <input type="hidden" name="add_personas"  id="lx-add-personas"  value="" />
           <button type="submit" class="lx-launch">Launch run</button>
           <p class="lx-meta">Spawns the backend, runs the steps, then saves and exits. The map opens at <a href="{% url 'home' %}">/simulator_home</a>.</p>
         </form>
@@ -201,6 +203,7 @@
       body.innerHTML = '<div class="px-empty">No personas found in this sim.</div>';
       return;
     }
+    _rosterAdded = [];  // reset added list when fork changes
     body.innerHTML = personas.map(function(p, idx) {
       var fieldsHtml = Object.keys(FIELD_LABELS).map(function(k) {
         var val = (p.fields[k] == null ? '' : p.fields[k]);
@@ -222,6 +225,9 @@
 
       return '<div class="px-persona" id="px-p-' + idx + '">'
         + '<div class="px-persona-hdr" onclick="togglePersona(' + idx + ')">'
+        + '<input type="checkbox" class="px-keep-check" value="' + escHtml(p.name) + '" checked '
+        + 'onclick="event.stopPropagation()" title="Include this persona in the run" '
+        + 'style="margin-right:2px;cursor:pointer;flex-shrink:0" />'
         + '<span class="glyphicon glyphicon-chevron-right px-persona-caret"></span>'
         + '<span class="px-persona-name">' + escHtml(p.name) + '</span>'
         + '</div>'
@@ -242,6 +248,7 @@
         + '<span class="px-msg" id="px-msg-' + idx + '"></span>'
         + '</div></div>';
     }).join('');
+    appendAddSection();
   }
 
   function escHtml(s) {
@@ -444,5 +451,114 @@
       _openLibPicker = null;
     }
   });
+
+  // ── Persona roster: add/exclude for new run ───────────────────────────────
+  var _rosterAdded = [];  // [{slug, name}] library personas to inject
+
+  function appendAddSection() {
+    var body = document.getElementById('px-body');
+    var sec = document.createElement('div');
+    sec.id = 'px-add-section';
+    sec.style.cssText = 'padding:12px 18px 14px;border-top:1px solid #f0eeea;';
+    sec.innerHTML =
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+      + '<span style="font-size:13px;font-weight:500;color:#555">Inject from library</span>'
+      + '<div style="position:relative">'
+      + '<button type="button" class="px-save" style="padding:4px 14px;font-size:12px;background:#1d5089" '
+      + 'onclick="toggleAddPicker()">+ Add persona ▾</button>'
+      + '<div id="px-add-picker" style="display:none;position:absolute;left:0;top:110%;min-width:240px;'
+      + 'background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);'
+      + 'z-index:99;max-height:220px;overflow-y:auto;"></div>'
+      + '</div>'
+      + '</div>'
+      + '<div id="px-add-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-height:4px"></div>';
+    body.appendChild(sec);
+    renderAddChips();
+  }
+
+  function renderAddChips() {
+    var chips = document.getElementById('px-add-chips');
+    if (!chips) return;
+    if (!_rosterAdded.length) { chips.innerHTML = ''; return; }
+    chips.innerHTML = _rosterAdded.map(function(p) {
+      return '<span style="background:#e8f0fe;border:1px solid #aac4f5;border-radius:12px;'
+        + 'padding:3px 8px 3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:4px">'
+        + escHtml(p.name)
+        + '<button type="button" onclick="removeAddedPersona(\'' + escAttr(p.slug) + '\')" '
+        + 'style="background:none;border:none;cursor:pointer;color:#888;font-size:15px;line-height:1;padding:0;margin:0">×</button>'
+        + '</span>';
+    }).join('');
+  }
+
+  function toggleAddPicker() {
+    var picker = document.getElementById('px-add-picker');
+    if (!picker) return;
+    if (picker.style.display === 'block') { picker.style.display = 'none'; return; }
+    picker.innerHTML = '<div style="padding:8px 12px;font-size:12px;color:#aaa">Loading…</div>';
+    picker.style.display = 'block';
+    _getLibProfiles(function(profiles) {
+      var addedSlugs = {};
+      _rosterAdded.forEach(function(p){ addedSlugs[p.slug] = true; });
+      var available = profiles.filter(function(p){ return !addedSlugs[p.slug]; });
+      if (!available.length) {
+        picker.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:#aaa">All library personas already added.<br>'
+          + '<a href="/sims/" style="color:#1d5089">Add more →</a></div>';
+        return;
+      }
+      picker.innerHTML = available.map(function(p) {
+        return '<div style="padding:8px 14px;cursor:pointer;border-bottom:1px solid #f0eeea;font-size:13px" '
+          + 'onmouseover="this.style.background=\'#f5f5f5\'" onmouseout="this.style.background=\'\'" '
+          + 'onclick="addPersonaFromLibrary(\'' + escAttr(p.slug) + '\',\'' + escAttr(p.name) + '\')">'
+          + '<strong>' + escHtml(p.name) + '</strong>'
+          + (p.age ? ' <span style="color:#aaa;font-size:11px">age ' + p.age + '</span>' : '')
+          + (p.innate ? '<div style="font-size:11px;color:#888;font-style:italic">' + escHtml(p.innate) + '</div>' : '')
+          + '</div>';
+      }).join('');
+    });
+  }
+
+  function addPersonaFromLibrary(slug, name) {
+    var picker = document.getElementById('px-add-picker');
+    if (picker) picker.style.display = 'none';
+    if (_rosterAdded.some(function(p){ return p.slug === slug; })) return;
+    _rosterAdded.push({slug: slug, name: name});
+    _libProfiles = null;  // force re-fetch so picker excludes newly added
+    renderAddChips();
+  }
+
+  function removeAddedPersona(slug) {
+    _rosterAdded = _rosterAdded.filter(function(p){ return p.slug !== slug; });
+    renderAddChips();
+  }
+
+  // Close add-picker when clicking outside
+  document.addEventListener('click', function(e) {
+    var picker = document.getElementById('px-add-picker');
+    if (!picker || picker.style.display !== 'block') return;
+    if (!picker.contains(e.target) && !e.target.closest('[onclick="toggleAddPicker()"]')) {
+      picker.style.display = 'none';
+    }
+  });
+
+  // Fill hidden roster fields before the launch form submits.
+  var launchForm = document.querySelector('form[action$="launch"]');
+  if (launchForm) {
+    launchForm.addEventListener('submit', function() {
+      var checkboxes = document.querySelectorAll('.px-keep-check');
+      var kpInput = document.getElementById('lx-keep-personas');
+      var apInput = document.getElementById('lx-add-personas');
+
+      if (checkboxes.length) {
+        var kept = [];
+        checkboxes.forEach(function(cb){ if (cb.checked) kept.push(cb.value); });
+        // Only send keep_personas if some are unchecked (otherwise keep all = default)
+        kpInput.value = (kept.length < checkboxes.length) ? JSON.stringify(kept) : '';
+      }
+
+      apInput.value = _rosterAdded.length
+        ? JSON.stringify(_rosterAdded.map(function(p){ return p.slug; }))
+        : '';
+    });
+  }
 </script>
 {% endblock content %}

@@ -210,13 +210,15 @@ def std(list_of_val):
 
 def copyanything(src, dst):
   """
-  Copy over everything in the src folder to dst folder. 
+  Copy over everything in the src folder to dst folder.
   ARGS:
-    src: address of the source folder  
-    dst: address of the destination folder  
-  RETURNS: 
+    src: address of the source folder
+    dst: address of the destination folder
+  RETURNS:
     None
   """
+  if os.path.realpath(src) == os.path.realpath(dst):
+    return  # self-fork: directory was pre-built by launcher, nothing to copy
   try:
     shutil.copytree(src, dst)
   except OSError as exc: # python >2.5

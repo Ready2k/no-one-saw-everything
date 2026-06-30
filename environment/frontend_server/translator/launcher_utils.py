@@ -70,6 +70,204 @@ def library_delete(slug):
   return False
 
 
+# ── Spawn-tile map ────────────────────────────────────────────────────────────
+# Maps "sector:arena" (from a persona's living_area) to an (x, y) tile.
+# Built once from the static maze CSV files.
+
+_MAZE_MATRIX = os.path.join(
+    os.path.dirname(__file__), "..", "..", "static_dirs", "assets",
+    "the_ville", "matrix")
+
+_SPAWN_TILES = None  # lazy singleton
+
+
+def _build_spawn_tiles():
+  """Parse the Tiled CSV maze to build {sector:arena -> (x, y)}."""
+  blocks_path = os.path.join(_MAZE_MATRIX, "special_blocks",
+                             "spawning_location_blocks.csv")
+  maze_path   = os.path.join(_MAZE_MATRIX, "maze",
+                             "spawning_location_maze.csv")
+  slb = {}
+  try:
+    with open(blocks_path) as f:
+      for line in f:
+        parts = [p.strip() for p in line.strip().split(",")]
+        if len(parts) >= 4:
+          slb[int(parts[0])] = {"sector": parts[2], "arena": parts[3]}
+  except Exception:
+    return {}
+  W = 140  # maze width tiles
+  result = {}
+  try:
+    with open(maze_path) as f:
+      vals = [int(v.strip()) for v in f.read().split(",") if v.strip()]
+    for idx, val in enumerate(vals):
+      if val and val in slb:
+        x, y = idx % W, idx // W
+        key = f'{slb[val]["sector"]}:{slb[val]["arena"]}'
+        if key not in result:          # keep first occurrence (sp-A)
+          result[key] = (x, y)
+  except Exception:
+    pass
+  return result
+
+
+def get_spawn_tile(living_area):
+  """Return (x, y) spawn tile for a living_area string like
+  'the Ville:sector:arena', or None if not found."""
+  global _SPAWN_TILES
+  if _SPAWN_TILES is None:
+    _SPAWN_TILES = _build_spawn_tiles()
+  parts = living_area.split(":")
+  if len(parts) >= 3:
+    key = f"{parts[1]}:{parts[2]}"
+    return _SPAWN_TILES.get(key)
+  return None
+
+
+# ── Pre-fork directory builder ────────────────────────────────────────────────
+
+def _empty_associative_memory(am_dir):
+  """Write empty associative memory files into am_dir."""
+  os.makedirs(am_dir, exist_ok=True)
+  with open(os.path.join(am_dir, "nodes.json"), "w") as f:
+    json.dump({}, f)
+  with open(os.path.join(am_dir, "embeddings.json"), "w") as f:
+    json.dump({}, f)
+  with open(os.path.join(am_dir, "kw_strength.json"), "w") as f:
+    json.dump({"kw_strength_event": {}, "kw_strength_thought": {}}, f)
+
+
+def build_new_persona_dir(persona_dir, profile, template_scratch, template_spatial):
+  """Create a complete bootstrap_memory directory for a brand-new persona.
+
+  persona_dir       - target path, e.g. storage/{sim}/personas/{Name}
+  profile           - dict from the sim library (scratch.json fields)
+  template_scratch  - scratch dict from an existing persona (for defaults)
+  template_spatial  - path to an existing persona's spatial_memory.json
+  """
+  import shutil
+  bm = os.path.join(persona_dir, "bootstrap_memory")
+  os.makedirs(bm, exist_ok=True)
+
+  # Resolve spawn tile from living_area
+  living_area = profile.get("living_area") or template_scratch.get("living_area", "")
+  tile = get_spawn_tile(living_area) if living_area else None
+  if tile is None:
+    tile = (template_scratch.get("curr_tile") or [73, 14])
+    if isinstance(tile, list):
+      tile = tuple(tile)
+
+  name = profile.get("name", "New Persona")
+  parts = name.strip().split()
+  first = parts[0] if parts else name
+  last  = " ".join(parts[1:]) if len(parts) > 1 else ""
+
+  # Build scratch: start from template defaults, overlay profile values,
+  # then reset runtime-state fields for a fresh start.
+  scratch = dict(template_scratch)
+  for k in ["name", "first_name", "last_name", "age", "innate", "learned",
+            "currently", "lifestyle", "daily_plan_req", "living_area",
+            "vision_r", "att_bandwidth", "retention", "recency_decay",
+            "importance_trigger_max", "recency_w", "relevance_w",
+            "importance_w", "concept_forget", "daily_reflection_time",
+            "daily_reflection_size"]:
+    if k in profile and profile[k] != "":
+      scratch[k] = profile[k]
+
+  scratch["name"]       = name
+  scratch["first_name"] = first
+  scratch["last_name"]  = last
+  scratch["curr_tile"]  = list(tile)
+
+  # Runtime state: fresh slate
+  scratch["daily_req"]                  = []
+  scratch["f_daily_schedule"]           = []
+  scratch["f_daily_schedule_hourly_org"] = []
+  scratch["act_address"]      = living_area + ":bed"
+  scratch["act_start_time"]   = template_scratch.get("curr_time", "")
+  scratch["act_duration"]     = 360
+  scratch["act_description"]  = "sleeping"
+  scratch["act_pronunciatio"] = "\U0001f634"
+  scratch["act_event"]        = [name, "is", "sleep"]
+  scratch["act_obj_description"]  = "being used"
+  scratch["act_obj_pronunciatio"] = "\U0001f504"
+  scratch["act_obj_event"]        = ["bed", "be", "used"]
+  scratch["chatting_with"]        = None
+  scratch["chat"]                 = None
+  scratch["chatting_with_buffer"] = {}
+  scratch["chatting_end_time"]    = None
+  scratch["act_path_set"]         = True
+  scratch["planned_path"]         = []
+  scratch["importance_trigger_curr"] = scratch.get("importance_trigger_max", 150)
+  scratch["importance_ele_n"]        = 8
+  scratch["thought_count"]           = 5
+
+  with open(os.path.join(bm, "scratch.json"), "w") as f:
+    json.dump(scratch, f, indent=2)
+
+  # Spatial memory: copy from template (same town = same map knowledge)
+  shutil.copy(template_spatial, os.path.join(bm, "spatial_memory.json"))
+
+  # Associative memory: empty (no prior memories)
+  _empty_associative_memory(os.path.join(bm, "associative_memory"))
+
+
+def prefork_directory(fork_sim_code, target_name, keep_personas=None,
+                      add_profiles=None):
+  """Build the target sim directory from a fork with persona modifications.
+
+  keep_personas - list of existing persona names to include (None = all)
+  add_profiles  - list of library profile dicts to inject as new personas
+
+  Returns the target directory path, or raises on error.
+  """
+  import shutil
+  fork_dir   = os.path.join(STORAGE, fork_sim_code)
+  target_dir = os.path.join(STORAGE, target_name)
+
+  if not os.path.isdir(fork_dir):
+    raise FileNotFoundError(f"Fork source not found: {fork_dir}")
+  if os.path.exists(target_dir):
+    raise FileExistsError(f"Target already exists: {target_dir}")
+
+  # Copy the full fork
+  shutil.copytree(fork_dir, target_dir)
+
+  personas_dir = os.path.join(target_dir, "personas")
+
+  # Remove excluded personas
+  if keep_personas is not None:
+    keep_set = {p.strip() for p in keep_personas}
+    for name in os.listdir(personas_dir):
+      if not name.startswith(".") and name not in keep_set:
+        shutil.rmtree(os.path.join(personas_dir, name))
+
+  # Get a template persona for defaults (first remaining one)
+  remaining = [p for p in os.listdir(personas_dir) if not p.startswith(".")]
+  if not remaining:
+    raise ValueError("No personas left in fork after exclusions.")
+  template_name = remaining[0]
+  template_bm   = os.path.join(personas_dir, template_name, "bootstrap_memory")
+  template_scratch_path  = os.path.join(template_bm, "scratch.json")
+  template_spatial_path  = os.path.join(template_bm, "spatial_memory.json")
+  with open(template_scratch_path) as f:
+    template_scratch = json.load(f)
+
+  # Inject new personas from library
+  for profile in (add_profiles or []):
+    persona_name = profile.get("name", "").strip()
+    if not persona_name:
+      continue
+    persona_dir = os.path.join(personas_dir, persona_name)
+    if os.path.exists(persona_dir):
+      continue  # don't overwrite existing
+    build_new_persona_dir(persona_dir, profile, template_scratch,
+                          template_spatial_path)
+
+  return target_dir
+
+
 def _safe_load(path):
   try:
     with open(path) as f:
