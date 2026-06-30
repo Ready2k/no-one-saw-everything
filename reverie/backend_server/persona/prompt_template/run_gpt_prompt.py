@@ -133,13 +133,12 @@ def run_gpt_prompt_daily_plan(persona,
     return cr
 
   def __func_validate(gpt_response, prompt=""):
-    try: __func_clean_up(gpt_response, prompt="")
+    try: return len(__func_clean_up(gpt_response, prompt="")) > 0
     except Exception:
       return False
-    return True
 
-  def get_fail_safe(): 
-    fs = ['wake up and complete the morning routine at 6:00 am', 
+  def get_fail_safe():
+    fs = ['wake up and complete the morning routine at 6:00 am',
           'eat breakfast at 7:00 am', 
           'read a book from 8:00 am to 12:00 pm', 
           'have lunch at 12:00 pm', 
@@ -254,13 +253,9 @@ def run_gpt_prompt_generate_hourly_schedule(persona,
                                      intermission2,
                                      test_input)
   prompt = generate_prompt(prompt_input, prompt_template)
-  example_output = "studying for her music classes"
-  special_instruction = ("The output should ONLY include the part of the sentence that "
-                         "completes the last line in the schedule above. "
-                         "Output just the activity (2-6 words), nothing else.")
   fail_safe = get_fail_safe()
-  output = ChatGPT_safe_generate_response(prompt, example_output, special_instruction, 3, fail_safe,
-                                          __func_validate, __func_clean_up, True)
+  output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
+                                  __func_validate, __func_clean_up)
   if output is False:
     output = fail_safe
   
@@ -545,6 +540,10 @@ def run_gpt_prompt_action_sector(action_description,
 
   def __func_clean_up(gpt_response, prompt=""):
     cleaned_response = gpt_response.split("}")[0].lstrip("{").strip()
+    for prefix in ("Answer:", "answer:", "ANSWER:"):
+      if cleaned_response.lower().startswith(prefix.lower()):
+        cleaned_response = cleaned_response[len(prefix):].lstrip(" {").strip()
+        break
     return cleaned_response
 
   def __func_validate(gpt_response, prompt=""): 
@@ -675,6 +674,10 @@ def run_gpt_prompt_action_arena(action_description,
 
   def __func_clean_up(gpt_response, prompt=""):
     cleaned_response = gpt_response.split("}")[0].lstrip("{").strip()
+    for prefix in ("Answer:", "answer:", "ANSWER:"):
+      if cleaned_response.lower().startswith(prefix.lower()):
+        cleaned_response = cleaned_response[len(prefix):].lstrip(" {").strip()
+        break
     return cleaned_response
 
   def __func_validate(gpt_response, prompt=""): 
@@ -760,8 +763,8 @@ def run_gpt_prompt_action_game_object(action_description,
   output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
                                    __func_validate, __func_clean_up)
 
-  x = [i.strip() for i in persona.s_mem.get_str_accessible_arena_game_objects(temp_address).split(",")]
-  if output not in x: 
+  x = [i.strip() for i in persona.s_mem.get_str_accessible_arena_game_objects(temp_address).split(",") if i.strip()]
+  if x and output not in x:
     output = random.choice(x)
 
   if debug or verbose: 

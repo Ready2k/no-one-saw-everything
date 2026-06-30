@@ -68,7 +68,10 @@
 </style>
 
 <div class="lx-wrap">
-  <h1 class="lx-h1">Reverie launcher</h1>
+  <div style="display:flex; align-items:baseline; gap:16px; margin-bottom:4px;">
+    <h1 class="lx-h1">Reverie launcher</h1>
+    <a href="/sims/" style="font-size:13px; color:#1d5089; text-decoration:none;">Sim library →</a>
+  </div>
   <p class="lx-sub">Configure a new simulation run, or browse and review previous runs.</p>
 
   <div class="lx-grid">
@@ -228,7 +231,14 @@
         + '<span class="px-cog-caret glyphicon glyphicon-chevron-right"></span> Cognitive settings'
         + '</div>'
         + '<div class="px-cog-body" id="px-cog-' + idx + '">' + cogHtml + '</div>'
-        + '<button class="px-save" onclick="savePersona(\'' + escAttr(simCode) + '\',\'' + escAttr(p.name) + '\',' + idx + ')">Save</button>'
+        + '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px;">'
+        + '<button class="px-save" onclick="savePersona(\'' + escAttr(simCode) + '\',\'' + escAttr(p.name) + '\',' + idx + ')">Save changes</button>'
+        + '<button class="px-save" style="background:#2a7a2a" onclick="saveToLibrary(' + idx + ')">Save to library</button>'
+        + '<div style="position:relative; display:inline-block">'
+        + '<button class="px-save" style="background:#5a4a8a" onclick="toggleLibPicker(' + idx + ')">Import from library ▾</button>'
+        + '<div id="px-lib-picker-' + idx + '" style="display:none;position:absolute;left:0;top:110%;min-width:220px;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:99;max-height:220px;overflow-y:auto;"></div>'
+        + '</div>'
+        + '</div>'
         + '<span class="px-msg" id="px-msg-' + idx + '"></span>'
         + '</div></div>';
     }).join('');
@@ -328,5 +338,111 @@
     forkSel.addEventListener('change', function(){ loadPersonas(this.value); });
     if (forkSel.value) loadPersonas(forkSel.value);
   }
+
+  // ── Sim library integration ───────────────────────────────────────────────
+  var _libProfiles = null;  // cached library list
+
+  function _getLibProfiles(cb) {
+    if (_libProfiles) { cb(_libProfiles); return; }
+    fetch('/sims/api/')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ _libProfiles = d.profiles || []; cb(_libProfiles); })
+      .catch(function(){ cb([]); });
+  }
+
+  function saveToLibrary(idx) {
+    var panel = document.getElementById('px-p-' + idx);
+    var data = {};
+    panel.querySelectorAll('[name]').forEach(function(el){ data[el.name] = el.value; });
+    var msg = document.getElementById('px-msg-' + idx);
+    msg.style.color = '#888';
+    msg.textContent = 'Saving to library…';
+    fetch('/sims/new/', {
+      method: 'POST',
+      headers: {'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok) {
+        _libProfiles = null;  // invalidate cache
+        msg.style.color = '#2a7a2a';
+        msg.textContent = 'Saved to library as "' + (d.profile && d.profile.name || d.slug) + '"';
+        setTimeout(function(){ msg.textContent = ''; }, 3000);
+      } else {
+        msg.style.color = '#c0392b';
+        msg.textContent = d.error || 'Save failed';
+      }
+    })
+    .catch(function(){ msg.style.color = '#c0392b'; msg.textContent = 'Save failed.'; });
+  }
+
+  var _openLibPicker = null;  // currently open picker idx
+
+  function toggleLibPicker(idx) {
+    var picker = document.getElementById('px-lib-picker-' + idx);
+    if (_openLibPicker !== null && _openLibPicker !== idx) {
+      var prev = document.getElementById('px-lib-picker-' + _openLibPicker);
+      if (prev) prev.style.display = 'none';
+    }
+    if (picker.style.display === 'block') {
+      picker.style.display = 'none';
+      _openLibPicker = null;
+      return;
+    }
+    _openLibPicker = idx;
+    picker.innerHTML = '<div style="padding:8px 12px;font-size:12px;color:#aaa">Loading…</div>';
+    picker.style.display = 'block';
+    _getLibProfiles(function(profiles) {
+      if (!profiles.length) {
+        picker.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:#aaa">Library is empty.<br>'
+          + '<a href="/sims/" style="color:#1d5089">Add personas →</a></div>';
+        return;
+      }
+      picker.innerHTML = profiles.map(function(p) {
+        return '<div style="padding:8px 14px;cursor:pointer;border-bottom:1px solid #f0eeea;font-size:13px" '
+          + 'onmouseover="this.style.background=\'#f5f5f5\'" onmouseout="this.style.background=\'\'" '
+          + 'onclick="importFromLibrary(' + idx + ',\'' + escAttr(p.slug) + '\')">'
+          + '<strong>' + escHtml(p.name) + '</strong>'
+          + (p.age ? ' <span style="color:#aaa;font-size:11px">age '+p.age+'</span>' : '')
+          + (p.innate ? '<div style="font-size:11px;color:#888;font-style:italic">' + escHtml(p.innate) + '</div>' : '')
+          + '</div>';
+      }).join('');
+    });
+  }
+
+  function importFromLibrary(idx, slug) {
+    // Close picker
+    var picker = document.getElementById('px-lib-picker-' + idx);
+    if (picker) picker.style.display = 'none';
+    _openLibPicker = null;
+
+    fetch('/sims/' + encodeURIComponent(slug) + '/')
+      .then(function(r){ return r.json(); })
+      .then(function(p) {
+        var panel = document.getElementById('px-p-' + idx);
+        // Fill in all matching form fields from the library profile
+        Object.keys(FIELD_LABELS).concat(COG_FIELDS.map(function(f){ return f.k; })).forEach(function(k) {
+          var el = panel.querySelector('[name="' + k + '"]');
+          if (el && p[k] != null) el.value = p[k];
+        });
+        // Update the header name
+        if (p.name) panel.querySelector('.px-persona-name').textContent = p.name;
+        var msg = document.getElementById('px-msg-' + idx);
+        msg.style.color = '#5a4a8a';
+        msg.textContent = 'Imported "' + p.name + '" — click Save changes to apply.';
+        setTimeout(function(){ msg.textContent = ''; }, 4000);
+      });
+  }
+
+  // Close lib picker when clicking outside
+  document.addEventListener('click', function(e) {
+    if (_openLibPicker === null) return;
+    var picker = document.getElementById('px-lib-picker-' + _openLibPicker);
+    if (picker && !picker.contains(e.target) && !e.target.closest('[onclick*="toggleLibPicker"]')) {
+      picker.style.display = 'none';
+      _openLibPicker = null;
+    }
+  });
 </script>
 {% endblock content %}

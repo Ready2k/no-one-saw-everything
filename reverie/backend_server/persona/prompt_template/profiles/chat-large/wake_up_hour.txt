@@ -9,4 +9,6 @@ Variables:
 !<INPUT 0>!
 
 In general, !<INPUT 1>!
-!<INPUT 2>!'s wake up hour:
+
+Question: What hour does !<INPUT 2>! typically wake up?
+Answer with ONLY a number between 4 and 11 representing the hour (e.g. 6 for 6am, 7 for 7am, 8 for 8am).

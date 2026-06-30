@@ -759,6 +759,92 @@ def save_persona(request, sim_code, persona_name):
   return JsonResponse({"ok": True})
 
 
+# ============================================================================
+# Sim library (persona template CRUD)
+# ============================================================================
+from .launcher_utils import (library_list, library_get, library_save,
+                             library_delete, _library_slug)
+
+_LIB_ALLOWED_BASIC = {k for k, _ in PERSONA_EDITABLE_FIELDS}
+_LIB_COG_TYPES     = {k: typ for k, _, typ, *_ in PERSONA_COGNITIVE_FIELDS}
+_LIB_ALLOWED       = _LIB_ALLOWED_BASIC | set(_LIB_COG_TYPES) | {"living_area"}
+
+
+def _coerce_library_data(data):
+  """Validate and coerce types for a library profile payload."""
+  clean = {k: v for k, v in data.items() if k in _LIB_ALLOWED}
+  # coerce cognitive fields
+  for key, typ in _LIB_COG_TYPES.items():
+    if key in clean:
+      try:
+        clean[key] = int(clean[key]) if typ == "int" else float(clean[key])
+      except (ValueError, TypeError):
+        clean.pop(key, None)
+  # coerce age
+  if "age" in clean:
+    try:
+      clean["age"] = int(clean["age"])
+    except (ValueError, TypeError):
+      clean.pop("age", None)
+  # split first/last from full name
+  if "name" in clean and clean["name"]:
+    parts = str(clean["name"]).strip().split()
+    clean["first_name"] = parts[0] if parts else ""
+    clean["last_name"]  = " ".join(parts[1:]) if len(parts) > 1 else ""
+  return clean
+
+
+def sim_library_page(request):
+  """Sim library page — lists all persona templates."""
+  profiles = library_list()
+  return render(request, "sims/library.html", {"profiles": profiles})
+
+
+def sim_library_api(request):
+  """JSON list of all library profiles (used by launcher import picker)."""
+  return JsonResponse({"profiles": library_list()})
+
+
+def sim_library_get(request, slug):
+  """Return a single library profile as JSON."""
+  p = library_get(slug)
+  if p is None:
+    return JsonResponse({"error": "not found"}, status=404)
+  return JsonResponse(p)
+
+
+def sim_library_save(request, slug=None):
+  """Create or update a library profile (POST, JSON body)."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+  try:
+    data = json.loads(request.body)
+  except Exception:
+    return JsonResponse({"error": "invalid JSON"}, status=400)
+
+  name = str(data.get("name", "")).strip()
+  if not name:
+    return JsonResponse({"error": "name is required"}, status=400)
+
+  # derive slug from name if not in URL
+  if not slug:
+    slug = _library_slug(name)
+  if not slug:
+    return JsonResponse({"error": "could not derive slug from name"}, status=400)
+
+  clean = _coerce_library_data(data)
+  saved = library_save(slug, clean)
+  return JsonResponse({"ok": True, "slug": slug, "profile": saved})
+
+
+def sim_library_delete_view(request, slug):
+  """Delete a library profile (POST)."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+  ok = library_delete(slug)
+  return JsonResponse({"ok": ok})
+
+
 
 
 

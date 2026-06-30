@@ -76,7 +76,8 @@ class MemoryTree:
     EXAMPLE STR OUTPUT
       "bedroom, kitchen, dining room, office, bathroom"
     """
-    curr_world, curr_sector = sector.split(":")
+    parts = sector.split(":")
+    curr_world, curr_sector = parts[0], parts[1] if len(parts) >= 2 else ("", "")
     if not curr_sector: 
       return ""
     x = ", ".join(list(self.tree[curr_world][curr_sector].keys()))
@@ -97,7 +98,8 @@ class MemoryTree:
     EXAMPLE STR OUTPUT
       "phone, charger, bed, nightstand"
     """
-    curr_world, curr_sector, curr_arena = arena.split(":")
+    parts = arena.split(":")
+    curr_world, curr_sector, curr_arena = parts[0], parts[1], parts[2] if len(parts) >= 3 else ("", "", "")
 
     if not curr_arena: 
       return ""

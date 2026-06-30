@@ -22,7 +22,7 @@ from utils import *
 # after N seconds and interrupts blocking network I/O — unlike request_timeout
 # which only fires if no bytes arrive, this fires even when the server is slowly
 # trickling tokens back.
-LLM_TIMEOUT_S = 90
+LLM_TIMEOUT_S = 300
 
 def _sigalrm_handler(signum, frame):
     raise TimeoutError(f"LLM call exceeded {LLM_TIMEOUT_S}s wall-clock limit")
@@ -40,21 +40,21 @@ def _llm_call(fn):
 openai.api_key  = openai_api_key
 openai.api_base = openai_api_base  # point at local gateway
 
-# Patch only the openai session to trust the LocalLLM self-signed cert.
-# We do this surgically so other libraries (HuggingFace etc.) are unaffected.
+# Patch the openai session for the local endpoint.
+# For https endpoints: trust the LocalLLM self-signed cert if present.
+# For http endpoints: no TLS, so skip cert logic entirely.
 _orig_make_session = _oai_req._make_session
 def _local_session():
     s = _orig_make_session()
-    # Trust the self-signed gateway cert. Fail closed: if the cert file is
-    # missing we keep verify=True (the default) rather than disabling TLS.
-    if os.path.exists(local_cert):
-        s.verify = local_cert
-    else:
-        import warnings
-        warnings.warn(
-            f"LocalLLM cert not found at {local_cert}; TLS verification may fail.",
-            RuntimeWarning, stacklevel=2,
-        )
+    if openai_api_base.startswith("https://"):
+        if os.path.exists(local_cert):
+            s.verify = local_cert
+        else:
+            import warnings
+            warnings.warn(
+                f"LocalLLM cert not found at {local_cert}; TLS verification may fail.",
+                RuntimeWarning, stacklevel=2,
+            )
     return s
 _oai_req._make_session = _local_session
 
@@ -65,6 +65,7 @@ def ChatGPT_single_request(prompt):
   completion = _llm_call(lambda: openai.ChatCompletion.create(
     model=local_model,
     messages=[{"role": "user", "content": prompt}],
+    max_tokens=512,
   ))
   return completion["choices"][0]["message"]["content"]
 
@@ -78,6 +79,7 @@ def GPT4_request(prompt):
     completion = _llm_call(lambda: openai.ChatCompletion.create(
       model=local_model,
       messages=[{"role": "user", "content": prompt}],
+      max_tokens=512,
     ))
     return completion["choices"][0]["message"]["content"]
   except Exception as e:
@@ -90,6 +92,7 @@ def ChatGPT_request(prompt):
     completion = _llm_call(lambda: openai.ChatCompletion.create(
       model=local_model,
       messages=[{"role": "user", "content": prompt}],
+      max_tokens=512,
     ))
     return completion["choices"][0]["message"]["content"]
   except Exception as e:
@@ -120,7 +123,8 @@ def GPT4_safe_generate_response(prompt,
       curr_gpt_response = GPT4_request(prompt).strip()
       end_index = curr_gpt_response.rfind('}') + 1
       curr_gpt_response = curr_gpt_response[:end_index]
-      curr_gpt_response = json.loads(curr_gpt_response)["output"]
+      _parsed = json.loads(curr_gpt_response)
+      curr_gpt_response = _parsed.get("output") or next(iter(_parsed.values()))
       
       if func_validate(curr_gpt_response, prompt=prompt):
         return func_clean_up(curr_gpt_response, prompt=prompt)
@@ -161,7 +165,8 @@ def ChatGPT_safe_generate_response(prompt,
       curr_gpt_response = ChatGPT_request(prompt).strip()
       end_index = curr_gpt_response.rfind('}') + 1
       curr_gpt_response = curr_gpt_response[:end_index]
-      curr_gpt_response = json.loads(curr_gpt_response)["output"]
+      _parsed = json.loads(curr_gpt_response)
+      curr_gpt_response = _parsed.get("output") or next(iter(_parsed.values()))
 
       # print ("---ashdfaf")
       # print (curr_gpt_response)
@@ -222,7 +227,7 @@ def GPT_request(prompt, gpt_parameter):
       model=local_model,
       messages=[{"role": "user", "content": prompt}],
       temperature=gpt_parameter.get("temperature", 0.7),
-      max_tokens=gpt_parameter.get("max_tokens", 512),
+      max_tokens=gpt_parameter.get("max_tokens", 1024),
       top_p=gpt_parameter.get("top_p", 1),
       frequency_penalty=gpt_parameter.get("frequency_penalty", 0),
       presence_penalty=gpt_parameter.get("presence_penalty", 0),

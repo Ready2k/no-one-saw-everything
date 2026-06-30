@@ -11,10 +11,63 @@ import datetime
 
 STORAGE = "storage"
 TEMP_STORAGE = "temp_storage"
+SIM_LIBRARY = os.path.join(STORAGE, "sim_library")
 
 # Forks the launcher offers as "base" templates to start a new run from.
 # Anything matching these prefixes is treated as a reusable base, not a run.
 BASE_PREFIXES = ("base_the_ville",)
+
+
+# ── Sim library (persona template CRUD) ──────────────────────────────────────
+
+def _library_slug(name):
+  """Convert a persona name to a filesystem-safe slug, e.g. 'Isabella Rodriguez' → 'isabella_rodriguez'."""
+  return "".join(c if c.isalnum() or c == "-" else "_" for c in name.lower()).strip("_")
+
+
+def library_list():
+  """Return sorted list of all persona profiles in the sim library."""
+  if not os.path.isdir(SIM_LIBRARY):
+    return []
+  profiles = []
+  for slug in sorted(os.listdir(SIM_LIBRARY)):
+    if slug.startswith("."):
+      continue
+    p = _safe_load(os.path.join(SIM_LIBRARY, slug, "profile.json"))
+    if p:
+      profiles.append(p)
+  return profiles
+
+
+def library_get(slug):
+  """Return a single library profile dict by slug, or None."""
+  return _safe_load(os.path.join(SIM_LIBRARY, slug, "profile.json"))
+
+
+def library_save(slug, data):
+  """Write (create or update) a library profile. Returns the saved dict."""
+  d = os.path.join(SIM_LIBRARY, slug)
+  os.makedirs(d, exist_ok=True)
+  path = os.path.join(d, "profile.json")
+  existing = _safe_load(path) or {}
+  existing.update(data)
+  existing["slug"] = slug
+  if "created" not in existing:
+    existing["created"] = datetime.datetime.now().isoformat(timespec="seconds")
+  existing["updated"] = datetime.datetime.now().isoformat(timespec="seconds")
+  with open(path, "w") as f:
+    json.dump(existing, f, indent=2)
+  return existing
+
+
+def library_delete(slug):
+  """Delete a library profile directory. Returns True if it existed."""
+  import shutil
+  d = os.path.join(SIM_LIBRARY, slug)
+  if os.path.isdir(d):
+    shutil.rmtree(d)
+    return True
+  return False
 
 
 def _safe_load(path):

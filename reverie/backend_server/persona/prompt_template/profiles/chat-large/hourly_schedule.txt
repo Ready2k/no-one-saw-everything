@@ -9,10 +9,12 @@ Variables:
 !<INPUT 5>! -- prompt_ending
 
 <commentblockmarker>###</commentblockmarker>
-Hourly schedule format: 
-!<INPUT 0>!
-===
 !<INPUT 1>!
-!<INPUT 2>!
+
+Their plan for today:
 !<INPUT 3>!!<INPUT 4>!
+
+Based on the daily plan above, what is this person doing at the time below?
+Write just the activity phrase (2-6 words). Do not write the time or the person's name.
+
 !<INPUT 5>!

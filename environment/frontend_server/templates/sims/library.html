@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  :root { --blue: #1d5089; --blue-light: #ebf3fb; --border: #e3e3e0; --text: #222; --sub: #888; --bg: #fafaf8; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { background: var(--bg); }
+
+  .sl-wrap  { max-width: 1100px; margin: 24px auto; padding: 0 16px; font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .sl-top   { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  .sl-h1    { font-size: 22px; font-weight: 500; margin: 0; }
+  .sl-sub   { font-size: 14px; color: var(--sub); margin: 0; flex: 1; }
+  .sl-btn   { padding: 7px 16px; border: none; border-radius: 8px; background: var(--blue); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .sl-btn:hover { background: #16406e; }
+  .sl-btn-sec { background: #fff; color: var(--blue); border: 1px solid var(--blue); }
+  .sl-btn-sec:hover { background: var(--blue-light); }
+
+  .sl-back  { font-size: 13px; color: var(--blue); text-decoration: none; margin-bottom: 12px; display: inline-block; }
+  .sl-back:hover { text-decoration: underline; }
+
+  /* Card grid */
+  .sl-grid  { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .sl-card  { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+  .sl-card-hdr { display: flex; align-items: center; gap: 10px; }
+  .sl-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sl-name   { font-size: 15px; font-weight: 500; }
+  .sl-age    { font-size: 12px; color: var(--sub); }
+  .sl-traits { font-size: 12px; color: #555; font-style: italic; }
+  .sl-bio    { font-size: 13px; color: #444; line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+  .sl-card-actions { display: flex; gap: 8px; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .sl-card-actions button { font-size: 12px; padding: 4px 12px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: #fff; color: #444; }
+  .sl-card-actions .edit-btn  { color: var(--blue); border-color: var(--blue); }
+  .sl-card-actions .edit-btn:hover  { background: var(--blue-light); }
+  .sl-card-actions .dupe-btn:hover  { background: #f5f5f5; }
+  .sl-card-actions .del-btn   { color: #c0392b; border-color: #c0392b; }
+  .sl-card-actions .del-btn:hover   { background: #fff5f5; }
+
+  /* Empty state */
+  .sl-empty { text-align: center; padding: 60px 20px; color: var(--sub); font-size: 15px; }
+  .sl-empty h3 { font-size: 18px; font-weight: 400; color: #aaa; margin-bottom: 8px; }
+
+  /* Edit / Create panel (inline drawer below the card) */
+  .sl-form-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; }
+  .sl-form-wrap h2 { font-size: 16px; font-weight: 500; margin: 0 0 14px; }
+  .sl-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .sl-field { margin-bottom: 12px; }
+  .sl-field label { font-size: 12px; color: var(--sub); display: block; margin-bottom: 3px; }
+  .sl-field input, .sl-field textarea {
+    width: 100%; border: 1px solid #ccc; border-radius: 6px;
+    padding: 6px 10px; font-size: 13px; font-family: inherit; }
+  .sl-field textarea { min-height: 62px; resize: vertical; }
+  .sl-field input[type=number] { width: 90px; }
+  .sl-field.full { grid-column: 1 / -1; }
+  .sl-form-actions { display: flex; gap: 10px; margin-top: 6px; align-items: center; }
+  .sl-msg { font-size: 13px; color: #2a7a2a; }
+  .sl-err { font-size: 13px; color: #c0392b; }
+
+  /* Cog section */
+  .sl-cog-toggle { font-size: 12px; color: var(--sub); cursor: pointer; margin: 8px 0 4px; user-select: none; display: flex; align-items: center; gap: 5px; grid-column: 1 / -1; }
+  .sl-cog-toggle:hover { color: #444; }
+  .sl-cog-body { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; grid-column: 1 / -1; margin-bottom: 6px; }
+  .sl-cog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 14px; }
+  .sl-hint { display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
+</style>
+
+<div class="sl-wrap">
+  <a class="sl-back" href="{% url 'launcher' %}">← Launcher</a>
+  <div class="sl-top">
+    <h1 class="sl-h1">Sim library</h1>
+    <p class="sl-sub">Persona templates you can reuse across simulation runs.</p>
+    <button class="sl-btn" onclick="showCreateForm()">+ New persona</button>
+  </div>
+
+  <!-- Create / edit form (hidden by default) -->
+  <div id="sl-form-wrap" class="sl-form-wrap" style="display:none">
+    <h2 id="sl-form-title">New persona</h2>
+    <input type="hidden" id="sl-edit-slug" value="" />
+    <div class="sl-form-grid" id="sl-form-fields">
+      <!-- injected by renderForm() -->
+    </div>
+    <div class="sl-form-actions">
+      <button class="sl-btn" onclick="submitForm()">Save</button>
+      <button class="sl-btn sl-btn-sec" onclick="hideForm()">Cancel</button>
+      <span class="sl-msg" id="sl-form-msg"></span>
+    </div>
+  </div>
+
+  <!-- Card grid -->
+  <div id="sl-grid" class="sl-grid">
+    {% for p in profiles %}
+    <div class="sl-card" id="sl-card-{{ p.slug }}" data-slug="{{ p.slug }}">
+      <div class="sl-card-hdr">
+        <div class="sl-avatar">{{ p.name|first }}</div>
+        <div>
+          <div class="sl-name">{{ p.name }}</div>
+          <div class="sl-age">{% if p.age %}Age {{ p.age }}{% endif %}{% if p.age and p.lifestyle %} · {% endif %}{{ p.lifestyle|truncatechars:40 }}</div>
+        </div>
+      </div>
+      {% if p.innate %}<div class="sl-traits">{{ p.innate }}</div>{% endif %}
+      {% if p.learned %}<div class="sl-bio">{{ p.learned }}</div>{% endif %}
+      <div class="sl-card-actions">
+        <button class="edit-btn" onclick="editProfile('{{ p.slug|escapejs }}')">Edit</button>
+        <button class="dupe-btn" onclick="duplicateProfile('{{ p.slug|escapejs }}')">Duplicate</button>
+        <button class="del-btn"  onclick="deleteProfile(event, '{{ p.slug|escapejs }}', this)">Delete</button>
+      </div>
+    </div>
+    {% empty %}
+    <div class="sl-empty" style="grid-column:1/-1">
+      <h3>No personas yet</h3>
+      <p>Click "New persona" to create your first one, or import from a run below.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+var FIELDS = [
+  {k:"name",           label:"Full name",        type:"text",   full:false},
+  {k:"age",            label:"Age",              type:"number", full:false},
+  {k:"innate",         label:"Innate traits",    type:"text",   full:true},
+  {k:"learned",        label:"Background bio",   type:"textarea",full:true},
+  {k:"currently",      label:"Currently",        type:"textarea",full:true},
+  {k:"lifestyle",      label:"Lifestyle / sleep",type:"text",   full:true},
+  {k:"daily_plan_req", label:"Daily routine",    type:"textarea",full:true},
+  {k:"living_area",    label:"Living area",      type:"text",   full:true},
+];
+var COG = [
+  {k:"vision_r",              label:"Vision radius",       type:"int",   hint:"How far the persona can see (tiles)"},
+  {k:"att_bandwidth",         label:"Attention bandwidth", type:"int",   hint:"Max events noticed per step"},
+  {k:"retention",             label:"Retention",           type:"int",   hint:"Recent events kept in working memory"},
+  {k:"recency_decay",         label:"Recency decay",       type:"float", hint:"How fast memory recency fades"},
+  {k:"importance_trigger_max",label:"Reflection threshold",type:"int",   hint:"Poignancy points before reflection fires"},
+  {k:"recency_w",             label:"Recency weight",      type:"float", hint:"Weight of recency in retrieval"},
+  {k:"relevance_w",           label:"Relevance weight",    type:"float", hint:"Weight of relevance in retrieval"},
+  {k:"importance_w",          label:"Importance weight",   type:"float", hint:"Weight of importance in retrieval"},
+];
+
+var _current = {};  // profile data currently in the form
+
+function getCookie(name) {
+  var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return v ? v.pop() : '';
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderForm(data) {
+  _current = data || {};
+  var html = FIELDS.map(function(f) {
+    var val = esc(_current[f.k] || '');
+    var cls = 'sl-field' + (f.full ? ' full' : '');
+    var inp = f.type === 'textarea'
+      ? '<textarea name="'+f.k+'">'+val+'</textarea>'
+      : '<input type="'+(f.type==='number'?'number':'text')+'" name="'+f.k+'" value="'+val+'">';
+    return '<div class="'+cls+'"><label>'+f.label+'</label>'+inp+'</div>';
+  }).join('');
+
+  var cogHtml = COG.map(function(f) {
+    var val = esc(_current[f.k] != null ? _current[f.k] : '');
+    return '<div class="sl-field">'
+      + '<label>'+f.label+' <span class="sl-hint" title="'+esc(f.hint)+'">?</span></label>'
+      + '<input type="number" name="'+f.k+'" value="'+val+'" step="'+(f.type==='float'?'0.001':'1')+'"/>'
+      + '</div>';
+  }).join('');
+
+  html += '<div class="sl-cog-toggle" onclick="toggleCog(this)">'
+    + '<span id="sl-cog-caret">▶</span> Cognitive settings</div>'
+    + '<div class="sl-cog-body" id="sl-cog-body"><div class="sl-cog-grid">'+cogHtml+'</div></div>';
+
+  document.getElementById('sl-form-fields').innerHTML = html;
+}
+
+function toggleCog(el) {
+  var body = document.getElementById('sl-cog-body');
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  document.getElementById('sl-cog-caret').textContent = open ? '▶' : '▼';
+}
+
+function showCreateForm() {
+  document.getElementById('sl-form-title').textContent = 'New persona';
+  document.getElementById('sl-edit-slug').value = '';
+  renderForm({
+    vision_r: 8, att_bandwidth: 8, retention: 8,
+    recency_decay: 0.995, importance_trigger_max: 150,
+    recency_w: 1, relevance_w: 1, importance_w: 1,
+    living_area: "the Ville:resident's home:main room"
+  });
+  document.getElementById('sl-form-msg').textContent = '';
+  document.getElementById('sl-form-wrap').style.display = 'block';
+  document.getElementById('sl-form-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function editProfile(slug) {
+  fetch('/sims/' + encodeURIComponent(slug) + '/')
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      document.getElementById('sl-form-title').textContent = 'Edit — ' + (d.name || slug);
+      document.getElementById('sl-edit-slug').value = slug;
+      renderForm(d);
+      document.getElementById('sl-form-msg').textContent = '';
+      document.getElementById('sl-form-wrap').style.display = 'block';
+      document.getElementById('sl-form-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+}
+
+function hideForm() {
+  document.getElementById('sl-form-wrap').style.display = 'none';
+}
+
+function collectFormData() {
+  var data = {};
+  document.querySelectorAll('#sl-form-fields [name]').forEach(function(el) {
+    data[el.name] = el.value;
+  });
+  return data;
+}
+
+function submitForm() {
+  var slug = document.getElementById('sl-edit-slug').value;
+  var data = collectFormData();
+  var url = slug ? ('/sims/' + encodeURIComponent(slug) + '/save/') : '/sims/new/';
+  var msg = document.getElementById('sl-form-msg');
+  msg.className = 'sl-msg';
+  msg.textContent = 'Saving…';
+
+  fetch(url, {
+    method: 'POST',
+    headers: {'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d) {
+    if (d.ok) {
+      msg.textContent = 'Saved!';
+      setTimeout(function(){ location.reload(); }, 600);
+    } else {
+      msg.className = 'sl-err';
+      msg.textContent = d.error || 'Save failed';
+    }
+  })
+  .catch(function(){ msg.className = 'sl-err'; msg.textContent = 'Save failed.'; });
+}
+
+function duplicateProfile(slug) {
+  fetch('/sims/' + encodeURIComponent(slug) + '/')
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      d.name = d.name + ' (copy)';
+      delete d.slug; delete d.created; delete d.updated;
+      document.getElementById('sl-form-title').textContent = 'New persona (duplicated)';
+      document.getElementById('sl-edit-slug').value = '';
+      renderForm(d);
+      document.getElementById('sl-form-msg').textContent = '';
+      document.getElementById('sl-form-wrap').style.display = 'block';
+      document.getElementById('sl-form-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+}
+
+function deleteProfile(evt, slug, btn) {
+  if (!btn.dataset.confirm) {
+    btn.dataset.confirm = '1';
+    btn.textContent = 'Sure?';
+    setTimeout(function(){
+      if (btn.dataset.confirm) { btn.dataset.confirm = ''; btn.textContent = 'Delete'; }
+    }, 3000);
+    return;
+  }
+  var card = btn.closest('.sl-card');
+  card.style.opacity = '0.4';
+  card.style.pointerEvents = 'none';
+  fetch('/sims/' + encodeURIComponent(slug) + '/delete/', {
+    method: 'POST',
+    headers: {'X-CSRFToken': getCookie('csrftoken')},
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.ok) card.remove();
+    else { card.style.opacity = '1'; card.style.pointerEvents = ''; alert('Delete failed.'); }
+  });
+}
+</script>
+{% endblock content %}

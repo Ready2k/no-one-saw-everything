@@ -32,6 +32,13 @@ urlpatterns = [
     url(r'^launcher/stop/(?P<sim_code>[\w\s-]+)/$', translator_views.stop_run, name='stop_run'),
     url(r'^launcher/personas/(?P<sim_code>[\w\s-]+)/$', translator_views.get_personas, name='get_personas'),
     url(r'^launcher/personas/(?P<sim_code>[\w\s-]+)/(?P<persona_name>[\w\s-]+)/save/$', translator_views.save_persona, name='save_persona'),
+    # Sim library (persona templates)
+    url(r'^sims/$', translator_views.sim_library_page, name='sim_library'),
+    url(r'^sims/api/$', translator_views.sim_library_api, name='sim_library_api'),
+    url(r'^sims/new/$', translator_views.sim_library_save, name='sim_library_new'),
+    url(r'^sims/(?P<slug>[\w-]+)/$', translator_views.sim_library_get, name='sim_library_get'),
+    url(r'^sims/(?P<slug>[\w-]+)/save/$', translator_views.sim_library_save, name='sim_library_save'),
+    url(r'^sims/(?P<slug>[\w-]+)/delete/$', translator_views.sim_library_delete_view, name='sim_library_delete'),
     url(r'^simulator_home$', translator_views.home, name='home'),
     url(r'^demo/(?P<sim_code>[\w\s-]+)/(?P<step>[\w-]+)/(?P<play_speed>[\w-]+)/$', translator_views.demo, name='demo'),
     url(r'^replay/(?P<sim_code>[\w\s-]+)/(?P<step>[\w-]+)/$', translator_views.replay, name='replay'),

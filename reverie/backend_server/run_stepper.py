@@ -24,7 +24,7 @@ import sys
 import time
 
 POLL_INTERVAL = 1.0   # seconds between checks for next movement file
-INIT_TIMEOUT  = 600   # seconds to wait for movement/0.json before giving up
+INIT_TIMEOUT  = 7200  # seconds to wait for movement/0.json before giving up (2h covers slow init)
 
 # Path from backend_server/ to the frontend storage directory.
 FS_STORAGE = "../../environment/frontend_server/storage"
