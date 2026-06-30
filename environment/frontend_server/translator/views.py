@@ -6,6 +6,7 @@ import os
 import string
 import random
 import json
+import csv
 from os import listdir
 import os
 
@@ -419,6 +420,7 @@ def path_tester_update(request):
 import subprocess
 import sys
 import signal
+import time
 from .launcher_utils import (scan_runs, run_review_data, live_run_status,
                              safe_log_name, prefork_directory, library_get)
 
@@ -598,7 +600,8 @@ def launch_simulation(request):
     f.write(json.dumps({"profile": profile}))
   with open("temp_storage/launcher_pid.json", "w") as f:
     f.write(json.dumps({"sim_code": name, "pid": proc.pid,
-                        "steps": steps, "profile": profile}))
+                        "steps": steps, "profile": profile,
+                        "started_at": time.time()}))
 
   return redirect("run_console", sim_code=name)
 
@@ -685,6 +688,7 @@ PERSONA_EDITABLE_FIELDS = [
     ("learned",       "Learned background"),
     ("currently",     "Currently"),
     ("lifestyle",     "Lifestyle / sleep"),
+    ("living_area",   "Location"),
     ("daily_plan_req","Daily routine"),
 ]
 
@@ -734,6 +738,69 @@ def get_personas(request, sim_code):
         "cognitive": {k: scratch.get(k, "") for k, *_ in PERSONA_COGNITIVE_FIELDS},
     })
   return JsonResponse({"personas": personas, "meta": meta})
+
+
+def _load_location_tree(maze_name):
+  """Parse a maze's special_blocks CSVs into {world: {sector: [arena,...]}}.
+  Returns (tree, error) — error is set (and tree is {}) if the maze has no
+  location data on disk."""
+  blocks_dir = os.path.join(
+      "static_dirs", "assets", maze_name, "matrix", "special_blocks")
+  sector_csv = os.path.join(blocks_dir, "sector_blocks.csv")
+  arena_csv = os.path.join(blocks_dir, "arena_blocks.csv")
+
+  tree = {}
+  try:
+    with open(sector_csv, newline="") as f:
+      for row in csv.reader(f):
+        if len(row) < 3:
+          continue
+        world, sector = row[1].strip(), row[2].strip()
+        tree.setdefault(world, {}).setdefault(sector, [])
+    with open(arena_csv, newline="") as f:
+      for row in csv.reader(f):
+        if len(row) < 4:
+          continue
+        world, sector, arena = row[1].strip(), row[2].strip(), row[3].strip()
+        arenas = tree.setdefault(world, {}).setdefault(sector, [])
+        if arena not in arenas:
+          arenas.append(arena)
+  except FileNotFoundError:
+    return {}, f"No location data for maze '{maze_name}'"
+
+  for sectors in tree.values():
+    for arenas in sectors.values():
+      arenas.sort()
+
+  return tree, None
+
+
+def get_locations(request, sim_code):
+  """Return the valid spatial hierarchy (world -> sector -> [arena,...]) for
+  a sim's map, parsed from its special_blocks CSVs, so the launcher can offer
+  a location picker instead of free-text entry."""
+  maze_name = "the_ville"
+  meta_path = os.path.join("storage", sim_code, "reverie", "meta.json")
+  try:
+    with open(meta_path) as f:
+      maze_name = json.load(f).get("maze_name", maze_name)
+  except Exception:
+    pass
+
+  tree, error = _load_location_tree(maze_name)
+  if error:
+    return JsonResponse({"error": error}, status=404)
+  return JsonResponse({"tree": tree, "maze_name": maze_name})
+
+
+def library_locations(request):
+  """Return the spatial hierarchy for the default map, for the sim-library
+  persona editor (which isn't tied to any particular sim/fork)."""
+  maze_name = "the_ville"
+  tree, error = _load_location_tree(maze_name)
+  if error:
+    return JsonResponse({"error": error}, status=404)
+  return JsonResponse({"tree": tree, "maze_name": maze_name})
 
 
 def save_persona(request, sim_code, persona_name):
@@ -824,7 +891,8 @@ def _coerce_library_data(data):
 def sim_library_page(request):
   """Sim library page — lists all persona templates."""
   profiles = library_list()
-  return render(request, "sims/library.html", {"profiles": profiles})
+  runs, _ = scan_runs()
+  return render(request, "sims/library.html", {"profiles": profiles, "runs": runs})
 
 
 def sim_library_api(request):
@@ -859,6 +927,33 @@ def sim_library_save(request, slug=None):
   if not slug:
     return JsonResponse({"error": "could not derive slug from name"}, status=400)
 
+  clean = _coerce_library_data(data)
+  saved = library_save(slug, clean)
+  return JsonResponse({"ok": True, "slug": slug, "profile": saved})
+
+
+def sim_library_import(request, sim_code, persona_name):
+  """Import a persona from an existing run's scratch.json into the sim
+  library, so it can be reused via "add from library" on future forks."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+
+  scratch_path = os.path.join("storage", sim_code, "personas", persona_name,
+                              "bootstrap_memory", "scratch.json")
+  try:
+    with open(scratch_path) as f:
+      scratch = json.load(f)
+  except Exception:
+    return JsonResponse({"error": "persona not found"}, status=404)
+
+  data = {k: scratch.get(k, "") for k, _ in PERSONA_EDITABLE_FIELDS}
+  data.update({k: scratch.get(k, "") for k, *_ in PERSONA_COGNITIVE_FIELDS})
+
+  name = str(data.get("name", "")).strip()
+  if not name:
+    return JsonResponse({"error": "persona has no name"}, status=400)
+
+  slug = _library_slug(name)
   clean = _coerce_library_data(data)
   saved = library_save(slug, clean)
   return JsonResponse({"ok": True, "slug": slug, "profile": saved})

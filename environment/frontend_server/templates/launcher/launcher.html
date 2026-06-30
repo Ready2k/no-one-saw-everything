@@ -29,6 +29,9 @@
   .b-complete { background: #e6f0ff; color: #1d5089; }
   .b-partial { background: #fff3df; color: #8a5a00; }
   .b-empty { background: #f0eeea; color: #888; }
+  .b-running { background: #e3f5e9; color: #1f7a44; }
+  .lx-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; margin-right: 5px; animation: lx-pulse 1.2s infinite; }
+  @keyframes lx-pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
   .lx-actions a { font-size: 12px; margin-left: 10px; color: #1d5089; text-decoration: none; white-space: nowrap; }
   .lx-actions a:hover { text-decoration: underline; }
   .lx-actions .del { color: #c0392b; }
@@ -49,7 +52,7 @@
   .px-persona.open .px-persona-body { display: block; }
   .px-field { margin-bottom: 10px; }
   .px-field label { font-size: 12px; color: #777; display: block; margin-bottom: 3px; }
-  .px-field input, .px-field textarea {
+  .px-field input, .px-field textarea, .px-field select {
     width: 100%; border: 1px solid #ccc; border-radius: 6px;
     padding: 6px 8px; font-size: 13px; font-family: inherit; box-sizing: border-box; }
   .px-field textarea { min-height: 56px; resize: vertical; }
@@ -129,15 +132,17 @@
           <div class="lx-run">
             <div>
               <div class="nm">{{ r.name }}</div>
-              <div class="sub">{{ r.steps }} steps
+              <div class="sub">Launched {{ r.started_at_label }}
+                · {{ r.steps }} steps
                 {% if r.sim_time %}· reached {{ r.sim_time }}{% endif %}
                 · {{ r.persona_count }} personas</div>
             </div>
             <div style="display:flex; align-items:center;">
-              <span class="lx-badge b-{{ r.status }}">{{ r.status }}</span>
+              <span class="lx-badge b-{{ r.status }}">{% if r.live %}<span class="lx-dot"></span>{% endif %}{{ r.status }}</span>
               <span class="lx-actions">
+                {% if r.live %}<a href="{% url 'run_console' r.name %}">Console</a>{% endif %}
                 <a href="{% url 'run_review' r.name %}">Review</a>
-                {% if r.has_replay %}<a href="{% url 'open_run_map' r.name %}">Map</a>{% endif %}
+                {% if r.has_replay or r.live %}<a href="{% url 'open_run_map' r.name %}">Map</a>{% endif %}
                 <a href="#" class="del" onclick="deleteRun(event, this, '{{ r.name|escapejs }}')">Delete</a>
               </span>
             </div>
@@ -167,9 +172,13 @@
   var FIELD_LABELS = {
     name: "Full name", age: "Age", innate: "Innate traits",
     learned: "Learned background", currently: "Currently",
-    lifestyle: "Lifestyle / sleep", daily_plan_req: "Daily routine"
+    lifestyle: "Lifestyle / sleep", living_area: "Location",
+    daily_plan_req: "Daily routine"
   };
   var MULTILINE = ["learned", "currently", "daily_plan_req"];
+  var _currentSimCode = null;
+  var _locTree = null;          // cached {world: {sector: [arena,...]}}
+  var _locTreeSimCode = null;
 
   var COG_FIELDS = [
     {k:"vision_r",              label:"Vision radius",        type:"int",   hint:"How far the persona can see (tiles)"},
@@ -190,6 +199,7 @@
   function renderPersonas(simCode, personas, meta) {
     var body = document.getElementById('px-body');
     document.getElementById('px-fork-label').textContent = simCode;
+    _currentSimCode = simCode;
 
     // Pre-populate sim-level fields from this fork's meta.
     if (meta) {
@@ -207,6 +217,7 @@
     body.innerHTML = personas.map(function(p, idx) {
       var fieldsHtml = Object.keys(FIELD_LABELS).map(function(k) {
         var val = (p.fields[k] == null ? '' : p.fields[k]);
+        if (k === 'living_area') return renderLocationField(idx, val);
         var input = MULTILINE.indexOf(k) !== -1
           ? '<textarea name="' + k + '">' + escHtml(String(val)) + '</textarea>'
           : (k === 'age'
@@ -249,6 +260,82 @@
         + '</div></div>';
     }).join('');
     appendAddSection();
+    // Reparent library pickers to <body> so the .px-card's overflow:hidden
+    // doesn't clip/cut off the dropdown when it falls near the card edge.
+    personas.forEach(function(p, idx) {
+      var picker = document.getElementById('px-lib-picker-' + idx);
+      if (picker) document.body.appendChild(picker);
+    });
+    populateLocationFields(simCode);
+  }
+
+  // ── Location (living_area) cascading picker ────────────────────────────────
+  function renderLocationField(idx, val) {
+    return '<div class="px-field px-loc-block" data-idx="' + idx + '">'
+      + '<label>Location <span class="px-hint" title="Where this persona lives: world / sector / arena">?</span></label>'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      + '<select data-level="world" onchange="onLocationChange(' + idx + ',\'world\')" style="flex:1;min-width:110px"></select>'
+      + '<select data-level="sector" onchange="onLocationChange(' + idx + ',\'sector\')" style="flex:1;min-width:150px"></select>'
+      + '<select data-level="arena" onchange="onLocationChange(' + idx + ',\'arena\')" style="flex:1;min-width:150px"></select>'
+      + '</div>'
+      + '<input type="hidden" name="living_area" value="' + escAttr(String(val)) + '" />'
+      + '</div>';
+  }
+
+  function _getLocations(simCode, cb) {
+    if (_locTree && _locTreeSimCode === simCode) { cb(_locTree); return; }
+    fetch('/launcher/locations/' + encodeURIComponent(simCode) + '/')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ _locTree = d.tree || {}; _locTreeSimCode = simCode; cb(_locTree); })
+      .catch(function(){ cb({}); });
+  }
+
+  function fillSelect(sel, options, selectedVal) {
+    sel.innerHTML = options.map(function(o) {
+      return '<option value="' + escAttr(o) + '"' + (o === selectedVal ? ' selected' : '') + '>' + escHtml(o) + '</option>';
+    }).join('');
+    if (selectedVal && options.indexOf(selectedVal) === -1) {
+      sel.insertAdjacentHTML('afterbegin',
+        '<option value="' + escAttr(selectedVal) + '" selected>' + escHtml(selectedVal) + ' (unknown)</option>');
+    }
+  }
+
+  function populateLocationBlock(block, tree) {
+    var worldSel = block.querySelector('[data-level="world"]');
+    var sectorSel = block.querySelector('[data-level="sector"]');
+    var arenaSel = block.querySelector('[data-level="arena"]');
+    var hidden = block.querySelector('input[name="living_area"]');
+    var parts = (hidden.value || '').split(':');
+    fillSelect(worldSel, Object.keys(tree), parts[0] || '');
+    fillSelect(sectorSel, Object.keys(tree[worldSel.value] || {}), parts[1] || '');
+    fillSelect(arenaSel, (tree[worldSel.value] || {})[sectorSel.value] || [], parts[2] || '');
+    hidden.value = [worldSel.value, sectorSel.value, arenaSel.value].join(':');
+  }
+
+  function populateLocationFields(simCode) {
+    var blocks = document.querySelectorAll('.px-loc-block');
+    if (!blocks.length) return;
+    _getLocations(simCode, function(tree) {
+      blocks.forEach(function(block) { populateLocationBlock(block, tree); });
+    });
+  }
+
+  function onLocationChange(idx, level) {
+    var block = document.querySelector('.px-loc-block[data-idx="' + idx + '"]');
+    if (!block) return;
+    var worldSel = block.querySelector('[data-level="world"]');
+    var sectorSel = block.querySelector('[data-level="sector"]');
+    var arenaSel = block.querySelector('[data-level="arena"]');
+    var hidden = block.querySelector('input[name="living_area"]');
+    _getLocations(_currentSimCode, function(tree) {
+      if (level === 'world') {
+        fillSelect(sectorSel, Object.keys(tree[worldSel.value] || {}), null);
+        fillSelect(arenaSel, (tree[worldSel.value] || {})[sectorSel.value] || [], null);
+      } else if (level === 'sector') {
+        fillSelect(arenaSel, (tree[worldSel.value] || {})[sectorSel.value] || [], null);
+      }
+      hidden.value = [worldSel.value, sectorSel.value, arenaSel.value].join(':');
+    });
   }
 
   function escHtml(s) {
@@ -386,6 +473,27 @@
 
   var _openLibPicker = null;  // currently open picker idx
 
+  // Position a fixed-position dropdown next to its trigger button, flipping
+  // above the button (and clamping its height) when there isn't enough room
+  // below in the viewport — otherwise it can run off-screen with no way to scroll to it.
+  function positionPicker(picker, btn) {
+    var rect = btn.getBoundingClientRect();
+    var margin = 8, gap = 4, desired = 220;
+    var spaceBelow = window.innerHeight - rect.bottom - gap - margin;
+    var spaceAbove = rect.top - gap - margin;
+    picker.style.position = 'fixed';
+    picker.style.left = rect.left + 'px';
+    if (spaceBelow >= 150 || spaceBelow >= spaceAbove) {
+      picker.style.top = (rect.bottom + gap) + 'px';
+      picker.style.bottom = '';
+      picker.style.maxHeight = Math.max(80, Math.min(desired, spaceBelow)) + 'px';
+    } else {
+      picker.style.top = '';
+      picker.style.bottom = (window.innerHeight - rect.top + gap) + 'px';
+      picker.style.maxHeight = Math.max(80, Math.min(desired, spaceAbove)) + 'px';
+    }
+  }
+
   function toggleLibPicker(idx) {
     var picker = document.getElementById('px-lib-picker-' + idx);
     if (_openLibPicker !== null && _openLibPicker !== idx) {
@@ -398,6 +506,8 @@
       return;
     }
     _openLibPicker = idx;
+    var btn = document.querySelector('#px-p-' + idx + ' button[onclick="toggleLibPicker(' + idx + ')"]');
+    if (btn) positionPicker(picker, btn);
     picker.innerHTML = '<div style="padding:8px 12px;font-size:12px;color:#aaa">Loading…</div>';
     picker.style.display = 'block';
     _getLibProfiles(function(profiles) {
@@ -435,6 +545,9 @@
         });
         // Update the header name
         if (p.name) panel.querySelector('.px-persona-name').textContent = p.name;
+        // The location selects need re-deriving from the hidden value we just set.
+        var locBlock = panel.querySelector('.px-loc-block');
+        if (locBlock) _getLocations(_currentSimCode, function(tree) { populateLocationBlock(locBlock, tree); });
         var msg = document.getElementById('px-msg-' + idx);
         msg.style.color = '#5a4a8a';
         msg.textContent = 'Imported "' + p.name + '" — click Save changes to apply.';
@@ -473,6 +586,10 @@
       + '</div>'
       + '<div id="px-add-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-height:4px"></div>';
     body.appendChild(sec);
+    // Reparent to <body> so the .px-card's overflow:hidden doesn't clip the
+    // dropdown (and its scrollbar) when it falls near the card edge.
+    var picker = document.getElementById('px-add-picker');
+    if (picker) document.body.appendChild(picker);
     renderAddChips();
   }
 
@@ -494,6 +611,8 @@
     var picker = document.getElementById('px-add-picker');
     if (!picker) return;
     if (picker.style.display === 'block') { picker.style.display = 'none'; return; }
+    var btn = document.querySelector('#px-add-section button[onclick="toggleAddPicker()"]');
+    if (btn) positionPicker(picker, btn);
     picker.innerHTML = '<div style="padding:8px 12px;font-size:12px;color:#aaa">Loading…</div>';
     picker.style.display = 'block';
     _getLibProfiles(function(profiles) {

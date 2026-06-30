@@ -46,7 +46,7 @@
   .sl-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
   .sl-field { margin-bottom: 12px; }
   .sl-field label { font-size: 12px; color: var(--sub); display: block; margin-bottom: 3px; }
-  .sl-field input, .sl-field textarea {
+  .sl-field input, .sl-field textarea, .sl-field select {
     width: 100%; border: 1px solid #ccc; border-radius: 6px;
     padding: 6px 10px; font-size: 13px; font-family: inherit; }
   .sl-field textarea { min-height: 62px; resize: vertical; }
@@ -62,6 +62,16 @@
   .sl-cog-body { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; grid-column: 1 / -1; margin-bottom: 6px; }
   .sl-cog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 14px; }
   .sl-hint { display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
+
+  /* Import-from-run section */
+  .sl-runs-hdr { font-size: 16px; font-weight: 500; margin: 28px 0 10px; }
+  .sl-runs-list { display: flex; flex-direction: column; gap: 8px; }
+  .sl-run-row { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .sl-run-name { font-size: 13px; font-weight: 500; min-width: 160px; }
+  .sl-run-personas { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sl-import-btn { font-size: 12px; padding: 4px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--blue); background: #fff; color: var(--blue); }
+  .sl-import-btn:hover { background: var(--blue-light); }
+  .sl-import-btn[disabled] { color: #999; border-color: var(--border); cursor: default; background: #f5f5f5; }
 </style>
 
 <div class="sl-wrap">
@@ -112,6 +122,23 @@
     </div>
     {% endfor %}
   </div>
+
+  {% if runs %}
+  <div class="sl-runs-hdr">Import from a run</div>
+  <div class="sl-runs-list">
+    {% for r in runs %}
+    <div class="sl-run-row">
+      <div class="sl-run-name">{{ r.name }}</div>
+      <div class="sl-run-personas">
+        {% for p in r.personas %}
+        <button class="sl-import-btn" data-sim="{{ r.name|escapejs }}" data-persona="{{ p|escapejs }}"
+                onclick="importPersona(this)">+ {{ p }}</button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
 
 <script>
@@ -123,7 +150,7 @@ var FIELDS = [
   {k:"currently",      label:"Currently",        type:"textarea",full:true},
   {k:"lifestyle",      label:"Lifestyle / sleep",type:"text",   full:true},
   {k:"daily_plan_req", label:"Daily routine",    type:"textarea",full:true},
-  {k:"living_area",    label:"Living area",      type:"text",   full:true},
+  {k:"living_area",    label:"Living area",      type:"location",full:true},
 ];
 var COG = [
   {k:"vision_r",              label:"Vision radius",       type:"int",   hint:"How far the persona can see (tiles)"},
@@ -137,6 +164,7 @@ var COG = [
 ];
 
 var _current = {};  // profile data currently in the form
+var _locTree = null;  // cached {world: {sector: [arena,...]}}
 
 function getCookie(name) {
   var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
@@ -149,8 +177,19 @@ function esc(s) {
 function renderForm(data) {
   _current = data || {};
   var html = FIELDS.map(function(f) {
-    var val = esc(_current[f.k] || '');
     var cls = 'sl-field' + (f.full ? ' full' : '');
+    if (f.type === 'location') {
+      return '<div class="'+cls+' sl-loc-block">'
+        + '<label>'+f.label+'</label>'
+        + '<div style="display:flex;gap:6px;flex-wrap:wrap">'
+        + '<select data-level="world" onchange="onLocationChange(\'world\')" style="flex:1;min-width:110px"></select>'
+        + '<select data-level="sector" onchange="onLocationChange(\'sector\')" style="flex:1;min-width:150px"></select>'
+        + '<select data-level="arena" onchange="onLocationChange(\'arena\')" style="flex:1;min-width:150px"></select>'
+        + '</div>'
+        + '<input type="hidden" name="'+f.k+'" value="'+esc(_current[f.k] || '')+'">'
+        + '</div>';
+    }
+    var val = esc(_current[f.k] || '');
     var inp = f.type === 'textarea'
       ? '<textarea name="'+f.k+'">'+val+'</textarea>'
       : '<input type="'+(f.type==='number'?'number':'text')+'" name="'+f.k+'" value="'+val+'">';
@@ -170,6 +209,63 @@ function renderForm(data) {
     + '<div class="sl-cog-body" id="sl-cog-body"><div class="sl-cog-grid">'+cogHtml+'</div></div>';
 
   document.getElementById('sl-form-fields').innerHTML = html;
+  populateLocationField();
+}
+
+// ── Living area (location) cascading picker ─────────────────────────────────
+function _getLocations(cb) {
+  if (_locTree) { cb(_locTree); return; }
+  fetch('/sims/locations/')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ _locTree = d.tree || {}; cb(_locTree); })
+    .catch(function(){ cb({}); });
+}
+
+function fillSelect(sel, options, selectedVal) {
+  sel.innerHTML = options.map(function(o) {
+    return '<option value="'+esc(o)+'"'+(o === selectedVal ? ' selected' : '')+'>'+esc(o)+'</option>';
+  }).join('');
+  if (selectedVal && options.indexOf(selectedVal) === -1) {
+    sel.insertAdjacentHTML('afterbegin',
+      '<option value="'+esc(selectedVal)+'" selected>'+esc(selectedVal)+' (unknown)</option>');
+  }
+}
+
+function populateLocationField() {
+  var block = document.querySelector('.sl-loc-block');
+  if (!block) return;
+  _getLocations(function(tree) {
+    var worldSel = block.querySelector('[data-level="world"]');
+    var sectorSel = block.querySelector('[data-level="sector"]');
+    var arenaSel = block.querySelector('[data-level="arena"]');
+    var hidden = block.querySelector('input[name="living_area"]');
+    var parts = (hidden.value || '').split(':');
+    fillSelect(worldSel, Object.keys(tree), parts[0] || '');
+    fillSelect(sectorSel, Object.keys(tree[worldSel.value] || {}), parts[1] || '');
+    fillSelect(arenaSel, (tree[worldSel.value] || {})[sectorSel.value] || [], parts[2] || '');
+    // Keep the hidden value in sync with what's actually shown (e.g. when the
+    // starting value didn't exactly match a real location and selects fell
+    // back to their first option).
+    hidden.value = [worldSel.value, sectorSel.value, arenaSel.value].join(':');
+  });
+}
+
+function onLocationChange(level) {
+  var block = document.querySelector('.sl-loc-block');
+  if (!block) return;
+  var worldSel = block.querySelector('[data-level="world"]');
+  var sectorSel = block.querySelector('[data-level="sector"]');
+  var arenaSel = block.querySelector('[data-level="arena"]');
+  var hidden = block.querySelector('input[name="living_area"]');
+  _getLocations(function(tree) {
+    if (level === 'world') {
+      fillSelect(sectorSel, Object.keys(tree[worldSel.value] || {}), null);
+      fillSelect(arenaSel, (tree[worldSel.value] || {})[sectorSel.value] || [], null);
+    } else if (level === 'sector') {
+      fillSelect(arenaSel, (tree[worldSel.value] || {})[sectorSel.value] || [], null);
+    }
+    hidden.value = [worldSel.value, sectorSel.value, arenaSel.value].join(':');
+  });
 }
 
 function toggleCog(el) {
@@ -186,7 +282,7 @@ function showCreateForm() {
     vision_r: 8, att_bandwidth: 8, retention: 8,
     recency_decay: 0.995, importance_trigger_max: 150,
     recency_w: 1, relevance_w: 1, importance_w: 1,
-    living_area: "the Ville:resident's home:main room"
+    living_area: "the Ville:Hobbs Cafe:cafe"
   });
   document.getElementById('sl-form-msg').textContent = '';
   document.getElementById('sl-form-wrap').style.display = 'block';
@@ -257,6 +353,32 @@ function duplicateProfile(slug) {
       document.getElementById('sl-form-wrap').style.display = 'block';
       document.getElementById('sl-form-wrap').scrollIntoView({behavior:'smooth', block:'start'});
     });
+}
+
+function importPersona(btn) {
+  btn.disabled = true;
+  var original = btn.textContent;
+  btn.textContent = 'Importing…';
+  fetch('/sims/import/' + encodeURIComponent(btn.dataset.sim) + '/' + encodeURIComponent(btn.dataset.persona) + '/', {
+    method: 'POST',
+    headers: {'X-CSRFToken': getCookie('csrftoken')},
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d) {
+    if (d.ok) {
+      btn.textContent = 'Imported ✓';
+      setTimeout(function(){ location.reload(); }, 500);
+    } else {
+      btn.disabled = false;
+      btn.textContent = original;
+      alert(d.error || 'Import failed');
+    }
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = original;
+    alert('Import failed.');
+  });
 }
 
 function deleteProfile(evt, slug, btn) {

@@ -18,12 +18,13 @@
   .cs-stop { font-size: 13px; color: #a32d2d; background: none; border: 1px solid #e3b9b9; border-radius: 6px; padding: 4px 12px; cursor: pointer; margin-left: 14px; }
   .cs-stop:hover { background: #fdeaea; }
   .cs-stop[disabled] { opacity: .4; cursor: default; }
-  .cs-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+  .cs-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 14px; }
   .cs-stat { background: #f6f5f1; border-radius: 8px; padding: 10px 14px; }
   .cs-stat .l { font-size: 12px; color: #888; }
   .cs-stat .v { font-size: 20px; font-weight: 500; margin-top: 2px; }
-  .cs-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
-  .cs-bar > div { height: 100%; width: 0%; background: #2b6cb0; transition: width .4s ease; }
+  .cs-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .cs-bar > div { height: 100%; width: 0%; min-width: 0; background: #2b6cb0; transition: width .4s ease; }
+  .cs-phase { font-size: 12px; color: #999; margin-bottom: 18px; }
   .cs-personas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
   .cs-p { border: 1px solid #e3e3e0; border-radius: 8px; padding: 10px 12px; }
   .cs-p .nm { font-size: 13px; font-weight: 500; }
@@ -49,17 +50,16 @@
     </div>
   </div>
   <p class="cs-sub"><span class="cs-dot" id="cs-dot"></span><span id="cs-statetext">Waiting for the backend to spin up…</span></p>
-  <div id="cs-mapnudge" style="display:none; background:#fffbe6; border:1px solid #f0d060; border-radius:8px; padding:10px 16px; margin-bottom:12px; font-size:13px; color:#7a5a00;">
-    <strong>Initialisation complete.</strong> Open the map to start simulation steps — the backend needs the map open in your browser to advance each turn.
-    <a href="{% url 'open_run_map' sim_code %}" style="margin-left:10px; color:#1d5089; font-weight:500;">Open map &rarr;</a>
-  </div>
 
   <div class="cs-stats">
     <div class="cs-stat"><div class="l">Step</div><div class="v" id="cs-step">0</div></div>
     <div class="cs-stat"><div class="l">Sim time</div><div class="v" id="cs-time">—</div></div>
     <div class="cs-stat"><div class="l">Progress</div><div class="v" id="cs-pct">0%</div></div>
+    <div class="cs-stat"><div class="l">Elapsed</div><div class="v" id="cs-elapsed">—</div></div>
+    <div class="cs-stat"><div class="l">ETA</div><div class="v" id="cs-eta">—</div></div>
   </div>
   <div class="cs-bar"><div id="cs-barfill"></div></div>
+  <div class="cs-phase" id="cs-phase"></div>
 
   <div class="cs-personas" id="cs-personas"></div>
 
@@ -117,6 +117,17 @@
     });
   }
 
+  function fmtDuration(seconds) {
+    if (seconds == null || !isFinite(seconds) || seconds < 0) return '—';
+    seconds = Math.round(seconds);
+    var h = Math.floor(seconds / 3600);
+    var m = Math.floor((seconds % 3600) / 60);
+    var s = seconds % 60;
+    if (h > 0) return h + 'h ' + m + 'm';
+    if (m > 0) return m + 'm ' + s + 's';
+    return s + 's';
+  }
+
   function poll() {
     if (!polling) return;
     $.getJSON(STATUS_URL, function(d) {
@@ -124,26 +135,40 @@
       document.getElementById('cs-dot').className = 'cs-dot' + (d.alive ? ' live' : '');
       document.getElementById('cs-step').textContent = d.steps.toLocaleString();
       document.getElementById('cs-time').textContent = d.sim_time || '—';
+      document.getElementById('cs-elapsed').textContent = fmtDuration(d.elapsed_seconds);
+      document.getElementById('cs-eta').textContent = fmtDuration(d.eta_seconds);
 
       var pct = 0;
+      var pctText = '0%';
       if (d.target_steps && d.target_steps > 0) {
-        pct = Math.min(100, Math.round(d.steps / d.target_steps * 100));
+        pct = Math.min(100, d.steps / d.target_steps * 100);
+        // Below 1% the rounded number sits at "0%" for ages and looks dead —
+        // show one decimal place until there's something to round to.
+        pctText = (pct > 0 && pct < 1) ? pct.toFixed(1) + '%' : Math.round(pct) + '%';
       }
-      document.getElementById('cs-pct').textContent = pct + '%';
-      document.getElementById('cs-barfill').style.width = pct + '%';
+      document.getElementById('cs-pct').textContent = pctText;
+      var fill = document.getElementById('cs-barfill');
+      fill.style.width = Math.max(pct, 0) + '%';
+      fill.style.minWidth = pct > 0 ? '2px' : '0';
 
+      var phaseMsgs = {
+        forking: 'Forking simulation storage…',
+        initializing: 'Generating persona identities and schedules — this can take several minutes before the first step lands.',
+        stepping: ''
+      };
       var msgs = {starting: 'Waiting for the backend to spin up…',
-                  running: d.steps <= 1
-                    ? 'Initialising agents — open the map to start simulation steps.'
-                    : 'Simulation running — generating agent behaviour.',
+                  running: phaseMsgs[d.phase] || 'Simulation running — generating agent behaviour.',
                   stopping: 'Stopping — saving state at a safe point…',
                   stopped: 'Run stopped. Progress kept — open the map to see how far it got.',
                   finished: 'Run finished and saved. Open the map to replay it.',
                   crashed: 'The backend hit an error — see the console below.'};
       document.getElementById('cs-statetext').textContent = msgs[d.state] || '';
 
-      var nudge = document.getElementById('cs-mapnudge');
-      nudge.style.display = (d.state === 'running' && d.steps <= 1) ? 'block' : 'none';
+      var phaseLabels = {forking: 'Phase: forking storage',
+                          initializing: 'Phase: initializing personas',
+                          stepping: 'Phase: stepping simulation'};
+      document.getElementById('cs-phase').textContent =
+        (d.state === 'starting' || d.state === 'running') ? (phaseLabels[d.phase] || '') : '';
 
       var stopBtn = document.getElementById('cs-stopbtn');
       var mapLink = document.querySelector('.cs-actions a[href*="open"]');
