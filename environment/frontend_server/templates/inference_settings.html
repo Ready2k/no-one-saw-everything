@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inference Settings</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fafaf8;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .header-icon {
+            font-size: 28px;
+        }
+        .settings-group {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f9f8f6;
+            border-radius: 6px;
+            border-left: 4px solid #1d5089;
+        }
+        .settings-group h2 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        label {
+            display: block;
+            margin: 12px 0 6px 0;
+            font-weight: 500;
+            color: #444;
+            font-size: 13px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: white;
+        }
+        select:hover {
+            border-color: #999;
+        }
+        select:focus {
+            outline: none;
+            border-color: #1d5089;
+            box-shadow: 0 0 0 3px rgba(29, 80, 137, 0.1);
+        }
+        .description {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+            font-style: italic;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #1d5089;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #16406e;
+        }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .btn-secondary:hover {
+            background: #e5e5e5;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 13px;
+            display: none;
+        }
+        .status.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #1565c0;
+        }
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        .status.loading {
+            background: #fff3e0;
+            color: #e65100;
+            border-left: 4px solid #e65100;
+        }
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            border-left: 4px solid #1976d2;
+            font-size: 12px;
+            color: #1565c0;
+            line-height: 1.6;
+        }
+        .info-box strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #1d5089;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .test-results {
+            margin-top: 20px;
+            padding: 18px;
+            background: #f9f8f6;
+            border-radius: 6px;
+            border-left: 4px solid #2e7d32;
+        }
+        .test-results.error {
+            border-left-color: #c62828;
+        }
+        .test-results h3 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #444;
+        }
+        .test-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .test-stat {
+            background: white;
+            border-radius: 4px;
+            padding: 10px 12px;
+            border: 1px solid #e5e3df;
+        }
+        .test-stat .label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .test-stat .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d5089;
+            margin-top: 2px;
+        }
+        .test-response {
+            background: white;
+            border: 1px solid #e5e3df;
+            border-radius: 4px;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #444;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'launcher' %}" class="back-link">← Back to Launcher</a>
+
+        <div class="header">
+            <div class="header-icon">⚙️</div>
+            <h1>Inference Settings</h1>
+        </div>
+
+        <div class="settings-group">
+            <h2>🖥️ LLM Host</h2>
+            <label for="host-select">Select LLM Host:</label>
+            <select id="host-select" disabled>
+                <option>Loading hosts...</option>
+            </select>
+            <div class="description" id="host-description">
+                Choose whether to use your local MacBook (vMLX) or remote Ollama server
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h2>🧠 Model Selection</h2>
+            <label for="model-select">Select Model:</label>
+            <select id="model-select" disabled>
+                <option>Loading models...</option>
+            </select>
+            <div class="description" id="model-description"></div>
+        </div>
+
+        <div class="settings-group">
+            <h2>📝 Prompt Profile</h2>
+            <label for="profile-select">Select Prompt Template:</label>
+            <select id="profile-select" disabled>
+                <option>Loading profiles...</option>
+            </select>
+            <div class="description" id="profile-description">
+                Different prompt profiles are optimized for different model sizes and types
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" id="save-btn" onclick="saveSettings()" disabled>
+                Save Settings
+            </button>
+            <button class="btn-secondary" id="test-btn" onclick="testLLM()" disabled>
+                🧪 Test LLM
+            </button>
+            <button class="btn-secondary" onclick="location.href='{% url 'launcher' %}'">
+                Cancel
+            </button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="test-results" class="test-results" style="display: none;"></div>
+
+        <div class="info-box">
+            <strong>📌 How this works:</strong>
+            Settings are saved to <code>inference_settings.json</code>.
+            The backend automatically loads these settings on startup.
+            Restart the backend after saving changes for them to take effect.
+        </div>
+    </div>
+
+    <script>
+        const statusEl = document.getElementById('status');
+        const hostSelectEl = document.getElementById('host-select');
+        const modelSelectEl = document.getElementById('model-select');
+        const profileSelectEl = document.getElementById('profile-select');
+        const saveBtnEl = document.getElementById('save-btn');
+        const testBtnEl = document.getElementById('test-btn');
+        const hostDescEl = document.getElementById('host-description');
+        const modelDescEl = document.getElementById('model-description');
+        const profileDescEl = document.getElementById('profile-description');
+
+        function showStatus(message, type = 'info') {
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '';
+            const gb = (bytes / (1024 * 1024 * 1024)).toFixed(1);
+            return `${gb}GB`;
+        }
+
+        function updateDescriptions() {
+            // Host description
+            const hostOption = hostSelectEl.options[hostSelectEl.selectedIndex];
+            if (hostOption && hostOption.dataset.description) {
+                hostDescEl.textContent = hostOption.dataset.description;
+            }
+
+            // Model description
+            const modelIdx = modelSelectEl.selectedIndex;
+            if (modelIdx >= 0) {
+                const optText = modelSelectEl.options[modelIdx].textContent;
+                modelDescEl.textContent = `Selected: ${optText}`;
+            }
+
+            // Profile description (from title attribute if available)
+            const profileOption = profileSelectEl.options[profileSelectEl.selectedIndex];
+            if (profileOption && profileOption.title) {
+                profileDescEl.textContent = profileOption.title;
+            }
+        }
+
+        async function loadModelsForHost(hostId) {
+            // Load available models for the selected host.
+            modelSelectEl.disabled = true;
+            modelSelectEl.innerHTML = '<option>Loading models...</option>';
+
+            try {
+                const response = await fetch(`/api/inference/host/models/?host_id=${encodeURIComponent(hostId)}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                if (!data.ok) throw new Error(data.error || 'Failed to load models');
+
+                modelSelectEl.innerHTML = '';
+                data.models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = `${model.display_name}${model.size ? ` (${formatBytes(model.size)})` : ''}`;
+                    modelSelectEl.appendChild(option);
+                });
+
+                if (data.models.length === 0) {
+                    modelSelectEl.innerHTML = '<option>No models available</option>';
+                    modelSelectEl.disabled = true;
+                } else {
+                    modelSelectEl.disabled = false;
+                    updateDescriptions();
+                }
+            } catch (error) {
+                showStatus(`Error loading models: ${error.message}`, 'error');
+                modelSelectEl.innerHTML = '<option>Error loading models</option>';
+                modelSelectEl.disabled = true;
+            }
+        }
+
+        async function saveSettings() {
+            const hostId = hostSelectEl.value;
+            const model = modelSelectEl.value;
+            const profile = profileSelectEl.value;
+
+            if (!hostId || !model || !profile) {
+                showStatus('Please select a host, model, and profile', 'error');
+                return;
+            }
+
+            showStatus('Saving settings...', 'loading');
+            saveBtnEl.disabled = true;
+
+            try {
+                const response = await fetch('/api/inference/settings/save/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({host_id: hostId, model, profile})
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                if (!data.ok) throw new Error(data.error || 'Failed to save');
+
+                const hostLabel = hostSelectEl.options[hostSelectEl.selectedIndex].textContent;
+                showStatus(
+                    `✓ Settings saved! Host: ${hostLabel}, Model: ${model}, Profile: ${profile}. ` +
+                    `Restart the backend for changes to take effect.`,
+                    'success'
+                );
+                saveBtnEl.disabled = false;
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+                saveBtnEl.disabled = false;
+            }
+        }
+
+        async function testLLM() {
+            const hostId = hostSelectEl.value;
+            const model = modelSelectEl.value;
+            const resultsEl = document.getElementById('test-results');
+
+            if (!hostId || !model) {
+                showStatus('Please select a host and model to test', 'error');
+                return;
+            }
+
+            testBtnEl.disabled = true;
+            resultsEl.style.display = 'block';
+            resultsEl.className = 'test-results';
+            resultsEl.innerHTML = '<h3>🧪 Testing connection…</h3><div class="test-response">Sending a test prompt and timing the response…</div>';
+
+            try {
+                const response = await fetch('/api/inference/test/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({host_id: hostId, model})
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.ok) {
+                    throw new Error(data.error || `HTTP ${response.status}`);
+                }
+
+                resultsEl.className = 'test-results';
+                resultsEl.innerHTML = `
+                    <h3>✓ LLM responded successfully</h3>
+                    <div class="test-stat-grid">
+                        <div class="test-stat">
+                            <div class="label">Response Time</div>
+                            <div class="value">${data.elapsed_seconds.toFixed(2)}s</div>
+                        </div>
+                        <div class="test-stat">
+                            <div class="label">Tokens Generated</div>
+                            <div class="value">${data.completion_tokens ?? '—'}</div>
+                        </div>
+                        <div class="test-stat">
+                            <div class="label">Throughput</div>
+                            <div class="value">${data.tokens_per_second != null ? data.tokens_per_second.toFixed(1) + ' tok/s' : '—'}</div>
+                        </div>
+                    </div>
+                    <div class="test-response">${data.response_text.replace(/</g, '&lt;')}</div>
+                `;
+            } catch (error) {
+                resultsEl.className = 'test-results error';
+                resultsEl.innerHTML = `<h3>✗ Test failed</h3><div class="test-response">${error.message}</div>`;
+            } finally {
+                testBtnEl.disabled = false;
+            }
+        }
+
+        // Event listeners
+        hostSelectEl.addEventListener('change', () => {
+            loadModelsForHost(hostSelectEl.value);
+            updateDescriptions();
+        });
+        modelSelectEl.addEventListener('change', updateDescriptions);
+        profileSelectEl.addEventListener('change', updateDescriptions);
+
+        // Load on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const result = await fetch('/api/inference/settings/');
+                const data = await result.json();
+
+                if (!data.ok) {
+                    showStatus(`Error: ${data.error}`, 'error');
+                    return;
+                }
+
+                // Populate hosts
+                const hosts = data.hosts || [];
+                hostSelectEl.innerHTML = '';
+                hosts.forEach(host => {
+                    const option = document.createElement('option');
+                    option.value = host.id;
+                    option.textContent = host.label;
+                    option.dataset.description = host.description;
+                    hostSelectEl.appendChild(option);
+                });
+
+                // Populate profiles
+                const profiles = data.profiles || [];
+                profileSelectEl.innerHTML = '';
+                profiles.forEach(profile => {
+                    const option = document.createElement('option');
+                    option.value = profile.value;
+                    option.textContent = profile.label;
+                    option.title = profile.hint;
+                    profileSelectEl.appendChild(option);
+                });
+
+                // Set current values
+                const current = data.current || {};
+                if (current.host_id) hostSelectEl.value = current.host_id;
+                if (current.model) modelSelectEl.value = current.model;
+                if (current.profile) profileSelectEl.value = current.profile;
+
+                // Populate models for the selected host
+                const models = data.models || [];
+                modelSelectEl.innerHTML = '';
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = `${model.display_name}${model.size ? ` (${formatBytes(model.size)})` : ''}`;
+                    modelSelectEl.appendChild(option);
+                });
+
+                hostSelectEl.disabled = false;
+                modelSelectEl.disabled = false;
+                profileSelectEl.disabled = false;
+                saveBtnEl.disabled = false;
+                testBtnEl.disabled = false;
+
+                updateDescriptions();
+                statusEl.style.display = 'none';
+            } catch (error) {
+                showStatus(`Error loading settings: ${error.message}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

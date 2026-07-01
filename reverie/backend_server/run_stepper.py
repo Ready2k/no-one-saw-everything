@@ -23,7 +23,13 @@ import os
 import sys
 import time
 
-POLL_INTERVAL = 1.0   # seconds between checks for next movement file
+POLL_INTERVAL = 0.02  # seconds between checks for next movement file
+# This is a plain filesystem existence check, not a real browser-frame delay,
+# so there's no reason to throttle it to human-watchable speed like the
+# original 1.0s did -- that made sense for the live map animating in a
+# browser, not for this headless stand-in. The real pace is now however fast
+# the backend actually finishes each tick's cognition (often <0.1s thanks to
+# concurrent cognition), not an artificial per-step cap.
 INIT_TIMEOUT  = 7200  # seconds to wait for movement/0.json before giving up (2h covers slow init)
 
 # Path from backend_server/ to the frontend storage directory.
@@ -58,6 +64,24 @@ def _movement_exists(sim_dir, step):
     return os.path.exists(os.path.join(sim_dir, "movement", f"{step}.json"))
 
 
+def _max_existing_movement_step(sim_dir):
+    """Highest step for which movement/<step>.json already exists. Forking
+    from an already-advanced sim copies its whole movement/environment
+    history up front, so this is >0 for a resumed run and 0 for a fresh one."""
+    move_dir = os.path.join(sim_dir, "movement")
+    best = 0
+    try:
+        for fname in os.listdir(move_dir):
+            if fname.endswith(".json"):
+                try:
+                    best = max(best, int(fname[:-len(".json")]))
+                except ValueError:
+                    pass
+    except FileNotFoundError:
+        pass
+    return best
+
+
 def run(sim_code, target_steps, backend_pid=None):
     sim_dir = os.path.join(FS_STORAGE, sim_code)
     print(f"[stepper] starting for {sim_code}, target={target_steps} steps", flush=True)
@@ -74,10 +98,22 @@ def run(sim_code, target_steps, backend_pid=None):
             print("[stepper] timed out waiting for movement/0.json — stopping", flush=True)
             return
 
-    print(f"[stepper] initialisation done, starting step loop", flush=True)
+    # Resume support: reverie.py's own "run <steps>" command treats <steps>
+    # as relative -- "how many more steps to take" -- not an absolute step
+    # number (see its start_server() docstring). The launcher passes the
+    # same value here, so target_steps must be interpreted the same way.
+    # Without this, resuming an already-advanced sim (whose entire
+    # movement/environment history was just copied over by the fork) made
+    # `step < target_steps` true immediately using leftover history, so the
+    # stepper declared itself done and exited without ever writing a new
+    # environment file -- leaving the backend blocked forever waiting for
+    # one that would never arrive.
+    step = _max_existing_movement_step(sim_dir)
+    final_step = step + target_steps
+    print(f"[stepper] initialisation done, resuming from step {step}, "
+          f"running to step {final_step}", flush=True)
 
-    step = 0
-    while step < target_steps:
+    while step < final_step:
         if not _pid_alive(backend_pid):
             print(f"[stepper] backend exited at step {step} — stopping", flush=True)
             break

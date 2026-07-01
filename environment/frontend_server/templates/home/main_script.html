@@ -31,6 +31,7 @@
 	// a step. We use this to link the steps in the backend. 
 	let step = parseInt(document.getElementById('step').innerHTML);
 	let sim_code = document.getElementById('sim_code').innerHTML;
+	let mode = "{{ mode }}";
 	// let persona_names = document.getElementById('persona_name_list').innerHTML.split(",");
 
 	let spans = document.getElementById('persona_init_pos').getElementsByTagName('span');
@@ -245,7 +246,210 @@
 	let execute_count_max = tile_width/movement_speed;
 	let execute_count = execute_count_max;
 	let movement_target = {};
-	
+
+	// --- Replay-mode playback state ---------------------------------------
+	// Replay reads already-recorded movement/{step}.json files directly
+	// (via /replay_movement/) instead of the live process/update handshake,
+	// so it can pause, change speed, and seek freely without a backend.
+	let replay_playing = false;
+	let replay_pending = false;
+	// Same tiers as demo()'s play_speed_opt, so the two playback surfaces feel
+	// consistent: movement_speed (px/frame) directly sets walk speed.
+	let replay_speed_tiers = {"1": 1, "2": 2, "3": 4, "4": 8, "5": 16, "6": 32};
+	let replay_speed_key = "2";
+	let replay_max_step = {{ max_step|default:"0" }};
+	let replay_start_datetime = new Date(Date.parse("{{ start_datetime|default:'' }}"));
+	let replay_sec_per_step = {{ sec_per_step|default:"10" }};
+
+	function setReplaySpeed(key) {
+		if (!replay_speed_tiers[key]) return;
+		replay_speed_key = key;
+		movement_speed = replay_speed_tiers[key];
+		execute_count_max = tile_width / movement_speed;
+	}
+
+	function fetchStepData(n, cb) {
+		fetch("/replay_movement/" + encodeURIComponent(sim_code) + "/" + n + "/")
+			.then(r => r.json())
+			.then(data => cb(data && data.found ? data : null))
+			.catch(() => cb(null));
+	}
+
+	// Populate the persona action/location/chat panels and the clock, given a
+	// step's movement data. Shared by the end of a walk animation and by an
+	// instant seek (scrubber/time-jump), so both leave the page in the same
+	// state.
+	function renderReplayStepInfo(data) {
+		document.getElementById("game-time-content").innerHTML = data["meta"]["curr_time"];
+		for (let curr_persona_name in data["persona"]) {
+			let curr_persona_name_os = curr_persona_name.replace(/ /g, "_");
+			let description_content = data["persona"][curr_persona_name]["description"];
+			let chat_content = "";
+			if (data["persona"][curr_persona_name]["chat"] != null) {
+				for (let j = 0; j < data["persona"][curr_persona_name]["chat"].length; j++) {
+					chat_content += data["persona"][curr_persona_name]["chat"][j][0] + ": " + data["persona"][curr_persona_name]["chat"][j][1] + "<br>";
+				}
+			} else {
+				chat_content = "<em>None at the moment</em>";
+			}
+			let action_el = document.getElementById("current_action__" + curr_persona_name_os);
+			let target_el = document.getElementById("target_address__" + curr_persona_name_os);
+			let chat_el = document.getElementById("chat__" + curr_persona_name_os);
+			if (action_el) action_el.innerHTML = description_content.split("@")[0];
+			if (target_el) target_el.innerHTML = description_content.split("@")[1];
+			if (chat_el) chat_el.innerHTML = chat_content;
+			live_state[curr_persona_name] = {
+				doing_now: description_content.split("@")[0],
+				location: description_content.split("@")[1],
+				chat_html: chat_content
+			};
+		}
+	}
+
+	// Snap every persona sprite directly to <data>'s recorded tile, with no
+	// walking animation -- used for seeking (scrubber/time-jump/restart),
+	// where visually walking through every intervening step would be wrong.
+	function snapReplaySprites(data) {
+		for (let curr_persona_name in data["persona"]) {
+			let sprite = personas[curr_persona_name];
+			if (!sprite) continue;
+			let x = data["persona"][curr_persona_name]["movement"][0] * tile_width;
+			let y = data["persona"][curr_persona_name]["movement"][1] * tile_width;
+			sprite.body.x = x;
+			sprite.body.y = y;
+			sprite.anims.stop();
+			let pron = pronunciatios[curr_persona_name];
+			if (pron) {
+				pron.x = x - 6;
+				pron.y = y - 42 - 32;
+				let rgx = new RegExp(/(\p{L}{1})\p{L}+/, 'gu');
+				let initials = [...curr_persona_name.matchAll(rgx)] || [];
+				initials = ((initials.shift()?.[1] || '') + (initials.pop()?.[1] || '')).toUpperCase();
+				pron.setText(initials + ": " + data["persona"][curr_persona_name]["pronunciatio"]);
+			}
+		}
+	}
+
+	// Jump straight to step <n> (clamped to what's been recorded), no
+	// animation. Used by the scrubber, time-jump box, and Restart.
+	function seekReplayStep(n) {
+		n = Math.max(0, Math.min(replay_max_step, Math.round(n)));
+		fetchStepData(n, function(data) {
+			if (!data) return;
+			execute_movement = null;
+			execute_count = 0;
+			step = n;
+			snapReplaySprites(data);
+			renderReplayStepInfo(data);
+			let scrub = document.getElementById("replay_scrubber");
+			if (scrub) scrub.value = n;
+		});
+	}
+
+	// Request the next step and, once it arrives, start walking sprites
+	// toward it (normal forward playback, one step at a time).
+	function requestReplayStep(n) {
+		if (replay_pending) return;
+		if (n > replay_max_step) { replay_playing = false; return; }
+		replay_pending = true;
+		fetchStepData(n, function(data) {
+			replay_pending = false;
+			if (!data) { replay_playing = false; return; }
+			step = n;
+			execute_movement = data;
+			for (let curr_persona_name in data["persona"]) {
+				let x = data["persona"][curr_persona_name]["movement"][0];
+				let y = data["persona"][curr_persona_name]["movement"][1];
+				movement_target[curr_persona_name] = [x * tile_width, y * tile_width];
+			}
+			execute_count = execute_count_max;
+		});
+	}
+
+	function replayPlay() {
+		if (mode !== "replay") return;
+		replay_playing = true;
+		if (!execute_movement && execute_count <= 0) requestReplayStep(step + 1);
+	}
+	function replayPause() { replay_playing = false; }
+	function replayStop() { replay_playing = false; execute_movement = null; execute_count = 0; }
+	function replayRestart() { replayStop(); seekReplayStep(0); replayPlay(); }
+
+	function onReplaySpeedChange(key) { setReplaySpeed(key); }
+
+	function onReplayScrub(value) {
+		replayPause();
+		seekReplayStep(parseInt(value));
+	}
+
+	function onReplayTimeJump(hhmm) {
+		let m = /^(\d{1,2}):(\d{2})$/.exec((hhmm || "").trim());
+		if (!m) return;
+		let target = new Date(replay_start_datetime.getTime());
+		target.setHours(parseInt(m[1]), parseInt(m[2]), 0, 0);
+		let target_step = Math.floor((target.getTime() - replay_start_datetime.getTime()) / 1000 / replay_sec_per_step);
+		replayPause();
+		seekReplayStep(target_step);
+	}
+
+	// Grow replay_max_step (and the scrubber's bound) while a still-running
+	// sim is being watched, without needing a page reload.
+	function pollReplayBounds() {
+		fetch("/replay_bounds/" + encodeURIComponent(sim_code) + "/")
+			.then(r => r.json())
+			.then(function(data) {
+				replay_max_step = data.max_step;
+				let scrub = document.getElementById("replay_scrubber");
+				if (scrub) scrub.max = replay_max_step;
+				let bound_el = document.getElementById("replay_max_step_label");
+				if (bound_el) bound_el.innerHTML = replay_max_step;
+			})
+			.catch(() => {});
+	}
+
+	function updateReplay() {
+		const camera_speed = 400;
+		player.body.setVelocity(0);
+		if (cursors.left.isDown) player.body.setVelocityX(-camera_speed);
+		if (cursors.right.isDown) player.body.setVelocityX(camera_speed);
+		if (cursors.up.isDown) player.body.setVelocityY(-camera_speed);
+		if (cursors.down.isDown) player.body.setVelocityY(camera_speed);
+
+		if (!execute_movement || execute_count <= 0) return;
+
+		for (let curr_persona_name in movement_target) {
+			let curr_persona = personas[curr_persona_name];
+			if (!curr_persona) continue;
+			let target = movement_target[curr_persona_name];
+			let dir = "";
+			if (curr_persona.body.x < target[0]) { curr_persona.body.x += movement_speed; dir = "r"; }
+			else if (curr_persona.body.x > target[0]) { curr_persona.body.x -= movement_speed; dir = "l"; }
+			else if (curr_persona.body.y < target[1]) { curr_persona.body.y += movement_speed; dir = "d"; }
+			else if (curr_persona.body.y > target[1]) { curr_persona.body.y -= movement_speed; dir = "u"; }
+
+			let pron = pronunciatios[curr_persona_name];
+			if (pron) { pron.x = curr_persona.body.x - 6; pron.y = curr_persona.body.y - 42 - 32; }
+
+			if (dir === "l") curr_persona.anims.play("misa-left-walk", true);
+			else if (dir === "r") curr_persona.anims.play("misa-right-walk", true);
+			else if (dir === "u") curr_persona.anims.play("misa-back-walk", true);
+			else if (dir === "d") curr_persona.anims.play("misa-front-walk", true);
+		}
+
+		execute_count -= 1;
+		if (execute_count <= 0) {
+			for (let curr_persona_name in movement_target) {
+				let curr_persona = personas[curr_persona_name];
+				if (!curr_persona) continue;
+				curr_persona.body.x = movement_target[curr_persona_name][0];
+				curr_persona.body.y = movement_target[curr_persona_name][1];
+				curr_persona.anims.stop();
+			}
+			renderReplayStepInfo(execute_movement);
+			if (replay_playing) requestReplayStep(step + 1);
+		}
+	}
+
 
 	// ###########################################################################
 	// ENGINE
@@ -494,26 +698,40 @@
 	    frames: anims.generateFrameNames("atlas", { prefix: "misa-back-walk.", start: 0, end: 3, zeroPad: 3 }),
 	    frameRate: 4,
 	    repeat: -1 });
+
+	  if (mode === "replay") {
+	    setReplaySpeed(replay_speed_key);
+	    seekReplayStep(step);
+	    setInterval(pollReplayBounds, 5000);
+	  }
 	}
 
 
 	function update(time, delta) {
-		// *** SETUP PLAY AND PAUSE BUTTON *** 
+		if (mode === "replay") {
+			// Replay drives play/pause itself (toggling replay_playing) rather
+			// than pausing the whole Phaser scene, so the map stays pannable
+			// while playback is paused.
+			updateReplay();
+			return;
+		}
+
+		// *** SETUP PLAY AND PAUSE BUTTON ***
 		let play_context = this;
-		function game_resume() {  
+		function game_resume() {
 			play_context.scene.resume();
-		}  
+		}
 		play_button.onclick = function(){
 			game_resume();
 		};
-		function game_pause() {  
+		function game_pause() {
 			play_context.scene.pause();
-		}  
+		}
 		pause_button.onclick = function(){
 			game_pause();
 		};
 
-	  // *** MOVE CAMERA *** 
+	  // *** MOVE CAMERA ***
 	  // This is where we finish up the camera setting we started in the create() 
 	  // function. We set the movement speed of the camera and wire up the keys to
 	  // map to the actual movement.
@@ -748,6 +966,22 @@
 	// Control button binders
 	var play_button=document.getElementById("play_button");
 	var pause_button=document.getElementById("pause_button");
+
+	if (mode === "replay") {
+		play_button.onclick = replayPlay;
+		pause_button.onclick = replayPause;
+		let stop_button = document.getElementById("stop_button");
+		let restart_button = document.getElementById("restart_button");
+		let speed_select = document.getElementById("replay_speed");
+		let scrubber = document.getElementById("replay_scrubber");
+		let time_jump_input = document.getElementById("replay_time_jump_input");
+		let time_jump_button = document.getElementById("replay_time_jump_button");
+		if (stop_button) stop_button.onclick = replayStop;
+		if (restart_button) restart_button.onclick = replayRestart;
+		if (speed_select) speed_select.onchange = function() { onReplaySpeedChange(this.value); };
+		if (scrubber) scrubber.oninput = function() { onReplayScrub(this.value); };
+		if (time_jump_button) time_jump_button.onclick = function() { onReplayTimeJump(time_jump_input.value); };
+	}
 </script>
 
 

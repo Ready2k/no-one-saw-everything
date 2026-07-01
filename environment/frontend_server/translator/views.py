@@ -151,38 +151,101 @@ def home(request):
   return render(request, template, context)
 
 
-def replay(request, sim_code, step): 
+def _replay_meta(sim_code):
+  """Reads storage/{sim_code}/reverie/meta.json and returns (start_datetime,
+  sec_per_step) -- start_datetime is a datetime at the run's day-start
+  (00:00:00), matching the same convention demo() uses for master_movement
+  playback. Used to convert step <-> clock time without scanning every
+  movement file."""
+  meta_file = f"storage/{sim_code}/reverie/meta.json"
+  with open(meta_file) as json_file:
+    meta = json.load(json_file)
+  start_datetime = datetime.datetime.strptime(
+    meta["start_date"] + " 00:00:00", '%B %d, %Y %H:%M:%S')
+  return start_datetime, meta["sec_per_step"]
+
+
+def _replay_max_step(sim_code):
+  """Highest step number with a movement/{step}.json file on disk -- bounds
+  the replay scrubber. Grows over time for a still-running sim."""
+  step_nums = []
+  for i in find_filenames(f"storage/{sim_code}/movement", ".json"):
+    x = i.split("/")[-1].strip()
+    if x[0] != ".":
+      step_nums += [int(x.split(".")[0])]
+  return max(step_nums) if step_nums else 0
+
+
+def replay(request, sim_code, step):
   sim_code = sim_code
   step = int(step)
 
   persona_names = []
   persona_names_set = set()
-  for i in find_filenames(f"storage/{sim_code}/personas", ""): 
+  for i in find_filenames(f"storage/{sim_code}/personas", ""):
     x = i.split("/")[-1].strip()
-    if x[0] != ".": 
+    if x[0] != ".":
       persona_names += [[x, x.replace(" ", "_")]]
       persona_names_set.add(x)
 
+  # Spawn personas at the position recorded for the requested <step>, not
+  # whatever the latest/current environment file happens to be -- otherwise
+  # sprites spawn at the run's final position and visibly jump once replay
+  # starts walking from an earlier step.
+  env_json = f'storage/{sim_code}/environment/{step}.json'
+  if not check_if_file_exists(env_json):
+    env_json = f'storage/{sim_code}/environment/0.json'
   persona_init_pos = []
-  file_count = []
-  for i in find_filenames(f"storage/{sim_code}/environment", ".json"):
-    x = i.split("/")[-1].strip()
-    if x[0] != ".": 
-      file_count += [int(x.split(".")[0])]
-  curr_json = f'storage/{sim_code}/environment/{str(max(file_count))}.json'
-  with open(curr_json) as json_file:  
+  with open(env_json) as json_file:
     persona_init_pos_dict = json.load(json_file)
-    for key, val in persona_init_pos_dict.items(): 
-      if key in persona_names_set: 
+    for key, val in persona_init_pos_dict.items():
+      if key in persona_names_set:
         persona_init_pos += [[key, val["x"], val["y"]]]
+
+  start_datetime, sec_per_step = _replay_meta(sim_code)
+  max_step = _replay_max_step(sim_code)
 
   context = {"sim_code": sim_code,
              "step": step,
              "persona_names": persona_names,
-             "persona_init_pos": persona_init_pos, 
-             "mode": "replay"}
+             "persona_init_pos": persona_init_pos,
+             "mode": "replay",
+             "start_datetime": start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+             "sec_per_step": sec_per_step,
+             "max_step": max_step}
   template = "home/home.html"
   return render(request, template, context)
+
+
+def replay_movement(request, sim_code, step):
+  """Read-only lookup of a single recorded step's movement data, for the
+  playback scrubber/seek controls. Deliberately separate from
+  update_environment(), which is part of the live backend handshake and
+  expects a matching environment/{step}.json write beforehand -- this just
+  reads whatever has already been recorded, with no side effects."""
+  step = int(step)
+  move_file = f"storage/{sim_code}/movement/{step}.json"
+  if not check_if_file_exists(move_file):
+    return JsonResponse({"found": False})
+  with open(move_file) as json_file:
+    content = json_file.read()
+  if not content.strip():
+    return JsonResponse({"found": False})
+  data = json.loads(content)
+  data["found"] = True
+  return JsonResponse(data)
+
+
+def replay_bounds(request, sim_code):
+  """Read-only {max_step, start_datetime, sec_per_step} for the playback
+  controls -- polled occasionally so the scrubber's upper bound can grow
+  while a still-running sim is being watched."""
+  start_datetime, sec_per_step = _replay_meta(sim_code)
+  return JsonResponse({
+    "max_step": _replay_max_step(sim_code),
+    "start_datetime": start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+    "sec_per_step": sec_per_step,
+  })
 
 
 def replay_persona_state(request, sim_code, step, persona_name): 
@@ -422,7 +485,8 @@ import sys
 import signal
 import time
 from .launcher_utils import (scan_runs, run_review_data, live_run_status,
-                             safe_log_name, prefork_directory, library_get)
+                             safe_log_name, prefork_directory, library_get,
+                             _live_run_sim_code)
 
 # Profiles offered in the launcher; value is the PROMPT_PROFILE env var.
 LAUNCHER_PROFILES = [
@@ -436,18 +500,12 @@ LAUNCHER_PROFILES = [
 def launcher(request):
   """Graphical replacement for start_simulation.sh: configure a new run and
   browse / review previous runs."""
+  from .ollama_utils import get_selected_profile
+
   runs, bases = scan_runs()
   default_name = "Claude_" + datetime.datetime.now().strftime("%Y%m%d-%H%M")
 
-  current_profile = "chat-large"
-  prof = None
-  try:
-    with open("temp_storage/llm_profile.json") as f:
-      prof = json.load(f).get("profile")
-  except Exception:
-    prof = None
-  if prof:
-    current_profile = prof
+  current_profile = get_selected_profile()
 
   context = {
       "runs": runs,
@@ -469,15 +527,27 @@ def run_review(request, sim_code):
 
 
 def open_run_map(request, sim_code):
-  """Point the frontend at a stored run and open the map replay for it."""
+  """Point the frontend at a stored run and open its map.
+
+  A currently-live run goes to the live "simulate" view (home), same as
+  before. Any other run -- finished, or just not the one actively being
+  driven by a backend process -- goes to the read-only playback view
+  (replay) instead, so its "Open map"/"Open map replay" links actually reach
+  the scrubber/speed/time-jump controls rather than the live view stalling
+  on a backend that isn't writing new steps for it.
+  """
   if not os.path.isdir(f"storage/{sim_code}"):
     return HttpResponse(f"No such run: {sim_code}", status=404)
-  os.makedirs("temp_storage", exist_ok=True)
-  with open("temp_storage/curr_sim_code.json", "w") as f:
-    f.write(json.dumps({"sim_code": sim_code}, indent=2))
-  with open("temp_storage/curr_step.json", "w") as f:
-    f.write(json.dumps({"step": 0}, indent=2))
-  return redirect("home")
+
+  if sim_code == _live_run_sim_code():
+    os.makedirs("temp_storage", exist_ok=True)
+    with open("temp_storage/curr_sim_code.json", "w") as f:
+      f.write(json.dumps({"sim_code": sim_code}, indent=2))
+    with open("temp_storage/curr_step.json", "w") as f:
+      f.write(json.dumps({"step": 0}, indent=2))
+    return redirect("home")
+
+  return redirect("replay", sim_code=sim_code, step=0)
 
 
 def launch_simulation(request):
@@ -560,6 +630,16 @@ def launch_simulation(request):
     f.write(f"{effective_fork}\n{name}\nrun {steps}\nfin\n")
   with open("temp_storage/launch_overrides.json", "w") as f:
     json.dump(overrides, f)
+
+  # Also save the selected profile to the unified inference settings
+  # (host and model will already be there from ollama_utils)
+  from .ollama_utils import get_selected_host_id, get_selected_model, set_settings
+  try:
+    current_host_id = get_selected_host_id()
+    current_model = get_selected_model()
+    set_settings(current_host_id, current_model, profile)
+  except Exception:
+    pass  # Non-critical; launch proceeds even if settings save fails
 
   env = dict(os.environ)
   env["PROMPT_PROFILE"] = profile
@@ -965,6 +1045,108 @@ def sim_library_delete_view(request, slug):
     return JsonResponse({"error": "POST only"}, status=405)
   ok = library_delete(slug)
   return JsonResponse({"ok": ok})
+
+
+# ── Ollama model management ─────────────────────────────────────────────────────
+
+def inference_settings_api(request):
+  """GET: Fetch available hosts, models, profiles, and current settings."""
+  from .ollama_utils import (
+      get_models_for_host, get_settings, AVAILABLE_HOSTS, AVAILABLE_PROFILES
+  )
+  try:
+    settings = get_settings()
+    current_host_id = settings["host_id"]
+
+    # Fetch models for the currently selected host
+    available_models = get_models_for_host(current_host_id)
+
+    return JsonResponse({
+        "ok": True,
+        "hosts": AVAILABLE_HOSTS,
+        "models": available_models,
+        "profiles": AVAILABLE_PROFILES,
+        "current": settings,
+    })
+  except Exception as e:
+    return JsonResponse({
+        "ok": False,
+        "error": str(e),
+    }, status=500)
+
+
+def inference_settings_save(request):
+  """POST: Save host, model, and profile settings."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+  try:
+    data = json.loads(request.body)
+    host_id = data.get("host_id")
+    model = data.get("model")
+    profile = data.get("profile")
+
+    if not host_id or not model or not profile:
+      return JsonResponse({
+          "error": "host_id, model, and profile all required"
+      }, status=400)
+
+    from .ollama_utils import set_settings
+    set_settings(host_id, model, profile)
+    return JsonResponse({
+        "ok": True,
+        "host_id": host_id,
+        "model": model,
+        "profile": profile
+    })
+  except Exception as e:
+    return JsonResponse({"error": str(e)}, status=500)
+
+
+def inference_settings(request):
+  """Display the unified inference settings page (host + model + profile)."""
+  context = {}
+  template = "inference_settings.html"
+  return render(request, template, context)
+
+
+def inference_test(request):
+  """POST: Send a test prompt to a host/model and report timing + throughput."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+  try:
+    data = json.loads(request.body)
+    host_id = data.get("host_id")
+    model = data.get("model")
+    if not host_id or not model:
+      return JsonResponse({"error": "host_id and model required"}, status=400)
+
+    from .ollama_utils import test_llm
+    result = test_llm(host_id, model)
+    status = 200 if result.get("ok") else 502
+    return JsonResponse(result, status=status)
+  except Exception as e:
+    return JsonResponse({"ok": False, "error": str(e)}, status=500)
+
+
+def inference_host_models(request):
+  """GET: Fetch available models for a specific host."""
+  from .ollama_utils import get_models_for_host
+
+  host_id = request.GET.get("host_id")
+  if not host_id:
+    return JsonResponse({"error": "host_id required"}, status=400)
+
+  try:
+    models = get_models_for_host(host_id)
+    return JsonResponse({
+        "ok": True,
+        "models": models,
+    })
+  except Exception as e:
+    return JsonResponse({
+        "ok": False,
+        "error": str(e),
+    }, status=500)
 
 
 

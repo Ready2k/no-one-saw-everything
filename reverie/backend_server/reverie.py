@@ -35,6 +35,9 @@ from global_methods import *
 from utils import *
 from maze import *
 from persona.persona import *
+from world_snapshot import WorldSnapshot
+from agent_cognition_pool import AgentCognitionPool
+from persona.cognitive_modules.chat_resolver import ChatResolver
 
 ##############################################################################
 #                                  REVERIE                                   #
@@ -155,10 +158,20 @@ class ReverieServer:
       self.maze.tiles[p_y][p_x]["events"].add(curr_persona.scratch
                                               .get_curr_event_and_desc())
 
-    # REVERIE SETTINGS PARAMETERS:  
+    # REVERIE SETTINGS PARAMETERS:
     # <server_sleep> denotes the amount of time that our while loop rests each
-    # cycle; this is to not kill our machine. 
+    # cycle; this is to not kill our machine.
     self.server_sleep = 0.1
+
+    # CONCURRENT COGNITION
+    # <agent_pool> dispatches each persona's perceive/retrieve/plan/reflect/
+    # execute sequence to a worker thread pool instead of running them one at
+    # a time. <chat_resolver> applies the conversation proposals that come
+    # back from that pool -- the one case where one persona's cognition needs
+    # to write into another persona's state -- atomically, after every
+    # persona's cognition for the step has finished.
+    self.agent_pool = AgentCognitionPool(MAX_WORKERS, LLM_TIMEOUT_SECONDS)
+    self.chat_resolver = ChatResolver(log=self.agent_pool.log)
 
     # SIGNALING THE FRONTEND SERVER: 
     # curr_sim_code.json contains the current simulation code, and
@@ -390,18 +403,34 @@ class ReverieServer:
           # Then we need to actually have each of the personas perceive and
           # move. The movement for each of the personas comes in the form of
           # x y coordinates where the persona will move towards. e.g., (50, 34)
-          # This is where the core brains of the personas are invoked. 
-          movements = {"persona": dict(), 
+          # This is where the core brains of the personas are invoked --
+          # concurrently, via agent_pool, instead of one persona at a time.
+          # <snapshot> freezes the cross-persona fields that gating logic
+          # (e.g. "is this persona free to chat") reads, so a target persona
+          # being read by one worker can't race a write from its own worker.
+          snapshot = WorldSnapshot(self.step, self.curr_time, self.personas)
+          cognition_results = self.agent_pool.run_tick(
+            self.personas, self.personas_tile, self.maze, self.curr_time,
+            self.step, snapshot)
+
+          # Conversation proposals are the one case where a persona's
+          # cognition needed to write into another persona's state. They
+          # were computed but not applied inside agent_pool -- apply (or
+          # reject) them here, atomically, now that every persona's
+          # cognition for this step has finished.
+          chat_proposals = [result[3] for result in cognition_results.values()
+                            if result[3] is not None]
+          self.chat_resolver.resolve_and_apply(chat_proposals, self.personas)
+
+          movements = {"persona": dict(),
                        "meta": dict()}
-          for persona_name, persona in self.personas.items(): 
+          for persona_name, persona in self.personas.items():
             # <next_tile> is a x,y coordinate. e.g., (58, 9)
             # <pronunciatio> is an emoji. e.g., "\ud83d\udca4"
-            # <description> is a string description of the movement. e.g., 
-            #   writing her next novel (editing her novel) 
+            # <description> is a string description of the movement. e.g.,
+            #   writing her next novel (editing her novel)
             #   @ double studio:double studio:common room:sofa
-            next_tile, pronunciatio, description = persona.move(
-              self.maze, self.personas, self.personas_tile[persona_name], 
-              self.curr_time)
+            next_tile, pronunciatio, description, _ = cognition_results[persona_name]
             movements["persona"][persona_name] = {}
             movements["persona"][persona_name]["movement"] = next_tile
             movements["persona"][persona_name]["pronunciatio"] = pronunciatio

@@ -123,51 +123,59 @@ class Persona:
     return retrieve(self, perceived)
 
 
-  def plan(self, maze, personas, new_day, retrieved):
+  def plan(self, maze, personas, new_day, retrieved, tick_id=0, snapshot=None):
     """
-    Main cognitive function of the chain. It takes the retrieved memory and 
-    perception, as well as the maze and the first day state to conduct both 
-    the long term and short term planning for the persona. 
+    Main cognitive function of the chain. It takes the retrieved memory and
+    perception, as well as the maze and the first day state to conduct both
+    the long term and short term planning for the persona.
 
-    INPUT: 
-      maze: Current <Maze> instance of the world. 
-      personas: A dictionary that contains all persona names as keys, and the 
-                Persona instance as values. 
-      new_day: This can take one of the three values. 
+    INPUT:
+      maze: Current <Maze> instance of the world.
+      personas: A dictionary that contains all persona names as keys, and the
+                Persona instance as values.
+      new_day: This can take one of the three values.
         1) <Boolean> False -- It is not a "new day" cycle (if it is, we would
-           need to call the long term planning sequence for the persona). 
+           need to call the long term planning sequence for the persona).
         2) <String> "First day" -- It is literally the start of a simulation,
-           so not only is it a new day, but also it is the first day. 
-        2) <String> "New day" -- It is a new day. 
+           so not only is it a new day, but also it is the first day.
+        2) <String> "New day" -- It is a new day.
       retrieved: dictionary of dictionary. The first layer specifies an event,
-                 while the latter layer specifies the "curr_event", "events", 
+                 while the latter layer specifies the "curr_event", "events",
                  and "thoughts" that are relevant.
-    OUTPUT 
-      The target action address of the persona (persona.scratch.act_address).
+      tick_id: current simulation step, stamped onto any ChatProposal.
+      snapshot: WorldSnapshot for this tick, used for cross-persona gating
+                reads instead of live (possibly concurrently mutating)
+                target persona state.
+    OUTPUT
+      A tuple (act_address, chat_proposal). chat_proposal is a ChatProposal
+      if this persona decided to start a conversation, else None -- it is
+      not yet applied to anyone's scratch; route it through ChatResolver.
     """
-    return plan(self, maze, personas, new_day, retrieved)
+    return plan(self, maze, personas, new_day, retrieved, tick_id, snapshot)
 
 
-  def execute(self, maze, personas, plan):
+  def execute(self, maze, personas, plan, snapshot=None):
     """
-    This function takes the agent's current plan and outputs a concrete 
-    execution (what object to use, and what tile to travel to). 
+    This function takes the agent's current plan and outputs a concrete
+    execution (what object to use, and what tile to travel to).
 
-    INPUT: 
-      maze: Current <Maze> instance of the world. 
-      personas: A dictionary that contains all persona names as keys, and the 
-                Persona instance as values. 
-      plan: The target action address of the persona  
+    INPUT:
+      maze: Current <Maze> instance of the world.
+      personas: A dictionary that contains all persona names as keys, and the
+                Persona instance as values.
+      plan: The target action address of the persona
             (persona.scratch.act_address).
-    OUTPUT: 
-      execution: A triple set that contains the following components: 
+      snapshot: WorldSnapshot for this tick, used to read another persona's
+                current tile for pathing.
+    OUTPUT:
+      execution: A triple set that contains the following components:
         <next_tile> is a x,y coordinate. e.g., (58, 9)
         <pronunciatio> is an emoji.
-        <description> is a string description of the movement. e.g., 
-        writing her next novel (editing her novel) 
+        <description> is a string description of the movement. e.g.,
+        writing her next novel (editing her novel)
         @ double studio:double studio:common room:sofa
     """
-    return execute(self, maze, personas, plan)
+    return execute(self, maze, personas, plan, snapshot)
 
 
   def reflect(self):
@@ -182,53 +190,60 @@ class Persona:
     reflect(self)
 
 
-  def move(self, maze, personas, curr_tile, curr_time):
+  def move(self, maze, personas, curr_tile, curr_time, tick_id=0, snapshot=None):
     """
-    This is the main cognitive function where our main sequence is called. 
+    This is the main cognitive function where our main sequence is called.
+    Safe to run inside a worker thread: it never writes to another
+    persona's state. The one case that would need to (starting a
+    conversation) instead returns a ChatProposal for the caller to apply
+    via ChatResolver from the main thread.
 
-    INPUT: 
-      maze: The Maze class of the current world. 
-      personas: A dictionary that contains all persona names as keys, and the 
-                Persona instance as values. 
-      curr_tile: A tuple that designates the persona's current tile location 
+    INPUT:
+      maze: The Maze class of the current world.
+      personas: A dictionary that contains all persona names as keys, and the
+                Persona instance as values.
+      curr_tile: A tuple that designates the persona's current tile location
                  in (row, col) form. e.g., (58, 39)
-      curr_time: datetime instance that indicates the game's current time. 
-    OUTPUT: 
-      execution: A triple set that contains the following components: 
-        <next_tile> is a x,y coordinate. e.g., (58, 9)
-        <pronunciatio> is an emoji.
-        <description> is a string description of the movement. e.g., 
-        writing her next novel (editing her novel) 
-        @ double studio:double studio:common room:sofa
+      curr_time: datetime instance that indicates the game's current time.
+      tick_id: current simulation step, stamped onto any ChatProposal.
+      snapshot: WorldSnapshot taken before this tick's cognition started.
+    OUTPUT:
+      (next_tile, pronunciatio, description, chat_proposal) -- the first
+      three are the same execution triple as before; chat_proposal is a
+      ChatProposal if this persona decided to start a conversation this
+      tick, else None.
     """
-    # Updating persona's scratch memory with <curr_tile>. 
+    # Updating persona's scratch memory with <curr_tile>.
     self.scratch.curr_tile = curr_tile
 
     # We figure out whether the persona started a new day, and if it is a new
-    # day, whether it is the very first day of the simulation. This is 
+    # day, whether it is the very first day of the simulation. This is
     # important because we set up the persona's long term plan at the start of
-    # a new day. 
+    # a new day.
     new_day = False
-    if not self.scratch.curr_time: 
+    if not self.scratch.curr_time:
       new_day = "First day"
     elif (self.scratch.curr_time.strftime('%A %B %d')
           != curr_time.strftime('%A %B %d')):
       new_day = "New day"
     self.scratch.curr_time = curr_time
 
-    # Main cognitive sequence begins here. 
+    # Main cognitive sequence begins here.
     perceived = self.perceive(maze)
     retrieved = self.retrieve(perceived)
-    plan = self.plan(maze, personas, new_day, retrieved)
+    plan, chat_proposal = self.plan(maze, personas, new_day, retrieved,
+                                    tick_id, snapshot)
     self.reflect()
 
-    # <execution> is a triple set that contains the following components: 
+    # <execution> is a triple set that contains the following components:
     # <next_tile> is a x,y coordinate. e.g., (58, 9)
     # <pronunciatio> is an emoji. e.g., "\ud83d\udca4"
-    # <description> is a string description of the movement. e.g., 
-    #   writing her next novel (editing her novel) 
+    # <description> is a string description of the movement. e.g.,
+    #   writing her next novel (editing her novel)
     #   @ double studio:double studio:common room:sofa
-    return self.execute(maze, personas, plan)
+    next_tile, pronunciatio, description = self.execute(maze, personas, plan,
+                                                         snapshot)
+    return next_tile, pronunciatio, description, chat_proposal
 
 
   def open_convo_session(self, convo_mode): 

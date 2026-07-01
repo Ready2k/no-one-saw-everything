@@ -38,6 +38,11 @@
   .cs-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 6px; vertical-align: middle; }
   .cs-dot.live { background: #2ecc71; animation: pulse 1.2s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+  .cs-failsafe { background: #fff8ef; border: 1px solid #f0dcb0; border-radius: 8px; padding: 10px 14px; margin-bottom: 18px; }
+  .cs-fs-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #8a5a00; }
+  .cs-fs-head .v { font-weight: 600; font-size: 15px; }
+  .cs-fs-rows { font-size: 12px; color: #666; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 5px 14px; }
+  .cs-fs-row.action { color: #a3742d; }
 </style>
 
 <div class="cs-wrap">
@@ -62,6 +67,14 @@
   <div class="cs-phase" id="cs-phase"></div>
 
   <div class="cs-personas" id="cs-personas"></div>
+
+  <div class="cs-failsafe" id="cs-failsafe" style="display:none;">
+    <div class="cs-fs-head">
+      <span>LLM fail-safes triggered</span>
+      <span class="v" id="cs-fs-total">0</span>
+    </div>
+    <div class="cs-fs-rows" id="cs-fs-rows"></div>
+  </div>
 
   <div class="cs-conhead">
     <span class="lbl">Backend console</span>
@@ -114,6 +127,31 @@
         '<div class="lo">' + (p.location || '') + '</div>' +
         (p.chatting ? '<div class="chat">in conversation</div>' : '');
       box.appendChild(div);
+    });
+  }
+
+  function renderFailsafe(fs) {
+    var box = document.getElementById('cs-failsafe');
+    if (!fs || !fs.total) {
+      box.style.display = 'none';
+      return;
+    }
+    box.style.display = 'block';
+    document.getElementById('cs-fs-total').textContent = fs.total;
+
+    var rows = document.getElementById('cs-fs-rows');
+    rows.innerHTML = '';
+    Object.keys(fs.by_persona || {}).sort().forEach(function(name) {
+      var span = document.createElement('span');
+      span.className = 'cs-fs-row';
+      span.textContent = name + ': ' + fs.by_persona[name];
+      rows.appendChild(span);
+    });
+    Object.keys(fs.by_action || {}).sort().forEach(function(action) {
+      var span = document.createElement('span');
+      span.className = 'cs-fs-row action';
+      span.textContent = action + ': ' + fs.by_action[action];
+      rows.appendChild(span);
     });
   }
 
@@ -187,6 +225,7 @@
       }
 
       renderPersonas(d.personas || []);
+      renderFailsafe(d.failsafe);
 
       consoleEl.textContent = d.log_tail || '(no output yet)';
       if (autoScroll) consoleEl.scrollTop = consoleEl.scrollHeight;

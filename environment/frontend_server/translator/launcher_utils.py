@@ -631,6 +631,58 @@ def safe_log_name(sim_code):
   return os.path.join(TEMP_STORAGE, f"launcher_run_{safe}.log")
 
 
+# Matches the persona/action-tagged fail-safe lines printed by
+# reverie/backend_server/persona/prompt_template/gpt_structure.py, e.g.
+# "CHATGPT FAIL SAFE TRIGGERED | persona=Isabella Rodriguez action=run_gpt_prompt_wake_up_hour"
+_FAILSAFE_RE = re.compile(
+    r"FAIL SAFE TRIGGERED \| persona=(?P<persona>.*?) action=(?P<action>\S+)\s*$")
+
+# Per-log incremental scan state, so a growing log file isn't rescanned from
+# byte 0 on every 2-second console poll. The launcher runs as a single Django
+# dev-server process, so a module-level dict is enough (no cross-process
+# sharing needed). Keyed by log path.
+_failsafe_cache = {}
+
+
+def failsafe_stats(sim_code):
+  """Counts of LLM fail-safe triggers seen so far in this run's log, broken
+  down by persona and by which run_gpt_prompt_* action hit it."""
+  path = safe_log_name(sim_code)
+  cached = _failsafe_cache.get(path)
+  if cached is None:
+    cached = {"offset": 0, "total": 0, "by_persona": {}, "by_action": {}, "recent": []}
+    _failsafe_cache[path] = cached
+
+  size = os.path.getsize(path) if os.path.exists(path) else 0
+  if size < cached["offset"]:
+    # Log was truncated (e.g. a new run reusing the same sim_code) -- the
+    # old counts no longer describe what's on disk.
+    cached.update(offset=0, total=0, by_persona={}, by_action={}, recent=[])
+
+  if size > cached["offset"]:
+    try:
+      with open(path, "rb") as f:
+        f.seek(cached["offset"])
+        new_data = f.read()
+      cached["offset"] = size
+    except Exception:
+      new_data = b""
+
+    for line in new_data.decode("utf-8", errors="replace").splitlines():
+      m = _FAILSAFE_RE.search(line)
+      if not m:
+        continue
+      persona, action = m.group("persona"), m.group("action")
+      cached["total"] += 1
+      cached["by_persona"][persona] = cached["by_persona"].get(persona, 0) + 1
+      cached["by_action"][action] = cached["by_action"].get(action, 0) + 1
+      cached["recent"].append({"persona": persona, "action": action})
+    cached["recent"] = cached["recent"][-10:]
+
+  return {"total": cached["total"], "by_persona": cached["by_persona"],
+          "by_action": cached["by_action"], "recent": cached["recent"]}
+
+
 def _tail(path, max_lines=60, max_bytes=16000):
   if not os.path.exists(path):
     return ""
@@ -662,6 +714,31 @@ def _collapse_repeats(lines):
       out.extend(lines[i:j])
     i = j
   return out
+
+
+def _recent_step_rate(move_dir, nums, window=20):
+  """Steps/second over the last <window> steps' movement-file timestamps,
+  rather than steps-so-far / total-elapsed. Persona bootstrapping (identity +
+  daily schedule generation) is LLM-heavy and one-time; averaging it into the
+  rate for the whole run makes the ETA look far worse than the steady-state
+  pace once bootstrapping is done. Falls back to None if there aren't enough
+  steps yet to sample a window."""
+  if len(nums) < 2:
+    return None
+  latest = max(nums)
+  earlier = max(n for n in nums if n <= max(0, latest - window)) if any(
+      n <= max(0, latest - window) for n in nums) else min(nums)
+  if earlier == latest:
+    return None
+  try:
+    t_latest = os.path.getmtime(os.path.join(move_dir, f"{latest}.json"))
+    t_earlier = os.path.getmtime(os.path.join(move_dir, f"{earlier}.json"))
+  except OSError:
+    return None
+  dt = t_latest - t_earlier
+  if dt <= 0:
+    return None
+  return (latest - earlier) / dt
 
 
 def _pid_alive(pid):
@@ -698,6 +775,7 @@ def live_run_status(sim_code):
   # Latest movement frame -> per-persona current activity.
   personas = []
   sim_time = None
+  nums = []
   move_dir = os.path.join(sim_dir, "movement")
   if os.path.isdir(move_dir):
     nums = [int(f[:-5]) for f in os.listdir(move_dir)
@@ -731,6 +809,7 @@ def live_run_status(sim_code):
 
   log_tail = _tail(safe_log_name(sim_code))
   crashed = "Traceback (most recent call last)" in log_tail
+  failsafe = failsafe_stats(sim_code)
 
   if alive and stop_requested:
     state = "stopping"
@@ -758,7 +837,7 @@ def live_run_status(sim_code):
   elapsed = (time.time() - started_at) if started_at else None
   eta_seconds = None
   if alive and elapsed and target_steps and 0 < steps < target_steps:
-    rate = steps / elapsed
+    rate = _recent_step_rate(move_dir, nums) or (steps / elapsed)
     if rate > 0:
       eta_seconds = (target_steps - steps) / rate
 
@@ -774,6 +853,7 @@ def live_run_status(sim_code):
       "phase": phase,
       "elapsed_seconds": elapsed,
       "eta_seconds": eta_seconds,
+      "failsafe": failsafe,
   }
 
 

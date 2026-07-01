@@ -110,8 +110,13 @@ environment/frontend_server/storage/StopTest_*/
 
 # Launcher runtime state
 environment/frontend_server/temp_storage/curr_step.json
+environment/frontend_server/temp_storage/curr_sim_code.json
 environment/frontend_server/temp_storage/launcher_input.txt
 environment/frontend_server/temp_storage/launcher_pid.json
 environment/frontend_server/temp_storage/llm_profile.json
 environment/frontend_server/temp_storage/launcher_run_*.log
 environment/frontend_server/temp_storage/stepper_*.log
+environment/frontend_server/temp_storage/launch_overrides.json
+
+# Live test runs from this branch's playback/concurrency work
+environment/frontend_server/storage/multi_thread_Test1/
