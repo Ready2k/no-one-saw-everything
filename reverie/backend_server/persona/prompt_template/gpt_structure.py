@@ -12,11 +12,30 @@ import inspect
 import json
 import os
 import random
+import re
 import openai
 import openai.api_requestor as _oai_req
 import time
 
 from utils import *
+
+
+# Local instruct models (e.g. Qwen2.5-Coder) habitually wrap JSON replies in
+# markdown code fences (```json ... ```) even when told to output raw JSON.
+# json.loads chokes on the leading fence, so every such response silently
+# threw a JSONDecodeError -> swallowed by `except Exception: pass` ->
+# fail-safe triggered on every retry, since these calls are made at
+# temperature=0 and the model repeats the same fenced reply each time.
+_JSON_FENCE_RE = re.compile(r"^```(?:json)?\s*|\s*```\s*$")
+
+
+def _extract_json_response(raw_response):
+  """Strips markdown code fences and surrounding junk, then parses the
+  first {...} object found in the response."""
+  text = _JSON_FENCE_RE.sub("", raw_response.strip()).strip()
+  start = text.find("{")
+  end = text.rfind("}") + 1
+  return json.loads(text[start:end])
 
 
 def _fail_safe_context():
@@ -134,9 +153,7 @@ def GPT4_safe_generate_response(prompt,
 
     try: 
       curr_gpt_response = GPT4_request(prompt).strip()
-      end_index = curr_gpt_response.rfind('}') + 1
-      curr_gpt_response = curr_gpt_response[:end_index]
-      _parsed = json.loads(curr_gpt_response)
+      _parsed = _extract_json_response(curr_gpt_response)
       curr_gpt_response = _parsed.get("output") or next(iter(_parsed.values()))
       
       if func_validate(curr_gpt_response, prompt=prompt):
@@ -177,9 +194,7 @@ def ChatGPT_safe_generate_response(prompt,
 
     try: 
       curr_gpt_response = ChatGPT_request(prompt).strip()
-      end_index = curr_gpt_response.rfind('}') + 1
-      curr_gpt_response = curr_gpt_response[:end_index]
-      _parsed = json.loads(curr_gpt_response)
+      _parsed = _extract_json_response(curr_gpt_response)
       curr_gpt_response = _parsed.get("output") or next(iter(_parsed.values()))
 
       # print ("---ashdfaf")
