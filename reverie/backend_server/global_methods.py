@@ -220,7 +220,13 @@ def copyanything(src, dst):
   if os.path.realpath(src) == os.path.realpath(dst):
     return  # self-fork: directory was pre-built by launcher, nothing to copy
   try:
-    shutil.copytree(src, dst)
+    # dirs_exist_ok: the launcher starts run_stepper.py concurrently with this
+    # process, and the stepper creates <dst>/environment/ as soon as it sees
+    # movement/0.json (which appears almost immediately when forking from an
+    # already-advanced sim, well before this copytree reaches that
+    # subdirectory). Without dirs_exist_ok, that benign pre-creation makes
+    # copytree raise "File exists" and abort the fork.
+    shutil.copytree(src, dst, dirs_exist_ok=True)
   except OSError as exc: # python >2.5
     if exc.errno in (errno.ENOTDIR, errno.EINVAL):
       shutil.copy(src, dst)
