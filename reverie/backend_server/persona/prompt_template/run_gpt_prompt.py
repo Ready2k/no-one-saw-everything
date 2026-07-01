@@ -123,14 +123,14 @@ def run_gpt_prompt_daily_plan(persona,
     return prompt_input
 
   def __func_clean_up(gpt_response, prompt=""):
-    cr = []
-    _cr = gpt_response.split(")")
-    for i in _cr: 
-      if i[-1].isdigit(): 
-        i = i[:-1].strip()
-        if i[-1] == "." or i[-1] == ",": 
-          cr += [i[:-1].strip()]
-    return cr
+    # Splits on numbered markers ("2)", "3)", ...) directly instead of the
+    # old heuristic of checking whether each ")"-delimited chunk happens to
+    # end in a digit followed by "." or ",". That heuristic assumes
+    # completion-style continuation text; the local chat model instead often
+    # restarts its numbering (e.g. jumping straight to "3)" and dropping the
+    # "2)" item), which produced empty chunks and raised IndexError here.
+    parts = re.split(r",?\s*\d+\)\s*", gpt_response.strip())
+    return [p.strip().rstrip(".,") for p in parts if p.strip()]
 
   def __func_validate(gpt_response, prompt=""):
     try: return len(__func_clean_up(gpt_response, prompt="")) > 0
@@ -538,80 +538,53 @@ def run_gpt_prompt_action_sector(action_description,
     
 
 
-  def __func_clean_up(gpt_response, prompt=""):
-    cleaned_response = gpt_response.split("}")[0].lstrip("{").strip()
-    for prefix in ("Answer:", "answer:", "ANSWER:"):
-      if cleaned_response.lower().startswith(prefix.lower()):
-        cleaned_response = cleaned_response[len(prefix):].lstrip(" {").strip()
-        break
-    return cleaned_response
-
-  def __func_validate(gpt_response, prompt=""): 
-    if len(gpt_response.strip()) < 1: 
-      return False
-    if "}" not in gpt_response:
-      return False
-    if "," in gpt_response: 
-      return False
-    return True
-  
-  def get_fail_safe(): 
+  def get_fail_safe():
     fs = ("kitchen")
     return fs
 
+  y = f"{maze.access_tile(persona.scratch.curr_tile)['world']}"
+  x = [i.strip() for i in persona.s_mem.get_str_accessible_sectors(y).split(",")]
 
-  # # ChatGPT Plugin ===========================================================
-  # def __chat_func_clean_up(gpt_response, prompt=""): ############
-  #   cr = gpt_response.strip()
-  #   return cr
+  # ChatGPT Plugin ===========================================================
+  # Picks one of the accessible sector names out of the model's reply. The
+  # local chat model answers in prose rather than completing a raw "{...}"
+  # fragment (the old validate/clean_up assumed completion-style output and
+  # always failed against it), so this matches against the known-good
+  # option list instead of expecting a fixed format.
+  def __chat_func_clean_up(gpt_response, prompt=""):
+    cr = gpt_response.strip()
+    for opt in x:
+      if opt.strip().lower() == cr.lower():
+        return opt.strip()
+    for opt in x:
+      if opt.strip().lower() in cr.lower():
+        return opt.strip()
+    return cr
 
-  # def __chat_func_validate(gpt_response, prompt=""): ############
-  #   try: 
-  #     gpt_response = __func_clean_up(gpt_response, prompt="")
-  #   except: 
-  #     return False
-  #   return True 
+  def __chat_func_validate(gpt_response, prompt=""):
+    try:
+      return len(__chat_func_clean_up(gpt_response, prompt="").strip()) > 0
+    except Exception:
+      return False
 
-  # print ("asdhfapsh8p9hfaiafdsi;ldfj as DEBUG 20") ########
-  # gpt_param = {"engine": "text-davinci-002", "max_tokens": 15, 
-  #              "temperature": 0, "top_p": 1, "stream": False,
-  #              "frequency_penalty": 0, "presence_penalty": 0, "stop": None}
-  # prompt_template = "persona/prompt_template/v3_ChatGPT/action_location_sector_v2.txt" ########
-  # prompt_input = create_prompt_input(action_description, persona, maze)  ########
-  # prompt = generate_prompt(prompt_input, prompt_template)
-  # example_output = "Johnson Park" ########
-  # special_instruction = "The value for the output must contain one of the area options above verbatim (including lower/upper case)." ########
-  # fail_safe = get_fail_safe() ########
-  # output = ChatGPT_safe_generate_response(prompt, example_output, special_instruction, 3, fail_safe,
-  #                                         __chat_func_validate, __chat_func_clean_up, True)
-  # if output != False: 
-  #   return output, [output, prompt, gpt_param, prompt_input, fail_safe]
-  # # ChatGPT Plugin ===========================================================
-
-
-
-
-
-  gpt_param = {"engine": "text-davinci-002", "max_tokens": 15, 
+  gpt_param = {"engine": "text-davinci-002", "max_tokens": 15,
                "temperature": 0, "top_p": 1, "stream": False,
                "frequency_penalty": 0, "presence_penalty": 0, "stop": None}
   prompt_template = _pt("action_sector")
   prompt_input = create_prompt_input(action_description, persona, maze)
   prompt = generate_prompt(prompt_input, prompt_template)
-
+  example_output = x[0] if x else "kitchen"
+  special_instruction = "The value for the output must contain one of the area options above verbatim (including lower/upper case), and nothing else."
   fail_safe = get_fail_safe()
-  output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
-                                   __func_validate, __func_clean_up)
-  y = f"{maze.access_tile(persona.scratch.curr_tile)['world']}"
-  x = [i.strip() for i in persona.s_mem.get_str_accessible_sectors(y).split(",")]
-  if output not in x: 
-    # output = random.choice(x)
+  output = ChatGPT_safe_generate_response(prompt, example_output, special_instruction, 3, fail_safe,
+                                          __chat_func_validate, __chat_func_clean_up, True)
+  # ChatGPT Plugin ===========================================================
+
+  if output not in x:
     output = persona.scratch.living_area.split(":")[1]
 
-  print ("DEBUG", random.choice(x), "------", output)
-
-  if debug or verbose: 
-    print_run_prompts(prompt_template, persona, gpt_param, 
+  if debug or verbose:
+    print_run_prompts(prompt_template, persona, gpt_param,
                       prompt_input, prompt, output)
 
   return output, [output, prompt, gpt_param, prompt_input, fail_safe]
@@ -877,72 +850,46 @@ def run_gpt_prompt_event_triple(action_description, persona, verbose=False):
                     persona.name]
     return prompt_input
   
-  def __func_clean_up(gpt_response, prompt=""):
-    cr = gpt_response.strip()
-    cr = [i.strip() for i in cr.split(")")[0].split(",")]
-    return cr
+  # ChatGPT Plugin ===========================================================
+  # The old prompt/parser expected raw completion-style continuation (the
+  # model finishing an unclosed "(Name," fragment). A chat model instead
+  # answers the fragment as its own fresh reply -- sometimes re-adding a
+  # leading "(" and echoing the subject, sometimes not -- so parsing options
+  # split on comma inconsistently. Wrapping in JSON and keeping only the
+  # last two comma-separated parts (predicate, object) is robust to both.
+  def __chat_func_clean_up(gpt_response, prompt=""):
+    cr = gpt_response.strip().strip("()").strip()
+    parts = [p.strip() for p in cr.split(",") if p.strip()]
+    return parts[-2:]
 
-  def __func_validate(gpt_response, prompt=""): 
-    try: 
-      gpt_response = __func_clean_up(gpt_response, prompt="")
-      if len(gpt_response) != 2: 
-        return False
-    except Exception: return False
-    return True 
+  def __chat_func_validate(gpt_response, prompt=""):
+    try:
+      return len(__chat_func_clean_up(gpt_response, prompt="")) == 2
+    except Exception:
+      return False
 
-  def get_fail_safe(persona): 
-    fs = (persona.name, "is", "idle")
+  def get_fail_safe(persona):
+    fs = ("is", "idle")
     return fs
 
-
-  # ChatGPT Plugin ===========================================================
-  # def __chat_func_clean_up(gpt_response, prompt=""): ############
-  #   cr = gpt_response.strip()
-  #   cr = [i.strip() for i in cr.split(")")[0].split(",")]
-  #   return cr
-
-  # def __chat_func_validate(gpt_response, prompt=""): ############
-  #   try: 
-  #     gpt_response = __func_clean_up(gpt_response, prompt="")
-  #     if len(gpt_response) != 2: 
-  #       return False
-  #   except: return False
-  #   return True 
-
-  # print ("asdhfapsh8p9hfaiafdsi;ldfj as DEBUG 5") ########
-  # gpt_param = {"engine": "text-davinci-002", "max_tokens": 15, 
-  #              "temperature": 0, "top_p": 1, "stream": False,
-  #              "frequency_penalty": 0, "presence_penalty": 0, "stop": None}
-  # prompt_template = "persona/prompt_template/v3_ChatGPT/generate_event_triple_v1.txt" ########
-  # prompt_input = create_prompt_input(action_description, persona)  ########
-  # prompt = generate_prompt(prompt_input, prompt_template)
-  # example_output = "(Jane Doe, cooking, breakfast)" ########
-  # special_instruction = "The value for the output must ONLY contain the triple. If there is an incomplete element, just say 'None' but there needs to be three elements no matter what." ########
-  # fail_safe = get_fail_safe(persona) ########
-  # output = ChatGPT_safe_generate_response(prompt, example_output, special_instruction, 3, fail_safe,
-  #                                         __chat_func_validate, __chat_func_clean_up, True)
-  # if output != False: 
-  #   return output, [output, prompt, gpt_param, prompt_input, fail_safe]
-  # ChatGPT Plugin ===========================================================
-
-
-
-
-  gpt_param = {"engine": "text-davinci-003", "max_tokens": 30, 
+  gpt_param = {"engine": "text-davinci-003", "max_tokens": 30,
                "temperature": 0, "top_p": 1, "stream": False,
                "frequency_penalty": 0, "presence_penalty": 0, "stop": ["\n"]}
   prompt_template = _pt("event_triple")
   prompt_input = create_prompt_input(action_description, persona)
   prompt = generate_prompt(prompt_input, prompt_template)
-  fail_safe = get_fail_safe(persona) ########
-  output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
-                                   __func_validate, __func_clean_up)
+  example_output = "eat, breakfast"
+  special_instruction = "The value for the output must ONLY contain the triple's predicate and object as a comma-separated pair (e.g. 'eat, breakfast'), with no extra words."
+  fail_safe = get_fail_safe(persona)
+  output = ChatGPT_safe_generate_response(prompt, example_output, special_instruction, 3, fail_safe,
+                                          __chat_func_validate, __chat_func_clean_up, True)
   output = (persona.name, output[0], output[1])
+  # ChatGPT Plugin ===========================================================
 
-  if debug or verbose: 
-    print_run_prompts(prompt_template, persona, gpt_param, 
+  if debug or verbose:
+    print_run_prompts(prompt_template, persona, gpt_param,
                       prompt_input, prompt, output)
-  
+
   return output, [output, prompt, gpt_param, prompt_input, fail_safe]
 
 
@@ -1045,38 +992,43 @@ def run_gpt_prompt_act_obj_event_triple(act_game_object, act_obj_desc, persona, 
                     act_game_object]
     return prompt_input
   
-  def __func_clean_up(gpt_response, prompt=""):
-    cr = gpt_response.strip()
-    cr = [i.strip() for i in cr.split(")")[0].split(",")]
-    return cr
+  # ChatGPT Plugin ===========================================================
+  # Same fix as run_gpt_prompt_event_triple above: the local chat model
+  # doesn't reliably continue the raw "(Name," completion fragment, so wrap
+  # in JSON and keep only the last two comma-separated parts.
+  def __chat_func_clean_up(gpt_response, prompt=""):
+    cr = gpt_response.strip().strip("()").strip()
+    parts = [p.strip() for p in cr.split(",") if p.strip()]
+    return parts[-2:]
 
-  def __func_validate(gpt_response, prompt=""): 
-    try: 
-      gpt_response = __func_clean_up(gpt_response, prompt="")
-      if len(gpt_response) != 2: 
-        return False
-    except Exception: return False
-    return True 
+  def __chat_func_validate(gpt_response, prompt=""):
+    try:
+      return len(__chat_func_clean_up(gpt_response, prompt="")) == 2
+    except Exception:
+      return False
 
-  def get_fail_safe(act_game_object): 
-    fs = (act_game_object, "is", "idle")
+  def get_fail_safe(act_game_object):
+    fs = ("is", "idle")
     return fs
 
-  gpt_param = {"engine": "text-davinci-003", "max_tokens": 30, 
+  gpt_param = {"engine": "text-davinci-003", "max_tokens": 30,
                "temperature": 0, "top_p": 1, "stream": False,
                "frequency_penalty": 0, "presence_penalty": 0, "stop": ["\n"]}
   prompt_template = _pt("event_triple")
   prompt_input = create_prompt_input(act_game_object, act_obj_desc)
   prompt = generate_prompt(prompt_input, prompt_template)
+  example_output = "eat, breakfast"
+  special_instruction = "The value for the output must ONLY contain the triple's predicate and object as a comma-separated pair (e.g. 'eat, breakfast'), with no extra words."
   fail_safe = get_fail_safe(act_game_object)
-  output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
-                                   __func_validate, __func_clean_up)
+  output = ChatGPT_safe_generate_response(prompt, example_output, special_instruction, 3, fail_safe,
+                                          __chat_func_validate, __chat_func_clean_up, True)
   output = (act_game_object, output[0], output[1])
+  # ChatGPT Plugin ===========================================================
 
-  if debug or verbose: 
-    print_run_prompts(prompt_template, persona, gpt_param, 
+  if debug or verbose:
+    print_run_prompts(prompt_template, persona, gpt_param,
                       prompt_input, prompt, output)
-  
+
   return output, [output, prompt, gpt_param, prompt_input, fail_safe]
 
 
