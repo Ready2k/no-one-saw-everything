@@ -542,10 +542,21 @@ def _determine_action(persona, maze):
     INPUT: 
       act_desp: the description of the action (e.g., "sleeping")
       act_dura: the duration of the action in minutes. 
-    OUTPUT: 
-      a boolean. True if we need to decompose, False otherwise. 
+    OUTPUT:
+      a boolean. True if we need to decompose, False otherwise.
     """
-    if "sleep" not in act_desp and "bed" not in act_desp: 
+    if "(" in act_desp:
+      # Already decomposed: run_gpt_prompt_task_decomp labels every subtask
+      # as f"{task} ({decomp_task})" (see run_gpt_prompt.py), so an act_desp
+      # containing "(" is itself the output of a previous decomposition.
+      # This function gets re-run on the same ~60-min-ahead schedule slot
+      # across many ticks before curr_time advances past it, so without this
+      # check an already-decomposed (and therefore already-labeled) slot
+      # would get decomposed again and wrapped in its own label a second
+      # time -- and again on the next tick, etc. -- producing runaway
+      # "X (X) (X (X))..." growth in the activity description.
+      return False
+    if "sleep" not in act_desp and "bed" not in act_desp:
       return True
     elif "sleeping" in act_desp or "asleep" in act_desp or "in bed" in act_desp:
       return False
