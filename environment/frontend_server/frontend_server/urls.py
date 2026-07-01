@@ -54,5 +54,10 @@ urlpatterns = [
     url(r'^update_environment/$', translator_views.update_environment, name='update_environment'),
     url(r'^path_tester/$', translator_views.path_tester, name='path_tester'),
     url(r'^path_tester_update/$', translator_views.path_tester_update, name='path_tester_update'),
+    url(r'^settings/inference/$', translator_views.inference_settings, name='inference_settings'),
+    url(r'^api/inference/settings/$', translator_views.inference_settings_api, name='inference_settings_api'),
+    url(r'^api/inference/settings/save/$', translator_views.inference_settings_save, name='inference_settings_save'),
+    url(r'^api/inference/host/models/$', translator_views.inference_host_models, name='inference_host_models'),
+    url(r'^api/inference/test/$', translator_views.inference_test, name='inference_test'),
     path('admin/', admin.site.urls),
 ]

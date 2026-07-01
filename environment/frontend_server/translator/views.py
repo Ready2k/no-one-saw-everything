@@ -500,18 +500,12 @@ LAUNCHER_PROFILES = [
 def launcher(request):
   """Graphical replacement for start_simulation.sh: configure a new run and
   browse / review previous runs."""
+  from .ollama_utils import get_selected_profile
+
   runs, bases = scan_runs()
   default_name = "Claude_" + datetime.datetime.now().strftime("%Y%m%d-%H%M")
 
-  current_profile = "chat-large"
-  prof = None
-  try:
-    with open("temp_storage/llm_profile.json") as f:
-      prof = json.load(f).get("profile")
-  except Exception:
-    prof = None
-  if prof:
-    current_profile = prof
+  current_profile = get_selected_profile()
 
   context = {
       "runs": runs,
@@ -636,6 +630,16 @@ def launch_simulation(request):
     f.write(f"{effective_fork}\n{name}\nrun {steps}\nfin\n")
   with open("temp_storage/launch_overrides.json", "w") as f:
     json.dump(overrides, f)
+
+  # Also save the selected profile to the unified inference settings
+  # (host and model will already be there from ollama_utils)
+  from .ollama_utils import get_selected_host_id, get_selected_model, set_settings
+  try:
+    current_host_id = get_selected_host_id()
+    current_model = get_selected_model()
+    set_settings(current_host_id, current_model, profile)
+  except Exception:
+    pass  # Non-critical; launch proceeds even if settings save fails
 
   env = dict(os.environ)
   env["PROMPT_PROFILE"] = profile
@@ -1041,6 +1045,108 @@ def sim_library_delete_view(request, slug):
     return JsonResponse({"error": "POST only"}, status=405)
   ok = library_delete(slug)
   return JsonResponse({"ok": ok})
+
+
+# ── Ollama model management ─────────────────────────────────────────────────────
+
+def inference_settings_api(request):
+  """GET: Fetch available hosts, models, profiles, and current settings."""
+  from .ollama_utils import (
+      get_models_for_host, get_settings, AVAILABLE_HOSTS, AVAILABLE_PROFILES
+  )
+  try:
+    settings = get_settings()
+    current_host_id = settings["host_id"]
+
+    # Fetch models for the currently selected host
+    available_models = get_models_for_host(current_host_id)
+
+    return JsonResponse({
+        "ok": True,
+        "hosts": AVAILABLE_HOSTS,
+        "models": available_models,
+        "profiles": AVAILABLE_PROFILES,
+        "current": settings,
+    })
+  except Exception as e:
+    return JsonResponse({
+        "ok": False,
+        "error": str(e),
+    }, status=500)
+
+
+def inference_settings_save(request):
+  """POST: Save host, model, and profile settings."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+  try:
+    data = json.loads(request.body)
+    host_id = data.get("host_id")
+    model = data.get("model")
+    profile = data.get("profile")
+
+    if not host_id or not model or not profile:
+      return JsonResponse({
+          "error": "host_id, model, and profile all required"
+      }, status=400)
+
+    from .ollama_utils import set_settings
+    set_settings(host_id, model, profile)
+    return JsonResponse({
+        "ok": True,
+        "host_id": host_id,
+        "model": model,
+        "profile": profile
+    })
+  except Exception as e:
+    return JsonResponse({"error": str(e)}, status=500)
+
+
+def inference_settings(request):
+  """Display the unified inference settings page (host + model + profile)."""
+  context = {}
+  template = "inference_settings.html"
+  return render(request, template, context)
+
+
+def inference_test(request):
+  """POST: Send a test prompt to a host/model and report timing + throughput."""
+  if request.method != "POST":
+    return JsonResponse({"error": "POST only"}, status=405)
+  try:
+    data = json.loads(request.body)
+    host_id = data.get("host_id")
+    model = data.get("model")
+    if not host_id or not model:
+      return JsonResponse({"error": "host_id and model required"}, status=400)
+
+    from .ollama_utils import test_llm
+    result = test_llm(host_id, model)
+    status = 200 if result.get("ok") else 502
+    return JsonResponse(result, status=status)
+  except Exception as e:
+    return JsonResponse({"ok": False, "error": str(e)}, status=500)
+
+
+def inference_host_models(request):
+  """GET: Fetch available models for a specific host."""
+  from .ollama_utils import get_models_for_host
+
+  host_id = request.GET.get("host_id")
+  if not host_id:
+    return JsonResponse({"error": "host_id required"}, status=400)
+
+  try:
+    models = get_models_for_host(host_id)
+    return JsonResponse({
+        "ok": True,
+        "models": models,
+    })
+  except Exception as e:
+    return JsonResponse({
+        "ok": False,
+        "error": str(e),
+    }, status=500)
 
 
 

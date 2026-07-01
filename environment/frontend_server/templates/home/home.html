@@ -3,9 +3,12 @@
 
 {% block content %}
 <br>
-<div style="width:1500px; max-width:100%; margin:0 auto">
+<div style="width:1500px; max-width:100%; margin:0 auto; display:flex; gap:1em">
 	<a href="{% url 'launcher' %}" class="btn btn-default" style="margin-bottom:0.5em">
 		<i class="glyphicon glyphicon-chevron-left"></i> &nbsp;Back to Launcher
+	</a>
+	<a href="/settings/inference/" class="btn btn-default" style="margin-bottom:0.5em">
+		<i class="glyphicon glyphicon-cog"></i> &nbsp;Inference Settings
 	</a>
 </div>
 <br>
