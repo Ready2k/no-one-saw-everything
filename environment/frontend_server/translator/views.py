@@ -151,38 +151,101 @@ def home(request):
   return render(request, template, context)
 
 
-def replay(request, sim_code, step): 
+def _replay_meta(sim_code):
+  """Reads storage/{sim_code}/reverie/meta.json and returns (start_datetime,
+  sec_per_step) -- start_datetime is a datetime at the run's day-start
+  (00:00:00), matching the same convention demo() uses for master_movement
+  playback. Used to convert step <-> clock time without scanning every
+  movement file."""
+  meta_file = f"storage/{sim_code}/reverie/meta.json"
+  with open(meta_file) as json_file:
+    meta = json.load(json_file)
+  start_datetime = datetime.datetime.strptime(
+    meta["start_date"] + " 00:00:00", '%B %d, %Y %H:%M:%S')
+  return start_datetime, meta["sec_per_step"]
+
+
+def _replay_max_step(sim_code):
+  """Highest step number with a movement/{step}.json file on disk -- bounds
+  the replay scrubber. Grows over time for a still-running sim."""
+  step_nums = []
+  for i in find_filenames(f"storage/{sim_code}/movement", ".json"):
+    x = i.split("/")[-1].strip()
+    if x[0] != ".":
+      step_nums += [int(x.split(".")[0])]
+  return max(step_nums) if step_nums else 0
+
+
+def replay(request, sim_code, step):
   sim_code = sim_code
   step = int(step)
 
   persona_names = []
   persona_names_set = set()
-  for i in find_filenames(f"storage/{sim_code}/personas", ""): 
+  for i in find_filenames(f"storage/{sim_code}/personas", ""):
     x = i.split("/")[-1].strip()
-    if x[0] != ".": 
+    if x[0] != ".":
       persona_names += [[x, x.replace(" ", "_")]]
       persona_names_set.add(x)
 
+  # Spawn personas at the position recorded for the requested <step>, not
+  # whatever the latest/current environment file happens to be -- otherwise
+  # sprites spawn at the run's final position and visibly jump once replay
+  # starts walking from an earlier step.
+  env_json = f'storage/{sim_code}/environment/{step}.json'
+  if not check_if_file_exists(env_json):
+    env_json = f'storage/{sim_code}/environment/0.json'
   persona_init_pos = []
-  file_count = []
-  for i in find_filenames(f"storage/{sim_code}/environment", ".json"):
-    x = i.split("/")[-1].strip()
-    if x[0] != ".": 
-      file_count += [int(x.split(".")[0])]
-  curr_json = f'storage/{sim_code}/environment/{str(max(file_count))}.json'
-  with open(curr_json) as json_file:  
+  with open(env_json) as json_file:
     persona_init_pos_dict = json.load(json_file)
-    for key, val in persona_init_pos_dict.items(): 
-      if key in persona_names_set: 
+    for key, val in persona_init_pos_dict.items():
+      if key in persona_names_set:
         persona_init_pos += [[key, val["x"], val["y"]]]
+
+  start_datetime, sec_per_step = _replay_meta(sim_code)
+  max_step = _replay_max_step(sim_code)
 
   context = {"sim_code": sim_code,
              "step": step,
              "persona_names": persona_names,
-             "persona_init_pos": persona_init_pos, 
-             "mode": "replay"}
+             "persona_init_pos": persona_init_pos,
+             "mode": "replay",
+             "start_datetime": start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+             "sec_per_step": sec_per_step,
+             "max_step": max_step}
   template = "home/home.html"
   return render(request, template, context)
+
+
+def replay_movement(request, sim_code, step):
+  """Read-only lookup of a single recorded step's movement data, for the
+  playback scrubber/seek controls. Deliberately separate from
+  update_environment(), which is part of the live backend handshake and
+  expects a matching environment/{step}.json write beforehand -- this just
+  reads whatever has already been recorded, with no side effects."""
+  step = int(step)
+  move_file = f"storage/{sim_code}/movement/{step}.json"
+  if not check_if_file_exists(move_file):
+    return JsonResponse({"found": False})
+  with open(move_file) as json_file:
+    content = json_file.read()
+  if not content.strip():
+    return JsonResponse({"found": False})
+  data = json.loads(content)
+  data["found"] = True
+  return JsonResponse(data)
+
+
+def replay_bounds(request, sim_code):
+  """Read-only {max_step, start_datetime, sec_per_step} for the playback
+  controls -- polled occasionally so the scrubber's upper bound can grow
+  while a still-running sim is being watched."""
+  start_datetime, sec_per_step = _replay_meta(sim_code)
+  return JsonResponse({
+    "max_step": _replay_max_step(sim_code),
+    "start_datetime": start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+    "sec_per_step": sec_per_step,
+  })
 
 
 def replay_persona_state(request, sim_code, step, persona_name): 
@@ -422,7 +485,8 @@ import sys
 import signal
 import time
 from .launcher_utils import (scan_runs, run_review_data, live_run_status,
-                             safe_log_name, prefork_directory, library_get)
+                             safe_log_name, prefork_directory, library_get,
+                             _live_run_sim_code)
 
 # Profiles offered in the launcher; value is the PROMPT_PROFILE env var.
 LAUNCHER_PROFILES = [
@@ -469,15 +533,27 @@ def run_review(request, sim_code):
 
 
 def open_run_map(request, sim_code):
-  """Point the frontend at a stored run and open the map replay for it."""
+  """Point the frontend at a stored run and open its map.
+
+  A currently-live run goes to the live "simulate" view (home), same as
+  before. Any other run -- finished, or just not the one actively being
+  driven by a backend process -- goes to the read-only playback view
+  (replay) instead, so its "Open map"/"Open map replay" links actually reach
+  the scrubber/speed/time-jump controls rather than the live view stalling
+  on a backend that isn't writing new steps for it.
+  """
   if not os.path.isdir(f"storage/{sim_code}"):
     return HttpResponse(f"No such run: {sim_code}", status=404)
-  os.makedirs("temp_storage", exist_ok=True)
-  with open("temp_storage/curr_sim_code.json", "w") as f:
-    f.write(json.dumps({"sim_code": sim_code}, indent=2))
-  with open("temp_storage/curr_step.json", "w") as f:
-    f.write(json.dumps({"step": 0}, indent=2))
-  return redirect("home")
+
+  if sim_code == _live_run_sim_code():
+    os.makedirs("temp_storage", exist_ok=True)
+    with open("temp_storage/curr_sim_code.json", "w") as f:
+      f.write(json.dumps({"sim_code": sim_code}, indent=2))
+    with open("temp_storage/curr_step.json", "w") as f:
+      f.write(json.dumps({"step": 0}, indent=2))
+    return redirect("home")
+
+  return redirect("replay", sim_code=sim_code, step=0)
 
 
 def launch_simulation(request):

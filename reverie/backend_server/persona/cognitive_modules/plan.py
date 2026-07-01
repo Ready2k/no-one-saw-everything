@@ -15,6 +15,9 @@ from global_methods import *
 from persona.prompt_template.run_gpt_prompt import *
 from persona.cognitive_modules.retrieve import *
 from persona.cognitive_modules.converse import *
+from persona.cognitive_modules.chat_resolver import (ChatProposal,
+                                                      ReactSideEffect,
+                                                      apply_react_side_effect)
 
 ##############################################################################
 # CHAPTER 2: Generate
@@ -696,82 +699,96 @@ def _choose_retrieved(persona, retrieved):
   return None
 
 
-def _should_react(persona, retrieved, personas): 
+def _should_react(persona, retrieved, personas, snapshot=None):
   """
-  Determines what form of reaction the persona should exihibit given the 
-  retrieved values. 
+  Determines what form of reaction the persona should exihibit given the
+  retrieved values.
   INPUT
-    persona: Current <Persona> instance whose action we are determining. 
-    retrieved: A dictionary of <ConceptNode> that were retrieved from the 
+    persona: Current <Persona> instance whose action we are determining.
+    retrieved: A dictionary of <ConceptNode> that were retrieved from the
                the persona's associative memory. This dictionary takes the
-               following form: 
-               dictionary[event.description] = 
-                 {["curr_event"] = <ConceptNode>, 
-                  ["events"] = [<ConceptNode>, ...], 
+               following form:
+               dictionary[event.description] =
+                 {["curr_event"] = <ConceptNode>,
+                  ["events"] = [<ConceptNode>, ...],
                   ["thoughts"] = [<ConceptNode>, ...] }
-    personas: A dictionary that contains all persona names as keys, and the 
-              <Persona> instance as values. 
+    personas: A dictionary that contains all persona names as keys, and the
+              <Persona> instance as values.
+    snapshot: A WorldSnapshot taken before this tick's cognition started.
+              Gating checks against the *target* persona read from here
+              instead of the live target object, since the target may be
+              concurrently running its own cognition in another thread and
+              mutating those same fields. None falls back to live reads
+              (single-threaded callers, e.g. tests).
   """
-  def lets_talk(init_persona, target_persona, retrieved):
-    if (not target_persona.scratch.act_address 
-        or not target_persona.scratch.act_description
+  def _target_view(target_name, target_persona):
+    if snapshot is not None:
+      return snapshot.gate_view(target_name)
+    s = target_persona.scratch
+    return dict(act_address=s.act_address, act_description=s.act_description,
+                chatting_with=s.chatting_with,
+                chatting_with_buffer=s.chatting_with_buffer)
+
+  def lets_talk(init_persona, target_persona, target_view, retrieved):
+    if (not target_view["act_address"]
+        or not target_view["act_description"]
         or not init_persona.scratch.act_address
-        or not init_persona.scratch.act_description): 
+        or not init_persona.scratch.act_description):
       return False
 
-    if ("sleeping" in target_persona.scratch.act_description 
-        or "sleeping" in init_persona.scratch.act_description): 
+    if ("sleeping" in target_view["act_description"]
+        or "sleeping" in init_persona.scratch.act_description):
       return False
 
-    if init_persona.scratch.curr_time.hour == 23: 
+    if init_persona.scratch.curr_time.hour == 23:
       return False
 
-    if "<waiting>" in target_persona.scratch.act_address: 
+    if "<waiting>" in target_view["act_address"]:
       return False
 
-    if (target_persona.scratch.chatting_with 
-      or init_persona.scratch.chatting_with): 
+    if (target_view["chatting_with"]
+      or init_persona.scratch.chatting_with):
       return False
 
-    if (target_persona.name in init_persona.scratch.chatting_with_buffer): 
-      if init_persona.scratch.chatting_with_buffer[target_persona.name] > 0: 
+    if (target_persona.name in init_persona.scratch.chatting_with_buffer):
+      if init_persona.scratch.chatting_with_buffer[target_persona.name] > 0:
         return False
 
-    if generate_decide_to_talk(init_persona, target_persona, retrieved): 
+    if generate_decide_to_talk(init_persona, target_persona, retrieved):
 
       return True
 
     return False
 
-  def lets_react(init_persona, target_persona, retrieved): 
-    if (not target_persona.scratch.act_address 
-        or not target_persona.scratch.act_description
+  def lets_react(init_persona, target_persona, target_view, retrieved):
+    if (not target_view["act_address"]
+        or not target_view["act_description"]
         or not init_persona.scratch.act_address
-        or not init_persona.scratch.act_description): 
+        or not init_persona.scratch.act_description):
       return False
 
-    if ("sleeping" in target_persona.scratch.act_description 
-        or "sleeping" in init_persona.scratch.act_description): 
+    if ("sleeping" in target_view["act_description"]
+        or "sleeping" in init_persona.scratch.act_description):
       return False
 
     # return False
-    if init_persona.scratch.curr_time.hour == 23: 
+    if init_persona.scratch.curr_time.hour == 23:
       return False
 
-    if "waiting" in target_persona.scratch.act_description: 
+    if "waiting" in target_view["act_description"]:
       return False
     if init_persona.scratch.planned_path == []:
       return False
 
-    if (init_persona.scratch.act_address 
-        != target_persona.scratch.act_address): 
+    if (init_persona.scratch.act_address
+        != target_view["act_address"]):
       return False
 
-    react_mode = generate_decide_to_react(init_persona, 
+    react_mode = generate_decide_to_react(init_persona,
                                           target_persona, retrieved)
 
-    if react_mode == "1": 
-      wait_until = ((target_persona.scratch.act_start_time 
+    if react_mode == "1":
+      wait_until = ((target_persona.scratch.act_start_time
         + datetime.timedelta(minutes=target_persona.scratch.act_duration - 1))
         .strftime("%B %d, %Y, %H:%M:%S"))
       return f"wait: {wait_until}"
@@ -779,92 +796,110 @@ def _should_react(persona, retrieved, personas):
       return False
       return "do other things"
     else:
-      return False #"keep" 
+      return False #"keep"
 
-  # If the persona is chatting right now, default to no reaction 
-  if persona.scratch.chatting_with: 
+  # If the persona is chatting right now, default to no reaction
+  if persona.scratch.chatting_with:
     return False
-  if "<waiting>" in persona.scratch.act_address: 
+  if "<waiting>" in persona.scratch.act_address:
     return False
 
-  # Recall that retrieved takes the following form: 
-  # dictionary {["curr_event"] = <ConceptNode>, 
-  #             ["events"] = [<ConceptNode>, ...], 
+  # Recall that retrieved takes the following form:
+  # dictionary {["curr_event"] = <ConceptNode>,
+  #             ["events"] = [<ConceptNode>, ...],
   #             ["thoughts"] = [<ConceptNode>, ...]}
   curr_event = retrieved["curr_event"]
 
-  if ":" not in curr_event.subject: 
-    # this is a persona event. 
-    if lets_talk(persona, personas[curr_event.subject], retrieved):
+  if ":" not in curr_event.subject:
+    # this is a persona event.
+    target_persona = personas[curr_event.subject]
+    target_view = _target_view(curr_event.subject, target_persona)
+    if lets_talk(persona, target_persona, target_view, retrieved):
       return f"chat with {curr_event.subject}"
-    react_mode = lets_react(persona, personas[curr_event.subject], 
-                            retrieved)
+    react_mode = lets_react(persona, target_persona, target_view, retrieved)
     return react_mode
   return False
 
 
-def _create_react(persona, inserted_act, inserted_act_dur,
-                  act_address, act_event, chatting_with, chat, chatting_with_buffer,
-                  chatting_end_time, 
-                  act_pronunciatio, act_obj_description, act_obj_pronunciatio, 
-                  act_obj_event, act_start_time=None): 
-  p = persona 
+def _propose_react(persona, inserted_act, inserted_act_dur,
+                   act_address, act_event, chatting_with, chat, chatting_with_buffer,
+                   chatting_end_time,
+                   act_pronunciatio, act_obj_description, act_obj_pronunciatio,
+                   act_obj_event, act_start_time=None):
+  """Computes what the old _create_react wrote directly to persona.scratch,
+  but returns it as a ReactSideEffect instead of mutating anything. This is
+  what makes _chat_propose side-effect free: it can run inside a worker
+  thread and touch the *target* persona's data without writing to it."""
+  p = persona
 
   min_sum = 0
-  for i in range (p.scratch.get_f_daily_schedule_hourly_org_index()): 
+  for i in range (p.scratch.get_f_daily_schedule_hourly_org_index()):
     min_sum += p.scratch.f_daily_schedule_hourly_org[i][1]
   start_hour = int (min_sum/60)
 
   if (p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()][1] >= 120):
     end_hour = start_hour + p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()][1]/60
 
-  elif (p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()][1] + 
-      p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()+1][1]): 
-    end_hour = start_hour + ((p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()][1] + 
+  elif (p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()][1] +
+      p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()+1][1]):
+    end_hour = start_hour + ((p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()][1] +
               p.scratch.f_daily_schedule_hourly_org[p.scratch.get_f_daily_schedule_hourly_org_index()+1][1])/60)
 
-  else: 
+  else:
     end_hour = start_hour + 2
   end_hour = int(end_hour)
 
   dur_sum = 0
-  count = 0 
+  count = 0
   start_index = None
   end_index = None
-  for act, dur in p.scratch.f_daily_schedule: 
+  for act, dur in p.scratch.f_daily_schedule:
     if dur_sum >= start_hour * 60 and start_index == None:
       start_index = count
-    if dur_sum >= end_hour * 60 and end_index == None: 
+    if dur_sum >= end_hour * 60 and end_index == None:
       end_index = count
     dur_sum += dur
     count += 1
 
-  ret = generate_new_decomp_schedule(p, inserted_act, inserted_act_dur, 
+  ret = generate_new_decomp_schedule(p, inserted_act, inserted_act_dur,
                                        start_hour, end_hour)
-  p.scratch.f_daily_schedule[start_index:end_index] = ret
-  p.scratch.add_new_action(act_address,
-                           inserted_act_dur,
-                           inserted_act,
-                           act_pronunciatio,
-                           act_event,
-                           chatting_with,
-                           chat,
-                           chatting_with_buffer,
-                           chatting_end_time,
-                           act_obj_description,
-                           act_obj_pronunciatio,
-                           act_obj_event,
-                           act_start_time)
+
+  add_new_action_kwargs = dict(
+    action_address=act_address,
+    action_duration=inserted_act_dur,
+    action_description=inserted_act,
+    action_pronunciatio=act_pronunciatio,
+    action_event=act_event,
+    chatting_with=chatting_with,
+    chat=chat,
+    chatting_with_buffer=chatting_with_buffer,
+    chatting_end_time=chatting_end_time,
+    act_obj_description=act_obj_description,
+    act_obj_pronunciatio=act_obj_pronunciatio,
+    act_obj_event=act_obj_event,
+    act_start_time=act_start_time,
+  )
+  return ReactSideEffect(
+    persona_name=p.name,
+    schedule_start_index=start_index,
+    schedule_end_index=end_index,
+    schedule_replacement=ret,
+    add_new_action_kwargs=add_new_action_kwargs,
+  )
 
 
-def _chat_react(maze, persona, focused_event, reaction_mode, personas):
-  # There are two personas -- the persona who is initiating the conversation
-  # and the persona who is the target. We get the persona instances here. 
+def _chat_propose(maze, persona, focused_event, reaction_mode, personas,
+                  tick_id=0):
+  """Computes a conversation between persona (the initiator) and the target
+  named in reaction_mode, but writes nothing to either persona's scratch --
+  returns a ChatProposal for ChatResolver to apply (or reject) from the main
+  thread once every persona's cognition for this tick has finished. This is
+  the only place agent cognition would otherwise need to write into another
+  persona's state, so it's the only place that needs this two-phase split."""
   init_persona = persona
   target_persona = personas[reaction_mode[9:].strip()]
-  curr_personas = [init_persona, target_persona]
 
-  # Actually creating the conversation here. 
+  # Actually creating the conversation here.
   convo, duration_min = generate_convo(maze, init_persona, target_persona)
   convo_summary = generate_convo_summary(init_persona, convo)
   inserted_act = convo_summary
@@ -873,38 +908,47 @@ def _chat_react(maze, persona, focused_event, reaction_mode, personas):
   act_start_time = target_persona.scratch.act_start_time
 
   curr_time = target_persona.scratch.curr_time
-  if curr_time.second != 0: 
+  if curr_time.second != 0:
     temp_curr_time = curr_time + datetime.timedelta(seconds=60 - curr_time.second)
     chatting_end_time = temp_curr_time + datetime.timedelta(minutes=inserted_act_dur)
-  else: 
+  else:
     chatting_end_time = curr_time + datetime.timedelta(minutes=inserted_act_dur)
 
-  for role, p in [("init", init_persona), ("target", target_persona)]: 
-    if role == "init": 
+  sides = {}
+  for role, p in [("init", init_persona), ("target", target_persona)]:
+    if role == "init":
       act_address = f"<persona> {target_persona.name}"
       act_event = (p.name, "chat with", target_persona.name)
       chatting_with = target_persona.name
       chatting_with_buffer = {}
       chatting_with_buffer[target_persona.name] = 800
-    elif role == "target": 
+    elif role == "target":
       act_address = f"<persona> {init_persona.name}"
       act_event = (p.name, "chat with", init_persona.name)
       chatting_with = init_persona.name
       chatting_with_buffer = {}
       chatting_with_buffer[init_persona.name] = 800
 
-    act_pronunciatio = "💬" 
+    act_pronunciatio = "💬"
     act_obj_description = None
     act_obj_pronunciatio = None
     act_obj_event = (None, None, None)
 
-    _create_react(p, inserted_act, inserted_act_dur,
+    sides[role] = _propose_react(p, inserted_act, inserted_act_dur,
       act_address, act_event, chatting_with, convo, chatting_with_buffer, chatting_end_time,
-      act_pronunciatio, act_obj_description, act_obj_pronunciatio, 
+      act_pronunciatio, act_obj_description, act_obj_pronunciatio,
       act_obj_event, act_start_time)
 
+  return ChatProposal(tick_id=tick_id,
+                      initiator=init_persona.name,
+                      target=target_persona.name,
+                      init_side=sides["init"],
+                      target_side=sides["target"])
 
-def _wait_react(persona, reaction_mode): 
+
+def _wait_react(persona, reaction_mode):
+  # Self-only reaction (no other persona's state is touched), so it's safe
+  # to apply immediately rather than going through ChatResolver.
   p = persona
 
   inserted_act = f'waiting to start {p.scratch.act_description.split("(")[-1][:-1]}'
@@ -918,93 +962,103 @@ def _wait_react(persona, reaction_mode):
   chatting_with_buffer = None
   chatting_end_time = None
 
-  act_pronunciatio = "⌛" 
+  act_pronunciatio = "⌛"
   act_obj_description = None
   act_obj_pronunciatio = None
   act_obj_event = (None, None, None)
 
-  _create_react(p, inserted_act, inserted_act_dur,
+  side_effect = _propose_react(p, inserted_act, inserted_act_dur,
     act_address, act_event, chatting_with, chat, chatting_with_buffer, chatting_end_time,
     act_pronunciatio, act_obj_description, act_obj_pronunciatio, act_obj_event)
+  apply_react_side_effect(p, side_effect)
 
 
-def plan(persona, maze, personas, new_day, retrieved): 
+def plan(persona, maze, personas, new_day, retrieved, tick_id=0, snapshot=None):
   """
-  Main cognitive function of the chain. It takes the retrieved memory and 
-  perception, as well as the maze and the first day state to conduct both 
-  the long term and short term planning for the persona. 
+  Main cognitive function of the chain. It takes the retrieved memory and
+  perception, as well as the maze and the first day state to conduct both
+  the long term and short term planning for the persona.
 
-  INPUT: 
-    maze: Current <Maze> instance of the world. 
-    personas: A dictionary that contains all persona names as keys, and the 
-              Persona instance as values. 
-    new_day: This can take one of the three values. 
+  INPUT:
+    maze: Current <Maze> instance of the world.
+    personas: A dictionary that contains all persona names as keys, and the
+              Persona instance as values.
+    new_day: This can take one of the three values.
       1) <Boolean> False -- It is not a "new day" cycle (if it is, we would
-         need to call the long term planning sequence for the persona). 
+         need to call the long term planning sequence for the persona).
       2) <String> "First day" -- It is literally the start of a simulation,
-         so not only is it a new day, but also it is the first day. 
-      2) <String> "New day" -- It is a new day. 
+         so not only is it a new day, but also it is the first day.
+      2) <String> "New day" -- It is a new day.
     retrieved: dictionary of dictionary. The first layer specifies an event,
-               while the latter layer specifies the "curr_event", "events", 
+               while the latter layer specifies the "curr_event", "events",
                and "thoughts" that are relevant.
-  OUTPUT 
-    The target action address of the persona (persona.scratch.act_address).
-  """ 
-  # PART 1: Generate the hourly schedule. 
-  if new_day: 
+    tick_id: the current simulation step, stamped onto any ChatProposal so
+             ChatResolver can order proposals deterministically.
+  OUTPUT
+    A tuple of (act_address, chat_proposal). chat_proposal is a ChatProposal
+    if this persona decided to start a conversation this tick, else None --
+    it is NOT applied to either persona's scratch yet; the caller is
+    responsible for routing it through ChatResolver.
+  """
+  # PART 1: Generate the hourly schedule.
+  if new_day:
     _long_term_planning(persona, new_day)
 
   # PART 2: If the current action has expired, we want to create a new plan.
-  if persona.scratch.act_check_finished(): 
+  if persona.scratch.act_check_finished():
     _determine_action(persona, maze)
 
-  # PART 3: If you perceived an event that needs to be responded to (saw 
-  # another persona), and retrieved relevant information. 
-  # Step 1: Retrieved may have multiple events represented in it. The first 
-  #         job here is to determine which of the events we want to focus 
-  #         on for the persona. 
-  #         <focused_event> takes the form of a dictionary like this: 
-  #         dictionary {["curr_event"] = <ConceptNode>, 
-  #                     ["events"] = [<ConceptNode>, ...], 
+  # PART 3: If you perceived an event that needs to be responded to (saw
+  # another persona), and retrieved relevant information.
+  # Step 1: Retrieved may have multiple events represented in it. The first
+  #         job here is to determine which of the events we want to focus
+  #         on for the persona.
+  #         <focused_event> takes the form of a dictionary like this:
+  #         dictionary {["curr_event"] = <ConceptNode>,
+  #                     ["events"] = [<ConceptNode>, ...],
   #                     ["thoughts"] = [<ConceptNode>, ...]}
   focused_event = False
-  if retrieved.keys(): 
+  if retrieved.keys():
     focused_event = _choose_retrieved(persona, retrieved)
-  
+
   # Step 2: Once we choose an event, we need to determine whether the
   #         persona will take any actions for the perceived event. There are
-  #         three possible modes of reaction returned by _should_react. 
+  #         three possible modes of reaction returned by _should_react.
   #         a) "chat with {target_persona.name}"
   #         b) "react"
   #         c) False
-  if focused_event: 
-    reaction_mode = _should_react(persona, focused_event, personas)
-    if reaction_mode: 
-      # If we do want to chat, then we generate conversation 
+  chat_proposal = None
+  if focused_event:
+    reaction_mode = _should_react(persona, focused_event, personas, snapshot)
+    if reaction_mode:
+      # If we do want to chat, we compute the conversation but don't commit
+      # it to either persona yet -- ChatResolver does that after collecting
+      # every persona's proposals for this tick.
       if reaction_mode[:9] == "chat with":
-        _chat_react(maze, persona, focused_event, reaction_mode, personas)
-      elif reaction_mode[:4] == "wait": 
+        chat_proposal = _chat_propose(maze, persona, focused_event,
+                                      reaction_mode, personas, tick_id)
+      elif reaction_mode[:4] == "wait":
         _wait_react(persona, reaction_mode)
-      # elif reaction_mode == "do other things": 
+      # elif reaction_mode == "do other things":
       #   _chat_react(persona, focused_event, reaction_mode, personas)
 
-  # Step 3: Chat-related state clean up. 
-  # If the persona is not chatting with anyone, we clean up any of the 
-  # chat-related states here. 
+  # Step 3: Chat-related state clean up.
+  # If the persona is not chatting with anyone, we clean up any of the
+  # chat-related states here.
   if persona.scratch.act_event[1] != "chat with":
     persona.scratch.chatting_with = None
     persona.scratch.chat = None
     persona.scratch.chatting_end_time = None
   # We want to make sure that the persona does not keep conversing with each
-  # other in an infinite loop. So, chatting_with_buffer maintains a form of 
-  # buffer that makes the persona wait from talking to the same target 
-  # immediately after chatting once. We keep track of the buffer value here. 
+  # other in an infinite loop. So, chatting_with_buffer maintains a form of
+  # buffer that makes the persona wait from talking to the same target
+  # immediately after chatting once. We keep track of the buffer value here.
   curr_persona_chat_buffer = persona.scratch.chatting_with_buffer
   for persona_name, buffer_count in curr_persona_chat_buffer.items():
-    if persona_name != persona.scratch.chatting_with: 
+    if persona_name != persona.scratch.chatting_with:
       persona.scratch.chatting_with_buffer[persona_name] -= 1
 
-  return persona.scratch.act_address
+  return persona.scratch.act_address, chat_proposal
 
 
 

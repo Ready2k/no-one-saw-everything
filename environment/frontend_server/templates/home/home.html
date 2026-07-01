@@ -33,15 +33,55 @@
 					<button id="play_button" type="button" class="btn btn-default">
 				    <strong style=" font-size:1.2em"><i class="glyphicon glyphicon-play"></i> &nbsp;Play</strong>
 				  </button>
-				  
+
 				  <button id="pause_button" type="button" class="btn btn-default">
 				    <strong style=" font-size:1.2em"><i class="glyphicon glyphicon-pause"></i> &nbsp;Pause</strong>
 				  </button>
 
+				  {% if mode == 'replay' %}
+				  <button id="stop_button" type="button" class="btn btn-default" title="Stop playback, keep position">
+				    <strong style="font-size:1.2em"><i class="glyphicon glyphicon-stop"></i> &nbsp;Stop</strong>
+				  </button>
+				  <button id="restart_button" type="button" class="btn btn-default" title="Seek to step 0 and play">
+				    <strong style="font-size:1.2em"><i class="glyphicon glyphicon-repeat"></i> &nbsp;Restart</strong>
+				  </button>
+				  {% endif %}
+
 				</h2>
-				
+
 			</div>
 		</div>
+
+		{% if mode == 'replay' %}
+		<div class="row" style="margin-top:1em">
+			<div class="col-md-3">
+				<label for="replay_speed" style="font-weight:bold">Speed</label>
+				<select id="replay_speed" class="form-control">
+					<option value="1">1x</option>
+					<option value="2" selected>2x</option>
+					<option value="3">4x</option>
+					<option value="4">8x</option>
+					<option value="5">16x</option>
+					<option value="6">32x</option>
+				</select>
+			</div>
+			<div class="col-md-6">
+				<label for="replay_scrubber" style="font-weight:bold">
+					Step <span id="replay_max_step_label">{{ max_step }}</span>
+				</label>
+				<input type="range" id="replay_scrubber" min="0" max="{{ max_step }}" value="{{ step }}" style="width:100%">
+			</div>
+			<div class="col-md-3">
+				<label for="replay_time_jump_input" style="font-weight:bold">Jump to time (e.g. 07:00)</label>
+				<div class="input-group">
+					<input type="text" id="replay_time_jump_input" class="form-control" placeholder="HH:MM">
+					<span class="input-group-btn">
+						<button id="replay_time_jump_button" type="button" class="btn btn-default">Go</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		{% endif %}
 
 		<br>
 		<hr style="border-color:#999999">

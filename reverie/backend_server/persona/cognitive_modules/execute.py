@@ -12,24 +12,28 @@ from global_methods import *
 from path_finder import *
 from utils import *
 
-def execute(persona, maze, personas, plan): 
+def execute(persona, maze, personas, plan, snapshot=None):
   """
-  Given a plan (action's string address), we execute the plan (actually 
-  outputs the tile coordinate path and the next coordinate for the 
-  persona). 
+  Given a plan (action's string address), we execute the plan (actually
+  outputs the tile coordinate path and the next coordinate for the
+  persona).
 
   INPUT:
-    persona: Current <Persona> instance.  
+    persona: Current <Persona> instance.
     maze: An instance of current <Maze>.
-    personas: A dictionary of all personas in the world. 
-    plan: This is a string address of the action we need to execute. 
-       It comes in the form of "{world}:{sector}:{arena}:{game_objects}". 
-       It is important that you access this without doing negative 
-       indexing (e.g., [-1]) because the latter address elements may not be 
-       present in some cases. 
+    personas: A dictionary of all personas in the world.
+    plan: This is a string address of the action we need to execute.
+       It comes in the form of "{world}:{sector}:{arena}:{game_objects}".
+       It is important that you access this without doing negative
+       indexing (e.g., [-1]) because the latter address elements may not be
+       present in some cases.
        e.g., "dolores double studio:double studio:bedroom 1:bed"
-    
-  OUTPUT: 
+    snapshot: A WorldSnapshot taken before this tick's cognition started.
+       Used to read another persona's current tile for pathing instead of
+       their live (possibly concurrently-moving) object. None falls back to
+       a live read.
+
+  OUTPUT:
     execution
   """
   if "<random>" in plan and persona.scratch.planned_path == []: 
@@ -45,10 +49,13 @@ def execute(persona, maze, personas, plan):
     print ('aldhfoaf/????')
     print (plan)
 
-    if "<persona>" in plan: 
+    if "<persona>" in plan:
       # Executing persona-persona interaction.
-      target_p_tile = (personas[plan.split("<persona>")[-1].strip()]
-                       .scratch.curr_tile)
+      target_name = plan.split("<persona>")[-1].strip()
+      if snapshot is not None:
+        target_p_tile = snapshot.curr_tile_of(target_name)
+      else:
+        target_p_tile = personas[target_name].scratch.curr_tile
       potential_path = path_finder(maze.collision_maze, 
                                    persona.scratch.curr_tile, 
                                    target_p_tile, 

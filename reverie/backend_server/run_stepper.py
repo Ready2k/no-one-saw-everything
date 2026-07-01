@@ -23,7 +23,13 @@ import os
 import sys
 import time
 
-POLL_INTERVAL = 1.0   # seconds between checks for next movement file
+POLL_INTERVAL = 0.02  # seconds between checks for next movement file
+# This is a plain filesystem existence check, not a real browser-frame delay,
+# so there's no reason to throttle it to human-watchable speed like the
+# original 1.0s did -- that made sense for the live map animating in a
+# browser, not for this headless stand-in. The real pace is now however fast
+# the backend actually finishes each tick's cognition (often <0.1s thanks to
+# concurrent cognition), not an artificial per-step cap.
 INIT_TIMEOUT  = 7200  # seconds to wait for movement/0.json before giving up (2h covers slow init)
 
 # Path from backend_server/ to the frontend storage directory.

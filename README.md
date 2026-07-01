@@ -48,6 +48,12 @@ Two shell scripts at the repo root handle the full startup sequence:
 - `start_environment.sh` — starts the Django frontend server
 - `start_simulation.sh` — interactive CLI menu that lets you pick a profile, fork, and simulation name, then launches `reverie.py` (requires `start_environment.sh` running separately)
 
+### Concurrent agent cognition
+Persona cognition (perceive → retrieve → plan → reflect → execute) now runs concurrently across all agents in a tick instead of one at a time, via a bounded worker pool (`agent_cognition_pool.py`) — the actual bottleneck (sequential LLM round-trips) scales down roughly with concurrency instead of with agent count. A `WorldSnapshot` gives each agent's cognition a frozen, read-only view of other personas for the tick, so no agent reads another's state while it's being concurrently mutated. Conversation initiation is the one place cognition used to write into another persona's state directly; it's now proposal-based (`chat_resolver.py`) — a `ChatProposal` carrying both sides' intended changes is applied atomically or rejected entirely from the main thread after the tick, so a conversation is never left half-initialized. Configure `REVERIE_MAX_WORKERS` / `REVERIE_LLM_TIMEOUT_SECONDS` env vars to tune the pool for your local inference server.
+
+### Playback mode for replaying runs
+The `/replay/<sim_code>/<step>/` map view now has real playback controls instead of a fixed one-way walkthrough: Play, Pause, Stop, Restart, a speed selector (1x–32x), a scrubber to seek to any recorded step, and a jump-to-time box (e.g. `07:00`) to skip straight past overnight/idle stretches. All of it reads the run's already-recorded `movement/*.json` files directly and never touches the live backend, so browsing a run doesn't affect (or wait on) simulation generation. The launcher's "Open map" / "Open map replay" links now correctly route to this playback view for any run that isn't the one currently being generated, rather than opening the live (backend-driven) map view for a run with nothing left to generate.
+
 ### Crash-proofing for local models
 Local models produce malformed output far more often than GPT-3.5. A systematic pass fixed 12+ crash vectors:
 
@@ -174,6 +180,8 @@ With the environment server running, navigate to:
 
 For example, to replay a pre-simulated example starting at step 1:  
 [http://localhost:8000/replay/July1_the_ville_isabella_maria_klaus-step-3-20/1/](http://localhost:8000/replay/July1_the_ville_isabella_maria_klaus-step-3-20/1/)
+
+Once open, use the Play/Pause/Stop/Restart buttons, the speed selector, the step scrubber, or the "jump to time" box (e.g. `07:00`) to browse the run at your own pace — none of it touches or waits on the backend.
 
 #### Step 5. Demoing a Simulation
 To view a simulation with correct character sprites, first compress it by running the `compress` function in `reverie/compress_sim_storage.py`, then navigate to:
