@@ -1,0 +1,3137 @@
+{
+  "case": {
+    "case_id": "template_blackmail",
+    "case_type": "blackmail",
+    "title": "The Storage Room Murder",
+    "status": "locked",
+    "victim_id": "{VICTIM_ID}",
+    "killer_id": "{KILLER_ID}",
+    "motive_summary": "{KILLER_NAME} was being blackmailed by {VICTIM_NAME} over a secret ledger.",
+    "method": "blunt_force",
+    "weapon_id": "{WEAPON_ID}",
+    "murder_location_id": "loc_cafe_storage",
+    "time_of_death": "07:56",
+    "discovery_time": "08:12",
+    "discovered_by": "{RH2_ID}",
+    "discovery_location_id": "loc_cafe_storage",
+    "sim_start_time": "06:00",
+    "murder_window": [
+      "07:45",
+      "08:00"
+    ],
+    "overview_text": "08:12 \u2014 {VICTIM_NAME}, owner of Hobbs Cafe, found dead in the cafe storage room by {RH2_NAME}. The cafe opened at 08:00. Several villagers passed nearby between 07:30 and 08:10. No one claims to have seen what happened. The morning can be rewound from 06:00."
+  },
+  "agents": [
+    {
+      "agent_id": "{VICTIM_ID}",
+      "full_name": "{VICTIM_NAME}",
+      "age": 54,
+      "occupation": "Owner of Hobbs Cafe",
+      "traits": [
+        "exacting",
+        "proud",
+        "fair but unforgiving"
+      ],
+      "portrait": "\u2615",
+      "home_location_id": "loc_marcus_house",
+      "work_location_id": "loc_hobbs_cafe",
+      "routine_summary": "Up at six, reviews the books in his study, at the cafe by a quarter to seven to oversee opening.",
+      "relationships": [
+        {
+          "target_agent_id": "{KILLER_ID}",
+          "relationship_type": "employer",
+          "affinity": -0.2,
+          "trust": 0.1,
+          "tension": 0.9
+        },
+        {
+          "target_agent_id": "{RH2_ID}",
+          "relationship_type": "business_partner",
+          "affinity": 0.3,
+          "trust": 0.4,
+          "tension": 0.7
+        },
+        {
+          "target_agent_id": "{RH1_ID}",
+          "relationship_type": "creditor",
+          "affinity": -0.1,
+          "trust": 0.3,
+          "tension": 0.8
+        }
+      ],
+      "observation_skill": 0.8,
+      "memory_reliability": 0.9,
+      "honesty_baseline": 0.8,
+      "is_victim": true
+    },
+    {
+      "agent_id": "{KILLER_ID}",
+      "full_name": "{KILLER_NAME}",
+      "age": 36,
+      "occupation": "Cafe manager",
+      "traits": [
+        "organised",
+        "proud",
+        "guarded"
+      ],
+      "portrait": "\ud83e\udde3",
+      "home_location_id": "loc_clara_flat",
+      "work_location_id": "loc_hobbs_cafe",
+      "routine_summary": "Lives above the cafe. Down by half six to prep, opens the doors at eight sharp.",
+      "relationships": [
+        {
+          "target_agent_id": "{VICTIM_ID}",
+          "relationship_type": "employee",
+          "affinity": -0.3,
+          "trust": 0.2,
+          "tension": 0.9
+        },
+        {
+          "target_agent_id": "{WITNESS1_ID}",
+          "relationship_type": "acquaintance",
+          "affinity": 0.1,
+          "trust": 0.3,
+          "tension": 0.2
+        }
+      ],
+      "observation_skill": 0.7,
+      "memory_reliability": 0.8,
+      "honesty_baseline": 0.45,
+      "conflict_avoidance": 0.6
+    },
+    {
+      "agent_id": "{WITNESS1_ID}",
+      "full_name": "{WITNESS1_NAME}",
+      "age": 29,
+      "occupation": "Delivery driver",
+      "traits": [
+        "easygoing",
+        "chatty",
+        "bad at secrets"
+      ],
+      "portrait": "\ud83d\udce6",
+      "home_location_id": "loc_village_square",
+      "work_location_id": "loc_village_square",
+      "routine_summary": "Morning delivery round through the square and rear alley; usually cadges a coffee when the cafe opens.",
+      "relationships": [
+        {
+          "target_agent_id": "{WITNESS4_ID}",
+          "relationship_type": "secret_relationship",
+          "affinity": 0.9,
+          "trust": 0.8,
+          "tension": 0.4
+        },
+        {
+          "target_agent_id": "{VICTIM_ID}",
+          "relationship_type": "acquaintance",
+          "affinity": 0.2,
+          "trust": 0.5,
+          "tension": 0.1
+        }
+      ],
+      "observation_skill": 0.6,
+      "memory_reliability": 0.65,
+      "honesty_baseline": 0.7,
+      "gossip_tendency": 0.8
+    },
+    {
+      "agent_id": "{RH2_ID}",
+      "full_name": "{RH2_NAME}",
+      "age": 41,
+      "occupation": "Bookshop owner",
+      "traits": [
+        "ambitious",
+        "wounded",
+        "composed"
+      ],
+      "portrait": "\ud83d\udcda",
+      "home_location_id": "loc_bookshop",
+      "work_location_id": "loc_bookshop",
+      "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
+      "relationships": [
+        {
+          "target_agent_id": "{VICTIM_ID}",
+          "relationship_type": "business_partner",
+          "affinity": -0.4,
+          "trust": 0.2,
+          "tension": 0.9
+        },
+        {
+          "target_agent_id": "{WITNESS4_ID}",
+          "relationship_type": "employer",
+          "affinity": 0.2,
+          "trust": 0.5,
+          "tension": 0.6
+        }
+      ],
+      "observation_skill": 0.75,
+      "memory_reliability": 0.85,
+      "honesty_baseline": 0.6
+    },
+    {
+      "agent_id": "{RH1_ID}",
+      "full_name": "{RH1_NAME}",
+      "age": 47,
+      "occupation": "Builder",
+      "traits": [
+        "blunt",
+        "hot-tempered",
+        "proud"
+      ],
+      "portrait": "\ud83d\udd28",
+      "home_location_id": "loc_owen_house",
+      "work_location_id": "loc_owen_house",
+      "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
+      "relationships": [
+        {
+          "target_agent_id": "{VICTIM_ID}",
+          "relationship_type": "debtor",
+          "affinity": -0.6,
+          "trust": 0.2,
+          "tension": 0.95
+        }
+      ],
+      "observation_skill": 0.5,
+      "memory_reliability": 0.7,
+      "honesty_baseline": 0.55,
+      "conflict_avoidance": 0.2
+    },
+    {
+      "agent_id": "{WITNESS4_ID}",
+      "full_name": "{WITNESS4_NAME}",
+      "age": 33,
+      "occupation": "Bookshop assistant",
+      "traits": [
+        "careful",
+        "kind",
+        "conflict-averse"
+      ],
+      "portrait": "\ud83c\udf38",
+      "home_location_id": "loc_village_square",
+      "work_location_id": "loc_bookshop",
+      "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
+      "relationships": [
+        {
+          "target_agent_id": "{WITNESS1_ID}",
+          "relationship_type": "secret_relationship",
+          "affinity": 0.9,
+          "trust": 0.8,
+          "tension": 0.4
+        },
+        {
+          "target_agent_id": "{RH2_ID}",
+          "relationship_type": "employee",
+          "affinity": 0.3,
+          "trust": 0.4,
+          "tension": 0.6
+        },
+        {
+          "target_agent_id": "{VICTIM_ID}",
+          "relationship_type": "sponsor",
+          "affinity": 0.5,
+          "trust": 0.6,
+          "tension": 0.3
+        }
+      ],
+      "observation_skill": 0.7,
+      "memory_reliability": 0.8,
+      "honesty_baseline": 0.65,
+      "conflict_avoidance": 0.85
+    },
+    {
+      "agent_id": "{WITNESS2_ID}",
+      "full_name": "{WITNESS2_NAME} Cole",
+      "age": 38,
+      "occupation": "Clinic nurse",
+      "traits": [
+        "observant",
+        "practical",
+        "discreet"
+      ],
+      "portrait": "\ud83e\ude7a",
+      "home_location_id": "loc_village_square",
+      "work_location_id": "loc_clinic",
+      "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
+      "relationships": [
+        {
+          "target_agent_id": "{VICTIM_ID}",
+          "relationship_type": "neighbour",
+          "affinity": 0.4,
+          "trust": 0.6,
+          "tension": 0.1
+        }
+      ],
+      "observation_skill": 0.85,
+      "memory_reliability": 0.85,
+      "honesty_baseline": 0.85,
+      "gossip_tendency": 0.2
+    },
+    {
+      "agent_id": "{WITNESS3_ID}",
+      "full_name": "{WITNESS3_NAME} Grant",
+      "age": 68,
+      "occupation": "Retired schoolteacher",
+      "traits": [
+        "nosy",
+        "certain of himself",
+        "harmless"
+      ],
+      "portrait": "\ud83c\udfa9",
+      "home_location_id": "loc_village_square",
+      "work_location_id": "loc_village_square",
+      "routine_summary": "First on the square bench every morning with a flask and opinions.",
+      "relationships": [
+        {
+          "target_agent_id": "{VICTIM_ID}",
+          "relationship_type": "old_friend",
+          "affinity": 0.5,
+          "trust": 0.7,
+          "tension": 0.2
+        },
+        {
+          "target_agent_id": "{KILLER_ID}",
+          "relationship_type": "acquaintance",
+          "affinity": -0.2,
+          "trust": 0.3,
+          "tension": 0.3
+        }
+      ],
+      "observation_skill": 0.55,
+      "memory_reliability": 0.5,
+      "honesty_baseline": 0.9,
+      "gossip_tendency": 0.9
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "loc_village_square",
+      "name": "Village Square",
+      "description": "The open heart of the village, with a stone fountain, benches, and a view of the cafe and bookshop fronts.",
+      "connected_location_ids": [
+        "loc_hobbs_cafe",
+        "loc_bookshop",
+        "loc_clinic",
+        "loc_rear_alley",
+        "loc_marcus_house",
+        "loc_owen_house"
+      ],
+      "visibility_type": "public",
+      "camera_coverage": false
+    },
+    {
+      "location_id": "loc_hobbs_cafe",
+      "name": "Hobbs Cafe",
+      "description": "The village cafe. Counter, tables, and the till at the front; kitchen behind.",
+      "connected_location_ids": [
+        "loc_village_square",
+        "loc_cafe_kitchen"
+      ],
+      "visibility_type": "public",
+      "audible_from_location_ids": [
+        "loc_village_square"
+      ],
+      "camera_coverage": false
+    },
+    {
+      "location_id": "loc_cafe_kitchen",
+      "name": "Cafe Kitchen",
+      "description": "The working kitchen behind the cafe counter. Coat hooks, sink, mop bucket in the corner.",
+      "connected_location_ids": [
+        "loc_hobbs_cafe",
+        "loc_cafe_storage"
+      ],
+      "access_rules": [
+        "staff"
+      ],
+      "visibility_type": "private",
+      "audible_from_location_ids": [
+        "loc_hobbs_cafe"
+      ]
+    },
+    {
+      "location_id": "loc_cafe_storage",
+      "name": "Cafe Storage Room",
+      "description": "A cramped storage room behind the kitchen, stacked with crates. A rear door opens onto the alley.",
+      "connected_location_ids": [
+        "loc_cafe_kitchen",
+        "loc_rear_alley"
+      ],
+      "access_rules": [
+        "staff",
+        "keyholder"
+      ],
+      "visibility_type": "private",
+      "audible_from_location_ids": [
+        "loc_cafe_kitchen",
+        "loc_rear_alley"
+      ],
+      "camera_coverage": false,
+      "murder_suitable": true
+    },
+    {
+      "location_id": "loc_rear_alley",
+      "name": "Rear Alley",
+      "description": "A narrow service alley running behind the cafe and bookshop. Bins, crates, and the cafe's rear door.",
+      "connected_location_ids": [
+        "loc_village_square",
+        "loc_cafe_storage",
+        "loc_bookshop"
+      ],
+      "visibility_type": "public",
+      "audible_from_location_ids": [
+        "loc_cafe_storage"
+      ]
+    },
+    {
+      "location_id": "loc_bookshop",
+      "name": "Reed & Bell Bookshop",
+      "description": "{RH2_NAME}'s bookshop, part-funded by {VICTIM_NAME}. Its back door opens onto the rear alley.",
+      "connected_location_ids": [
+        "loc_village_square",
+        "loc_rear_alley"
+      ],
+      "visibility_type": "public"
+    },
+    {
+      "location_id": "loc_clinic",
+      "name": "Village Clinic",
+      "description": "A small clinic on the square where {WITNESS2_NAME} Cole works the early shift.",
+      "connected_location_ids": [
+        "loc_village_square"
+      ],
+      "visibility_type": "public"
+    },
+    {
+      "location_id": "loc_marcus_house",
+      "name": "{VICTIM_NAME}'s House",
+      "description": "{VICTIM_NAME}'s house on the edge of the square. His study holds the cafe's books.",
+      "connected_location_ids": [
+        "loc_village_square"
+      ],
+      "access_rules": [
+        "owner"
+      ],
+      "visibility_type": "private"
+    },
+    {
+      "location_id": "loc_owen_house",
+      "name": "{RH1_NAME}'s House & Yard",
+      "description": "{RH1_NAME}'s house and builder's timber yard on the far side of the square.",
+      "connected_location_ids": [
+        "loc_village_square"
+      ],
+      "access_rules": [
+        "owner"
+      ],
+      "visibility_type": "public"
+    },
+    {
+      "location_id": "loc_clara_flat",
+      "name": "Flat above Hobbs Cafe",
+      "description": "{KILLER_NAME}'s small flat above the cafe, reached by a side stair.",
+      "connected_location_ids": [
+        "loc_hobbs_cafe"
+      ],
+      "access_rules": [
+        "owner"
+      ],
+      "visibility_type": "private"
+    },
+    {
+      "location_id": "loc_fountain",
+      "name": "Fountain",
+      "description": "The stone fountain in the middle of the village square.",
+      "connected_location_ids": [
+        "loc_village_square"
+      ],
+      "visibility_type": "public"
+    }
+  ],
+  "objects": [
+    {
+      "object_id": "{WEAPON_ID}",
+      "name": "Brass {WEAPON_NAME}",
+      "description": "A heavy brass weight normally kept beside the till to pin down receipts.",
+      "normal_location_id": "loc_hobbs_cafe",
+      "final_location_id": "loc_cafe_kitchen",
+      "access_rules": [
+        "cafe_staff"
+      ],
+      "touched_by_agent_ids": [
+        "{KILLER_ID}",
+        "{VICTIM_ID}"
+      ],
+      "last_seen_time": "07:36",
+      "hidden_state": "cleaned_and_damp_in_mop_bucket",
+      "clue_relevance": "weapon"
+    },
+    {
+      "object_id": "obj_ledger_page",
+      "name": "Torn ledger page",
+      "description": "A page torn from the cafe ledger, columns of till takings with discrepancies circled in red ink.",
+      "normal_location_id": "loc_marcus_house",
+      "final_location_id": "loc_cafe_storage",
+      "access_rules": [
+        "owner"
+      ],
+      "touched_by_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "last_seen_time": "07:52",
+      "clue_relevance": "motive"
+    },
+    {
+      "object_id": "obj_blue_coat",
+      "name": "Blue wool coat",
+      "description": "{KILLER_NAME}'s blue coat, well known around the village.",
+      "normal_location_id": "loc_cafe_kitchen",
+      "final_location_id": "loc_cafe_kitchen",
+      "access_rules": [],
+      "touched_by_agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "last_seen_time": "08:00",
+      "hidden_state": "right_sleeve_damp_and_smudged",
+      "clue_relevance": "opportunity"
+    },
+    {
+      "object_id": "obj_loan_ledger",
+      "name": "{VICTIM_NAME}'s loan book",
+      "description": "A private notebook in {VICTIM_NAME}'s study recording money he is owed.",
+      "normal_location_id": "loc_marcus_house",
+      "final_location_id": "loc_marcus_house",
+      "access_rules": [
+        "owner"
+      ],
+      "touched_by_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "last_seen_time": "06:20",
+      "clue_relevance": "red_herring_motive"
+    },
+    {
+      "object_id": "obj_partnership_letter",
+      "name": "Partnership letter",
+      "description": "A signed letter in {VICTIM_NAME}'s coat pocket naming {WITNESS4_NAME} \u2014 not {RH2_NAME} \u2014 as partner in the bookshop expansion.",
+      "normal_location_id": "loc_marcus_house",
+      "final_location_id": "loc_cafe_storage",
+      "access_rules": [],
+      "touched_by_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "last_seen_time": "07:52",
+      "clue_relevance": "red_herring_motive"
+    },
+    {
+      "object_id": "obj_isabella_note",
+      "name": "{RH2_NAME}'s handwritten note",
+      "description": "A folded note in {VICTIM_NAME}'s pocket: 'We settle this at 8. Don't make me ask twice. \u2014 I.R.'",
+      "normal_location_id": "loc_bookshop",
+      "final_location_id": "loc_cafe_storage",
+      "access_rules": [],
+      "touched_by_agent_ids": [
+        "{RH2_ID}",
+        "{VICTIM_ID}"
+      ],
+      "last_seen_time": "07:52",
+      "clue_relevance": "red_herring"
+    }
+  ],
+  "memories": [
+    {
+      "memory_id": "mem_clara_theft",
+      "owner_agent_id": "{KILLER_ID}",
+      "known_by_agent_ids": [
+        "{KILLER_ID}",
+        "{VICTIM_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "killer_motive",
+      "truth_status": "true",
+      "summary": "{KILLER_NAME} has been skimming cash from the cafe till for over a year to cover her late mother's care debts.",
+      "emotional_weight": 9,
+      "shareability": "will_hide",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ledger_page"
+      ],
+      "linked_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "linked_location_ids": [
+        "loc_hobbs_cafe"
+      ]
+    },
+    {
+      "memory_id": "mem_clara_caught",
+      "owner_agent_id": "{KILLER_ID}",
+      "known_by_agent_ids": [
+        "{KILLER_ID}",
+        "{VICTIM_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "killer_motive",
+      "truth_status": "true",
+      "summary": "Last week {VICTIM_NAME} showed {KILLER_NAME} the torn ledger page proving the theft and said: 'You have until tomorrow.' The deadline was this morning.",
+      "emotional_weight": 10,
+      "shareability": "will_lie",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ledger_page",
+        "clue_overheard_threat"
+      ],
+      "linked_agent_ids": [
+        "{VICTIM_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_clara_summons",
+      "owner_agent_id": "{KILLER_ID}",
+      "known_by_agent_ids": [
+        "{KILLER_ID}",
+        "{VICTIM_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "opportunity_setup",
+      "truth_status": "true",
+      "summary": "At 07:40 {VICTIM_NAME} told {KILLER_NAME} to meet him in the storage room before opening \u2014 'last chance to say it in your own words.'",
+      "emotional_weight": 9,
+      "shareability": "will_lie",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_nadia_overheard"
+      ],
+      "linked_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_storage"
+      ]
+    },
+    {
+      "memory_id": "mem_clara_cover_story",
+      "owner_agent_id": "{KILLER_ID}",
+      "known_by_agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "memory_type": "cover_story",
+      "case_function": "false_alibi_reason",
+      "truth_status": "false",
+      "summary": "{KILLER_NAME}'s prepared story: she stepped out to the fountain for air from about 07:45 to just before 08:00, then opened the cafe.",
+      "emotional_weight": 8,
+      "shareability": "will_lie",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ben_sighting"
+      ],
+      "linked_location_ids": [
+        "loc_fountain"
+      ]
+    },
+    {
+      "memory_id": "mem_clara_weapon_fear",
+      "owner_agent_id": "{KILLER_ID}",
+      "known_by_agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "object_trail",
+      "truth_status": "true",
+      "summary": "{KILLER_NAME} washed the {WEAPON_NAME} and pushed it into the mop bucket at 08:02. She is terrified someone will look in the kitchen.",
+      "emotional_weight": 10,
+      "shareability": "will_hide",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_till_weight_found",
+        "clue_till_weight_missing"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_kitchen"
+      ]
+    },
+    {
+      "memory_id": "mem_marcus_discovery",
+      "owner_agent_id": "{VICTIM_ID}",
+      "known_by_agent_ids": [
+        "{VICTIM_ID}",
+        "{KILLER_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "victim_trigger",
+      "truth_status": "true",
+      "summary": "{VICTIM_NAME} found the till discrepancies while doing the quarterly books and tore out the page as proof.",
+      "emotional_weight": 8,
+      "shareability": "will_hide",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ledger_page"
+      ]
+    },
+    {
+      "memory_id": "mem_marcus_plan",
+      "owner_agent_id": "{VICTIM_ID}",
+      "known_by_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "victim_trigger",
+      "truth_status": "true",
+      "summary": "{VICTIM_NAME} planned to confront {KILLER_NAME} before opening and, if she refused to confess, take the ledger page to the village committee at nine.",
+      "emotional_weight": 8,
+      "shareability": "will_hide",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ledger_page",
+        "clue_overheard_threat"
+      ]
+    },
+    {
+      "memory_id": "mem_marcus_partnership",
+      "owner_agent_id": "{VICTIM_ID}",
+      "known_by_agent_ids": [
+        "{VICTIM_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "memory_type": "shared_secret",
+      "case_function": "red_herring_motive",
+      "truth_status": "true",
+      "summary": "{VICTIM_NAME} signed the bookshop expansion over to {WITNESS4_NAME}, breaking his promise to {RH2_NAME}. He planned to tell {RH2_NAME} at their 8 o'clock meeting.",
+      "emotional_weight": 7,
+      "shareability": "will_hide",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_partnership_letter",
+        "clue_isabella_note"
+      ],
+      "linked_agent_ids": [
+        "{RH2_ID}",
+        "{WITNESS4_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_marcus_owen_debt",
+      "owner_agent_id": "{VICTIM_ID}",
+      "known_by_agent_ids": [
+        "{VICTIM_ID}",
+        "{RH1_ID}"
+      ],
+      "memory_type": "shared_secret",
+      "case_function": "red_herring_motive",
+      "truth_status": "true",
+      "summary": "{RH1_NAME} owes {VICTIM_NAME} \u00a38,000, due today. {VICTIM_NAME} told him last night he would raise it at the village committee if unpaid.",
+      "emotional_weight": 7,
+      "shareability": "will_hide",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_loan_book",
+        "clue_owen_argument"
+      ],
+      "linked_agent_ids": [
+        "{RH1_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_isabella_betrayal",
+      "owner_agent_id": "{RH2_ID}",
+      "known_by_agent_ids": [
+        "{RH2_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "red_herring_motive",
+      "truth_status": "true",
+      "summary": "{RH2_NAME} heard a rumour the partnership went to {WITNESS4_NAME}. She wrote {VICTIM_NAME} a furious note demanding they settle it at 8 this morning.",
+      "emotional_weight": 8,
+      "shareability": "will_deflect",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_isabella_note",
+        "clue_partnership_letter"
+      ],
+      "linked_agent_ids": [
+        "{VICTIM_ID}",
+        "{WITNESS4_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_isabella_discovery",
+      "owner_agent_id": "{RH2_ID}",
+      "known_by_agent_ids": [
+        "{RH2_ID}"
+      ],
+      "memory_type": "observed",
+      "case_function": "clue_support",
+      "truth_status": "true",
+      "summary": "{RH2_NAME} arrived at 08:05 for the meeting, waited, then found {VICTIM_NAME} dead in the storage room at 08:12 when {KILLER_NAME} said he must be out the back.",
+      "emotional_weight": 10,
+      "shareability": "will_share",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [],
+      "linked_location_ids": [
+        "loc_cafe_storage"
+      ]
+    },
+    {
+      "memory_id": "mem_isabella_anchor",
+      "owner_agent_id": "{RH2_ID}",
+      "known_by_agent_ids": [
+        "{RH2_ID}",
+        "{WITNESS2_ID}"
+      ],
+      "memory_type": "observed",
+      "case_function": "innocence_anchor",
+      "truth_status": "true",
+      "summary": "{RH2_NAME} was at the clinic with {WITNESS2_NAME} from 07:40 to 08:00 having her blood pressure checked \u2014 she nearly cancelled the {VICTIM_NAME} meeting over the stress.",
+      "emotional_weight": 5,
+      "shareability": "will_share_if_asked",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_isabella_clinic"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS2_ID}"
+      ],
+      "linked_location_ids": [
+        "loc_clinic"
+      ]
+    },
+    {
+      "memory_id": "mem_owen_debt",
+      "owner_agent_id": "{RH1_ID}",
+      "known_by_agent_ids": [
+        "{RH1_ID}",
+        "{VICTIM_ID}"
+      ],
+      "memory_type": "private_secret",
+      "case_function": "red_herring_motive",
+      "truth_status": "true",
+      "summary": "{RH1_NAME} owes {VICTIM_NAME} \u00a38,000 he cannot repay. Being named at the committee would finish his business.",
+      "emotional_weight": 8,
+      "shareability": "will_deflect",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_loan_book",
+        "clue_owen_argument"
+      ]
+    },
+    {
+      "memory_id": "mem_owen_argument",
+      "owner_agent_id": "{RH1_ID}",
+      "known_by_agent_ids": [
+        "{RH1_ID}",
+        "{VICTIM_ID}",
+        "{WITNESS2_ID}",
+        "{WITNESS3_ID}"
+      ],
+      "memory_type": "observed",
+      "case_function": "red_herring_motive",
+      "truth_status": "true",
+      "summary": "{RH1_NAME} confronted {VICTIM_NAME} outside the cafe at 07:05 and it turned into a shouting match about the money.",
+      "emotional_weight": 7,
+      "shareability": "will_share_if_asked",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_owen_argument"
+      ]
+    },
+    {
+      "memory_id": "mem_owen_anchor",
+      "owner_agent_id": "{RH1_ID}",
+      "known_by_agent_ids": [
+        "{RH1_ID}"
+      ],
+      "memory_type": "observed",
+      "case_function": "innocence_anchor",
+      "truth_status": "true",
+      "summary": "{RH1_NAME} was back in his yard from 07:15 signing for a timber delivery; the driver was with him until 08:05.",
+      "emotional_weight": 4,
+      "shareability": "will_share_if_asked",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_owen_delivery"
+      ]
+    },
+    {
+      "memory_id": "mem_ben_sighting",
+      "owner_agent_id": "{WITNESS1_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS1_ID}"
+      ],
+      "memory_type": "witness_fragment",
+      "case_function": "clue_support",
+      "truth_status": "mistaken",
+      "summary": "{WITNESS1_NAME} saw someone in a blue coat slip into the rear alley at about 07:47. He didn't see the face but assumes it was {KILLER_NAME} \u2014 she always wears that coat.",
+      "emotional_weight": 5,
+      "confidence": 0.72,
+      "shareability": "will_share_if_asked",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ben_sighting"
+      ],
+      "linked_agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "linked_location_ids": [
+        "loc_rear_alley"
+      ]
+    },
+    {
+      "memory_id": "mem_ben_priya",
+      "owner_agent_id": "{WITNESS1_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS1_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "memory_type": "innocent_secret",
+      "case_function": "innocent_secret",
+      "truth_status": "true",
+      "summary": "{WITNESS1_NAME} was in the alley at 07:45 to meet {WITNESS4_NAME} \u2014 they've been seeing each other in secret because {RH2_NAME} disapproves of workplace romance.",
+      "emotional_weight": 6,
+      "shareability": "will_lie",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ben_priya_meeting"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS4_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_ben_sound",
+      "owner_agent_id": "{WITNESS1_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS1_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "memory_type": "witness_fragment",
+      "case_function": "clue_support",
+      "truth_status": "true",
+      "summary": "While in the alley {WITNESS1_NAME} heard a dull thud from inside the cafe's back rooms just before he and {WITNESS4_NAME} left, around 07:56.",
+      "emotional_weight": 6,
+      "confidence": 0.8,
+      "shareability": "will_share_if_asked",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_storage_sound"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_storage"
+      ]
+    },
+    {
+      "memory_id": "mem_priya_partnership",
+      "owner_agent_id": "{WITNESS4_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS4_ID}",
+        "{VICTIM_ID}"
+      ],
+      "memory_type": "shared_secret",
+      "case_function": "red_herring_motive",
+      "truth_status": "true",
+      "summary": "{WITNESS4_NAME} knows {VICTIM_NAME} chose her for the partnership and that {RH2_NAME} doesn't officially know yet. She's been dreading the fallout.",
+      "emotional_weight": 7,
+      "shareability": "will_hide",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_partnership_letter"
+      ],
+      "linked_agent_ids": [
+        "{RH2_ID}",
+        "{VICTIM_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_priya_ben",
+      "owner_agent_id": "{WITNESS4_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS4_ID}",
+        "{WITNESS1_ID}"
+      ],
+      "memory_type": "innocent_secret",
+      "case_function": "innocent_secret",
+      "truth_status": "true",
+      "summary": "{WITNESS4_NAME} met {WITNESS1_NAME} behind the bookshop at 07:45. She will not admit it unless confronted \u2014 {RH2_NAME} would make her life miserable.",
+      "emotional_weight": 6,
+      "shareability": "will_lie",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_ben_priya_meeting"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS1_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_nadia_overheard",
+      "owner_agent_id": "{WITNESS2_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS2_ID}"
+      ],
+      "memory_type": "witness_fragment",
+      "case_function": "opportunity_setup",
+      "truth_status": "true",
+      "summary": "Passing the cafe window at 07:40, {WITNESS2_NAME} heard {VICTIM_NAME} say something like 'storage room, before we open' \u2014 she couldn't hear who he was talking to.",
+      "emotional_weight": 5,
+      "confidence": 0.75,
+      "shareability": "will_share_if_asked",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_nadia_overheard"
+      ],
+      "linked_location_ids": [
+        "loc_hobbs_cafe"
+      ]
+    },
+    {
+      "memory_id": "mem_nadia_isabella",
+      "owner_agent_id": "{WITNESS2_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS2_ID}",
+        "{RH2_ID}"
+      ],
+      "memory_type": "observed",
+      "case_function": "innocence_anchor",
+      "truth_status": "true",
+      "summary": "{WITNESS2_NAME} took {RH2_NAME}'s blood pressure at the clinic from about 07:40 to 08:00. {RH2_NAME} was agitated about a meeting.",
+      "emotional_weight": 4,
+      "shareability": "will_share_if_asked",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_isabella_clinic"
+      ],
+      "linked_agent_ids": [
+        "{RH2_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_elias_threat",
+      "owner_agent_id": "{WITNESS3_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS3_ID}"
+      ],
+      "memory_type": "witness_fragment",
+      "case_function": "clue_support",
+      "truth_status": "true",
+      "summary": "Last week {WITNESS3_NAME} was in the cafe when he heard {VICTIM_NAME}, low and furious, tell someone in the kitchen doorway: 'You have until tomorrow.' He never saw who.",
+      "emotional_weight": 6,
+      "confidence": 0.7,
+      "shareability": "will_share",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_overheard_threat"
+      ],
+      "linked_agent_ids": [
+        "{VICTIM_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_elias_owen_bias",
+      "owner_agent_id": "{WITNESS3_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS3_ID}"
+      ],
+      "memory_type": "false_belief",
+      "case_function": "witness_bias",
+      "truth_status": "mistaken",
+      "summary": "{WITNESS3_NAME} is convinced {RH1_NAME} must be the killer \u2014 'you should have heard him this morning, practically frothing.' He connects the argument to the murder with no evidence.",
+      "emotional_weight": 5,
+      "confidence": 0.9,
+      "shareability": "will_share",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_owen_argument"
+      ],
+      "linked_agent_ids": [
+        "{RH1_ID}"
+      ]
+    },
+    {
+      "memory_id": "mem_rumour_priya",
+      "owner_agent_id": "{WITNESS3_ID}",
+      "known_by_agent_ids": [
+        "{WITNESS3_ID}",
+        "{RH2_ID}",
+        "{WITNESS2_ID}"
+      ],
+      "memory_type": "rumour",
+      "case_function": "rumour_noise",
+      "truth_status": "rumour",
+      "summary": "Village rumour: {VICTIM_NAME} was planning to 'shake up' the bookshop arrangement. Nobody knows details, but {RH2_NAME} heard it too.",
+      "emotional_weight": 4,
+      "shareability": "will_share",
+      "discoverable_by_player": true,
+      "linked_clue_ids": [
+        "clue_partnership_letter"
+      ],
+      "linked_agent_ids": [
+        "{RH2_ID}",
+        "{WITNESS4_ID}"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "event_id": "ev_0600_marcus_wakes",
+      "time": "06:00",
+      "location_id": "loc_marcus_house",
+      "agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "event_type": "routine",
+      "truth_description": "{VICTIM_NAME} rises early and takes his coffee into the study.",
+      "visibility": "public",
+      "importance": 2
+    },
+    {
+      "event_id": "ev_0615_marcus_ledger",
+      "time": "06:15",
+      "location_id": "loc_marcus_house",
+      "agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "event_type": "object_use",
+      "truth_description": "{VICTIM_NAME} works through the cafe ledger in his study and slips a torn page into his coat pocket.",
+      "player_description": "A light is on in {VICTIM_NAME}'s study.",
+      "visibility": "private",
+      "object_ids": [
+        "obj_ledger_page",
+        "obj_loan_ledger"
+      ],
+      "importance": 7,
+      "linked_clue_ids": [
+        "clue_ledger_page"
+      ]
+    },
+    {
+      "event_id": "ev_0630_clara_opens",
+      "time": "06:30",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "routine",
+      "truth_description": "{KILLER_NAME} comes down from her flat and starts prepping the cafe: chairs down, machine on, float counted.",
+      "visibility": "public",
+      "importance": 3
+    },
+    {
+      "event_id": "ev_0640_elias_bench",
+      "time": "06:40",
+      "location_id": "loc_village_square",
+      "agent_ids": [
+        "{WITNESS3_ID}"
+      ],
+      "event_type": "routine",
+      "truth_description": "{WITNESS3_NAME} takes his usual bench in the square with a flask of tea, facing the cafe.",
+      "visibility": "public",
+      "importance": 2
+    },
+    {
+      "event_id": "ev_0645_marcus_arrives",
+      "time": "06:45",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{VICTIM_ID}",
+        "{KILLER_ID}"
+      ],
+      "event_type": "arrival",
+      "truth_description": "{VICTIM_NAME} arrives at the cafe. He and {KILLER_NAME} exchange a few stiff words; the room goes quiet when he checks the till.",
+      "visibility": "public",
+      "visible_to_agent_ids": [
+        "{WITNESS3_ID}"
+      ],
+      "importance": 6
+    },
+    {
+      "event_id": "ev_0650_nadia_shift",
+      "time": "06:50",
+      "location_id": "loc_clinic",
+      "agent_ids": [
+        "{WITNESS2_ID}"
+      ],
+      "event_type": "routine",
+      "truth_description": "{WITNESS2_NAME} opens up the clinic for the early shift.",
+      "visibility": "public",
+      "importance": 2
+    },
+    {
+      "event_id": "ev_0700_priya_stockroom",
+      "time": "07:00",
+      "location_id": "loc_bookshop",
+      "agent_ids": [
+        "{WITNESS4_ID}"
+      ],
+      "event_type": "routine",
+      "truth_description": "{WITNESS4_NAME} lets herself into the bookshop to sort the morning delivery in the stockroom.",
+      "visibility": "public",
+      "importance": 2
+    },
+    {
+      "event_id": "ev_0705_owen_argument",
+      "time": "07:05",
+      "location_id": "loc_village_square",
+      "agent_ids": [
+        "{RH1_ID}",
+        "{VICTIM_ID}"
+      ],
+      "event_type": "argument",
+      "truth_description": "{RH1_NAME} confronts {VICTIM_NAME} outside the cafe. Voices rise fast \u2014 money, a deadline, the committee. {RH1_NAME} jabs a finger at {VICTIM_NAME}'s chest before storming off.",
+      "visibility": "public",
+      "visible_to_agent_ids": [
+        "{WITNESS3_ID}",
+        "{WITNESS2_ID}",
+        "{KILLER_ID}"
+      ],
+      "audible_to_agent_ids": [
+        "{WITNESS3_ID}",
+        "{WITNESS2_ID}"
+      ],
+      "importance": 8,
+      "linked_clue_ids": [
+        "clue_owen_argument"
+      ]
+    },
+    {
+      "event_id": "ev_0715_owen_yard",
+      "time": "07:15",
+      "location_id": "loc_owen_house",
+      "agent_ids": [
+        "{RH1_ID}"
+      ],
+      "event_type": "arrival",
+      "truth_description": "{RH1_NAME} returns to his yard, still fuming, and starts hauling timber about.",
+      "visibility": "public",
+      "importance": 4,
+      "linked_clue_ids": [
+        "clue_owen_delivery"
+      ]
+    },
+    {
+      "event_id": "ev_0720_isabella_note",
+      "time": "07:20",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{RH2_ID}",
+        "{VICTIM_ID}"
+      ],
+      "event_type": "object_drop",
+      "truth_description": "{RH2_NAME} strides into the cafe, presses a folded note into {VICTIM_NAME}'s hand without a word, and leaves.",
+      "player_description": "{RH2_NAME} enters the cafe briefly and hands {VICTIM_NAME} something small, then leaves without ordering.",
+      "visibility": "public_partial",
+      "visible_to_agent_ids": [
+        "{KILLER_ID}",
+        "{WITNESS3_ID}"
+      ],
+      "object_ids": [
+        "obj_isabella_note"
+      ],
+      "importance": 7,
+      "linked_clue_ids": [
+        "clue_isabella_note"
+      ]
+    },
+    {
+      "event_id": "ev_0730_ben_round",
+      "time": "07:30",
+      "location_id": "loc_village_square",
+      "agent_ids": [
+        "{WITNESS1_ID}"
+      ],
+      "event_type": "movement",
+      "truth_description": "{WITNESS1_NAME} parks his van by the square and starts his delivery round, crates stacked on a trolley.",
+      "visibility": "public",
+      "importance": 3
+    },
+    {
+      "event_id": "ev_0736_till_weight",
+      "time": "07:36",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "object_use",
+      "truth_description": "{KILLER_NAME} tidies the counter, moving the {WEAPON_NAME} onto the receipt pile.",
+      "visibility": "public",
+      "visible_to_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "object_ids": [
+        "{WEAPON_ID}"
+      ],
+      "importance": 6,
+      "linked_clue_ids": [
+        "clue_till_weight_missing"
+      ]
+    },
+    {
+      "event_id": "ev_0740_marcus_summons",
+      "time": "07:40",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{VICTIM_ID}",
+        "{KILLER_ID}"
+      ],
+      "event_type": "conversation",
+      "truth_description": "{VICTIM_NAME} tells {KILLER_NAME}, quietly: 'Storage room, before we open. Last chance to say it in your own words.'",
+      "player_description": "{VICTIM_NAME} speaks to {KILLER_NAME} in a low voice near the kitchen door. A phrase drifts through the open window: '...storage room, before we open...'",
+      "visibility": "public_partial",
+      "audible_to_agent_ids": [
+        "{WITNESS2_ID}"
+      ],
+      "importance": 9,
+      "linked_clue_ids": [
+        "clue_nadia_overheard"
+      ]
+    },
+    {
+      "event_id": "ev_0740_isabella_clinic",
+      "time": "07:40",
+      "location_id": "loc_clinic",
+      "agent_ids": [
+        "{RH2_ID}",
+        "{WITNESS2_ID}"
+      ],
+      "event_type": "arrival",
+      "truth_description": "{RH2_NAME} arrives at the clinic, tense and pale, and asks {WITNESS2_NAME} to check her blood pressure before 'a difficult meeting'.",
+      "visibility": "public",
+      "importance": 6,
+      "linked_clue_ids": [
+        "clue_isabella_clinic"
+      ]
+    },
+    {
+      "event_id": "ev_0744_clara_exits",
+      "time": "07:44",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "departure",
+      "truth_description": "{KILLER_NAME} takes her blue coat and slips out of the cafe's front door, turning towards the square.",
+      "visibility": "public",
+      "visible_to_agent_ids": [
+        "{WITNESS3_ID}"
+      ],
+      "object_ids": [
+        "obj_blue_coat"
+      ],
+      "importance": 7
+    },
+    {
+      "event_id": "ev_0745_ben_priya_meet",
+      "time": "07:45",
+      "location_id": "loc_rear_alley",
+      "agent_ids": [
+        "{WITNESS1_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "event_type": "private_meeting",
+      "truth_description": "{WITNESS1_NAME} and {WITNESS4_NAME} meet behind the bookshop's back door, out of sight, talking in whispers.",
+      "player_description": "Two figures stand close together at the bookshop end of the alley, mostly hidden by the bins.",
+      "visibility": "private",
+      "importance": 6,
+      "linked_clue_ids": [
+        "clue_ben_priya_meeting"
+      ]
+    },
+    {
+      "event_id": "ev_0747_blue_coat",
+      "time": "07:47",
+      "location_id": "loc_rear_alley",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "movement",
+      "truth_description": "{KILLER_NAME}, in her blue coat, cuts from the square into the rear alley and stops by the cafe's rear door.",
+      "player_description": "A figure in a blue coat enters the rear alley from the square and moves towards the cafe's rear door.",
+      "visibility": "public_partial",
+      "visible_to_agent_ids": [
+        "{WITNESS1_ID}"
+      ],
+      "object_ids": [
+        "obj_blue_coat"
+      ],
+      "importance": 9,
+      "linked_clue_ids": [
+        "clue_ben_sighting"
+      ]
+    },
+    {
+      "event_id": "ev_0752_marcus_storage",
+      "time": "07:52",
+      "location_id": "loc_cafe_storage",
+      "agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "event_type": "movement",
+      "truth_description": "{VICTIM_NAME} walks through the kitchen into the storage room carrying his coat, the ledger page in the pocket.",
+      "player_description": "{VICTIM_NAME} is no longer visible in the cafe front.",
+      "visibility": "private",
+      "object_ids": [
+        "obj_ledger_page",
+        "obj_partnership_letter",
+        "obj_isabella_note"
+      ],
+      "importance": 8
+    },
+    {
+      "event_id": "ev_0753_clara_rear_door",
+      "time": "07:53",
+      "location_id": "loc_cafe_storage",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "movement",
+      "truth_description": "{KILLER_NAME} enters the storage room through the rear door, the {WEAPON_NAME} in her coat pocket.",
+      "visibility": "hidden",
+      "object_ids": [
+        "{WEAPON_ID}"
+      ],
+      "importance": 9
+    },
+    {
+      "event_id": "ev_0756_murder",
+      "time": "07:56",
+      "location_id": "loc_cafe_storage",
+      "agent_ids": [
+        "{KILLER_ID}",
+        "{VICTIM_ID}"
+      ],
+      "event_type": "murder",
+      "truth_description": "The confrontation turns. {VICTIM_NAME} says the committee will hear everything at nine. {KILLER_NAME} strikes him with the {WEAPON_NAME}.",
+      "visibility": "hidden",
+      "object_ids": [
+        "{WEAPON_ID}"
+      ],
+      "importance": 10
+    },
+    {
+      "event_id": "ev_0756_sound",
+      "time": "07:56",
+      "location_id": "loc_rear_alley",
+      "agent_ids": [],
+      "event_type": "sound",
+      "truth_description": "The blow is audible in the alley as a dull thud.",
+      "player_description": "A dull thud is heard from inside the cafe's back rooms.",
+      "visibility": "public_partial",
+      "audible_to_agent_ids": [
+        "{WITNESS1_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "importance": 8,
+      "linked_clue_ids": [
+        "clue_storage_sound"
+      ]
+    },
+    {
+      "event_id": "ev_0758_rear_door",
+      "time": "07:58",
+      "location_id": "loc_rear_alley",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "movement",
+      "truth_description": "{KILLER_NAME} slips out of the rear door, pulls it shut, and walks quickly up the alley towards the square, one hand pressed into her coat pocket.",
+      "player_description": "The cafe's rear door opens briefly. A figure leaves carrying something small and walks quickly towards the square.",
+      "visibility": "public_partial",
+      "object_ids": [
+        "{WEAPON_ID}"
+      ],
+      "importance": 9,
+      "linked_clue_ids": [
+        "clue_rear_door"
+      ]
+    },
+    {
+      "event_id": "ev_0759_ben_priya_leave",
+      "time": "07:59",
+      "location_id": "loc_rear_alley",
+      "agent_ids": [
+        "{WITNESS1_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "event_type": "departure",
+      "truth_description": "{WITNESS1_NAME} and {WITNESS4_NAME} separate hurriedly \u2014 {WITNESS4_NAME} back through the bookshop's rear door, {WITNESS1_NAME} around to his van.",
+      "player_description": "The two figures at the bookshop end of the alley separate and leave in different directions.",
+      "visibility": "public_partial",
+      "importance": 5
+    },
+    {
+      "event_id": "ev_0800_cafe_opens",
+      "time": "08:00",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "routine",
+      "truth_description": "{KILLER_NAME} re-enters through the front, hangs her coat in the kitchen, and unlocks the cafe doors two minutes late, visibly flushed.",
+      "player_description": "{KILLER_NAME} opens the cafe doors, slightly late, looking flustered.",
+      "visibility": "public",
+      "visible_to_agent_ids": [
+        "{WITNESS3_ID}"
+      ],
+      "object_ids": [
+        "obj_blue_coat"
+      ],
+      "importance": 7
+    },
+    {
+      "event_id": "ev_0802_weight_hidden",
+      "time": "08:02",
+      "location_id": "loc_cafe_kitchen",
+      "agent_ids": [
+        "{KILLER_ID}"
+      ],
+      "event_type": "hidden_action",
+      "truth_description": "{KILLER_NAME} rinses the {WEAPON_NAME} at the kitchen sink and pushes it down into the mop bucket.",
+      "visibility": "hidden",
+      "object_ids": [
+        "{WEAPON_ID}"
+      ],
+      "importance": 9
+    },
+    {
+      "event_id": "ev_0803_elias_coffee",
+      "time": "08:03",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{WITNESS3_ID}",
+        "{KILLER_ID}"
+      ],
+      "event_type": "routine",
+      "truth_description": "{WITNESS3_NAME} comes in for his usual coffee. {KILLER_NAME} fumbles his change; he remarks that she looks like she's seen a ghost.",
+      "visibility": "public",
+      "importance": 5
+    },
+    {
+      "event_id": "ev_0805_isabella_arrives",
+      "time": "08:05",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{RH2_ID}"
+      ],
+      "event_type": "arrival",
+      "truth_description": "{RH2_NAME} arrives for her 8 o'clock meeting with {VICTIM_NAME} and takes a table, drumming her fingers.",
+      "visibility": "public",
+      "visible_to_agent_ids": [
+        "{KILLER_ID}",
+        "{WITNESS3_ID}"
+      ],
+      "importance": 6
+    },
+    {
+      "event_id": "ev_0810_isabella_asks",
+      "time": "08:10",
+      "location_id": "loc_hobbs_cafe",
+      "agent_ids": [
+        "{RH2_ID}",
+        "{KILLER_ID}"
+      ],
+      "event_type": "conversation",
+      "truth_description": "{RH2_NAME} demands to know where {VICTIM_NAME} is. {KILLER_NAME}, not meeting her eyes, says he's probably out the back.",
+      "visibility": "public",
+      "visible_to_agent_ids": [
+        "{WITNESS3_ID}"
+      ],
+      "importance": 7
+    },
+    {
+      "event_id": "ev_0812_discovery",
+      "time": "08:12",
+      "location_id": "loc_cafe_storage",
+      "agent_ids": [
+        "{RH2_ID}",
+        "{VICTIM_ID}"
+      ],
+      "event_type": "body_discovery",
+      "truth_description": "{RH2_NAME} pushes through the kitchen into the storage room and finds {VICTIM_NAME} dead on the floor. Her scream empties the square.",
+      "player_description": "{RH2_NAME} finds {VICTIM_NAME} dead in the storage room. Her scream is heard across the square.",
+      "visibility": "public",
+      "importance": 10
+    }
+  ],
+  "clues": [
+    {
+      "clue_id": "clue_ledger_page",
+      "title": "Torn ledger page on the body",
+      "clue_type": "document",
+      "description": "In {VICTIM_NAME}'s coat pocket: a page torn from the cafe ledger. Till takings for the past year, with shortfalls circled in red and a note in {VICTIM_NAME}'s hand \u2014 'C. \u2014 until tomorrow.'",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_storage"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_agent_ids": [
+        "{KILLER_ID}",
+        "{VICTIM_ID}"
+      ],
+      "linked_object_ids": [
+        "obj_ledger_page"
+      ],
+      "linked_event_ids": [
+        "ev_0615_marcus_ledger"
+      ]
+    },
+    {
+      "clue_id": "clue_overheard_threat",
+      "title": "\"You have until tomorrow\"",
+      "clue_type": "witness_statement",
+      "description": "{WITNESS3_NAME} heard {VICTIM_NAME}, low and furious, tell someone in the cafe kitchen doorway last week: 'You have until tomorrow.' He never saw who it was.",
+      "strength": "medium",
+      "reliability": 0.7,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "{WITNESS3_ID}",
+        "question_type": "relationship"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS3_ID}",
+        "{VICTIM_ID}"
+      ]
+    },
+    {
+      "clue_id": "clue_till_discrepancy",
+      "title": "Audited ledger with missing page",
+      "clue_type": "document",
+      "description": "The cafe ledger in {VICTIM_NAME}'s study is covered in fresh audit marks. One page has been torn out \u2014 the stub remains. Someone at the cafe was stealing, and {VICTIM_NAME} knew.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_agent_ids": [
+        "{VICTIM_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0615_marcus_ledger"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_sighting",
+      "title": "Blue coat in the rear alley",
+      "clue_type": "witness_statement",
+      "description": "{WITNESS1_NAME} saw someone in a blue coat slip into the rear alley at about 07:47 and head for the cafe's rear door. He didn't see the face, but {KILLER_NAME} always wears that blue coat.",
+      "strength": "medium",
+      "reliability": 0.72,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "{WITNESS1_ID}",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_clara_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS1_ID}",
+        "{KILLER_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0747_blue_coat"
+      ],
+      "linked_location_ids": [
+        "loc_rear_alley"
+      ]
+    },
+    {
+      "clue_id": "clue_storage_sound",
+      "title": "Dull thud at 07:56",
+      "clue_type": "observation",
+      "description": "A dull thud was heard from the cafe's back rooms at 07:56 \u2014 inside the murder window, in the room where the body was found.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_method"
+      ],
+      "linked_event_ids": [
+        "ev_0756_sound"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_storage"
+      ]
+    },
+    {
+      "clue_id": "clue_rear_door",
+      "title": "Figure leaving by the rear door at 07:58",
+      "clue_type": "observation",
+      "description": "The cafe's rear door opened briefly at 07:58. A figure left carrying something small and walked quickly towards the square.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_clara_false_alibi"
+      ],
+      "linked_event_ids": [
+        "ev_0758_rear_door"
+      ],
+      "linked_location_ids": [
+        "loc_rear_alley"
+      ]
+    },
+    {
+      "clue_id": "clue_till_weight_missing",
+      "title": "The {WEAPON_NAME} is gone",
+      "clue_type": "object_trail",
+      "description": "The {WEAPON_NAME} sat on the counter at 07:36 \u2014 {KILLER_NAME} moved it herself. After the body was found, it is nowhere on the counter.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_hobbs_cafe"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_method"
+      ],
+      "linked_object_ids": [
+        "{WEAPON_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0736_till_weight"
+      ]
+    },
+    {
+      "clue_id": "clue_till_weight_found",
+      "title": "Till weight in the mop bucket",
+      "clue_type": "physical_evidence",
+      "description": "The {WEAPON_NAME}, found pushed down inside the kitchen mop bucket. It has been rinsed but is still damp \u2014 and it doesn't belong anywhere near the sink.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_kitchen",
+        "required_prior_clue_ids": [
+          "clue_till_weight_missing"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_method"
+      ],
+      "linked_object_ids": [
+        "{WEAPON_ID}"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_kitchen"
+      ]
+    },
+    {
+      "clue_id": "clue_blue_coat_damp",
+      "title": "Damp sleeve on {KILLER_NAME}'s coat",
+      "clue_type": "physical_evidence",
+      "description": "{KILLER_NAME}'s blue coat hangs in the kitchen. The right sleeve is damp at the cuff and faintly smudged, as if something wet was carried against it.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_kitchen"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_clara_opportunity"
+      ],
+      "linked_object_ids": [
+        "obj_blue_coat"
+      ],
+      "linked_agent_ids": [
+        "{KILLER_ID}"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_overheard",
+      "title": "\"Storage room, before we open\"",
+      "clue_type": "witness_statement",
+      "description": "Passing the cafe window at 07:40, {WITNESS2_NAME} heard {VICTIM_NAME} say 'storage room, before we open'. She couldn't hear who he was speaking to \u2014 but whoever it was knew where {VICTIM_NAME} would be.",
+      "strength": "medium",
+      "reliability": 0.75,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "{WITNESS2_ID}",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS2_ID}",
+        "{VICTIM_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0740_marcus_summons"
+      ]
+    },
+    {
+      "clue_id": "clue_owen_argument",
+      "title": "{RH1_NAME}'s shouting match with {VICTIM_NAME}",
+      "clue_type": "observation",
+      "description": "At 07:05 {RH1_NAME} confronted {VICTIM_NAME} outside the cafe \u2014 money, a deadline, the committee. He jabbed a finger in {VICTIM_NAME}'s chest and stormed off. Half the square heard it.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_red_herring"
+      ],
+      "linked_agent_ids": [
+        "{RH1_ID}",
+        "{VICTIM_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0705_owen_argument"
+      ]
+    },
+    {
+      "clue_id": "clue_loan_book",
+      "title": "{VICTIM_NAME}'s loan book",
+      "clue_type": "document",
+      "description": "A private notebook in {VICTIM_NAME}'s study: 'O. Price \u2014 \u00a38,000 \u2014 due 1st. Committee if unpaid.' {RH1_NAME} had everything to lose today.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_red_herring"
+      ],
+      "linked_agent_ids": [
+        "{RH1_ID}"
+      ],
+      "linked_object_ids": [
+        "obj_loan_ledger"
+      ]
+    },
+    {
+      "clue_id": "clue_owen_delivery",
+      "title": "{RH1_NAME}'s timber delivery",
+      "clue_type": "witness_statement",
+      "description": "{RH1_NAME} was in his yard from 07:15 signing for a timber delivery. The driver was with him until after eight \u2014 right through the murder window.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "{RH1_ID}",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_innocent"
+      ],
+      "linked_agent_ids": [
+        "{RH1_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0715_owen_yard"
+      ]
+    },
+    {
+      "clue_id": "clue_isabella_note",
+      "title": "{RH2_NAME}'s note on the body",
+      "clue_type": "document",
+      "description": "A folded note in {VICTIM_NAME}'s pocket: 'We settle this at 8. Don't make me ask twice. \u2014 I.R.' {RH2_NAME} wanted something from {VICTIM_NAME}, badly, this morning.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_storage"
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring"
+      ],
+      "linked_agent_ids": [
+        "{RH2_ID}"
+      ],
+      "linked_object_ids": [
+        "obj_isabella_note"
+      ],
+      "linked_event_ids": [
+        "ev_0720_isabella_note"
+      ]
+    },
+    {
+      "clue_id": "clue_partnership_letter",
+      "title": "The partnership letter",
+      "clue_type": "document",
+      "description": "A signed letter in {VICTIM_NAME}'s coat: the bookshop expansion goes to {WITNESS4_NAME} \u2014 not {RH2_NAME}. {VICTIM_NAME} broke his promise, and today he was going to say so to {RH2_NAME}'s face.",
+      "strength": "medium",
+      "reliability": 0.95,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_storage"
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring"
+      ],
+      "linked_agent_ids": [
+        "{RH2_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "linked_object_ids": [
+        "obj_partnership_letter"
+      ]
+    },
+    {
+      "clue_id": "clue_isabella_clinic",
+      "title": "{RH2_NAME}'s clinic visit",
+      "clue_type": "witness_statement",
+      "description": "{WITNESS2_NAME} took {RH2_NAME}'s blood pressure at the clinic from about 07:40 to 08:00 \u2014 covering the whole murder window. {RH2_NAME} was agitated about 'a difficult meeting'.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "{WITNESS2_ID}",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_innocent"
+      ],
+      "linked_agent_ids": [
+        "{RH2_ID}",
+        "{WITNESS2_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0740_isabella_clinic"
+      ]
+    },
+    {
+      "clue_id": "clue_elias_fountain",
+      "title": "Nobody at the fountain",
+      "clue_type": "witness_statement",
+      "description": "{WITNESS3_NAME} sat facing the fountain from 06:40 onwards and does not recall seeing {KILLER_NAME} there between 07:45 and 08:00 \u2014 though he admits he had his crossword.",
+      "strength": "weak",
+      "reliability": 0.55,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "{WITNESS3_ID}",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS3_ID}",
+        "{KILLER_ID}"
+      ],
+      "linked_location_ids": [
+        "loc_fountain"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_priya_meeting",
+      "title": "{WITNESS1_NAME} and {WITNESS4_NAME}'s secret meeting",
+      "clue_type": "confession",
+      "description": "{WITNESS1_NAME} was in the alley at 07:45 to meet {WITNESS4_NAME} \u2014 they've been seeing each other in secret. That's why he was there, and why neither of them wanted to say so.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "{WITNESS4_ID}",
+        "question_type": "location",
+        "location_id": "loc_rear_alley",
+        "required_prior_clue_ids": [
+          "clue_ben_sighting"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_innocent"
+      ],
+      "linked_agent_ids": [
+        "{WITNESS1_ID}",
+        "{WITNESS4_ID}"
+      ],
+      "linked_event_ids": [
+        "ev_0745_ben_priya_meet"
+      ]
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "conc_clara_motive",
+      "type": "motive",
+      "summary": "{KILLER_NAME} was stealing from the till; {VICTIM_NAME} had proof and a deadline of this morning.",
+      "target_agent_id": "{KILLER_ID}",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ledger_page",
+        "clue_overheard_threat",
+        "clue_till_discrepancy"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_opportunity",
+      "type": "opportunity",
+      "summary": "{KILLER_NAME} was at the cafe's rear door during the murder window, despite claiming to be at the fountain.",
+      "target_agent_id": "{KILLER_ID}",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ben_sighting",
+        "clue_rear_door",
+        "clue_storage_sound",
+        "clue_nadia_overheard",
+        "clue_blue_coat_damp"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_means",
+      "type": "means",
+      "summary": "{KILLER_NAME} had the {WEAPON_NAME} \u2014 she handled it at 07:36, it vanished in the murder window, and it was found rinsed in the kitchen she controls.",
+      "target_agent_id": "{KILLER_ID}",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_till_weight_missing",
+        "clue_till_weight_found",
+        "clue_blue_coat_damp"
+      ]
+    },
+    {
+      "conclusion_id": "conc_method",
+      "type": "method",
+      "summary": "{VICTIM_NAME} was struck with the {WEAPON_NAME} in the storage room at about 07:56.",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_till_weight_found",
+        "clue_storage_sound",
+        "clue_till_weight_missing"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_false_alibi",
+      "type": "false_alibi",
+      "summary": "{KILLER_NAME}'s fountain alibi is false \u2014 she was seen entering the rear alley at 07:47, a figure left the rear door at 07:58, and nobody saw her at the fountain.",
+      "target_agent_id": "{KILLER_ID}",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ben_sighting",
+        "clue_rear_door",
+        "clue_elias_fountain"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_red_herring",
+      "type": "red_herring",
+      "summary": "{RH1_NAME} had a desperate financial motive and argued publicly with {VICTIM_NAME} an hour before the murder.",
+      "target_agent_id": "{RH1_ID}",
+      "supported_by_clue_ids": [
+        "clue_owen_argument",
+        "clue_loan_book"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_innocent",
+      "type": "innocence_anchor",
+      "summary": "{RH1_NAME} was with the timber delivery driver through the entire murder window.",
+      "target_agent_id": "{RH1_ID}",
+      "supported_by_clue_ids": [
+        "clue_owen_delivery"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_red_herring",
+      "type": "red_herring",
+      "summary": "{RH2_NAME} was betrayed over the partnership and demanded a showdown with {VICTIM_NAME} this very morning.",
+      "target_agent_id": "{RH2_ID}",
+      "supported_by_clue_ids": [
+        "clue_isabella_note",
+        "clue_partnership_letter"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_innocent",
+      "type": "innocence_anchor",
+      "summary": "{RH2_NAME} was at the clinic with {WITNESS2_NAME} from 07:40 to 08:00.",
+      "target_agent_id": "{RH2_ID}",
+      "supported_by_clue_ids": [
+        "clue_isabella_clinic"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_red_herring",
+      "type": "red_herring",
+      "summary": "{WITNESS1_NAME} was lurking in the rear alley during the murder window and is evasive about why.",
+      "target_agent_id": "{WITNESS1_ID}",
+      "supported_by_clue_ids": [
+        "clue_storage_sound"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_innocent",
+      "type": "innocence_anchor",
+      "summary": "{WITNESS1_NAME} was in the alley to meet {WITNESS4_NAME} in secret \u2014 nothing to do with {VICTIM_NAME}.",
+      "target_agent_id": "{WITNESS1_ID}",
+      "supported_by_clue_ids": [
+        "clue_ben_priya_meeting"
+      ]
+    }
+  ],
+  "interviews": [
+    {
+      "agent_id": "{KILLER_ID}",
+      "default_answers": {
+        "alibi": "I told you \u2014 I stepped out for some air before opening. It was a normal morning until {RH2_NAME} screamed.",
+        "timeline": "Prepping the cafe, mostly. Chairs, coffee machine, the float. The same as every morning.",
+        "last_seen_victim": "He was here first thing. After that I was busy with the counter.",
+        "relationship": "He owned the cafe. I run it. We kept things professional.",
+        "evidence": "I don't know anything about that.",
+        "location": "I don't spend much time thinking about that place, to be honest."
+      },
+      "rules": [
+        {
+          "question_type": "alibi",
+          "answer_text": "I was at the fountain from about a quarter to eight until just before opening. I needed air \u2014 {VICTIM_NAME} had been on edge all morning and it gets to you. Then I opened up at eight.",
+          "answer_type": "claim",
+          "truthfulness": "false",
+          "emotional_shift": "guarded",
+          "claims": [
+            {
+              "claim_id": "claim_clara_fountain",
+              "summary": "{KILLER_NAME} claims she was at the fountain from about 07:45 until just before 08:00.",
+              "claim_type": "alibi",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_fountain",
+              "truthfulness": "false"
+            }
+          ],
+          "suggested_followups": [
+            "Who saw you at the fountain?",
+            "Why did you need air?"
+          ]
+        },
+        {
+          "question_type": "timeline",
+          "time_from": "07:40",
+          "time_to": "08:00",
+          "answer_text": "That's when I was out at the fountain. I stepped out around a quarter to and came back to open the doors. Ask {WITNESS3_NAME} \u2014 he's always on that bench.",
+          "answer_type": "claim",
+          "truthfulness": "false",
+          "emotional_shift": "nervous",
+          "claims": [
+            {
+              "claim_id": "claim_clara_fountain",
+              "summary": "{KILLER_NAME} claims she was at the fountain from about 07:45 until just before 08:00.",
+              "claim_type": "alibi",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_fountain",
+              "truthfulness": "false"
+            }
+          ],
+          "suggested_followups": [
+            "Did {WITNESS3_NAME} actually see you there?"
+          ]
+        },
+        {
+          "question_type": "timeline",
+          "time_from": "06:00",
+          "time_to": "07:39",
+          "answer_text": "Down at half six, prep until {VICTIM_NAME} arrived at a quarter to seven. He checked the till \u2014 he'd been doing that a lot lately. {RH1_NAME} turned up around seven and made a scene outside. After that, more prep.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "claims": [
+            {
+              "claim_id": "claim_clara_morning_prep",
+              "summary": "{KILLER_NAME} says she was prepping the cafe from 06:30 and that {VICTIM_NAME} had been checking the till often lately.",
+              "claim_type": "statement",
+              "time_reference": "06:30",
+              "location_reference_id": "loc_hobbs_cafe",
+              "truthfulness": "true"
+            }
+          ]
+        },
+        {
+          "question_type": "last_seen_victim",
+          "answer_text": "About twenty to eight, I suppose. He said he had things to sort in the back before we opened. I didn't see him again. I wish I'd... checked on him.",
+          "answer_type": "claim",
+          "truthfulness": "mistaken",
+          "emotional_shift": "carefully sad",
+          "claims": [
+            {
+              "claim_id": "claim_clara_last_seen",
+              "summary": "{KILLER_NAME} claims she last saw {VICTIM_NAME} around 07:40 when he went to the back, and never saw him again.",
+              "claim_type": "sighting",
+              "time_reference": "07:40",
+              "location_reference_id": "loc_hobbs_cafe",
+              "truthfulness": "false"
+            }
+          ],
+          "suggested_followups": [
+            "What did he need to sort in the back?"
+          ]
+        },
+        {
+          "question_type": "relationship",
+          "answer_text": "He was exacting. Checked everything twice, trusted no one to do it right. But he gave me the manager's job when nobody else would, so we made it work.",
+          "answer_type": "claim",
+          "truthfulness": "mistaken",
+          "emotional_shift": "controlled",
+          "claims": [
+            {
+              "claim_id": "claim_clara_relationship",
+              "summary": "{KILLER_NAME} describes her relationship with {VICTIM_NAME} as strict but workable, and says he 'trusted no one'.",
+              "claim_type": "relationship",
+              "truthfulness": "mistaken"
+            }
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_object_id": "{WEAPON_ID}",
+          "answer_text": "The {WEAPON_NAME}? It lives on the counter. If it's not there, someone's moved it \u2014 people fiddle with it all the time. {WITNESS1_NAME} plays with it while he waits for his coffee.",
+          "answer_type": "denial",
+          "truthfulness": "false",
+          "emotional_shift": "brittle",
+          "claims": [
+            {
+              "claim_id": "claim_clara_weight_ignorance",
+              "summary": "{KILLER_NAME} claims she doesn't know where the {WEAPON_NAME} is and suggests others handle it often.",
+              "claim_type": "statement",
+              "truthfulness": "false"
+            }
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_clue_id": "clue_ledger_page",
+          "answer_text": "I keep the till. {VICTIM_NAME} kept the books. If there were mistakes in those columns they were his sums, not mine. 'C' could be anyone \u2014 customer, carried-over, anything.",
+          "answer_type": "denial",
+          "truthfulness": "false",
+          "emotional_shift": "defensive",
+          "claims": [
+            {
+              "claim_id": "claim_clara_ledger_denial",
+              "summary": "{KILLER_NAME} denies the ledger discrepancies have anything to do with her.",
+              "claim_type": "statement",
+              "truthfulness": "false"
+            }
+          ]
+        },
+        {
+          "question_type": "location",
+          "topic_location_id": "loc_rear_alley",
+          "answer_text": "The alley? I had no reason to be back there. Deliveries come in the morning through the front until we open the rear for the bins. I was at the fountain, as I said.",
+          "answer_type": "denial",
+          "truthfulness": "false",
+          "emotional_shift": "sharp",
+          "claims": [
+            {
+              "claim_id": "claim_clara_not_in_alley",
+              "summary": "{KILLER_NAME} denies being in the rear alley this morning.",
+              "claim_type": "statement",
+              "location_reference_id": "loc_rear_alley",
+              "truthfulness": "false"
+            }
+          ]
+        },
+        {
+          "question_type": "location",
+          "topic_location_id": "loc_cafe_storage",
+          "answer_text": "I hadn't been in the storage room since yesterday's stocktake. {VICTIM_NAME} dealt with the back himself these days. He'd... changed the lock rota, actually. Didn't say why.",
+          "answer_type": "denial",
+          "truthfulness": "false",
+          "emotional_shift": "brittle",
+          "claims": [
+            {
+              "claim_id": "claim_clara_not_in_storage",
+              "summary": "{KILLER_NAME} claims she had not been in the storage room since yesterday.",
+              "claim_type": "statement",
+              "location_reference_id": "loc_cafe_storage",
+              "truthfulness": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "agent_id": "{WITNESS1_ID}",
+      "default_answers": {
+        "alibi": "Doing my round, mate. Van by the square, crates in and out. Same as every day.",
+        "timeline": "On my round somewhere. It all blurs together a bit, honestly.",
+        "last_seen_victim": "Properly spoke to him? Day before yesterday, when I dropped the coffee order.",
+        "relationship": "{VICTIM_NAME} was alright. Paid on time, tipped at Christmas. No trouble between us.",
+        "evidence": "Couldn't tell you anything about that.",
+        "location": "I'm all over the village in a morning, take your pick."
+      },
+      "rules": [
+        {
+          "question_type": "alibi",
+          "answer_text": "I was around the square and the back lane doing deliveries. Look, I was near the alley for a bit, alright? Just... sorting crates. Then I heard the scream same as everyone.",
+          "answer_type": "claim",
+          "truthfulness": "mistaken",
+          "emotional_shift": "shifty",
+          "claims": [
+            {
+              "claim_id": "claim_ben_crates",
+              "summary": "{WITNESS1_NAME} admits being near the rear alley during the murder window but says he was 'sorting crates'.",
+              "claim_type": "alibi",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_rear_alley",
+              "truthfulness": "mistaken"
+            }
+          ],
+          "suggested_followups": [
+            "What were you really doing in the alley?",
+            "What did you see from there?"
+          ]
+        },
+        {
+          "question_type": "timeline",
+          "time_from": "07:40",
+          "time_to": "08:00",
+          "answer_text": "Right, so \u2014 I was down the alley end around then. Saw someone in a blue coat come in from the square about a quarter to... no, closer to ten-to. Went towards the cafe's back door. Didn't see the face but \u2014 that's {KILLER_NAME}'s coat, everyone knows it. And later there was this thud from inside. Dull, like a sack of flour going over. I didn't think anything of it. You don't, do you.",
+          "answer_type": "claim",
+          "truthfulness": "mistaken",
+          "emotional_shift": "uneasy",
+          "claims": [
+            {
+              "claim_id": "claim_ben_blue_coat",
+              "summary": "{WITNESS1_NAME} says he saw someone in a blue coat \u2014 he assumes {KILLER_NAME} \u2014 enter the alley at about 07:47 and head for the cafe's rear door.",
+              "claim_type": "sighting",
+              "time_reference": "07:47",
+              "location_reference_id": "loc_rear_alley",
+              "truthfulness": "mistaken"
+            },
+            {
+              "claim_id": "claim_ben_thud",
+              "summary": "{WITNESS1_NAME} says he heard a dull thud from the cafe's back rooms while he was in the alley, around 07:56.",
+              "claim_type": "sighting",
+              "time_reference": "07:56",
+              "location_reference_id": "loc_cafe_storage",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_ben_sighting",
+            "clue_storage_sound"
+          ],
+          "suggested_followups": [
+            "Why were you in the alley at that time?",
+            "Did the figure see you?"
+          ]
+        },
+        {
+          "question_type": "location",
+          "topic_location_id": "loc_rear_alley",
+          "answer_text": "Crates. I told you. There's a stack behind the bookshop needs shifting most mornings. Why's everyone so interested in the alley all of a sudden?",
+          "answer_type": "denial",
+          "truthfulness": "false",
+          "emotional_shift": "defensive",
+          "claims": [
+            {
+              "claim_id": "claim_ben_crates",
+              "summary": "{WITNESS1_NAME} admits being near the rear alley during the murder window but says he was 'sorting crates'.",
+              "claim_type": "alibi",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_rear_alley",
+              "truthfulness": "mistaken"
+            }
+          ]
+        },
+        {
+          "question_type": "relationship",
+          "answer_text": "No quarrel with {VICTIM_NAME}, none. He had his moods lately, mind \u2014 snapping at {KILLER_NAME}, double-counting the till like it owed him money. Something was eating him.",
+          "answer_type": "gossip",
+          "truthfulness": "true",
+          "claims": [
+            {
+              "claim_id": "claim_ben_marcus_moods",
+              "summary": "{WITNESS1_NAME} says {VICTIM_NAME} had been in a foul mood lately, snapping at {KILLER_NAME} and repeatedly counting the till.",
+              "claim_type": "statement",
+              "truthfulness": "true"
+            }
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_object_id": "{WEAPON_ID}",
+          "answer_text": "The brass thing? Yeah, it sits by the till. I flick it sometimes waiting for my coffee. It was there yesterday. Why, is it gone?",
+          "answer_type": "claim",
+          "truthfulness": "true"
+        }
+      ]
+    },
+    {
+      "agent_id": "{RH2_ID}",
+      "default_answers": {
+        "alibi": "I was at the clinic, then I came here for my meeting with {VICTIM_NAME}. You know the rest.",
+        "timeline": "Paperwork at the shop, then the clinic, then... the cafe.",
+        "last_seen_victim": "Alive? At twenty past seven. I gave him a note about our meeting.",
+        "relationship": "We were business partners. He put money into my shop. It was... complicated lately.",
+        "evidence": "I can't help you with that.",
+        "location": "I know the village as well as anyone. What of it?"
+      },
+      "rules": [
+        {
+          "question_type": "alibi",
+          "answer_text": "From about twenty to eight I was at the clinic \u2014 {WITNESS2_NAME} was taking my blood pressure, of all things. I'd been wound up about the meeting. I left just before eight, waited here at a table, and at ten past I went looking for him myself. I found him.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "shaken",
+          "claims": [
+            {
+              "claim_id": "claim_isabella_clinic",
+              "summary": "{RH2_NAME} says she was at the clinic with {WITNESS2_NAME} from about 07:40 to 08:00, then waited in the cafe.",
+              "claim_type": "alibi",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_clinic",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_isabella_clinic"
+          ],
+          "suggested_followups": [
+            "What was the meeting about?",
+            "Why were you so wound up?"
+          ]
+        },
+        {
+          "question_type": "last_seen_victim",
+          "answer_text": "Twenty past seven. I handed him a note confirming we'd settle things at eight. He didn't even look at me. That was {VICTIM_NAME} all over \u2014 decisions first, people later.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "bitter",
+          "claims": [
+            {
+              "claim_id": "claim_isabella_note_handoff",
+              "summary": "{RH2_NAME} admits handing {VICTIM_NAME} a note at 07:20 arranging to 'settle things' at 08:00.",
+              "claim_type": "statement",
+              "time_reference": "07:20",
+              "location_reference_id": "loc_hobbs_cafe",
+              "truthfulness": "true"
+            }
+          ],
+          "suggested_followups": [
+            "What needed settling?"
+          ]
+        },
+        {
+          "question_type": "relationship",
+          "answer_text": "He financed my shop and never let me forget it. Lately there was a rumour he meant to change our arrangement. I wanted it settled, face to face. That's why the meeting. That's all I'll say.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "guarded",
+          "claims": [
+            {
+              "claim_id": "claim_isabella_arrangement",
+              "summary": "{RH2_NAME} admits there was a rumour {VICTIM_NAME} meant to change their business arrangement and that she demanded the meeting to settle it.",
+              "claim_type": "relationship",
+              "truthfulness": "true"
+            }
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_clue_id": "clue_partnership_letter",
+          "answer_text": "So it's true. {WITNESS4_NAME}. He promised me that expansion two years ago \u2014 I built my plans on it. If you're asking whether I was angry: yes. Angry enough to demand a meeting. Not angry enough for... whatever you're implying. I was with {WITNESS2_NAME} when it happened, ask her.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "wounded",
+          "claims": [
+            {
+              "claim_id": "claim_isabella_betrayal_admitted",
+              "summary": "{RH2_NAME} admits the partnership betrayal gave her a grievance, but points to her clinic alibi.",
+              "claim_type": "statement",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_isabella_clinic"
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_clue_id": "clue_isabella_note",
+          "answer_text": "Yes, I wrote it. 'Don't make me ask twice' \u2014 because I'd asked for a straight answer for a month and got nothing. It's a note, detective, not a confession.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "defiant"
+        },
+        {
+          "question_type": "timeline",
+          "time_from": "08:00",
+          "time_to": "08:12",
+          "answer_text": "I sat at that table from just after eight. {KILLER_NAME} was behind the counter \u2014 jumpy, dropping things. When {VICTIM_NAME} didn't show I asked where he was. She said 'out the back, probably', and wouldn't look at me. So I went. I wish I hadn't.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "shaken",
+          "claims": [
+            {
+              "claim_id": "claim_isabella_clara_jumpy",
+              "summary": "{RH2_NAME} says {KILLER_NAME} was jumpy behind the counter after 08:00 and avoided her eyes when asked about {VICTIM_NAME}.",
+              "claim_type": "sighting",
+              "time_reference": "08:05",
+              "location_reference_id": "loc_hobbs_cafe",
+              "truthfulness": "true"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "agent_id": "{RH1_ID}",
+      "default_answers": {
+        "alibi": "In my yard. Working. Like every morning.",
+        "timeline": "Yard, mostly. Timber doesn't stack itself.",
+        "last_seen_victim": "Outside the cafe, around seven. We had words. I'm not going to pretend we didn't.",
+        "relationship": "We did business. It went sour. That's between me and him.",
+        "evidence": "No idea.",
+        "location": "What about it?"
+      },
+      "rules": [
+        {
+          "question_type": "alibi",
+          "answer_text": "From a quarter past seven I was in my yard. Timber delivery came \u2014 big one. Driver, Col Hartley, was with me signing sheets and unloading until gone eight. Check with him if you don't believe me. I've nothing to hide about where I was.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "bristling",
+          "claims": [
+            {
+              "claim_id": "claim_owen_yard",
+              "summary": "{RH1_NAME} says he was in his yard with delivery driver Col Hartley from 07:15 until after 08:00.",
+              "claim_type": "alibi",
+              "time_reference": "07:45",
+              "location_reference_id": "loc_owen_house",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_owen_delivery"
+          ],
+          "suggested_followups": [
+            "What were you and {VICTIM_NAME} arguing about at 07:05?"
+          ]
+        },
+        {
+          "question_type": "last_seen_victim",
+          "answer_text": "Five past seven, outside his cafe, both of us shouting. Half the square heard, so you'll hear about it anyway. He was going to name me at the committee over money. I told him what I thought of that. Then I went back to my yard and got on with my work.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "grim",
+          "claims": [
+            {
+              "claim_id": "claim_owen_argument",
+              "summary": "{RH1_NAME} admits the 07:05 argument and that {VICTIM_NAME} threatened to name him at the committee over money.",
+              "claim_type": "statement",
+              "time_reference": "07:05",
+              "location_reference_id": "loc_village_square",
+              "truthfulness": "true"
+            }
+          ]
+        },
+        {
+          "question_type": "relationship",
+          "answer_text": "I'll say it before {WITNESS3_NAME} does: I owed him. A lot. And no, I couldn't pay, and yes, he was going to make it public today. If that makes me a suspect, fine. But I settle things with my mouth, not... whatever happened in that room.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "defensive",
+          "claims": [
+            {
+              "claim_id": "claim_owen_debt_admitted",
+              "summary": "{RH1_NAME} admits he owed {VICTIM_NAME} a large sum he couldn't repay and that exposure was due today.",
+              "claim_type": "statement",
+              "truthfulness": "true"
+            }
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_clue_id": "clue_loan_book",
+          "answer_text": "Eight thousand. There, I've said the number. He'd have ruined me by lunchtime and called it principle. But I was in my yard with Col when it happened, and thank God for that delivery, because I know how this looks.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "weary",
+          "reveals_clue_ids": [
+            "clue_owen_delivery"
+          ]
+        }
+      ]
+    },
+    {
+      "agent_id": "{WITNESS4_ID}",
+      "default_answers": {
+        "alibi": "I was in the bookshop stockroom, sorting the delivery. I didn't see anything.",
+        "timeline": "The stockroom, mostly. It was a big delivery.",
+        "last_seen_victim": "Yesterday afternoon. He came by the shop.",
+        "relationship": "He was kind to me. Kinder than people knew. I can't believe this has happened.",
+        "evidence": "I'm sorry, I don't know.",
+        "location": "I mostly go between home and the shop."
+      },
+      "rules": [
+        {
+          "question_type": "alibi",
+          "answer_text": "I was in the stockroom from seven. Alone, sorting the delivery. I know that's not much of an answer but it's the truth.",
+          "answer_type": "claim",
+          "truthfulness": "false",
+          "emotional_shift": "quiet",
+          "claims": [
+            {
+              "claim_id": "claim_priya_stockroom",
+              "summary": "{WITNESS4_NAME} claims she was alone in the bookshop stockroom through the murder window.",
+              "claim_type": "alibi",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_bookshop",
+              "truthfulness": "false"
+            }
+          ]
+        },
+        {
+          "question_type": "location",
+          "topic_location_id": "loc_rear_alley",
+          "answer_text": "...Alright. Please don't take this the wrong way. I was in the alley, for a few minutes, around a quarter to eight. With {WITNESS1_NAME}. We've been seeing each other \u2014 {RH2_NAME} doesn't approve of that kind of thing at the shop, so we keep it quiet. We stood by the back door and talked, that's all. We heard a sort of thud from the cafe side and then a door, and we got nervous someone would see us, so we left. {WITNESS1_NAME} went to his van. I went inside. That's everything, I promise.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "ashamed",
+          "claims": [
+            {
+              "claim_id": "claim_priya_confession",
+              "summary": "{WITNESS4_NAME} admits she and {WITNESS1_NAME} were secretly meeting in the alley from about 07:45 to just before 08:00, and heard a thud and a door from the cafe side.",
+              "claim_type": "statement",
+              "time_reference": "07:47",
+              "location_reference_id": "loc_rear_alley",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_ben_priya_meeting"
+          ],
+          "suggested_followups": [
+            "What exactly did you hear from the cafe?",
+            "Did you see who came out of the rear door?"
+          ]
+        },
+        {
+          "question_type": "location",
+          "topic_location_id": "loc_bookshop",
+          "answer_text": "I was in and out of the stockroom all morning. The back door sticks, so I mostly keep it shut.",
+          "answer_type": "claim",
+          "truthfulness": "mistaken"
+        },
+        {
+          "question_type": "relationship",
+          "answer_text": "{VICTIM_NAME} sponsored my apprenticeship at the shop. He believed in me when it wasn't fashionable. There are things I can't talk about yet \u2014 business things, not mine to tell. Please don't ask {RH2_NAME} about them either. Not today.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "anxious",
+          "claims": [
+            {
+              "claim_id": "claim_priya_business_secret",
+              "summary": "{WITNESS4_NAME} hints at a business matter involving {VICTIM_NAME} and {RH2_NAME} that she refuses to discuss.",
+              "claim_type": "statement",
+              "truthfulness": "true"
+            }
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_clue_id": "clue_partnership_letter",
+          "answer_text": "He told me two weeks ago. The expansion, the partnership \u2014 me, not {RH2_NAME}. I never asked for it! I told him it would break something between them and he said business isn't sentiment. I've been dreading {RH2_NAME} finding out. And now he's dead and she'll think\u2014 oh god.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "distressed",
+          "claims": [
+            {
+              "claim_id": "claim_priya_partnership_admitted",
+              "summary": "{WITNESS4_NAME} confirms {VICTIM_NAME} gave her the partnership and that {RH2_NAME} did not officially know.",
+              "claim_type": "statement",
+              "truthfulness": "true"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "agent_id": "{WITNESS2_ID}",
+      "default_answers": {
+        "alibi": "I was at the clinic from ten to seven. I had a patient with me over that window, as it happens.",
+        "timeline": "Clinic, mostly. I crossed the square a couple of times.",
+        "last_seen_victim": "Through the cafe window this morning, about twenty to eight.",
+        "relationship": "A neighbour. Decent man under the gruffness. He sponsored half this village one way or another.",
+        "evidence": "I only know what I saw and heard, and I'll keep to that.",
+        "location": "Ask me something specific and I'll tell you what I saw."
+      },
+      "rules": [
+        {
+          "question_type": "alibi",
+          "answer_text": "Clinic, from ten to seven onwards. And before you ask \u2014 {RH2_NAME} was with me from about twenty to eight until eight. Blood pressure check. She was strung tight over some meeting, but she was in my chair the whole time.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "steady",
+          "claims": [
+            {
+              "claim_id": "claim_nadia_isabella_alibi",
+              "summary": "{WITNESS2_NAME} confirms {RH2_NAME} was at the clinic with her from about 07:40 to 08:00.",
+              "claim_type": "alibi",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_clinic",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_isabella_clinic"
+          ]
+        },
+        {
+          "question_type": "timeline",
+          "time_from": "07:35",
+          "time_to": "07:45",
+          "answer_text": "I crossed the square about twenty to eight, past the cafe window. {VICTIM_NAME} was talking to someone \u2014 low, but the window was cracked open. I caught '...storage room, before we open...'. Couldn't see or hear who he was talking to. It only means something now, doesn't it.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "sober",
+          "claims": [
+            {
+              "claim_id": "claim_nadia_overheard",
+              "summary": "{WITNESS2_NAME} heard {VICTIM_NAME} say 'storage room, before we open' to someone at about 07:40.",
+              "claim_type": "sighting",
+              "time_reference": "07:40",
+              "location_reference_id": "loc_hobbs_cafe",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_nadia_overheard"
+          ],
+          "suggested_followups": [
+            "Who was in the cafe at 07:40?"
+          ]
+        },
+        {
+          "question_type": "timeline",
+          "time_from": "07:00",
+          "time_to": "07:15",
+          "answer_text": "The argument, you mean. {RH1_NAME} and {VICTIM_NAME}, outside the cafe, going at it hammer and tongs about money and some committee business. {RH1_NAME} jabbed him in the chest and stormed off towards his yard. I nearly went over, it looked that heated.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "claims": [
+            {
+              "claim_id": "claim_nadia_argument",
+              "summary": "{WITNESS2_NAME} confirms the 07:05 argument between {RH1_NAME} and {VICTIM_NAME} about money and the committee.",
+              "claim_type": "sighting",
+              "time_reference": "07:05",
+              "location_reference_id": "loc_village_square",
+              "truthfulness": "true"
+            }
+          ]
+        },
+        {
+          "question_type": "relationship",
+          "answer_text": "We were neighbours twenty years. If you're asking who'd want him dead \u2014 he held this village's debts and secrets, and lately he'd been tightening his grip on both. That's not gossip, that's arithmetic.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "level"
+        }
+      ]
+    },
+    {
+      "agent_id": "{WITNESS3_ID}",
+      "default_answers": {
+        "alibi": "My bench, six-forty until the scream. Best seat in the village.",
+        "timeline": "On the bench. I see everything from there \u2014 well. Nearly everything, it turns out.",
+        "last_seen_victim": "Going into his cafe this morning, quarter to seven, same as forty years of mornings.",
+        "relationship": "{VICTIM_NAME}? Knew him since he was a boy. Stubborn as a gatepost.",
+        "evidence": "Now that I couldn't say.",
+        "location": "From my bench you can see the cafe, the fountain, the bookshop and the clinic door. Ask away."
+      },
+      "rules": [
+        {
+          "question_type": "relationship",
+          "answer_text": "Forty years I knew him. And I'll tell you something for nothing: last week, in the cafe, I heard him say to somebody \u2014 quiet, but furious, the way he got \u2014 'You have until tomorrow.' Never saw who. Kitchen doorway, my back was to it. But {VICTIM_NAME} didn't threaten people for sport. Somebody in this village was living on borrowed time, and I'd say the loan came due.",
+          "answer_type": "claim",
+          "truthfulness": "true",
+          "emotional_shift": "grave",
+          "claims": [
+            {
+              "claim_id": "claim_elias_threat",
+              "summary": "{WITNESS3_NAME} heard {VICTIM_NAME} tell someone 'You have until tomorrow' in the cafe last week, but didn't see who.",
+              "claim_type": "sighting",
+              "truthfulness": "true"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_overheard_threat"
+          ],
+          "suggested_followups": [
+            "Could it have been a member of staff he was talking to?"
+          ]
+        },
+        {
+          "question_type": "alibi",
+          "answer_text": "{WITNESS1_NAME}ch, six-forty, flask of tea. Saw {VICTIM_NAME} arrive, saw {RH1_NAME} make his scene \u2014 you'll want to look at {RH1_NAME}, mark my words, the man was frothing \u2014 saw {RH2_NAME} march in and out like a thundercloud, saw {KILLER_NAME} pop out just before the quarter hour and come back at eight looking like she'd run a mile. Then the scream.",
+          "answer_type": "claim",
+          "truthfulness": "mistaken",
+          "emotional_shift": "eager",
+          "claims": [
+            {
+              "claim_id": "claim_elias_bench_account",
+              "summary": "{WITNESS3_NAME} lists the morning's comings and goings, including {KILLER_NAME} leaving before 07:45 and returning at 08:00 'looking like she'd run a mile'.",
+              "claim_type": "sighting",
+              "time_reference": "07:44",
+              "location_reference_id": "loc_village_square",
+              "truthfulness": "true"
+            }
+          ],
+          "suggested_followups": [
+            "Did you see {KILLER_NAME} at the fountain?",
+            "Which way did {KILLER_NAME} go when she left?"
+          ]
+        },
+        {
+          "question_type": "timeline",
+          "time_from": "07:40",
+          "time_to": "08:00",
+          "answer_text": "{KILLER_NAME} went out the front just before the quarter hour and turned towards the square. Now here's the thing \u2014 she says fountain, I hear. I face that fountain, young detective. My eyes aren't what they were, and I did have my crossword. But I don't recall seeing her at it. {RH1_NAME}, though \u2014 you should have heard him this morning. That's your man, I'd stake my pension.",
+          "answer_type": "gossip",
+          "truthfulness": "mistaken",
+          "emotional_shift": "conspiratorial",
+          "claims": [
+            {
+              "claim_id": "claim_elias_no_fountain",
+              "summary": "{WITNESS3_NAME}, who faces the fountain from his bench, does not recall seeing {KILLER_NAME} at the fountain between 07:45 and 08:00 \u2014 though he admits his attention was on his crossword.",
+              "claim_type": "sighting",
+              "time_reference": "07:50",
+              "location_reference_id": "loc_fountain",
+              "truthfulness": "true"
+            },
+            {
+              "claim_id": "claim_elias_owen_accusation",
+              "summary": "{WITNESS3_NAME} insists {RH1_NAME} must be the killer because of the morning argument.",
+              "claim_type": "statement",
+              "truthfulness": "mistaken"
+            }
+          ],
+          "reveals_clue_ids": [
+            "clue_elias_fountain"
+          ],
+          "suggested_followups": [
+            "How sure are you that {KILLER_NAME} wasn't at the fountain?"
+          ]
+        },
+        {
+          "question_type": "evidence",
+          "topic_clue_id": "clue_owen_argument",
+          "answer_text": "Heard every word that mattered. Money. A deadline. 'The committee will hear it all,' {VICTIM_NAME} said, and {RH1_NAME} went white, then red, then off like a kettle. A man doesn't boil like that at seven and cool by eight, that's all I'm saying.",
+          "answer_type": "gossip",
+          "truthfulness": "mistaken",
+          "emotional_shift": "certain",
+          "claims": [
+            {
+              "claim_id": "claim_elias_owen_accusation",
+              "summary": "{WITNESS3_NAME} insists {RH1_NAME} must be the killer because of the morning argument.",
+              "claim_type": "statement",
+              "truthfulness": "mistaken"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "target_agent_id": "{KILLER_ID}",
+      "challenged_claim_id": "claim_clara_fountain",
+      "evidence_clue_ids": [
+        "clue_ben_sighting"
+      ],
+      "outcome": "partial_admission",
+      "response_text": "...Fine. I walked past the top of the alley on my way back from the fountain \u2014 it's a shortcut, everyone uses it. But I never went in the cafe's back way. {WITNESS1_NAME} sees a blue coat and his imagination fills in the rest. Half the village owns a blue coat.",
+      "emotional_shift": "rattled",
+      "pressure_delta": 0.25,
+      "sets_claim_status": "reframed",
+      "new_claims": [
+        {
+          "claim_id": "claim_clara_passed_alley",
+          "summary": "Under pressure, {KILLER_NAME} now admits she passed the top of the rear alley but insists she never entered the cafe by the back door.",
+          "claim_type": "alibi",
+          "time_reference": "07:47",
+          "location_reference_id": "loc_rear_alley",
+          "truthfulness": "mistaken"
+        }
+      ]
+    },
+    {
+      "target_agent_id": "{KILLER_ID}",
+      "challenged_claim_id": "claim_clara_fountain",
+      "evidence_clue_ids": [
+        "clue_rear_door"
+      ],
+      "outcome": "deflect",
+      "response_text": "A door opening? Doors open. Deliveries, bins, the wind. That could be anyone. It doesn't put me anywhere.",
+      "emotional_shift": "guarded",
+      "pressure_delta": 0.12,
+      "sets_claim_status": "disputed"
+    },
+    {
+      "target_agent_id": "{KILLER_ID}",
+      "challenged_claim_id": "claim_clara_fountain",
+      "evidence_clue_ids": [
+        "clue_elias_fountain"
+      ],
+      "outcome": "deflect",
+      "response_text": "{WITNESS3_NAME} had his crossword and his flask and his opinions. He didn't see me because he wasn't looking, not because I wasn't there.",
+      "emotional_shift": "defensive",
+      "pressure_delta": 0.1,
+      "sets_claim_status": "disputed"
+    },
+    {
+      "target_agent_id": "{KILLER_ID}",
+      "challenged_claim_id": "claim_clara_not_in_alley",
+      "evidence_clue_ids": [
+        "clue_ben_sighting"
+      ],
+      "outcome": "partial_admission",
+      "response_text": "All right \u2014 I cut across the top of the alley. Once. I didn't go near the back door. There's a difference and you know it.",
+      "emotional_shift": "rattled",
+      "pressure_delta": 0.2,
+      "sets_claim_status": "reframed",
+      "new_claims": [
+        {
+          "claim_id": "claim_clara_passed_alley",
+          "summary": "Under pressure, {KILLER_NAME} now admits she passed the top of the rear alley but insists she never entered the cafe by the back door.",
+          "claim_type": "alibi",
+          "time_reference": "07:47",
+          "location_reference_id": "loc_rear_alley",
+          "truthfulness": "mistaken"
+        }
+      ]
+    },
+    {
+      "target_agent_id": "{KILLER_ID}",
+      "challenged_claim_id": "claim_clara_not_in_storage",
+      "evidence_clue_ids": [
+        "clue_blue_coat_damp"
+      ],
+      "outcome": "deflect",
+      "response_text": "The sleeve's damp because I wipe down tables with it tucked up. I run a cafe. Everything I own is faintly damp and smells of coffee.",
+      "emotional_shift": "brittle",
+      "pressure_delta": 0.15,
+      "sets_claim_status": "disputed"
+    },
+    {
+      "target_agent_id": "{KILLER_ID}",
+      "challenged_claim_id": "claim_clara_weight_ignorance",
+      "evidence_clue_ids": [
+        "clue_till_weight_found"
+      ],
+      "outcome": "deflect",
+      "response_text": "In the mop bucket? Then someone put it there. People come behind that counter all morning. It isn't Fort Knox.",
+      "emotional_shift": "tense",
+      "pressure_delta": 0.2,
+      "sets_claim_status": "disputed"
+    },
+    {
+      "target_agent_id": "{WITNESS4_ID}",
+      "challenged_claim_id": "claim_priya_stockroom",
+      "evidence_clue_ids": [
+        "clue_ben_sighting"
+      ],
+      "required_prior_clue_ids": [
+        "clue_ben_sighting"
+      ],
+      "outcome": "reveal_innocent_secret",
+      "response_text": "Oh. Oh no. Please \u2014 it isn't what it looks like. I wasn't in the stockroom the whole time. I was in the alley, for a few minutes, with {WITNESS1_NAME}. We've been seeing each other and {RH2_NAME} can't know. We stood by the back door and talked, and then we heard a thud from the cafe and a door, and we panicked and left. That's all. That's everything. I swear it on my life.",
+      "emotional_shift": "distressed",
+      "pressure_delta": -0.1,
+      "sets_claim_status": "resolved",
+      "reveals_clue_ids": [
+        "clue_ben_priya_meeting"
+      ],
+      "reveals_memory_ids": [
+        "mem_priya_ben"
+      ],
+      "new_claims": [
+        {
+          "claim_id": "claim_priya_confession",
+          "summary": "{WITNESS4_NAME} admits she and {WITNESS1_NAME} were secretly meeting in the alley from about 07:45 to just before 08:00, and heard a thud and a door from the cafe side.",
+          "claim_type": "statement",
+          "time_reference": "07:47",
+          "location_reference_id": "loc_rear_alley",
+          "truthfulness": "true"
+        }
+      ]
+    },
+    {
+      "target_agent_id": "{WITNESS1_ID}",
+      "challenged_claim_id": "claim_ben_crates",
+      "evidence_clue_ids": [
+        "clue_ben_priya_meeting"
+      ],
+      "required_prior_clue_ids": [
+        "clue_ben_priya_meeting"
+      ],
+      "outcome": "reveal_innocent_secret",
+      "response_text": "She told you, didn't she. Look \u2014 I wasn't shifting crates. I was with {WITNESS4_NAME}. We meet in the mornings where no one's about, because if {RH2_NAME} finds out she'll make {WITNESS4_NAME}'s life hell. That's my big secret. I heard the thud, same as her, and I bolted because I didn't want to be caught back there. That's the whole of it.",
+      "emotional_shift": "sheepish",
+      "pressure_delta": -0.05,
+      "sets_claim_status": "resolved",
+      "reveals_memory_ids": [
+        "mem_ben_priya"
+      ],
+      "new_claims": [
+        {
+          "claim_id": "claim_ben_secret_meeting",
+          "summary": "{WITNESS1_NAME} admits he was in the alley to meet {WITNESS4_NAME} in secret, not to move crates.",
+          "claim_type": "statement",
+          "time_reference": "07:45",
+          "location_reference_id": "loc_rear_alley",
+          "truthfulness": "true"
+        }
+      ]
+    },
+    {
+      "target_agent_id": "{RH1_ID}",
+      "challenged_claim_id": "claim_owen_yard",
+      "evidence_clue_ids": [
+        "clue_owen_argument"
+      ],
+      "outcome": "reframe",
+      "response_text": "Yes, I shouted at him at five past seven. Then I went to my yard, and by quarter past I was signing for timber with Col Hartley stood next to me till gone eight. A row at seven isn't a murder at eight. Ask Col. I'd rather be the man who shouts than the one you're looking for.",
+      "emotional_shift": "steady",
+      "pressure_delta": 0.05,
+      "sets_claim_status": "confirmed",
+      "reveals_clue_ids": [
+        "clue_owen_delivery"
+      ]
+    },
+    {
+      "target_agent_id": "{RH2_ID}",
+      "challenged_claim_id": "claim_isabella_clinic",
+      "evidence_clue_ids": [
+        "clue_isabella_note"
+      ],
+      "outcome": "reframe",
+      "response_text": "The note proves I was angry. It doesn't prove I was there. I wrote it, I meant every word \u2014 and I was in {WITNESS2_NAME}'s chair with a cuff on my arm when it happened. A grievance is not a murder weapon. Ask her.",
+      "emotional_shift": "composed",
+      "pressure_delta": 0.05,
+      "sets_claim_status": "confirmed",
+      "reveals_clue_ids": [
+        "clue_isabella_clinic"
+      ]
+    }
+  ],
+  "solution": {
+    "killer_id": "{KILLER_ID}",
+    "motive": {
+      "canonical": "{VICTIM_NAME} discovered {KILLER_NAME} had been stealing from the cafe till and gave her until this morning to confess before he took the proof to the village committee.",
+      "concept_groups": [
+        [
+          "till",
+          "cash",
+          "money",
+          "takings",
+          "cafe funds"
+        ],
+        [
+          "steal",
+          "stole",
+          "stolen",
+          "theft",
+          "thief",
+          "skim",
+          "embezzl",
+          "took",
+          "taking"
+        ],
+        [
+          "blackmail",
+          "expose",
+          "confess",
+          "committee",
+          "threat",
+          "reveal",
+          "ledger"
+        ]
+      ],
+      "min_groups": 2
+    },
+    "method": {
+      "canonical": "Blunt force with the {WEAPON_NAME}, in the storage room.",
+      "concept_groups": [
+        [
+          "blunt",
+          "struck",
+          "strike",
+          "hit",
+          "bludgeon",
+          "blow",
+          "beat"
+        ],
+        [
+          "{WEAPON_NAME}",
+          "weight",
+          "brass"
+        ]
+      ],
+      "min_groups": 2
+    },
+    "opportunity": {
+      "canonical": "{KILLER_NAME} was at the cafe's rear door during the murder window and lied about being at the fountain.",
+      "concept_groups": [
+        [
+          "alley",
+          "storage",
+          "rear",
+          "back door",
+          "back way",
+          "cafe back"
+        ],
+        [
+          "fountain",
+          "alibi",
+          "lied",
+          "lie",
+          "false"
+        ],
+        [
+          "window",
+          "murder window",
+          "before open",
+          "07:5",
+          "07:4",
+          "quarter to eight"
+        ]
+      ],
+      "min_groups": 1
+    },
+    "key_clue_ids": [
+      "clue_ledger_page",
+      "clue_ben_sighting",
+      "clue_till_weight_found",
+      "clue_rear_door",
+      "clue_nadia_overheard"
+    ],
+    "explanation": "Correct. {KILLER_NAME} killed {VICTIM_NAME}. {VICTIM_NAME} had found the torn ledger page proving {KILLER_NAME} was skimming the till, and gave her until this morning to confess before taking it to the committee. He summoned her to the storage room before opening. {KILLER_NAME} slipped out the front, doubled back through the rear alley \u2014 the blue coat {WITNESS1_NAME} saw at 07:47 \u2014 and let herself in the back door. When {VICTIM_NAME} refused to back down she struck him with the {WEAPON_NAME} at 07:56 (the thud {WITNESS1_NAME} and {WITNESS4_NAME} heard), rinsed it in the kitchen and hid it in the mop bucket, then opened the cafe two minutes late. Her fountain alibi was never real, and no one could place her there."
+  }
+}

@@ -22,7 +22,9 @@ from .models import (
 )
 from .projections import project_claim, project_clue
 from .session import Session
-from .store import minutes
+from .case_store import minutes
+from .llm.config import get_llm_config
+from .llm.dialogue_rewriter import rewrite_interview_answer
 
 QUESTION_TEXT = {
     "alibi": "Where were you during the murder window, between 07:45 and 08:00?",
@@ -103,15 +105,24 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
     rule = _match_rule(pack, case, session, req)
 
     if rule is None:
-        answer_text = pack.default_answers.get(
+        deterministic_answer = pack.default_answers.get(
             req.question_type, "I don't have anything to say about that."
         )
         response = AskResponse(
             question_text=question_text,
-            answer_text=answer_text,
+            deterministic_answer_text=deterministic_answer,
+            display_answer_text=deterministic_answer,
             answer_type="uncertain",
         )
-        _record(session, req, question_text, answer_text, [], [])
+        _record(
+            session, req, question_text,
+            deterministic_answer_text=deterministic_answer,
+            display_answer_text=deterministic_answer,
+            claim_ids=[], clue_ids=[],
+            llm_rewrite_used=False,
+            llm_rewrite_fallback=False,
+            llm_rewrite_fallback_reason=None
+        )
         return response
 
     new_claims: list[Claim] = []
@@ -135,23 +146,57 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
             session.discovered_clue_ids.add(clue_id)
             revealed.append(clue)
 
+    # Rewrite logic
+    config = get_llm_config()
+    deterministic_answer = rule.answer_text
+    display_answer = deterministic_answer
+    llm_rewrite_used = False
+    llm_rewrite_fallback = False
+    llm_rewrite_fallback_reason = None
+    
+    if config.dialogue_enabled:
+        allowed_facts = [c.claim_text for c in new_claims] + [c.title for c in revealed]
+        agent = next(a for a in case.agents if a.agent_id == req.agent_id)
+        pressure = session.pressure_for(req.agent_id)
+        
+        rewrite_result = rewrite_interview_answer(
+            case=case,
+            agent=agent,
+            question_text=question_text,
+            deterministic_text=deterministic_answer,
+            allowed_facts=allowed_facts,
+            pressure_level=pressure
+        )
+        display_answer = rewrite_result.rewritten_text
+        llm_rewrite_used = True
+        llm_rewrite_fallback = rewrite_result.fallback_used
+        llm_rewrite_fallback_reason = rewrite_result.fallback_reason
+
     _record(
         session,
         req,
         question_text,
-        rule.answer_text,
-        [c.claim_id for c in new_claims],
-        [c.clue_id for c in revealed],
+        deterministic_answer_text=deterministic_answer,
+        display_answer_text=display_answer,
+        claim_ids=[c.claim_id for c in new_claims],
+        clue_ids=[c.clue_id for c in revealed],
+        llm_rewrite_used=llm_rewrite_used,
+        llm_rewrite_fallback=llm_rewrite_fallback,
+        llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,
     )
 
     return AskResponse(
         question_text=question_text,
-        answer_text=rule.answer_text,
+        deterministic_answer_text=deterministic_answer,
+        display_answer_text=display_answer,
         answer_type=rule.answer_type,
         emotional_shift=rule.emotional_shift,
         new_claims=new_claims,
         revealed_clues=revealed,
         suggested_followups=rule.suggested_followups,
+        llm_rewrite_used=llm_rewrite_used,
+        llm_rewrite_fallback=llm_rewrite_fallback,
+        llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,
     )
 
 
@@ -159,9 +204,13 @@ def _record(
     session: Session,
     req: AskRequest,
     question_text: str,
-    answer_text: str,
+    deterministic_answer_text: str,
+    display_answer_text: str,
     claim_ids: list[str],
     clue_ids: list[str],
+    llm_rewrite_used: bool = False,
+    llm_rewrite_fallback: bool = False,
+    llm_rewrite_fallback_reason: Optional[str] = None,
 ) -> None:
     transcript = session.transcript_for(req.agent_id)
     transcript.messages.append(
@@ -170,9 +219,13 @@ def _record(
     transcript.messages.append(
         InterviewMessage(
             speaker="agent",
-            text=answer_text,
+            text=display_answer_text,
+            deterministic_text=deterministic_answer_text,
             generated_claim_ids=claim_ids,
             revealed_clue_ids=clue_ids,
+            llm_rewrite_used=llm_rewrite_used,
+            llm_rewrite_fallback=llm_rewrite_fallback,
+            llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,
         )
     )
 
@@ -181,10 +234,13 @@ def public_ask_response(resp: AskResponse) -> dict:
     """Strip hidden truth (lie flags) before the response crosses the API."""
     return {
         "question_text": resp.question_text,
-        "answer_text": resp.answer_text,
+        "answer_text": resp.display_answer_text,
+        "deterministic_answer_text": resp.deterministic_answer_text,
         "answer_type": resp.answer_type,
         "emotional_shift": resp.emotional_shift,
         "new_claims": [project_claim(c) for c in resp.new_claims],
         "revealed_clues": [project_clue(c) for c in resp.revealed_clues],
         "suggested_followups": resp.suggested_followups,
+        "llm_rewrite_used": resp.llm_rewrite_used,
+        "llm_rewrite_fallback": resp.llm_rewrite_fallback,
     }

@@ -11,8 +11,8 @@ truth (killer identity, lie flags, hidden events) to the client.
 
 ## Status
 
-Implements build-plan phases 0–6 (spec 13) — the full playable loop:
-`observe → interview → note → challenge → accuse → judgement`.
+Implements build-plan phases 0–7C:
+`observe → interview → note → challenge → accuse → judgement` plus `procedural generation` and `LLM dialogue rewrites`.
 
 - **Locked case data model** (spec 11) — Pydantic schemas in `backend/app/models.py`
 - **Hand-authored case** — *The Storage Room Murder* (blackmail template, spec 03)
@@ -44,9 +44,10 @@ interview engine, so an LLM resolver can be plugged in behind
 `resolve_challenge` / `answer_question` / `judge_accusation` without touching the
 API or the frontend.
 
-Not yet built: procedural generation (phase 7), fairness validator as a live
-service (phase 8 — the checks exist as tests), free-text LLM interrogation
-(phase 9, pluggable provider planned).
+- **Procedural Generation** (phase 7A, 7B) — LLM-assisted generation of new cases based on templates. Safe, deterministic fallback on generation failure.
+- **LLM Surface Dialogue** (phase 7C) — The engine intercepts deterministic dialogue responses and uses an LLM to rewrite them for narrative flavor.
+
+Not yet built: free-text LLM interrogation (phase 9).
 
 ## Run it
 
@@ -87,11 +88,22 @@ backend/app/
   judge.py        # deterministic accusation scoring + gated truth reveal
   main.py         # FastAPI endpoints
   data/case_001/  # the locked hand-authored case (+ challenges.json, solution.json)
+  llm/            # LLM adapter interfaces, config, prompts, and dialogue rewriters
+  mystery_architect.py  # LLM generation orchestration and fallback
 frontend/src/
   views/          # Overview, Rewind, Places, Suspects (interview + challenge),
                   #   Board, Accuse (accusation form + reveal)
 ```
 
-The interview engine's request/response contract matches spec 06/12, so the
-free-text LLM layer can be swapped in behind `answer_question` without touching
-the API or UI.
+### Dialogue Rewrite Architecture (Phase 7C)
+
+For interactions (interviews and challenges), the system maintains a strict separation of truth and flavor:
+
+```
+Deterministic Result → Optional LLM Rewrite → Sanitiser → Display Text
+```
+
+1. **Deterministic Result**: The engine determines the exact outcome (claims made, clues revealed, pressure delta) and selects a pre-authored fallback response.
+2. **Optional Rewrite**: If enabled, the LLM uses the agent's persona and the exact "allowed facts" generated in Step 1 to write a richer, in-character response.
+3. **Sanitiser**: The rewritten text is checked for leakage (role labels, hidden facts not in the allowed list, JSON artifacts).
+4. **Display Text**: If safe, the UI displays the rewritten text. Internally, the deterministic text is preserved for audits, tests, and debugging.

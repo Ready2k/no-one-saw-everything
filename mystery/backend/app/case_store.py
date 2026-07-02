@@ -1,4 +1,4 @@
-"""Loads a locked case from disk. Case data is immutable during play."""
+"""Manages loading static cases and registering procedurally generated cases."""
 
 from __future__ import annotations
 
@@ -23,13 +23,21 @@ from .models import (
 
 DATA_DIR = Path(__file__).parent / "data"
 
+_GENERATED_CASES: dict[str, CaseData] = {}
+
+
+def reset_case_store() -> None:
+    _GENERATED_CASES.clear()
+    load_case_from_disk.cache_clear()
+
 
 def _load_json(case_dir: Path, name: str):
     return json.loads((case_dir / name).read_text())
 
 
 @lru_cache(maxsize=8)
-def load_case(case_id: str = "case_001") -> CaseData:
+def load_case_from_disk(case_id: str) -> CaseData:
+    """Loads a static, hand-authored case from the data directory."""
     case_dir = DATA_DIR / case_id
     if not case_dir.is_dir():
         raise FileNotFoundError(f"No case directory: {case_dir}")
@@ -45,9 +53,21 @@ def load_case(case_id: str = "case_001") -> CaseData:
         clues=[Clue(**c) for c in clue_pack["clues"]],
         conclusions=[Conclusion(**c) for c in clue_pack["conclusions"]],
         interview_packs=[AgentInterviewPack(**p) for p in _load_json(case_dir, "interviews.json")],
-        challenge_rules=[ChallengeRule(**c) for c in _load_json(case_dir, "challenges.json")],
+        challenge_rules=[ChallengeRule(**c) for c in _load_json(case_dir, "challenges.json")] if (case_dir / "challenges.json").exists() else [],
         solution=Solution(**_load_json(case_dir, "solution.json")),
     )
+
+
+def get_case(case_id: str) -> CaseData:
+    """Gets a case from the generated registry or disk."""
+    if case_id in _GENERATED_CASES:
+        return _GENERATED_CASES[case_id]
+    return load_case_from_disk(case_id)
+
+
+def register_case(case_data: CaseData):
+    """Registers a procedurally generated case so it can be played."""
+    _GENERATED_CASES[case_data.case.case_id] = case_data
 
 
 def minutes(hhmm: str) -> int:

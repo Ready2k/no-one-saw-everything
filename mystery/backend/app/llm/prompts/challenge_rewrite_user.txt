@@ -1,0 +1,26 @@
+Rewrite the following deterministic response for a player challenge.
+
+Length Limit: Maximum 3 sentences. Maximum 80 words.
+
+PERSONA:
+Name: {name}
+Occupation: {occupation}
+Traits: {traits}
+Emotion: {emotion}
+Pressure Level: {pressure_level}
+
+CONTEXT:
+Player Challenged: "{challenged_claim}"
+Player Provided Evidence: {evidence_clues}
+Player Statement: {player_statement}
+Challenge Outcome: {outcome}
+
+FACTS:
+Allowed Facts (YOU MAY ONLY USE THESE FACTS):
+{allowed_facts}
+
+Forbidden Facts (DO NOT MENTION THESE):
+{forbidden_facts}
+
+DETERMINISTIC TEXT TO REWRITE:
+{deterministic_text}

@@ -24,6 +24,8 @@ from .models import (
 )
 from .projections import project_claim, project_clue
 from .session import Session
+from .llm.config import get_llm_config
+from .llm.dialogue_rewriter import rewrite_challenge_response
 
 
 class ChallengeError(Exception):
@@ -123,6 +125,30 @@ def resolve_challenge(case: CaseData, session: Session, req: ChallengeRequest) -
     else:
         record = _apply_rule(case, session, req, claim, rule)
 
+    config = get_llm_config()
+    if config.dialogue_enabled:
+        allowed_facts = [session.claims[cid].claim_text for cid in record.new_claim_ids]
+        allowed_facts += [c.title for c in case.clues if c.clue_id in record.revealed_clue_ids]
+        agent = next(a for a in case.agents if a.agent_id == req.target_agent_id)
+        pressure = session.pressure_for(req.target_agent_id)
+        evidence_clues = ", ".join(c.title for c in case.clues if c.clue_id in req.evidence_clue_ids)
+        
+        rewrite_result = rewrite_challenge_response(
+            case=case,
+            agent=agent,
+            challenged_claim=claim.claim_text,
+            evidence_clues=evidence_clues,
+            player_statement=req.player_statement or "",
+            outcome=record.outcome,
+            deterministic_text=record.deterministic_response_text,
+            allowed_facts=allowed_facts,
+            pressure_level=pressure
+        )
+        record.display_response_text = rewrite_result.rewritten_text
+        record.llm_rewrite_used = True
+        record.llm_rewrite_fallback = rewrite_result.fallback_used
+        record.llm_rewrite_fallback_reason = rewrite_result.fallback_reason
+
     session.challenges[record.challenge_id] = record
     session.challenge_index[dedup_key] = record.challenge_id
     _record_transcript(session, req, record)
@@ -185,7 +211,8 @@ def _apply_rule(
         evidence_clue_ids=req.evidence_clue_ids,
         player_statement=req.player_statement,
         outcome=rule.outcome,
-        response_text=rule.response_text,
+        deterministic_response_text=rule.response_text,
+        display_response_text=rule.response_text,
         emotional_shift=rule.emotional_shift,
         new_claim_ids=new_claim_ids,
         revealed_memory_ids=revealed_memory_ids,
@@ -218,7 +245,8 @@ def _resolve_unscripted(
         evidence_clue_ids=req.evidence_clue_ids,
         player_statement=req.player_statement,
         outcome="deny",
-        response_text=response,
+        deterministic_response_text=response,
+        display_response_text=response,
         emotional_shift="unmoved",
         pressure_delta=delta,
     )
@@ -291,9 +319,13 @@ def _record_transcript(session: Session, req: ChallengeRequest, record: Challeng
     transcript.messages.append(
         InterviewMessage(
             speaker="agent",
-            text=record.response_text,
+            text=record.display_response_text,
+            deterministic_text=record.deterministic_response_text,
             generated_claim_ids=record.new_claim_ids,
             revealed_clue_ids=record.revealed_clue_ids,
+            llm_rewrite_used=record.llm_rewrite_used,
+            llm_rewrite_fallback=record.llm_rewrite_fallback,
+            llm_rewrite_fallback_reason=record.llm_rewrite_fallback_reason,
         )
     )
 
@@ -322,7 +354,7 @@ def public_challenge(case: CaseData, session: Session, record: ChallengeRecord) 
         "challenged_claim_id": record.challenged_claim_id,
         "evidence_clue_ids": record.evidence_clue_ids,
         "outcome": record.outcome,
-        "response_text": record.response_text,
+        "response_text": record.display_response_text,
         "emotional_shift": record.emotional_shift,
         "new_claims": new_claims,
         "revealed_clues": revealed_clues,
@@ -331,4 +363,6 @@ def public_challenge(case: CaseData, session: Session, record: ChallengeRecord) 
         "pressure_level": round(session.pressure_for(record.target_agent_id), 3),
         "created_note_ids": record.created_note_ids,
         "duplicate": record.duplicate,
+        "llm_rewrite_used": record.llm_rewrite_used,
+        "llm_rewrite_fallback": record.llm_rewrite_fallback,
     }

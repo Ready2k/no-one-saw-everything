@@ -19,7 +19,7 @@ from .models import (
     TimelineEntry,
 )
 from .session import Session
-from .store import minutes
+from .case_store import minutes
 
 
 def _criterion_correct(criterion: SolutionCriterion, answer: str) -> bool:
@@ -56,6 +56,15 @@ def _verdict_band(score: int) -> str:
     if score >= 20:
         return "Wrong suspect, though you found some real threads."
     return "An accusation the evidence doesn't support."
+
+
+def _detective_rating(score: int) -> str:
+    if score >= 95: return "S"
+    if score >= 85: return "A"
+    if score >= 70: return "B"
+    if score >= 50: return "C"
+    if score >= 30: return "D"
+    return "F"
 
 
 def _true_timeline(case: CaseData) -> list[TimelineEntry]:
@@ -104,6 +113,7 @@ def judge_accusation(
 
     # Split cited evidence into valid (discovered) and invalid (not discovered).
     valid_clue_ids: set[str] = set()
+    player_evidence_used: list[str] = []
     false_assumptions: list[str] = []
     for clue_id in req.supporting_clue_ids:
         if clue_id not in clue_by_id:
@@ -114,6 +124,7 @@ def judge_accusation(
             )
         else:
             valid_clue_ids.add(clue_id)
+            player_evidence_used.append(clue_by_id[clue_id].title)
 
     killer_correct = req.accused_agent_id == sol.killer_id
     motive_correct = _criterion_correct(sol.motive, req.motive_answer)
@@ -185,6 +196,8 @@ def judge_accusation(
         key_clues_found=key_clues_found,
         key_clues_missed=key_clues_missed,
         red_herring_explanations=_red_herring_explanations(case),
+        player_evidence_used=player_evidence_used,
+        detective_rating=_detective_rating(score),
     )
     session.accusation = result
     return result

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
-import type { Board, CluePublic, Note } from "../types";
+import type { Board, CluePublic, Note, HintsResponse, MarkerType } from "../types";
 import { ClaimRow, ClueCard } from "./shared";
 
 export default function BoardView() {
@@ -13,11 +13,13 @@ export default function BoardView() {
   const [body, setBody] = useState("");
   const [noteType, setNoteType] = useState<Note["note_type"]>("manual");
   const [pinTo, setPinTo] = useState("");
+  const [hints, setHints] = useState<HintsResponse | null>(null);
 
   const refresh = useCallback(() => {
     api.board().then(setBoard);
     api.clues().then(setClues);
     api.notes().then(setNotes);
+    api.hints().then(setHints);
   }, []);
 
   useEffect(refresh, [refresh]);
@@ -33,6 +35,18 @@ export default function BoardView() {
     });
     setTitle("");
     setBody("");
+    refresh();
+  };
+
+  const toggleMarker = async (agentId: string, marker: MarkerType) => {
+    if (!board) return;
+    const currentMarkers = board.case_board_markers?.[agentId] || [];
+    const hasMarker = currentMarkers.includes(marker);
+    await api.updateMarkers({
+      element_id: agentId,
+      marker,
+      action: hasMarker ? "remove" : "add"
+    });
     refresh();
   };
 
@@ -59,6 +73,34 @@ export default function BoardView() {
                 {s.suspicion.replace(/_/g, " ")}
               </span>
             </div>
+            
+            <div className="marker-toggles">
+              <label>
+                <input 
+                  type="checkbox" 
+                  checked={(board.case_board_markers?.[s.agent.agent_id] || []).includes("red_herring")}
+                  onChange={() => toggleMarker(s.agent.agent_id, "red_herring")}
+                />
+                Red Herring
+              </label>
+              <label>
+                <input 
+                  type="checkbox" 
+                  checked={(board.case_board_markers?.[s.agent.agent_id] || []).includes("cleared")}
+                  onChange={() => toggleMarker(s.agent.agent_id, "cleared")}
+                />
+                Cleared
+              </label>
+              <label>
+                <input 
+                  type="checkbox" 
+                  checked={(board.case_board_markers?.[s.agent.agent_id] || []).includes("prime_suspect")}
+                  onChange={() => toggleMarker(s.agent.agent_id, "prime_suspect")}
+                />
+                Prime Suspect
+              </label>
+            </div>
+
             {s.claims.length > 0 && (
               <details>
                 <summary>Claims ({s.claims.length})</summary>
@@ -92,6 +134,20 @@ export default function BoardView() {
       </div>
 
       <div className="board-col">
+        <h2>Guidance</h2>
+        {hints && (hints.tutorial_hints.length > 0 || hints.readiness_hints.length > 0) ? (
+          <div className="panel guidance-panel">
+            {hints.tutorial_hints.map((h, i) => (
+              <p key={`tut-${i}`} className="tutorial-hint">💡 {h}</p>
+            ))}
+            {hints.readiness_hints.map((h, i) => (
+              <p key={`read-${i}`} className="readiness-hint">🕵️ {h}</p>
+            ))}
+          </div>
+        ) : (
+          <p className="muted">You're doing great. Keep investigating.</p>
+        )}
+
         <h2>Evidence</h2>
         {clues.length === 0 && <p className="muted">Nothing catalogued yet.</p>}
         {clues.map((c) => (

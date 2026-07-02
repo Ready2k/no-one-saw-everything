@@ -1,0 +1,23 @@
+Rewrite the following deterministic answer for an interview.
+
+Length Limit: Maximum 2 sentences. Maximum 60 words.
+
+PERSONA:
+Name: {name}
+Occupation: {occupation}
+Traits: {traits}
+Emotion: {emotion}
+Pressure Level: {pressure_level}
+
+CONTEXT:
+Question: {question_text}
+
+FACTS:
+Allowed Facts (YOU MAY ONLY USE THESE FACTS):
+{allowed_facts}
+
+Forbidden Facts (DO NOT MENTION THESE):
+{forbidden_facts}
+
+DETERMINISTIC TEXT TO REWRITE:
+{deterministic_text}
