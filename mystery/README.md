@@ -11,7 +11,8 @@ truth (killer identity, lie flags, hidden events) to the client.
 
 ## Status
 
-Implements build-plan phases 0–4 (spec 13):
+Implements build-plan phases 0–6 (spec 13) — the full playable loop:
+`observe → interview → note → challenge → accuse → judgement`.
 
 - **Locked case data model** (spec 11) — Pydantic schemas in `backend/app/models.py`
 - **Hand-authored case** — *The Storage Room Murder* (blackmail template, spec 03)
@@ -26,10 +27,26 @@ Implements build-plan phases 0–4 (spec 13):
 - **Structured interview engine** (spec 06, deterministic) — six question types,
   grounded hand-authored answers derived from seeded memories and lie state,
   claim extraction, clue reveals gated on prior discoveries
+- **Challenge engine** (spec 06, phase 5, deterministic) — confront a claim with
+  discovered contradictory evidence; scripted outcomes (deny / deflect / reframe
+  / partial admission / reveal innocent secret / contradiction locked), pressure
+  tracking, claim-status updates, auto contradiction notes, gated innocent-secret
+  reveals, idempotent duplicate handling. Guardrails reject undiscovered evidence,
+  missing/mismatched claims, and the victim.
+- **Accusation judge** (phase 6, deterministic) — grades killer / motive / method
+  / opportunity by keyword-concept matching against `solution.json`, scores
+  evidence quality against the clue graph, flags undiscovered-evidence citations
+  and reasoning gaps. The truth reveal (true timeline, key clues found/missed,
+  red-herring explanations) is exposed **only after** an accusation.
 
-Not yet built: challenge engine (phase 5), accusation judge (phase 6),
-procedural generation (7), fairness validator as a service (8 — the checks
-exist as tests), free-text LLM interrogation (9, pluggable provider planned).
+The challenge and accusation engines share the spec-06/12 contract with the
+interview engine, so an LLM resolver can be plugged in behind
+`resolve_challenge` / `answer_question` / `judge_accusation` without touching the
+API or the frontend.
+
+Not yet built: procedural generation (phase 7), fairness validator as a live
+service (phase 8 — the checks exist as tests), free-text LLM interrogation
+(phase 9, pluggable provider planned).
 
 ## Run it
 
@@ -59,15 +76,20 @@ cd mystery/backend && .venv/bin/python -m pytest tests/ -q
 
 ```
 backend/app/
-  models.py       # spec-11 schemas: case, agents, events, clues, memories, notes
+  models.py       # spec-11 schemas: case, agents, events, clues, memories, notes,
+                  #   challenges, solution, accusation
   store.py        # loads and caches the immutable case bundle
-  session.py      # mutable player state: discoveries, claims, notes, transcripts
+  session.py      # mutable player state: discoveries, claims, notes, transcripts,
+                  #   pressure, challenges, accusation result
   projections.py  # player-safe views — strips hidden truth at the API boundary
   interview.py    # deterministic grounded Q&A (same contract a future LLM uses)
+  challenge.py    # deterministic challenge resolution + player-safe projection
+  judge.py        # deterministic accusation scoring + gated truth reveal
   main.py         # FastAPI endpoints
-  data/case_001/  # the locked hand-authored case
+  data/case_001/  # the locked hand-authored case (+ challenges.json, solution.json)
 frontend/src/
-  views/          # Overview, Rewind, Places, Suspects (interview), Board
+  views/          # Overview, Rewind, Places, Suspects (interview + challenge),
+                  #   Board, Accuse (accusation form + reveal)
 ```
 
 The interview engine's request/response contract matches spec 06/12, so the

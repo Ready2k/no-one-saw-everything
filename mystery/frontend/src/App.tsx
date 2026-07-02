@@ -6,6 +6,7 @@ import Rewind from "./views/Rewind";
 import Places from "./views/Places";
 import Suspects from "./views/Suspects";
 import BoardView from "./views/Board";
+import Accuse from "./views/Accuse";
 
 export interface World {
   caseOverview: CaseOverview;
@@ -29,6 +30,7 @@ const TABS = [
   { id: "places", label: "Places" },
   { id: "suspects", label: "Suspects" },
   { id: "board", label: "Case Board" },
+  { id: "accuse", label: "Accuse" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -100,6 +102,7 @@ export default function App() {
           {tab === "places" && <Places />}
           {tab === "suspects" && <Suspects />}
           {tab === "board" && <BoardView />}
+          {tab === "accuse" && <Accuse />}
         </main>
       </div>
     </WorldContext.Provider>

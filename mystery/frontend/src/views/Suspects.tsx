@@ -3,6 +3,8 @@ import { api } from "../api";
 import { useWorld } from "../App";
 import type {
   AskResult,
+  ChallengeResult,
+  ChallengeSuggestion,
   CluePublic,
   QuestionType,
   SuspicionLevel,
@@ -54,6 +56,8 @@ function InterviewPanel({ agentId }: { agentId: string }) {
   const [lastResult, setLastResult] = useState<AskResult | null>(null);
   const [clues, setClues] = useState<CluePublic[]>([]);
   const [suspicion, setSuspicion] = useState<SuspicionLevel>("unknown");
+  const [suggestions, setSuggestions] = useState<ChallengeSuggestion[]>([]);
+  const [lastChallenge, setLastChallenge] = useState<ChallengeResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +68,7 @@ function InterviewPanel({ agentId }: { agentId: string }) {
   const refresh = useCallback(() => {
     api.transcript(agentId).then(setTranscript);
     api.clues().then(setClues);
+    api.challengeSuggestions(agentId).then(setSuggestions);
     api.board().then((b) => {
       const me = b.suspects.find((s) => s.agent.agent_id === agentId);
       if (me) setSuspicion(me.suspicion);
@@ -104,6 +109,26 @@ function InterviewPanel({ agentId }: { agentId: string }) {
       pinned_to_agent_id: agentId,
     });
     alert("Noted.");
+  };
+
+  const runChallenge = async (s: ChallengeSuggestion) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await api.challenge({
+        target_agent_id: agentId,
+        challenged_claim_id: s.challenged_claim_id,
+        evidence_clue_ids: [s.evidence_clue_id],
+        player_statement: `You claimed: "${s.claim_text}" — but ${s.evidence_title}.`,
+      });
+      setLastChallenge(result);
+      setLastResult(null);
+      refresh();
+    } catch (e) {
+      setError(String(e instanceof Error ? e.message : e));
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -168,9 +193,52 @@ function InterviewPanel({ agentId }: { agentId: string }) {
             Save answer as note
           </button>
         )}
+        {lastChallenge && (
+          <div className={`challenge-response outcome-${lastChallenge.outcome}`}>
+            <span className="badge outcome">{lastChallenge.outcome.replace(/_/g, " ")}</span>
+            {lastChallenge.emotional_shift && (
+              <span className="muted small">
+                {" "}
+                {agent.full_name.split(" ")[0]} seems {lastChallenge.emotional_shift}.
+              </span>
+            )}
+            {lastChallenge.pressure_delta > 0 && (
+              <span className="muted small pressure-up"> pressure ↑</span>
+            )}
+            {lastChallenge.revealed_memories.map((m) => (
+              <p key={m.memory_id} className="small revealed-memory">
+                🗝️ {m.summary}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
 
       {error && <p className="error">{error}</p>}
+
+      {suggestions.length > 0 && (
+        <div className="challenge-builder panel">
+          <h3>Contradictions you can press</h3>
+          <p className="muted small">
+            You hold evidence that conflicts with what {agent.full_name.split(" ")[0]} has told
+            you. Confront them.
+          </p>
+          {suggestions.map((s) => (
+            <div key={`${s.challenged_claim_id}:${s.evidence_clue_id}`} className="challenge-card">
+              <div className="challenge-claim">
+                <span className={`badge status-${s.claim_status}`}>{s.claim_status}</span>
+                <span>“{s.claim_text}”</span>
+              </div>
+              <div className="challenge-evidence">
+                <span className="muted small">contradicted by</span> {s.evidence_title}
+              </div>
+              <button className="challenge-btn" disabled={busy} onClick={() => runChallenge(s)}>
+                Challenge
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="question-builder panel">
         <div className="question-row">
@@ -233,6 +301,14 @@ function InterviewPanel({ agentId }: { agentId: string }) {
       {lastResult && lastResult.revealed_clues.length > 0 && (
         <div className="revealed">
           {lastResult.revealed_clues.map((c) => (
+            <ClueCard key={c.clue_id} clue={c} isNew />
+          ))}
+        </div>
+      )}
+
+      {lastChallenge && lastChallenge.revealed_clues.length > 0 && (
+        <div className="revealed">
+          {lastChallenge.revealed_clues.map((c) => (
             <ClueCard key={c.clue_id} clue={c} isNew />
           ))}
         </div>

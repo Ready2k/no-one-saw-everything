@@ -1,7 +1,10 @@
 import type {
+  AccusationResult,
   AskResult,
   Board,
   CaseOverview,
+  ChallengeResult,
+  ChallengeSuggestion,
   ClaimPublic,
   CluePublic,
   EventPublic,
@@ -84,6 +87,40 @@ export const api = {
       body: JSON.stringify({ agent_id: agentId, level }),
     }),
   board: () => request<Board>("/api/board"),
+  challengeSuggestions: (agentId?: string) =>
+    request<ChallengeSuggestion[]>(
+      `/api/challenge/suggestions${agentId ? `?agent_id=${agentId}` : ""}`
+    ),
+  challenge: (payload: {
+    target_agent_id: string;
+    challenged_claim_id: string;
+    evidence_clue_ids: string[];
+    player_statement?: string;
+  }) =>
+    request<ChallengeResult>("/api/challenge", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  accuse: (payload: {
+    accused_agent_id: string;
+    motive_answer: string;
+    method_answer: string;
+    opportunity_answer: string;
+    supporting_note_ids: string[];
+    supporting_clue_ids: string[];
+  }) =>
+    request<AccusationResult>("/api/accuse", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  reveal: () => request<AccusationResult>("/api/reveal"),
+  status: () =>
+    request<{
+      discovered_clue_count: number;
+      claim_count: number;
+      challenge_count: number;
+      accused: boolean;
+    }>("/api/status"),
   reset: () => request<{ reset: boolean }>("/api/session/reset", { method: "POST" }),
 };
 

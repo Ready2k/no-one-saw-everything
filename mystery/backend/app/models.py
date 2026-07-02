@@ -47,6 +47,17 @@ Shareability = Literal[
 
 ClueStrength = Literal["weak", "medium", "strong", "critical"]
 
+ClaimStatus = Literal["claimed", "disputed", "reframed", "confirmed", "resolved"]
+
+ChallengeOutcome = Literal[
+    "deny",                    # rejects the evidence; claim unchanged
+    "deflect",                 # redirects; claim disputed but not admitted
+    "reframe",                 # offers an innocent explanation
+    "partial_admission",      # concedes part of the hidden truth
+    "reveal_innocent_secret",  # red herring explains suspicious behaviour
+    "contradiction_locked",   # claim is provably false; recorded as such
+]
+
 NoteType = Literal[
     "manual",
     "event",
@@ -261,6 +272,52 @@ class AgentInterviewPack(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Challenge data (hand-authored scripted outcomes for the challenge engine)
+# ---------------------------------------------------------------------------
+
+class ChallengeRule(BaseModel):
+    """A scripted reaction to a specific claim being challenged with
+    specific evidence. First matching rule (in file order) wins."""
+
+    target_agent_id: str
+    challenged_claim_id: str
+    evidence_clue_ids: list[str] = []
+    match_mode: Literal["any", "all"] = "any"
+    required_prior_clue_ids: list[str] = []
+    outcome: ChallengeOutcome
+    response_text: str
+    emotional_shift: Optional[str] = None
+    pressure_delta: float = 0.0
+    new_claims: list[AnswerClaim] = []
+    reveals_clue_ids: list[str] = []
+    reveals_memory_ids: list[str] = []
+    sets_claim_status: Optional[ClaimStatus] = None
+
+
+# ---------------------------------------------------------------------------
+# Solution / judging config (hand-authored; consumed only by the judge & reveal)
+# ---------------------------------------------------------------------------
+
+class SolutionCriterion(BaseModel):
+    """A gradeable free-text answer field. A concept group matches if any of
+    its synonyms appears (case-insensitive substring) in the player's answer.
+    The field is 'correct' when at least `min_groups` distinct groups match."""
+
+    canonical: str
+    concept_groups: list[list[str]] = []
+    min_groups: int = 1
+
+
+class Solution(BaseModel):
+    killer_id: str
+    motive: SolutionCriterion
+    method: SolutionCriterion
+    opportunity: SolutionCriterion
+    key_clue_ids: list[str] = []          # the clues that prove the case
+    explanation: str = ""                  # shown on a correct reveal
+
+
+# ---------------------------------------------------------------------------
 # Bundled case data (everything loaded from disk, immutable in play)
 # ---------------------------------------------------------------------------
 
@@ -274,6 +331,8 @@ class CaseData(BaseModel):
     clues: list[Clue]
     conclusions: list[Conclusion]
     interview_packs: list[AgentInterviewPack]
+    challenge_rules: list[ChallengeRule] = []
+    solution: Solution
 
 
 # ---------------------------------------------------------------------------
@@ -302,7 +361,7 @@ class Claim(BaseModel):
     time_reference: Optional[str] = None
     location_reference_id: Optional[str] = None
     truthfulness: TruthStatus = "unknown"  # hidden from player until reveal
-    player_known_status: Literal["claimed", "disputed", "confirmed"] = "claimed"
+    player_known_status: ClaimStatus = "claimed"
 
 
 class InterviewMessage(BaseModel):
@@ -369,3 +428,85 @@ class SuspicionUpdate(BaseModel):
 class InspectRequest(BaseModel):
     location_id: Optional[str] = None
     object_id: Optional[str] = None
+
+
+# ---------------------------------------------------------------------------
+# Challenge payloads
+# ---------------------------------------------------------------------------
+
+class ChallengeRequest(BaseModel):
+    target_agent_id: str
+    challenged_claim_id: str
+    evidence_clue_ids: list[str] = []
+    player_statement: Optional[str] = None
+
+
+class ChallengeRecord(BaseModel):
+    """Full record of a resolved challenge, stored in the session. The
+    player-safe projection lives in challenge.py."""
+
+    challenge_id: str
+    case_id: str
+    target_agent_id: str
+    challenged_claim_id: str
+    evidence_clue_ids: list[str] = []
+    player_statement: Optional[str] = None
+    outcome: ChallengeOutcome
+    response_text: str
+    emotional_shift: Optional[str] = None
+    new_claim_ids: list[str] = []
+    revealed_memory_ids: list[str] = []
+    revealed_clue_ids: list[str] = []
+    pressure_delta: float = 0.0
+    created_note_ids: list[str] = []
+    duplicate: bool = False
+
+
+# ---------------------------------------------------------------------------
+# Accusation payloads
+# ---------------------------------------------------------------------------
+
+class AccusationRequest(BaseModel):
+    accused_agent_id: str
+    motive_answer: str = ""
+    method_answer: str = ""
+    opportunity_answer: str = ""
+    supporting_note_ids: list[str] = []
+    supporting_clue_ids: list[str] = []
+
+
+class RedHerringExplanation(BaseModel):
+    agent_id: str
+    agent_name: str
+    looked_suspicious_because: str
+    actually_innocent_because: str
+
+
+class TimelineEntry(BaseModel):
+    time: str
+    description: str
+    location_name: str
+
+
+class AccusationResult(BaseModel):
+    accusation_id: str
+    case_id: str
+    score: int
+    killer_correct: bool
+    motive_correct: bool
+    method_correct: bool
+    opportunity_correct: bool
+    evidence_score: float
+    missed_key_clues: list[str] = []
+    false_assumptions: list[str] = []
+    explanation: str
+    verdict: str
+    # Truth reveal — only ever returned by the accuse/reveal endpoints:
+    true_killer_id: str
+    true_killer_name: str
+    true_motive: str
+    true_method: str
+    true_timeline: list[TimelineEntry] = []
+    key_clues_found: list[str] = []
+    key_clues_missed: list[str] = []
+    red_herring_explanations: list[RedHerringExplanation] = []

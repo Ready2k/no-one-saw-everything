@@ -9,23 +9,48 @@ from __future__ import annotations
 
 import itertools
 
-from .models import Claim, InterviewTranscript, Note, SuspicionLevel
+from typing import Optional
+
+from .models import (
+    AccusationResult,
+    ChallengeRecord,
+    Claim,
+    InterviewTranscript,
+    Note,
+    SuspicionLevel,
+)
 
 
 class Session:
     def __init__(self, case_id: str):
         self.case_id = case_id
         self.discovered_clue_ids: set[str] = set()
+        self.revealed_memory_ids: set[str] = set()
         self.pinned_event_ids: set[str] = set()
         self.inspected_location_ids: set[str] = set()
         self.claims: dict[str, Claim] = {}
         self.transcripts: dict[str, InterviewTranscript] = {}
         self.notes: dict[str, Note] = {}
         self.suspicion: dict[str, SuspicionLevel] = {}
+        self.pressure: dict[str, float] = {}  # agent_id -> cumulative pressure
+        self.challenges: dict[str, ChallengeRecord] = {}
+        # (claim_id, frozenset(evidence_ids)) -> challenge_id, for de-duplication
+        self.challenge_index: dict[tuple[str, frozenset[str]], str] = {}
+        self.accusation: Optional[AccusationResult] = None
         self._note_counter = itertools.count(1)
+        self._challenge_counter = itertools.count(1)
 
     def next_note_id(self) -> str:
         return f"note_{next(self._note_counter):03d}"
+
+    def next_challenge_id(self) -> str:
+        return f"challenge_{next(self._challenge_counter):03d}"
+
+    def pressure_for(self, agent_id: str) -> float:
+        return self.pressure.get(agent_id, 0.0)
+
+    def add_pressure(self, agent_id: str, delta: float) -> None:
+        self.pressure[agent_id] = max(0.0, min(1.0, self.pressure_for(agent_id) + delta))
 
     def transcript_for(self, agent_id: str) -> InterviewTranscript:
         if agent_id not in self.transcripts:

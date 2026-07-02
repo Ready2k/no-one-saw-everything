@@ -11,12 +11,14 @@ from .models import (
     AgentInterviewPack,
     CaseData,
     CaseFile,
+    ChallengeRule,
     Clue,
     Conclusion,
     Event,
     GameObject,
     Location,
     SeededMemory,
+    Solution,
 )
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -43,6 +45,8 @@ def load_case(case_id: str = "case_001") -> CaseData:
         clues=[Clue(**c) for c in clue_pack["clues"]],
         conclusions=[Conclusion(**c) for c in clue_pack["conclusions"]],
         interview_packs=[AgentInterviewPack(**p) for p in _load_json(case_dir, "interviews.json")],
+        challenge_rules=[ChallengeRule(**c) for c in _load_json(case_dir, "challenges.json")],
+        solution=Solution(**_load_json(case_dir, "solution.json")),
     )
 
 

@@ -1,0 +1,37 @@
+{
+  "killer_id": "agent_clara",
+  "motive": {
+    "canonical": "Marcus discovered Clara had been stealing from the cafe till and gave her until this morning to confess before he took the proof to the village committee.",
+    "concept_groups": [
+      ["till", "cash", "money", "takings", "cafe funds"],
+      ["steal", "stole", "stolen", "theft", "thief", "skim", "embezzl", "took", "taking"],
+      ["blackmail", "expose", "confess", "committee", "threat", "reveal", "ledger"]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with the brass till weight, in the storage room.",
+    "concept_groups": [
+      ["blunt", "struck", "strike", "hit", "bludgeon", "blow", "beat"],
+      ["till weight", "weight", "brass"]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Clara was at the cafe's rear door during the murder window and lied about being at the fountain.",
+    "concept_groups": [
+      ["alley", "storage", "rear", "back door", "back way", "cafe back"],
+      ["fountain", "alibi", "lied", "lie", "false"],
+      ["window", "murder window", "before open", "07:5", "07:4", "quarter to eight"]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_ledger_page",
+    "clue_ben_sighting",
+    "clue_till_weight_found",
+    "clue_rear_door",
+    "clue_nadia_overheard"
+  ],
+  "explanation": "Correct. Clara Wells killed Marcus Bell. Marcus had found the torn ledger page proving Clara was skimming the till, and gave her until this morning to confess before taking it to the committee. He summoned her to the storage room before opening. Clara slipped out the front, doubled back through the rear alley — the blue coat Ben saw at 07:47 — and let herself in the back door. When Marcus refused to back down she struck him with the brass till weight at 07:56 (the thud Ben and Priya heard), rinsed it in the kitchen and hid it in the mop bucket, then opened the cafe two minutes late. Her fountain alibi was never real, and no one could place her there."
+}

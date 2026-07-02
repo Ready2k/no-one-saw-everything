@@ -7,8 +7,20 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from . import challenge as challenge_engine
 from . import interview as interview_engine
-from .models import AskRequest, InspectRequest, Note, NoteCreate, NoteUpdate, SuspicionUpdate
+from . import judge as judge_engine
+from .challenge import ChallengeError
+from .models import (
+    AccusationRequest,
+    AskRequest,
+    ChallengeRequest,
+    InspectRequest,
+    Note,
+    NoteCreate,
+    NoteUpdate,
+    SuspicionUpdate,
+)
 from .projections import (
     project_agent,
     project_claim,
@@ -219,6 +231,69 @@ def claims(agent_id: Optional[str] = None):
 
 
 # ---------------------------------------------------------------------------
+# Challenges
+# ---------------------------------------------------------------------------
+
+@app.get("/api/challenge/suggestions")
+def challenge_suggestions(agent_id: Optional[str] = None):
+    """Claims for which the player already holds evidence a challenge can use.
+    Drives the 'Challenge' affordance without exposing the full rule set or
+    any hidden truth — only heard claims and discovered clues are referenced."""
+    case = case_data()
+    sess = session()
+    clue_title = {c.clue_id: c.title for c in case.clues}
+    seen: set[tuple[str, str]] = set()
+    out = []
+    for rule in case.challenge_rules:
+        if rule.challenged_claim_id not in sess.claims:
+            continue
+        if agent_id and rule.target_agent_id != agent_id:
+            continue
+        if any(p not in sess.discovered_clue_ids for p in rule.required_prior_clue_ids):
+            continue
+        usable = [c for c in rule.evidence_clue_ids if c in sess.discovered_clue_ids]
+        if not usable:
+            continue
+        for clue_id in usable:
+            key = (rule.challenged_claim_id, clue_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            claim = sess.claims[rule.challenged_claim_id]
+            out.append(
+                {
+                    "target_agent_id": rule.target_agent_id,
+                    "challenged_claim_id": rule.challenged_claim_id,
+                    "claim_text": claim.claim_text,
+                    "claim_status": claim.player_known_status,
+                    "evidence_clue_id": clue_id,
+                    "evidence_title": clue_title.get(clue_id, clue_id),
+                }
+            )
+    return out
+
+
+@app.post("/api/challenge")
+def challenge(req: ChallengeRequest):
+    case = case_data()
+    sess = session()
+    try:
+        record = challenge_engine.resolve_challenge(case, sess, req)
+    except ChallengeError as e:
+        raise HTTPException(e.status, e.detail)
+    return challenge_engine.public_challenge(case, sess, record)
+
+
+@app.get("/api/challenges")
+def list_challenges():
+    case = case_data()
+    sess = session()
+    return [
+        challenge_engine.public_challenge(case, sess, r) for r in sess.challenges.values()
+    ]
+
+
+# ---------------------------------------------------------------------------
 # Notes & case board
 # ---------------------------------------------------------------------------
 
@@ -296,6 +371,40 @@ def board():
         ],
         "discovered_clue_count": len(sess.discovered_clue_ids),
         "total_discoverable_clues": len(case.clues),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Accusation & reveal
+# ---------------------------------------------------------------------------
+
+@app.post("/api/accuse")
+def accuse(req: AccusationRequest):
+    case = case_data()
+    sess = session()
+    if not any(a.agent_id == req.accused_agent_id and not a.is_victim for a in case.agents):
+        raise HTTPException(400, "You must accuse a living member of the village.")
+    result = judge_engine.judge_accusation(case, sess, req)
+    return result
+
+
+@app.get("/api/reveal")
+def reveal():
+    """The truth is only available once an accusation has been submitted."""
+    sess = session()
+    if sess.accusation is None:
+        raise HTTPException(403, "The truth is sealed until you make an accusation.")
+    return sess.accusation
+
+
+@app.get("/api/status")
+def status():
+    sess = session()
+    return {
+        "discovered_clue_count": len(sess.discovered_clue_ids),
+        "claim_count": len(sess.claims),
+        "challenge_count": len(sess.challenges),
+        "accused": sess.accusation is not None,
     }
 
 
