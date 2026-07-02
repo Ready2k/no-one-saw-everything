@@ -1,0 +1,242 @@
+import { useCallback, useEffect, useState } from "react";
+import { api } from "../api";
+import { useWorld } from "../App";
+import type {
+  AskResult,
+  CluePublic,
+  QuestionType,
+  SuspicionLevel,
+  TranscriptMessage,
+} from "../types";
+import { ClueCard } from "./shared";
+
+const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
+  { value: "unknown", label: "Unmarked" },
+  { value: "person_of_interest", label: "Person of interest" },
+  { value: "suspect", label: "Suspect" },
+  { value: "prime_suspect", label: "Prime suspect" },
+  { value: "likely_innocent", label: "Likely innocent" },
+  { value: "cleared", label: "Cleared" },
+];
+
+export default function Suspects() {
+  const { agents } = useWorld();
+  const living = agents.filter((a) => !a.is_victim);
+  const [selectedId, setSelectedId] = useState(living[0]?.agent_id ?? "");
+  const selected = living.find((a) => a.agent_id === selectedId);
+
+  return (
+    <div className="suspects">
+      <div className="suspect-list panel">
+        {living.map((a) => (
+          <button
+            key={a.agent_id}
+            className={`suspect ${selectedId === a.agent_id ? "active" : ""}`}
+            onClick={() => setSelectedId(a.agent_id)}
+          >
+            <span className="portrait">{a.portrait}</span>
+            <span>
+              <span className="suspect-name">{a.full_name}</span>
+              <span className="muted small">{a.occupation}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+      {selected && <InterviewPanel key={selected.agent_id} agentId={selected.agent_id} />}
+    </div>
+  );
+}
+
+function InterviewPanel({ agentId }: { agentId: string }) {
+  const { agents, locations, caseOverview } = useWorld();
+  const agent = agents.find((a) => a.agent_id === agentId)!;
+  const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
+  const [lastResult, setLastResult] = useState<AskResult | null>(null);
+  const [clues, setClues] = useState<CluePublic[]>([]);
+  const [suspicion, setSuspicion] = useState<SuspicionLevel>("unknown");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [timeRef, setTimeRef] = useState("07:50");
+  const [clueTopic, setClueTopic] = useState("");
+  const [locationTopic, setLocationTopic] = useState("");
+
+  const refresh = useCallback(() => {
+    api.transcript(agentId).then(setTranscript);
+    api.clues().then(setClues);
+    api.board().then((b) => {
+      const me = b.suspects.find((s) => s.agent.agent_id === agentId);
+      if (me) setSuspicion(me.suspicion);
+    });
+  }, [agentId]);
+
+  useEffect(refresh, [refresh]);
+
+  const ask = async (
+    questionType: QuestionType,
+    extra: Record<string, string> = {}
+  ) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await api.ask({
+        agent_id: agentId,
+        question_type: questionType,
+        ...extra,
+      });
+      setLastResult(result);
+      refresh();
+    } catch (e) {
+      setError(String(e instanceof Error ? e.message : e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const noteFromAnswer = async () => {
+    if (!lastResult) return;
+    await api.createNote({
+      note_type: "interview",
+      title: `${agent.full_name}: ${lastResult.answer_text.slice(0, 70)}…`,
+      body: `Q: ${lastResult.question_text}\nA: ${lastResult.answer_text}`,
+      linked_agent_ids: [agentId],
+      linked_claim_ids: lastResult.new_claims.map((c) => c.claim_id),
+      pinned_to_agent_id: agentId,
+    });
+    alert("Noted.");
+  };
+
+  return (
+    <div className="interview">
+      <div className="interview-head">
+        <div>
+          <h2>
+            {agent.portrait} {agent.full_name}
+          </h2>
+          <p className="muted">
+            {agent.occupation}, {agent.age} · {agent.traits.join(", ")}
+          </p>
+          <p className="muted small">{agent.routine_summary}</p>
+        </div>
+        <label className="suspicion-select">
+          Your judgement
+          <select
+            value={suspicion}
+            onChange={async (e) => {
+              const level = e.target.value as SuspicionLevel;
+              setSuspicion(level);
+              await api.setSuspicion(agentId, level);
+            }}
+          >
+            {SUSPICION_LEVELS.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div className="transcript">
+        {transcript.length === 0 && (
+          <p className="muted">You haven't questioned {agent.full_name.split(" ")[0]} yet.</p>
+        )}
+        {transcript.map((m, i) => (
+          <div key={i} className={`bubble ${m.speaker}`}>
+            <p>{m.text}</p>
+            {m.revealed_clue_ids.length > 0 && (
+              <p className="small badge new">revealed: {m.revealed_clue_ids.join(", ")}</p>
+            )}
+          </div>
+        ))}
+        {lastResult?.emotional_shift && (
+          <p className="muted small emotional">
+            {agent.full_name.split(" ")[0]} seems {lastResult.emotional_shift}.
+          </p>
+        )}
+        {lastResult && lastResult.suggested_followups.length > 0 && (
+          <div className="followups">
+            {lastResult.suggested_followups.map((f, i) => (
+              <span key={i} className="followup-chip">
+                {f}
+              </span>
+            ))}
+          </div>
+        )}
+        {lastResult && (
+          <button className="small-button" onClick={noteFromAnswer}>
+            Save answer as note
+          </button>
+        )}
+      </div>
+
+      {error && <p className="error">{error}</p>}
+
+      <div className="question-builder panel">
+        <div className="question-row">
+          <button disabled={busy} onClick={() => ask("alibi")}>
+            Ask alibi ({caseOverview.murder_window[0]}–{caseOverview.murder_window[1]})
+          </button>
+          <button disabled={busy} onClick={() => ask("last_seen_victim")}>
+            Last saw {caseOverview.victim.full_name.split(" ")[0]}?
+          </button>
+          <button disabled={busy} onClick={() => ask("relationship")}>
+            Relationship with victim
+          </button>
+        </div>
+        <div className="question-row">
+          <input
+            type="time"
+            value={timeRef}
+            min={caseOverview.sim_start_time}
+            max={caseOverview.discovery_time}
+            onChange={(e) => setTimeRef(e.target.value)}
+          />
+          <button disabled={busy} onClick={() => ask("timeline", { time_reference: timeRef })}>
+            What were you doing at {timeRef}?
+          </button>
+        </div>
+        <div className="question-row">
+          <select value={locationTopic} onChange={(e) => setLocationTopic(e.target.value)}>
+            <option value="">Pick a place…</option>
+            {locations.map((l) => (
+              <option key={l.location_id} value={l.location_id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
+          <button
+            disabled={busy || !locationTopic}
+            onClick={() => ask("location", { topic_location_id: locationTopic })}
+          >
+            Ask about this place
+          </button>
+        </div>
+        <div className="question-row">
+          <select value={clueTopic} onChange={(e) => setClueTopic(e.target.value)}>
+            <option value="">Pick discovered evidence…</option>
+            {clues.map((c) => (
+              <option key={c.clue_id} value={c.clue_id}>
+                {c.title}
+              </option>
+            ))}
+          </select>
+          <button
+            disabled={busy || !clueTopic}
+            onClick={() => ask("evidence", { topic_clue_id: clueTopic })}
+          >
+            Confront with evidence
+          </button>
+        </div>
+      </div>
+
+      {lastResult && lastResult.revealed_clues.length > 0 && (
+        <div className="revealed">
+          {lastResult.revealed_clues.map((c) => (
+            <ClueCard key={c.clue_id} clue={c} isNew />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

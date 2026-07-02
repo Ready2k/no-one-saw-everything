@@ -1,0 +1,99 @@
+import type {
+  AskResult,
+  Board,
+  CaseOverview,
+  ClaimPublic,
+  CluePublic,
+  EventPublic,
+  InspectResult,
+  LocationPublic,
+  Note,
+  AgentPublic,
+  QuestionType,
+  SuspicionLevel,
+  TranscriptMessage,
+} from "./types";
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(path, {
+    headers: { "Content-Type": "application/json" },
+    ...init,
+  });
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({}));
+    throw new Error(detail.detail ?? `Request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export const api = {
+  caseOverview: () => request<CaseOverview>("/api/case"),
+  agents: () => request<AgentPublic[]>("/api/agents"),
+  locations: () => request<LocationPublic[]>("/api/locations"),
+  events: (params: {
+    time_from?: string;
+    time_to?: string;
+    location_id?: string;
+    agent_id?: string;
+  }) => {
+    const qs = new URLSearchParams(
+      Object.entries(params).filter(([, v]) => v) as [string, string][]
+    );
+    return request<EventPublic[]>(`/api/events?${qs}`);
+  },
+  pinEvent: (eventId: string) =>
+    request<{ pinned: boolean; new_clues: CluePublic[]; note: Note }>(
+      `/api/events/${eventId}/pin`,
+      { method: "POST" }
+    ),
+  inspect: (locationId: string) =>
+    request<InspectResult>("/api/inspect", {
+      method: "POST",
+      body: JSON.stringify({ location_id: locationId }),
+    }),
+  clues: () => request<CluePublic[]>("/api/clues"),
+  ask: (payload: {
+    agent_id: string;
+    question_type: QuestionType;
+    time_reference?: string;
+    topic_clue_id?: string;
+    topic_object_id?: string;
+    topic_location_id?: string;
+  }) =>
+    request<AskResult>("/api/interview/ask", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  transcript: (agentId: string) =>
+    request<TranscriptMessage[]>(`/api/interview/${agentId}`),
+  claims: (agentId?: string) =>
+    request<ClaimPublic[]>(`/api/claims${agentId ? `?agent_id=${agentId}` : ""}`),
+  notes: () => request<Note[]>("/api/notes"),
+  createNote: (payload: Partial<Note> & { title: string }) =>
+    request<Note>("/api/notes", { method: "POST", body: JSON.stringify(payload) }),
+  updateNote: (noteId: string, payload: Partial<Note>) =>
+    request<Note>(`/api/notes/${noteId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+  deleteNote: (noteId: string) =>
+    request<{ deleted: boolean }>(`/api/notes/${noteId}`, { method: "DELETE" }),
+  setSuspicion: (agentId: string, level: SuspicionLevel) =>
+    request<{ agent_id: string; level: SuspicionLevel }>("/api/suspicion", {
+      method: "POST",
+      body: JSON.stringify({ agent_id: agentId, level }),
+    }),
+  board: () => request<Board>("/api/board"),
+  reset: () => request<{ reset: boolean }>("/api/session/reset", { method: "POST" }),
+};
+
+export function minutes(hhmm: string): number {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+}
+
+export function hhmm(mins: number): string {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}

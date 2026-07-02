@@ -1,0 +1,371 @@
+"""Core data models for the murder mystery engine.
+
+These mirror the schemas in spec 11 (data schemas). The case file and
+everything linked from it is immutable once loaded ("locked truth");
+player-session state (notes, discovered clues, interview transcripts)
+lives in session.py and is mutable.
+"""
+
+from __future__ import annotations
+
+from typing import Literal, Optional
+
+from pydantic import BaseModel, Field
+
+# ---------------------------------------------------------------------------
+# Enumerations
+# ---------------------------------------------------------------------------
+
+Visibility = Literal[
+    "public",          # player sees directly in rewind
+    "public_partial",  # player sees an ambiguous version
+    "private",         # hidden unless discovered; may show a locked placeholder
+    "hidden",          # never shown directly (e.g. the murder itself)
+]
+
+TruthStatus = Literal["true", "false", "mistaken", "rumour", "unknown"]
+
+MemoryType = Literal[
+    "private_secret",
+    "shared_secret",
+    "rumour",
+    "witness_fragment",
+    "false_belief",
+    "deliberate_lie",
+    "innocent_secret",
+    "observed",
+    "cover_story",
+]
+
+Shareability = Literal[
+    "will_share",
+    "will_share_if_asked",
+    "will_hide",
+    "will_lie",
+    "will_deflect",
+]
+
+ClueStrength = Literal["weak", "medium", "strong", "critical"]
+
+NoteType = Literal[
+    "manual",
+    "event",
+    "evidence",
+    "interview",
+    "contradiction",
+    "theory",
+    "question",
+]
+
+SuspicionLevel = Literal[
+    "unknown",
+    "person_of_interest",
+    "suspect",
+    "prime_suspect",
+    "likely_innocent",
+    "cleared",
+]
+
+QuestionType = Literal[
+    "alibi",            # where were you during the murder window?
+    "timeline",         # what were you doing at/around <time>?
+    "last_seen_victim", # when did you last see the victim?
+    "relationship",     # what was your relationship with the victim?
+    "evidence",         # what do you know about <clue/object>?
+    "location",         # why were you at / what do you know about <location>?
+]
+
+
+# ---------------------------------------------------------------------------
+# Locked case truth
+# ---------------------------------------------------------------------------
+
+class Relationship(BaseModel):
+    target_agent_id: str
+    relationship_type: str
+    affinity: float = 0.0
+    trust: float = 0.0
+    tension: float = 0.0
+
+
+class Agent(BaseModel):
+    agent_id: str
+    full_name: str
+    age: int
+    occupation: str
+    traits: list[str] = []
+    portrait: Optional[str] = None  # emoji or asset path for MVP
+    home_location_id: Optional[str] = None
+    work_location_id: Optional[str] = None
+    routine_summary: str = ""
+    relationships: list[Relationship] = []
+    observation_skill: float = 0.5
+    memory_reliability: float = 0.5
+    honesty_baseline: float = 0.5
+    gossip_tendency: float = 0.5
+    conflict_avoidance: float = 0.5
+    is_victim: bool = False
+
+
+class Location(BaseModel):
+    location_id: str
+    name: str
+    description: str = ""
+    connected_location_ids: list[str] = []
+    access_rules: list[str] = []
+    visibility_type: Literal["public", "private"] = "public"
+    audible_from_location_ids: list[str] = []
+    camera_coverage: bool = False
+    murder_suitable: bool = False
+
+
+class GameObject(BaseModel):
+    object_id: str
+    name: str
+    description: str = ""
+    normal_location_id: Optional[str] = None
+    final_location_id: Optional[str] = None
+    access_rules: list[str] = []
+    touched_by_agent_ids: list[str] = []
+    last_seen_time: Optional[str] = None
+    hidden_state: Optional[str] = None
+    clue_relevance: Optional[str] = None
+
+
+class SeededMemory(BaseModel):
+    memory_id: str
+    owner_agent_id: str
+    known_by_agent_ids: list[str] = []
+    memory_type: MemoryType
+    case_function: str
+    truth_status: TruthStatus = "true"
+    summary: str
+    emotional_weight: int = 5
+    confidence: float = 1.0
+    shareability: Shareability = "will_share_if_asked"
+    discoverable_by_player: bool = True
+    linked_clue_ids: list[str] = []
+    linked_agent_ids: list[str] = []
+    linked_location_ids: list[str] = []
+
+
+class Event(BaseModel):
+    event_id: str
+    time: str  # "HH:MM"
+    location_id: str
+    agent_ids: list[str] = []
+    event_type: str
+    truth_description: str
+    player_description: Optional[str] = None  # shown for public_partial
+    visibility: Visibility = "public"
+    visible_to_agent_ids: list[str] = []
+    audible_to_agent_ids: list[str] = []
+    object_ids: list[str] = []
+    importance: int = 5
+    linked_clue_ids: list[str] = []
+
+
+class Discoverability(BaseModel):
+    method: Literal["observation", "interview", "inspect", "challenge", "initial"]
+    # For interview: agent + question type that reveals it.
+    agent_id: Optional[str] = None
+    question_type: Optional[QuestionType] = None
+    # For inspect: location or object that yields it.
+    location_id: Optional[str] = None
+    object_id: Optional[str] = None
+    required_prior_clue_ids: list[str] = []
+
+
+class Clue(BaseModel):
+    clue_id: str
+    title: str
+    clue_type: str
+    description: str
+    strength: ClueStrength = "medium"
+    reliability: float = 0.7
+    ambiguity: Literal["low", "medium", "high"] = "medium"
+    discoverability: Discoverability
+    supports_conclusion_ids: list[str] = []
+    linked_event_ids: list[str] = []
+    linked_agent_ids: list[str] = []
+    linked_location_ids: list[str] = []
+    linked_object_ids: list[str] = []
+
+
+class Conclusion(BaseModel):
+    conclusion_id: str
+    type: str  # motive / opportunity / means / method / false_alibi / red_herring...
+    summary: str
+    target_agent_id: Optional[str] = None
+    required_for_solution: bool = False
+    supported_by_clue_ids: list[str] = []
+
+
+class CaseFile(BaseModel):
+    case_id: str
+    case_type: str
+    title: str
+    status: Literal["locked"] = "locked"
+    victim_id: str
+    killer_id: str
+    motive_summary: str
+    method: str
+    weapon_id: Optional[str] = None
+    murder_location_id: str
+    time_of_death: str
+    discovery_time: str
+    discovered_by: str
+    discovery_location_id: str
+    sim_start_time: str = "06:00"
+    murder_window: tuple[str, str] = ("07:45", "08:00")
+    overview_text: str = ""
+
+
+# ---------------------------------------------------------------------------
+# Interview data (hand-authored grounded answers for the structured engine)
+# ---------------------------------------------------------------------------
+
+class AnswerClaim(BaseModel):
+    claim_id: str
+    summary: str
+    claim_type: str = "statement"  # alibi / sighting / relationship / statement
+    time_reference: Optional[str] = None
+    location_reference_id: Optional[str] = None
+    truthfulness: TruthStatus = "true"
+
+
+class AnswerRule(BaseModel):
+    """One grounded answer an agent can give to a structured question."""
+
+    question_type: QuestionType
+    # Optional matchers narrowing when this rule applies:
+    time_from: Optional[str] = None
+    time_to: Optional[str] = None
+    topic_clue_id: Optional[str] = None
+    topic_object_id: Optional[str] = None
+    topic_location_id: Optional[str] = None
+    answer_text: str
+    answer_type: Literal["claim", "denial", "uncertain", "refusal", "gossip"] = "claim"
+    truthfulness: TruthStatus = "true"
+    emotional_shift: Optional[str] = None
+    claims: list[AnswerClaim] = []
+    reveals_clue_ids: list[str] = []
+    reveals_memory_ids: list[str] = []
+    suggested_followups: list[str] = []
+
+
+class AgentInterviewPack(BaseModel):
+    agent_id: str
+    default_answers: dict[str, str] = {}  # question_type -> fallback text
+    rules: list[AnswerRule] = []
+
+
+# ---------------------------------------------------------------------------
+# Bundled case data (everything loaded from disk, immutable in play)
+# ---------------------------------------------------------------------------
+
+class CaseData(BaseModel):
+    case: CaseFile
+    agents: list[Agent]
+    locations: list[Location]
+    objects: list[GameObject]
+    memories: list[SeededMemory]
+    events: list[Event]
+    clues: list[Clue]
+    conclusions: list[Conclusion]
+    interview_packs: list[AgentInterviewPack]
+
+
+# ---------------------------------------------------------------------------
+# Mutable player-session models
+# ---------------------------------------------------------------------------
+
+class Note(BaseModel):
+    note_id: str
+    note_type: NoteType = "manual"
+    title: str
+    body: str = ""
+    linked_agent_ids: list[str] = []
+    linked_clue_ids: list[str] = []
+    linked_event_ids: list[str] = []
+    linked_claim_ids: list[str] = []
+    player_tags: list[str] = []
+    status: Literal["open", "unresolved", "resolved"] = "open"
+    pinned_to_agent_id: Optional[str] = None
+
+
+class Claim(BaseModel):
+    claim_id: str
+    speaker_agent_id: str
+    claim_text: str
+    claim_type: str = "statement"
+    time_reference: Optional[str] = None
+    location_reference_id: Optional[str] = None
+    truthfulness: TruthStatus = "unknown"  # hidden from player until reveal
+    player_known_status: Literal["claimed", "disputed", "confirmed"] = "claimed"
+
+
+class InterviewMessage(BaseModel):
+    speaker: Literal["player", "agent"]
+    text: str
+    question_type: Optional[QuestionType] = None
+    generated_claim_ids: list[str] = []
+    revealed_clue_ids: list[str] = []
+
+
+class InterviewTranscript(BaseModel):
+    agent_id: str
+    messages: list[InterviewMessage] = []
+
+
+# ---------------------------------------------------------------------------
+# API request/response payloads
+# ---------------------------------------------------------------------------
+
+class AskRequest(BaseModel):
+    agent_id: str
+    question_type: QuestionType
+    time_reference: Optional[str] = None
+    topic_clue_id: Optional[str] = None
+    topic_object_id: Optional[str] = None
+    topic_location_id: Optional[str] = None
+
+
+class AskResponse(BaseModel):
+    question_text: str
+    answer_text: str
+    answer_type: str
+    emotional_shift: Optional[str] = None
+    new_claims: list[Claim] = []
+    revealed_clues: list[Clue] = []
+    suggested_followups: list[str] = []
+
+
+class NoteCreate(BaseModel):
+    note_type: NoteType = "manual"
+    title: str
+    body: str = ""
+    linked_agent_ids: list[str] = []
+    linked_clue_ids: list[str] = []
+    linked_event_ids: list[str] = []
+    linked_claim_ids: list[str] = []
+    player_tags: list[str] = []
+    pinned_to_agent_id: Optional[str] = None
+
+
+class NoteUpdate(BaseModel):
+    title: Optional[str] = None
+    body: Optional[str] = None
+    player_tags: Optional[list[str]] = None
+    status: Optional[Literal["open", "unresolved", "resolved"]] = None
+    pinned_to_agent_id: Optional[str] = None
+
+
+class SuspicionUpdate(BaseModel):
+    agent_id: str
+    level: SuspicionLevel
+
+
+class InspectRequest(BaseModel):
+    location_id: Optional[str] = None
+    object_id: Optional[str] = None
