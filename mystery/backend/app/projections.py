@@ -11,7 +11,7 @@ from typing import Any, Optional
 
 from .models import Agent, CaseData, Claim, Clue, Event, GameObject, Location
 from .session import Session
-from .store import minutes
+from .case_store import minutes
 
 
 def project_agent(agent: Agent) -> dict[str, Any]:
@@ -138,3 +138,27 @@ def project_object(obj: GameObject, case: CaseData, session: Session) -> Optiona
         "description": obj.description,
         "normal_location_id": obj.normal_location_id,
     }
+
+
+def build_playtest_export(session: Session, case: CaseData, include_reveal: bool = False) -> dict[str, Any]:
+    export = {
+        "export_visibility": "post_reveal" if include_reveal else "pre_reveal",
+        "case_metadata": {
+            "case_id": case.case.case_id,
+            "case_type": case.case.case_type,
+            "title": case.case.title,
+        },
+        "telemetry": session.event_log,
+        "discovered_clues": [project_clue(c) for c in case.clues if c.clue_id in session.discovered_clue_ids],
+        "notes": [n.model_dump() for n in session.notes.values()],
+        "interviews": [t.model_dump() for t in session.transcripts.values()],
+        "challenges": [c.model_dump() for c in session.challenges.values()],
+        "markers": session.case_board_markers,
+        "suspicion": session.suspicion,
+        "feedback": session.feedback.model_dump() if session.feedback else None,
+    }
+    
+    if include_reveal and session.accusation:
+        export["accusation_result"] = session.accusation.model_dump()
+        
+    return export

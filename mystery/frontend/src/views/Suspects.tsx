@@ -64,6 +64,25 @@ function InterviewPanel({ agentId }: { agentId: string }) {
   const [timeRef, setTimeRef] = useState("07:50");
   const [clueTopic, setClueTopic] = useState("");
   const [locationTopic, setLocationTopic] = useState("");
+  const [freeText, setFreeText] = useState("");
+  const [fallbackMsg, setFallbackMsg] = useState<string | null>(null);
+
+  const victimName = caseOverview.victim.full_name.split(" ")[0];
+  const placeholders = [
+    `Ask a question or accuse them of a contradiction...`,
+    `"Where were you between ${caseOverview.murder_window[0]} and ${caseOverview.murder_window[1]}?"`,
+    `"How did you know ${victimName}?"`,
+    `"What were you doing at ${caseOverview.discovery_time}?"`,
+    clues.length > 0 ? `"Can you explain this ${clues[0].title.toLowerCase()}?"` : `"Why should I believe you?"`,
+  ];
+  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPlaceholderIdx((i) => (i + 1) % placeholders.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [placeholders.length]);
 
   const refresh = useCallback(() => {
     api.transcript(agentId).then(setTranscript);
@@ -90,6 +109,38 @@ function InterviewPanel({ agentId }: { agentId: string }) {
         ...extra,
       });
       setLastResult(result);
+      setLastChallenge(null);
+      refresh();
+    } catch (e) {
+      setError(String(e instanceof Error ? e.message : e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitFreeText = async () => {
+    if (!freeText.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await api.freeTextAsk({
+        agent_id: agentId,
+        question: freeText.trim(),
+      });
+      if (result.answer) {
+        setLastResult(result.answer);
+        setLastChallenge(null);
+      } else if (result.challenge_result) {
+        setLastChallenge(result.challenge_result as ChallengeResult);
+        setLastResult(null);
+      } else if (result.challenge_suggestion) {
+        setLastResult(null);
+        setLastChallenge(null);
+        // The challenge suggestion will appear in the UI list after refresh!
+      } else if (result.fallback_message) {
+        setFallbackMsg(result.fallback_message);
+      }
+      setFreeText("");
       refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
@@ -168,7 +219,14 @@ function InterviewPanel({ agentId }: { agentId: string }) {
         )}
         {transcript.map((m, i) => (
           <div key={i} className={`bubble ${m.speaker}`}>
-            <p>{m.text}</p>
+            <p>
+              {m.text}
+              {m.deterministic_text && m.deterministic_text !== m.text && (
+                <span className="muted small" title={m.deterministic_text} style={{ cursor: "help", marginLeft: "8px" }}>
+                  ✨
+                </span>
+              )}
+            </p>
             {m.revealed_clue_ids.length > 0 && (
               <p className="small badge new">revealed: {m.revealed_clue_ids.join(", ")}</p>
             )}
@@ -215,6 +273,7 @@ function InterviewPanel({ agentId }: { agentId: string }) {
       </div>
 
       {error && <p className="error">{error}</p>}
+      {fallbackMsg && <p className="error fallback-message">{fallbackMsg}</p>}
 
       {suggestions.length > 0 && (
         <div className="challenge-builder panel">
@@ -241,6 +300,28 @@ function InterviewPanel({ agentId }: { agentId: string }) {
       )}
 
       <div className="question-builder panel">
+        <div className="question-row free-text-row">
+          <input
+            type="text"
+            className="flex-1"
+            placeholder={placeholders[placeholderIdx]}
+            value={freeText}
+            onChange={(e) => {
+              setFreeText(e.target.value);
+              setFallbackMsg(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") submitFreeText();
+            }}
+            disabled={busy}
+          />
+          <button disabled={busy || !freeText.trim()} onClick={submitFreeText}>
+            Ask
+          </button>
+        </div>
+        <div className="question-divider">
+          <span className="muted small">or use predefined topics</span>
+        </div>
         <div className="question-row">
           <button disabled={busy} onClick={() => ask("alibi")}>
             Ask alibi ({caseOverview.murder_window[0]}–{caseOverview.murder_window[1]})

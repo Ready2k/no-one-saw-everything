@@ -15,6 +15,11 @@ import type {
   QuestionType,
   SuspicionLevel,
   TranscriptMessage,
+  HintsResponse,
+  MarkerType,
+  Config,
+  PlaytestSummary,
+  Feedback,
 } from "./types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -69,6 +74,17 @@ export const api = {
     }),
   transcript: (agentId: string) =>
     request<TranscriptMessage[]>(`/api/interview/${agentId}`),
+  freeTextAsk: (payload: { agent_id: string; question: string }) =>
+    request<{
+      intent: any;
+      answer?: AskResult;
+      challenge_suggestion?: ChallengeSuggestion;
+      challenge_result?: ChallengeResult;
+      fallback_message?: string;
+    }>("/api/interview/free-text", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   claims: (agentId?: string) =>
     request<ClaimPublic[]>(`/api/claims${agentId ? `?agent_id=${agentId}` : ""}`),
   notes: () => request<Note[]>("/api/notes"),
@@ -87,6 +103,12 @@ export const api = {
       body: JSON.stringify({ agent_id: agentId, level }),
     }),
   board: () => request<Board>("/api/board"),
+  hints: () => request<HintsResponse>("/api/session/hints"),
+  updateMarkers: (payload: { element_id: string; marker: MarkerType; action: "add" | "remove" | "clear" }) =>
+    request<{ element_id: string; markers: MarkerType[] }>("/api/session/markers", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   challengeSuggestions: (agentId?: string) =>
     request<ChallengeSuggestion[]>(
       `/api/challenge/suggestions${agentId ? `?agent_id=${agentId}` : ""}`
@@ -122,6 +144,45 @@ export const api = {
       accused: boolean;
     }>("/api/status"),
   reset: () => request<{ reset: boolean }>("/api/session/reset", { method: "POST" }),
+  generate: (payload: {
+    case_type: string;
+    difficulty: string;
+    seed: number;
+    activate: boolean;
+    mode: "deterministic" | "llm_assisted";
+    fallback_allowed: boolean;
+  }) =>
+    request<{
+      case_id: string;
+      case_type: string;
+      title: string;
+      mode: string;
+      fallback_used: boolean;
+      fallback_reason: string;
+      repair_attempts: number;
+      active_session_id: string | null;
+      validation: {
+        valid: boolean;
+        score: number;
+        warnings: string[];
+        errors: string[];
+      };
+    }>("/api/cases/generate", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  activate: (caseId: string) =>
+    request<{ active_session_id: string }>("/api/cases/activate", {
+      method: "POST",
+      body: JSON.stringify({ case_id: caseId }),
+    }),
+  getConfig: () => request<Config>("/api/config"),
+  getPlaytestSummary: () => request<PlaytestSummary>("/api/session/playtest-summary"),
+  getPlaytestExport: () => request<any>("/api/session/playtest-export"),
+  submitFeedback: (payload: Feedback) => request<{ status: string }>("/api/session/feedback", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 };
 
 export function minutes(hhmm: string): number {

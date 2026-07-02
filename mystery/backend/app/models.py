@@ -8,7 +8,7 @@ lives in session.py and is mutable.
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Dict, List, Literal, Optional, Set, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -84,6 +84,20 @@ QuestionType = Literal[
     "relationship",     # what was your relationship with the victim?
     "evidence",         # what do you know about <clue/object>?
     "location",         # why were you at / what do you know about <location>?
+]
+
+QuestionIntentType = Literal[
+    "alibi",
+    "timeline",
+    "last_seen_victim",
+    "relationship",
+    "evidence",
+    "location",
+    "motive",
+    "object",
+    "contradiction",
+    "explicit_challenge",
+    "fallback_unknown"
 ]
 
 
@@ -367,9 +381,13 @@ class Claim(BaseModel):
 class InterviewMessage(BaseModel):
     speaker: Literal["player", "agent"]
     text: str
+    deterministic_text: Optional[str] = None
     question_type: Optional[QuestionType] = None
     generated_claim_ids: list[str] = []
     revealed_clue_ids: list[str] = []
+    llm_rewrite_used: bool = False
+    llm_rewrite_fallback: bool = False
+    llm_rewrite_fallback_reason: Optional[str] = None
 
 
 class InterviewTranscript(BaseModel):
@@ -380,6 +398,15 @@ class InterviewTranscript(BaseModel):
 # ---------------------------------------------------------------------------
 # API request/response payloads
 # ---------------------------------------------------------------------------
+
+class GenerateCaseRequest(BaseModel):
+    case_type: str = "blackmail"
+    difficulty: str = "standard"
+    seed: int = 12345
+    activate: bool = False
+    mode: Literal["deterministic", "llm_assisted"] = "deterministic"
+    fallback_allowed: bool = True
+
 
 class AskRequest(BaseModel):
     agent_id: str
@@ -392,12 +419,49 @@ class AskRequest(BaseModel):
 
 class AskResponse(BaseModel):
     question_text: str
-    answer_text: str
+    deterministic_answer_text: str
+    display_answer_text: str
     answer_type: str
     emotional_shift: Optional[str] = None
     new_claims: list[Claim] = []
     revealed_clues: list[Clue] = []
     suggested_followups: list[str] = []
+    llm_rewrite_used: bool = False
+    llm_rewrite_fallback: bool = False
+    llm_rewrite_fallback_reason: Optional[str] = None
+
+
+class QuestionIntent(BaseModel):
+    intent: QuestionIntentType
+    confidence: float
+    referenced_time: Optional[str] = None
+    referenced_agent_id: Optional[str] = None
+    referenced_location_id: Optional[str] = None
+    referenced_object_id: Optional[str] = None
+    referenced_clue_id: Optional[str] = None
+    rewritten_structured_question: str
+
+
+class ChallengeSuggestion(BaseModel):
+    target_agent_id: str
+    challenged_claim_id: str
+    claim_text: str
+    claim_status: str
+    evidence_clue_id: str
+    evidence_title: str
+
+
+class FreeTextAskRequest(BaseModel):
+    agent_id: str
+    question: str
+
+
+class FreeTextAskResponse(BaseModel):
+    intent: QuestionIntent
+    answer: Optional[dict] = None
+    challenge_suggestion: Optional[ChallengeSuggestion] = None
+    challenge_result: Optional[dict] = None
+    fallback_message: Optional[str] = None
 
 
 class NoteCreate(BaseModel):
@@ -423,6 +487,22 @@ class NoteUpdate(BaseModel):
 class SuspicionUpdate(BaseModel):
     agent_id: str
     level: SuspicionLevel
+
+
+MarkerType = Literal[
+    "important",
+    "theory",
+    "red_herring",
+    "cleared",
+    "suspect",
+    "prime_suspect",
+    "open_question"
+]
+
+class MarkerUpdate(BaseModel):
+    element_id: str
+    marker: MarkerType
+    action: Literal["add", "remove", "clear"]
 
 
 class InspectRequest(BaseModel):
@@ -452,7 +532,8 @@ class ChallengeRecord(BaseModel):
     evidence_clue_ids: list[str] = []
     player_statement: Optional[str] = None
     outcome: ChallengeOutcome
-    response_text: str
+    deterministic_response_text: str
+    display_response_text: str
     emotional_shift: Optional[str] = None
     new_claim_ids: list[str] = []
     revealed_memory_ids: list[str] = []
@@ -460,6 +541,9 @@ class ChallengeRecord(BaseModel):
     pressure_delta: float = 0.0
     created_note_ids: list[str] = []
     duplicate: bool = False
+    llm_rewrite_used: bool = False
+    llm_rewrite_fallback: bool = False
+    llm_rewrite_fallback_reason: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -510,3 +594,24 @@ class AccusationResult(BaseModel):
     key_clues_found: list[str] = []
     key_clues_missed: list[str] = []
     red_herring_explanations: list[RedHerringExplanation] = []
+    player_evidence_used: list[str] = []
+    detective_rating: str = ""
+
+# ---------------------------------------------------------------------------
+# Feedback payloads
+# ---------------------------------------------------------------------------
+
+class Feedback(BaseModel):
+    understood_goal: Literal["yes", "mostly", "no"]
+    rewind_made_sense: Literal["yes", "mostly", "no"]
+    hints_helpfulness: Literal["too_little", "about_right", "too_much", "spoiled"]
+    difficulty: Literal["too_easy", "about_right", "too_hard", "confusing"]
+    final_reveal_fair: Literal["yes", "mostly", "no"]
+    enjoyment_score: int  # 1-5
+    confidence_score: int  # 1-5
+    suspected_before_reveal: Optional[str] = None
+    most_confusing_part: Optional[str] = None
+    best_part: Optional[str] = None
+    worst_part: Optional[str] = None
+    clues_that_felt_unfair: Optional[str] = None
+    free_text: Optional[str] = None

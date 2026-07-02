@@ -16,8 +16,9 @@ from .models import (
     ChallengeRecord,
     Claim,
     InterviewTranscript,
-    Note,
     SuspicionLevel,
+    MarkerType,
+    Feedback,
 )
 
 
@@ -37,6 +38,11 @@ class Session:
         # (claim_id, frozenset(evidence_ids)) -> challenge_id, for de-duplication
         self.challenge_index: dict[tuple[str, frozenset[str]], str] = {}
         self.accusation: Optional[AccusationResult] = None
+        self.case_board_markers: dict[str, list[MarkerType]] = {}
+        self.tutorial_enabled: bool = True
+        self.tutorial_step: Optional[int] = 0
+        self.event_log: list[dict] = []
+        self.feedback: Optional[Feedback] = None
         self._note_counter = itertools.count(1)
         self._challenge_counter = itertools.count(1)
 
@@ -75,3 +81,7 @@ def get_session(case_id: str = "case_001") -> Session:
 def reset_session(case_id: str = "case_001") -> Session:
     _sessions[case_id] = Session(case_id)
     return _sessions[case_id]
+
+
+def reset_session_store() -> None:
+    _sessions.clear()

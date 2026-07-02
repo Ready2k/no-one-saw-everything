@@ -4,8 +4,11 @@ from __future__ import annotations
 
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import logging
+import os
 
 from . import challenge as challenge_engine
 from . import interview as interview_engine
@@ -14,12 +17,15 @@ from .challenge import ChallengeError
 from .models import (
     AccusationRequest,
     AskRequest,
+    FreeTextAskRequest,
     ChallengeRequest,
     InspectRequest,
     Note,
     NoteCreate,
     NoteUpdate,
     SuspicionUpdate,
+    GenerateCaseRequest,
+    Feedback,
 )
 from .projections import (
     project_agent,
@@ -27,11 +33,13 @@ from .projections import (
     project_clue,
     project_location,
     visible_events,
+    build_playtest_export,
 )
 from .session import get_session, reset_session
-from .store import load_case
+from .case_store import get_case as fetch_case
+from .telemetry import log_telemetry_event
 
-CASE_ID = "case_001"
+ACTIVE_CASE_ID = "case_001"
 
 app = FastAPI(title="No One Saw Everything", version="0.1.0")
 
@@ -42,13 +50,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+MYSTERY_PLAYTEST_MODE = os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "true"
+
+@app.get("/api/config")
+def get_config():
+    return {
+        "playtest_mode": MYSTERY_PLAYTEST_MODE,
+        "llm_dialogue_enabled": os.getenv("LLM_PROVIDER") is not None,
+        "llm_generation_available": os.getenv("LLM_PROVIDER") is not None,
+    }
+
 
 def case_data():
-    return load_case(CASE_ID)
+    return fetch_case(ACTIVE_CASE_ID)
 
 
 def session():
-    return get_session(CASE_ID)
+    return get_session(ACTIVE_CASE_ID)
 
 
 # ---------------------------------------------------------------------------
@@ -166,6 +184,7 @@ def inspect(req: InspectRequest):
             locked += 1  # something is here, but the player lacks context
             continue
         sess.discovered_clue_ids.add(clue.clue_id)
+        log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "inspect"})
         newly.append(project_clue(clue))
 
     hint = None
@@ -209,7 +228,19 @@ def ask(req: AskRequest):
         raise HTTPException(400, "location questions need topic_location_id")
 
     resp = interview_engine.answer_question(case, sess, req)
+    log_telemetry_event(sess, "interview_answered", {"agent_id": req.agent_id, "question_type": req.question_type})
     return interview_engine.public_ask_response(resp)
+
+
+@app.post("/api/interview/free-text")
+def free_text_ask(req: FreeTextAskRequest):
+    case = case_data()
+    sess = session()
+    from app.free_text_api import handle_free_text
+    resp = handle_free_text(req, case, sess)
+    log_telemetry_event(sess, "interview_asked", {"agent_id": req.agent_id, "question_type": "free_text"})
+    log_telemetry_event(sess, "interview_answered", {"agent_id": req.agent_id, "question_type": "free_text"})
+    return resp
 
 
 @app.get("/api/interview/{agent_id}")
@@ -260,6 +291,7 @@ def challenge_suggestions(agent_id: Optional[str] = None):
                 continue
             seen.add(key)
             claim = sess.claims[rule.challenged_claim_id]
+            log_telemetry_event(sess, "challenge_suggested", {"target_agent_id": rule.target_agent_id, "challenged_claim_id": rule.challenged_claim_id})
             out.append(
                 {
                     "target_agent_id": rule.target_agent_id,
@@ -279,6 +311,7 @@ def challenge(req: ChallengeRequest):
     sess = session()
     try:
         record = challenge_engine.resolve_challenge(case, sess, req)
+        log_telemetry_event(sess, "challenge_executed", {"target_agent_id": req.target_agent_id, "outcome": record.outcome})
     except ChallengeError as e:
         raise HTTPException(e.status, e.detail)
     return challenge_engine.public_challenge(case, sess, record)
@@ -307,6 +340,7 @@ def create_note(payload: NoteCreate):
     sess = session()
     note = Note(note_id=sess.next_note_id(), **payload.model_dump())
     sess.notes[note.note_id] = note
+    log_telemetry_event(sess, "note_created", {"note_id": note.note_id})
     return note
 
 
@@ -332,12 +366,102 @@ def delete_note(note_id: str):
 
 @app.post("/api/suspicion")
 def set_suspicion(payload: SuspicionUpdate):
-    session().suspicion[payload.agent_id] = payload.level
+    sess = session()
+    sess.suspicion[payload.agent_id] = payload.level
+    log_telemetry_event(sess, "marker_updated", {"agent_id": payload.agent_id, "type": "suspicion", "level": payload.level})
     return {"agent_id": payload.agent_id, "level": payload.level}
+
+from .models import MarkerUpdate
+@app.post("/api/session/markers")
+def update_markers(payload: MarkerUpdate):
+    sess = session()
+    if payload.element_id not in sess.case_board_markers:
+        sess.case_board_markers[payload.element_id] = []
+    
+    markers = sess.case_board_markers[payload.element_id]
+    
+    if payload.action == "add" and payload.marker not in markers:
+        markers.append(payload.marker)
+    elif payload.action == "remove" and payload.marker in markers:
+        markers.remove(payload.marker)
+    elif payload.action == "clear":
+        markers.clear()
+        
+    log_telemetry_event(sess, "marker_updated", {"element_id": payload.element_id, "type": "case_board", "action": payload.action, "marker": payload.marker})
+    return {"element_id": payload.element_id, "markers": markers}
+
+@app.get("/api/session/log")
+def get_telemetry_log():
+    return session().event_log
+
+@app.get("/api/session/hints")
+def get_hints():
+    from .analyzer import analyze_session
+    from .tutorial import get_tutorial_hints
+    case = case_data()
+    sess = session()
+    analyzer_hints = analyze_session(sess, case)
+    tutorial_hints = get_tutorial_hints(sess, case)
+    return {
+        "readiness_hints": analyzer_hints,
+        "tutorial_hints": tutorial_hints,
+    }
+
+@app.get("/api/session/playtest-summary")
+def get_playtest_summary():
+    case = case_data()
+    sess = session()
+    
+    player_action_types = {
+        "clue_discovered", "inspection_performed", "interview_answered",
+        "free_text_question_asked", "challenge_executed", "note_created",
+        "marker_updated", "accusation_submitted", "feedback_submitted"
+    }
+    
+    player_action_count = sum(1 for e in sess.event_log if e["type"] in player_action_types)
+    telemetry_event_count = len(sess.event_log)
+    
+    free_text_questions = sum(1 for e in sess.event_log if e["type"] == "interview_answered" and e["data"].get("question_type") == "free_text")
+    interviews = sum(1 for e in sess.event_log if e["type"] == "interview_answered") - free_text_questions
+    
+    return {
+        "case_id": case.case.case_id,
+        "case_title": case.case.title,
+        "case_type": case.case.case_type,
+        "mode": "deterministic", # TODO: dynamic if we track mode in case/session
+        "telemetry_event_count": telemetry_event_count,
+        "player_action_count": player_action_count,
+        "discovered_clues": len(sess.discovered_clue_ids),
+        "visible_clues": len(case.clues),
+        "interviews": interviews,
+        "free_text_questions": free_text_questions,
+        "challenges_suggested": sum(1 for e in sess.event_log if e["type"] == "challenge_suggested"),
+        "challenges_executed": len(sess.challenges),
+        "notes_created": len(sess.notes),
+        "markers_used": sum(len(v) for v in sess.case_board_markers.values()),
+        "accusation_submitted": sess.accusation is not None,
+        "score": sess.accusation.score if sess.accusation else None,
+        "detective_rating": sess.accusation.detective_rating if sess.accusation else None,
+    }
+
+@app.get("/api/session/playtest-export")
+def get_playtest_export():
+    case = case_data()
+    sess = session()
+    return build_playtest_export(sess, case, include_reveal=sess.accusation is not None)
+
+@app.post("/api/session/feedback")
+def submit_feedback(payload: Feedback):
+    sess = session()
+    sess.feedback = payload
+    log_telemetry_event(sess, "feedback_submitted")
+    return {"status": "ok"}
+
 
 
 @app.get("/api/board")
 def board():
+    from .analyzer import analyze_session
     case = case_data()
     sess = session()
     suspects = []
@@ -371,6 +495,8 @@ def board():
         ],
         "discovered_clue_count": len(sess.discovered_clue_ids),
         "total_discoverable_clues": len(case.clues),
+        "readiness_hints": analyze_session(sess, case),
+        "case_board_markers": sess.case_board_markers,
     }
 
 
@@ -385,6 +511,7 @@ def accuse(req: AccusationRequest):
     if not any(a.agent_id == req.accused_agent_id and not a.is_victim for a in case.agents):
         raise HTTPException(400, "You must accuse a living member of the village.")
     result = judge_engine.judge_accusation(case, sess, req)
+    log_telemetry_event(sess, "accusation_submitted", {"accused_agent_id": req.accused_agent_id, "score": result.score})
     return result
 
 
@@ -394,6 +521,7 @@ def reveal():
     sess = session()
     if sess.accusation is None:
         raise HTTPException(403, "The truth is sealed until you make an accusation.")
+    log_telemetry_event(sess, "reveal_viewed")
     return sess.accusation
 
 
@@ -410,5 +538,70 @@ def status():
 
 @app.post("/api/session/reset")
 def reset():
-    reset_session(CASE_ID)
+    reset_session(ACTIVE_CASE_ID)
     return {"reset": True}
+
+
+@app.post("/api/cases/generate")
+def generate(req: GenerateCaseRequest):
+    from .generator import generate_case
+    from .validator import validate_case
+    from .case_store import register_case
+    global ACTIVE_CASE_ID
+
+    # Generate the case deterministically or via LLM
+    new_case, fallback_used, fallback_reason, repair_attempts = generate_case(
+        req.case_type, req.difficulty, req.seed, req.mode, req.fallback_allowed
+    )
+    
+    # Validate
+    val_result = validate_case(new_case)
+    
+    # Always register if generated, even if imperfect, but you might reject hard errors?
+    # Spec says: "reject invalid generated cases". Let's block play if errors exist.
+    if val_result["valid"]:
+        register_case(new_case)
+    
+    # Activate session if requested and valid
+    active_session_id = None
+    if req.activate and val_result["valid"]:
+        ACTIVE_CASE_ID = new_case.case.case_id
+        active_session_id = ACTIVE_CASE_ID
+
+    return {
+        "case_id": new_case.case.case_id,
+        "case_type": new_case.case.case_type,
+        "title": new_case.case.title,
+        "mode": req.mode,
+        "fallback_used": fallback_used,
+        "fallback_reason": fallback_reason,
+        "repair_attempts": repair_attempts,
+        "validation": {
+            "valid": val_result["valid"],
+            "score": val_result["score"],
+            "warnings": val_result["warnings"],
+            "errors": val_result["errors"],
+        },
+        "active_session_id": active_session_id
+    }
+
+
+class ActivateCaseRequest(BaseModel):
+    case_id: str
+
+@app.post("/api/cases/activate")
+def activate_case(req: ActivateCaseRequest):
+    from .case_store import _GENERATED_CASES, load_case_from_disk
+    global ACTIVE_CASE_ID
+    
+    # Validate case exists in store
+    if req.case_id not in _GENERATED_CASES:
+        try:
+            load_case_from_disk(req.case_id)
+        except Exception:
+            raise HTTPException(status_code=404, detail="Case not found")
+            
+    ACTIVE_CASE_ID = req.case_id
+    reset_session(ACTIVE_CASE_ID)
+    
+    return {"active_session_id": ACTIVE_CASE_ID}

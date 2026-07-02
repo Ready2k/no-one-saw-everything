@@ -103,6 +103,7 @@ export interface ChallengeResult {
   evidence_clue_ids: string[];
   outcome: ChallengeOutcome;
   response_text: string;
+  deterministic_response_text?: string;
   emotional_shift: string | null;
   new_claims: ClaimPublic[];
   revealed_clues: CluePublic[];
@@ -111,6 +112,8 @@ export interface ChallengeResult {
   pressure_level: number;
   created_note_ids: string[];
   duplicate: boolean;
+  llm_rewrite_used?: boolean;
+  llm_rewrite_fallback?: boolean;
 }
 
 export type QuestionType =
@@ -124,19 +127,25 @@ export type QuestionType =
 export interface AskResult {
   question_text: string;
   answer_text: string;
+  deterministic_answer_text?: string;
   answer_type: string;
   emotional_shift: string | null;
   new_claims: ClaimPublic[];
   revealed_clues: CluePublic[];
   suggested_followups: string[];
+  llm_rewrite_used?: boolean;
+  llm_rewrite_fallback?: boolean;
 }
 
 export interface TranscriptMessage {
   speaker: "player" | "agent";
   text: string;
+  deterministic_text?: string;
   question_type: QuestionType | null;
   generated_claim_ids: string[];
   revealed_clue_ids: string[];
+  llm_rewrite_used?: boolean;
+  llm_rewrite_fallback?: boolean;
 }
 
 export type NoteType =
@@ -178,11 +187,27 @@ export interface BoardSuspect {
   pinned_notes: Note[];
 }
 
+export type MarkerType =
+  | "important"
+  | "theory"
+  | "red_herring"
+  | "cleared"
+  | "suspect"
+  | "prime_suspect"
+  | "open_question";
+
 export interface Board {
   suspects: BoardSuspect[];
   contradiction_notes: Note[];
   discovered_clue_count: number;
   total_discoverable_clues: number;
+  readiness_hints: string[];
+  case_board_markers: Record<string, MarkerType[]>;
+}
+
+export interface HintsResponse {
+  readiness_hints: string[];
+  tutorial_hints: string[];
 }
 
 export interface InspectResult {
@@ -226,4 +251,48 @@ export interface AccusationResult {
   key_clues_found: string[];
   key_clues_missed: string[];
   red_herring_explanations: RedHerringExplanation[];
+  player_evidence_used: string[];
+  detective_rating: string;
+}
+
+export interface Config {
+  playtest_mode: boolean;
+  llm_dialogue_enabled: boolean;
+  llm_generation_available: boolean;
+}
+
+export interface PlaytestSummary {
+  case_id: string;
+  case_title: string;
+  case_type: string;
+  mode: string;
+  telemetry_event_count: number;
+  player_action_count: number;
+  discovered_clues: number;
+  visible_clues: number;
+  interviews: number;
+  free_text_questions: number;
+  challenges_suggested: number;
+  challenges_executed: number;
+  notes_created: number;
+  markers_used: number;
+  accusation_submitted: boolean;
+  score: number | null;
+  detective_rating: string | null;
+}
+
+export interface Feedback {
+  understood_goal: "yes" | "mostly" | "no";
+  rewind_made_sense: "yes" | "mostly" | "no";
+  hints_helpfulness: "too_little" | "about_right" | "too_much" | "spoiled";
+  difficulty: "too_easy" | "about_right" | "too_hard" | "confusing";
+  final_reveal_fair: "yes" | "mostly" | "no";
+  suspected_before_reveal: string | null;
+  most_confusing_part: string | null;
+  best_part: string | null;
+  worst_part: string | null;
+  clues_that_felt_unfair: string | null;
+  free_text: string | null;
+  enjoyment_score: number;
+  confidence_score: number;
 }

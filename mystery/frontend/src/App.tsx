@@ -7,6 +7,8 @@ import Places from "./views/Places";
 import Suspects from "./views/Suspects";
 import BoardView from "./views/Board";
 import Accuse from "./views/Accuse";
+import GenerateCaseModal from "./views/GenerateCaseModal";
+import { PlaytestPanel } from "./views/PlaytestPanel";
 
 export interface World {
   caseOverview: CaseOverview;
@@ -39,6 +41,8 @@ export default function App() {
   const [world, setWorld] = useState<World | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<TabId>("overview");
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([api.caseOverview(), api.agents(), api.locations()])
@@ -84,18 +88,31 @@ export default function App() {
               </button>
             ))}
           </nav>
-          <button
-            className="reset"
-            onClick={async () => {
-              if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
-                await api.reset();
-                location.reload();
-              }
-            }}
-          >
-            New investigation
-          </button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              className="reset"
+              onClick={async () => {
+                if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
+                  await api.reset();
+                  location.reload();
+                }
+              }}
+            >
+              New investigation
+            </button>
+            <button
+              className="primary"
+              onClick={() => setShowGenerateModal(true)}
+            >
+              Generate Case
+            </button>
+          </div>
         </header>
+        {toastMessage && (
+          <div style={{ padding: "0.5rem", background: "rgba(255,255,255,0.1)", textAlign: "center", color: "var(--text)" }}>
+            {toastMessage}
+          </div>
+        )}
         <main className="content">
           {tab === "overview" && <Overview onBegin={() => setTab("rewind")} />}
           {tab === "rewind" && <Rewind />}
@@ -105,6 +122,26 @@ export default function App() {
           {tab === "accuse" && <Accuse />}
         </main>
       </div>
+      {showGenerateModal && (
+        <GenerateCaseModal
+          onClose={() => setShowGenerateModal(false)}
+          onSuccess={(fallbackUsed) => {
+            setShowGenerateModal(false);
+            if (fallbackUsed) {
+              setToastMessage("Generated a validated case using safe deterministic fallback.");
+            }
+            // Give time for toast to render, or just reload right away
+            // Since we reload, toastMessage won't be seen unless we persist it, or wait.
+            // Actually, we can fetch the world instead of reloading the page!
+            // But location.reload() is easier and consistent with reset().
+            if (fallbackUsed) {
+              alert("Generated a validated case using safe deterministic fallback.");
+            }
+            location.reload();
+          }}
+        />
+      )}
+      <PlaytestPanel />
     </WorldContext.Provider>
   );
 }
