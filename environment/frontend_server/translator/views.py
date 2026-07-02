@@ -971,6 +971,9 @@ def _coerce_library_data(data):
 def sim_library_page(request):
   """Sim library page — lists all persona templates."""
   profiles = library_list()
+  for p in profiles:
+    if "name" in p:
+      p["image_name"] = p["name"].replace(" ", "_")
   runs, _ = scan_runs()
   return render(request, "sims/library.html", {"profiles": profiles, "runs": runs})
 

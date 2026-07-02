@@ -3,160 +3,540 @@
 
 {% block content %}
 <style>
-  .lx-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-  .lx-h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px; }
-  .lx-sub { color: #777; font-size: 14px; margin: 0 0 20px; }
-  .lx-grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
-  .lx-card { background: #fff; border: 1px solid #e3e3e0; border-radius: 12px; padding: 18px 20px; }
-  .lx-card h2 { font-size: 16px; font-weight: 500; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
-  .lx-label { font-size: 13px; color: #777; display: block; margin: 10px 0 4px; }
-  .lx-card select, .lx-card input[type=text], .lx-card input[type=number] {
-    width: 100%; height: 36px; border: 1px solid #ccc; border-radius: 8px; padding: 0 10px; font-size: 14px; }
-  .lx-profiles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .lx-profiles label { font-size: 13px; padding: 6px 12px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; margin: 0; font-weight: 400; }
-  .lx-profiles input { display: none; }
-  .lx-profiles input:checked + span { font-weight: 500; }
-  .lx-profiles label.sel { border-color: #2b6cb0; background: #ebf3fb; color: #1d5089; }
-  .lx-launch { width: 100%; margin-top: 16px; height: 40px; border: none; border-radius: 8px; background: #1d5089; color: #fff; font-size: 15px; font-weight: 500; cursor: pointer; }
-  .lx-launch:hover { background: #16406e; }
-  .lx-meta { font-size: 12px; color: #999; margin-top: 10px; }
-  .lx-runs { display: flex; flex-direction: column; gap: 8px; max-height: 620px; overflow-y: auto; }
-  .lx-run { border: 1px solid #e3e3e0; border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; }
-  .lx-run:hover { border-color: #bbb; }
-  .lx-run .nm { font-size: 14px; font-weight: 500; color: #222; }
-  .lx-run .sub { font-size: 12px; color: #888; margin-top: 2px; }
-  .lx-badge { font-size: 11px; padding: 2px 9px; border-radius: 11px; white-space: nowrap; }
-  .b-complete { background: #e6f0ff; color: #1d5089; }
-  .b-partial { background: #fff3df; color: #8a5a00; }
-  .b-empty { background: #f0eeea; color: #888; }
-  .b-running { background: #e3f5e9; color: #1f7a44; }
-  .lx-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; margin-right: 5px; animation: lx-pulse 1.2s infinite; }
-  @keyframes lx-pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
-  .lx-actions a { font-size: 12px; margin-left: 10px; color: #1d5089; text-decoration: none; white-space: nowrap; }
-  .lx-actions a:hover { text-decoration: underline; }
-  .lx-actions .del { color: #c0392b; }
-  .lx-actions .del:hover { text-decoration: underline; }
-  .lx-run.deleting { opacity: 0.4; pointer-events: none; }
-  .lx-right .lx-card h2 .cnt { margin-left: auto; font-size: 12px; color: #999; font-weight: 400; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-  /* Persona editor */
-  .px-card { background: #fff; border: 1px solid #e3e3e0; border-radius: 12px; margin-top: 16px; overflow: hidden; }
-  .px-card h2 { font-size: 16px; font-weight: 500; margin: 0; padding: 14px 18px; display: flex; align-items: center; gap: 8px; }
-  .px-persona { border-top: 1px solid #f0eeea; }
-  .px-persona-hdr { padding: 10px 18px; cursor: pointer; display: flex; align-items: center; gap: 8px; user-select: none; }
-  .px-persona-hdr:hover { background: #fafaf8; }
-  .px-persona-name { font-size: 14px; font-weight: 500; flex: 1; }
-  .px-persona-caret { font-size: 12px; color: #aaa; transition: transform 0.15s; }
-  .px-persona.open .px-persona-caret { transform: rotate(90deg); }
-  .px-persona-body { display: none; padding: 0 18px 14px; }
-  .px-persona.open .px-persona-body { display: block; }
-  .px-field { margin-bottom: 10px; }
-  .px-field label { font-size: 12px; color: #777; display: block; margin-bottom: 3px; }
+  body {
+    background: linear-gradient(135deg, #f3f6fa 0%, #e8f0fe 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color: #202124;
+    min-height: 100vh;
+  }
+
+  .lx-wrap {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+
+  .lx-header {
+    margin-bottom: 32px;
+  }
+
+  .lx-h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: #1a237e;
+    letter-spacing: -0.5px;
+  }
+
+  .lx-sub {
+    color: #5f6368;
+    font-size: 15px;
+    margin: 0;
+  }
+
+  .lx-links a {
+    font-size: 14px;
+    color: #3f51b5;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 16px;
+    transition: color 0.2s;
+  }
+
+  .lx-links a:hover {
+    color: #1a237e;
+  }
+
+  /* Grid for top section (Launch & Runs) */
+  .lx-grid-top {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 24px;
+    align-items: stretch;
+    margin-bottom: 24px;
+  }
+
+  /* Modern Card Styling */
+  .lx-card, .px-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .lx-card:hover, .px-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 2px 5px rgba(0, 0, 0, 0.03);
+  }
+
+  .lx-card h2, .px-card h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #2c3e50;
+  }
+
+  .lx-card h2 .glyphicon, .px-card h2 .glyphicon {
+    color: #3f51b5;
+    background: #e8eaf6;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .lx-label {
+    font-size: 13px;
+    color: #5f6368;
+    display: block;
+    margin: 16px 0 6px;
+    font-weight: 500;
+  }
+
+  /* Input Styling */
+  .lx-card select, .lx-card input[type=text], .lx-card input[type=number], .lx-card input[type=date],
   .px-field input, .px-field textarea, .px-field select {
-    width: 100%; border: 1px solid #ccc; border-radius: 6px;
-    padding: 6px 8px; font-size: 13px; font-family: inherit; box-sizing: border-box; }
-  .px-field textarea { min-height: 56px; resize: vertical; }
-  .px-field input[type=number] { width: 80px; }
-  .px-save { margin-top: 8px; padding: 6px 16px; border: none; border-radius: 6px;
-    background: #2b6cb0; color: #fff; font-size: 13px; cursor: pointer; }
-  .px-save:hover { background: #1d5089; }
-  .px-msg { font-size: 12px; margin-left: 10px; color: #2a7a2a; }
-  .px-empty { padding: 12px 18px; font-size: 13px; color: #aaa; }
-  .px-loading { padding: 12px 18px; font-size: 13px; color: #aaa; }
-  .px-cog-toggle { font-size: 12px; color: #888; cursor: pointer; margin: 10px 0 4px; user-select: none; display: flex; align-items: center; gap: 5px; }
-  .px-cog-toggle:hover { color: #444; }
-  .px-cog-caret { font-size: 10px; transition: transform 0.15s; }
-  .px-cog-body { display: none; background: #fafaf8; border: 1px solid #eeece8; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
-  .px-hint { position: relative; display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
-  .px-hint::after { content: attr(data-tip); display: none; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
-    background: #333; color: #fff; padding: 5px 8px; border-radius: 4px; font-size: 11px; line-height: 1.3; white-space: nowrap; z-index: 1000; }
-  .px-hint:hover::after { display: block; }
+    width: 100%;
+    height: 42px;
+    border: 1px solid #dadce0;
+    border-radius: 10px;
+    padding: 0 14px;
+    font-size: 14px;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    color: #202124;
+  }
+
+  .px-field textarea {
+    height: auto;
+    padding: 10px 14px;
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .lx-card select:focus, .lx-card input[type=text]:focus, .lx-card input[type=number]:focus, .lx-card input[type=date]:focus,
+  .px-field input:focus, .px-field textarea:focus, .px-field select:focus {
+    outline: none;
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+  }
+
+  /* Profiles Toggle */
+  .lx-profiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .lx-profiles label {
+    font-size: 13px;
+    padding: 10px 16px;
+    border: 1px solid #dadce0;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 0;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: #fff;
+    color: #5f6368;
+  }
+
+  .lx-profiles input { display: none; }
+  .lx-profiles label:hover {
+    background: #f8f9fa;
+    border-color: #bdc1c6;
+  }
+
+  .lx-profiles label.sel {
+    border-color: #3f51b5;
+    background: #e8eaf6;
+    color: #3f51b5;
+    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.15);
+  }
+
+  /* Buttons */
+  .lx-launch {
+    width: 100%;
+    margin-top: 24px;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3f51b5, #1a237e);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(26, 35, 126, 0.25);
+  }
+
+  .lx-launch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.35);
+  }
+
+  .lx-launch:active {
+    transform: translateY(0);
+  }
+
+  .lx-meta {
+    font-size: 12px;
+    color: #80868b;
+    margin-top: 14px;
+    text-align: center;
+  }
+  
+  .lx-meta a { color: #3f51b5; text-decoration: none; font-weight: 500; }
+
+  /* Runs List */
+  .lx-runs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  /* Custom Scrollbar for Runs */
+  .lx-runs::-webkit-scrollbar { width: 6px; }
+  .lx-runs::-webkit-scrollbar-track { background: transparent; }
+  .lx-runs::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 10px; }
+  .lx-runs::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+
+  .lx-run {
+    background: #fff;
+    border: 1px solid #e8eaed;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+
+  .lx-run:hover {
+    border-color: #d2d6dc;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    transform: translateY(-1px);
+  }
+
+  .lx-run .nm {
+    font-size: 15px;
+    font-weight: 600;
+    color: #202124;
+  }
+
+  .lx-run .sub {
+    font-size: 12px;
+    color: #5f6368;
+    margin-top: 4px;
+  }
+
+  /* Badges */
+  .lx-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .b-complete { background: #e8eaf6; color: #3f51b5; }
+  .b-partial { background: #fff8e1; color: #f57f17; }
+  .b-empty { background: #f1f3f4; color: #5f6368; }
+  .b-running { background: #e6f4ea; color: #1e8e3e; }
+
+  .lx-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34a853;
+    margin-right: 6px;
+    animation: lx-pulse 1.5s infinite;
+  }
+
+  @keyframes lx-pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 168, 83, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(52, 168, 83, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 168, 83, 0); }
+  }
+
+  .lx-actions a {
+    font-size: 13px;
+    font-weight: 500;
+    margin-left: 14px;
+    color: #3f51b5;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .lx-actions a:hover { color: #1a237e; }
+  .lx-actions .del { color: #d32f2f; }
+  .lx-actions .del:hover { color: #b71c1c; }
+  .lx-run.deleting { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+
+  .lx-right .lx-card h2 .cnt {
+    margin-left: auto;
+    font-size: 13px;
+    color: #80868b;
+    font-weight: 500;
+    background: #f1f3f4;
+    padding: 4px 10px;
+    border-radius: 10px;
+  }
+
+  /* Persona Editor */
+  .px-card {
+    margin-top: 24px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .px-card h2 {
+    padding: 24px;
+    margin: 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.4);
+  }
+
+  .px-persona {
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    background: #fff;
+    transition: background 0.2s;
+  }
+  
+  .px-persona:last-child {
+    border-bottom: none;
+  }
+
+  .px-persona-hdr {
+    padding: 16px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .px-persona-hdr:hover { background: #fafbfc; }
+  .px-persona-name { font-size: 15px; font-weight: 600; flex: 1; color: #202124; }
+  .px-persona-caret { font-size: 12px; color: #9aa0a6; transition: transform 0.2s ease; }
+  .px-persona.open .px-persona-caret { transform: rotate(90deg); color: #3f51b5; }
+  
+  .px-persona-body {
+    display: none;
+    padding: 8px 24px 24px;
+    background: #fafbfc;
+  }
+  
+  .px-persona.open .px-persona-body {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Persona grid for fields */
+  .px-fields-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .px-field label {
+    font-size: 13px;
+    color: #5f6368;
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  
+  .px-field.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .px-save {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #3f51b5;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .px-save:hover { background: #303f9f; transform: translateY(-1px); }
+  .px-save:active { transform: translateY(0); }
+  
+  .px-msg { font-size: 13px; margin-left: 12px; color: #0d8236; font-weight: 500; }
+  .px-empty, .px-loading { padding: 24px; font-size: 14px; color: #80868b; text-align: center; }
+
+  .px-cog-toggle {
+    font-size: 14px;
+    font-weight: 500;
+    color: #3f51b5;
+    cursor: pointer;
+    margin: 24px 0 16px;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #e8eaf6;
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+
+  .px-cog-toggle:hover { background: #c5cae9; }
+  .px-cog-caret { font-size: 11px; transition: transform 0.2s; }
+  
+  .px-cog-body {
+    display: none;
+    background: #fff;
+    border: 1px solid #e8eaed;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+
+  .px-hint {
+    position: relative;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    border-radius: 50%;
+    background: #e8eaed;
+    color: #5f6368;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: help;
+    margin-left: 4px;
+  }
+  
+  /* Checkboxes */
+  .px-keep-check {
+    width: 18px;
+    height: 18px;
+    accent-color: #3f51b5;
+  }
 </style>
 
 <div class="lx-wrap">
-  <div style="display:flex; align-items:baseline; gap:16px; margin-bottom:4px;">
-    <h1 class="lx-h1">Reverie launcher</h1>
-    <a href="/sims/" style="font-size:13px; color:#1d5089; text-decoration:none;">Sim library →</a>
-    <a href="/settings/inference/" style="font-size:13px; color:#1d5089; text-decoration:none;">Inference settings →</a>
-  </div>
-  <p class="lx-sub">Configure a new simulation run, or browse and review previous runs.</p>
-
-  <div class="lx-grid">
-    <div class="lx-left">
-      <div class="lx-card">
-        <h2><span class="glyphicon glyphicon-play"></span> Start a new run</h2>
-        <form method="POST" action="{% url 'launch_simulation' %}">
-          {% csrf_token %}
-          <label class="lx-label">Fork from</label>
-          <select name="fork">
-            {% for b in bases %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
-          </select>
-
-          <label class="lx-label">New name</label>
-          <input type="text" name="name" value="{{ default_name }}" />
-
-          <label class="lx-label">Profile</label>
-          <div class="lx-profiles" id="lx-profiles">
-            {% for p in profiles %}
-            <label data-val="{{ p.value }}" title="{{ p.hint }}{% if p.value == current_profile %} (active){% endif %}">
-              <input type="radio" name="profile" value="{{ p.value }}" {% if p.value == current_profile %}checked{% endif %} />
-              <span>{{ p.label }}</span>
-            </label>
-            {% endfor %}
-          </div>
-
-          <label class="lx-label">Simulation start date</label>
-          <input type="date" name="start_date" id="lx-start-date" />
-
-          <label class="lx-label">Seconds per step <span style="color:#bbb">(10 = normal speed)</span></label>
-          <input type="number" name="sec_per_step" id="lx-sec-per-step" value="10" min="1" max="3600" step="1" style="width:100px" />
-
-          <label class="lx-label">Steps to run <span style="color:#bbb">(8640 = one full day at 10s/step)</span></label>
-          <input type="number" name="steps" value="8640" min="1" step="1" />
-
-          <input type="hidden" name="keep_personas" id="lx-keep-personas" value="" />
-          <input type="hidden" name="add_personas"  id="lx-add-personas"  value="" />
-          <button type="submit" class="lx-launch">Launch run</button>
-          <p class="lx-meta">Spawns the backend, runs the steps, then saves and exits. The map opens at <a href="{% url 'home' %}">/simulator_home</a>.</p>
-        </form>
-      </div>
-
-      <!-- Persona editor panel, loaded dynamically when fork changes -->
-      <div id="px-panel" class="px-card">
-        <h2><span class="glyphicon glyphicon-user"></span> Personas <span style="margin-left:auto;font-size:12px;color:#999;font-weight:400" id="px-fork-label"></span></h2>
-        <div id="px-body"><div class="px-loading">Select a fork above to view personas.</div></div>
+  <div class="lx-header">
+    <div style="display:flex; align-items:baseline; justify-content:space-between;">
+      <div style="display:flex; align-items:baseline;">
+        <h1 class="lx-h1">Reverie launcher</h1>
+        <span class="lx-links">
+          <a href="/sims/">Sim library →</a>
+          <a href="/settings/inference/">Inference settings →</a>
+        </span>
       </div>
     </div>
+    <p class="lx-sub">Configure a new simulation run, or browse and review previous runs.</p>
+  </div>
 
-    <div class="lx-right">
-      <div class="lx-card">
-        <h2><span class="glyphicon glyphicon-time"></span> Previous runs <span class="cnt">{{ run_count }} total</span></h2>
-        <div class="lx-runs">
-          {% for r in runs %}
-          <div class="lx-run">
-            <div>
-              <div class="nm">{{ r.name }}</div>
-              <div class="sub">Launched {{ r.started_at_label }}
-                · {{ r.steps }} steps
-                {% if r.sim_time %}· reached {{ r.sim_time }}{% endif %}
-                · {{ r.persona_count }} personas</div>
-            </div>
-            <div style="display:flex; align-items:center;">
-              <span class="lx-badge b-{{ r.status }}">{% if r.live %}<span class="lx-dot"></span>{% endif %}{{ r.status }}</span>
-              <span class="lx-actions">
-                {% if r.live %}<a href="{% url 'run_console' r.name %}">Console</a>{% endif %}
-                <a href="{% url 'run_review' r.name %}">Review</a>
-                {% if r.has_replay or r.live %}<a href="{% url 'open_run_map' r.name %}">Map</a>{% endif %}
-                <a href="#" class="del" onclick="deleteRun(event, this, '{{ r.name|escapejs }}')">Delete</a>
-              </span>
-            </div>
-          </div>
-          {% empty %}
-          <p style="color:#999; font-size:13px;">No runs yet. Launch one to get started.</p>
+  <div class="lx-grid-top">
+    <!-- Left: Launch config -->
+    <div class="lx-card">
+      <h2><span class="glyphicon glyphicon-play"></span> Start a new run</h2>
+      <form method="POST" action="{% url 'launch_simulation' %}">
+        {% csrf_token %}
+        <label class="lx-label">Fork from</label>
+        <select name="fork">
+          {% for b in bases %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
+        </select>
+
+        <label class="lx-label">New name</label>
+        <input type="text" name="name" value="{{ default_name }}" />
+
+        <label class="lx-label">Profile</label>
+        <div class="lx-profiles" id="lx-profiles">
+          {% for p in profiles %}
+          <label data-val="{{ p.value }}" title="{{ p.hint }}{% if p.value == current_profile %} (active){% endif %}">
+            <input type="radio" name="profile" value="{{ p.value }}" {% if p.value == current_profile %}checked{% endif %} />
+            <span>{{ p.label }}</span>
+          </label>
           {% endfor %}
         </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px;">
+          <div>
+            <label class="lx-label">Simulation start date</label>
+            <input type="date" name="start_date" id="lx-start-date" />
+          </div>
+          <div>
+            <label class="lx-label">Steps to run</label>
+            <input type="number" name="steps" value="8640" min="1" step="1" title="8640 = one full day at 10s/step" />
+          </div>
+        </div>
+
+        <label class="lx-label">Seconds per step <span style="color:#9aa0a6; font-weight:400;">(10 = normal speed)</span></label>
+        <input type="number" name="sec_per_step" id="lx-sec-per-step" value="10" min="1" max="3600" step="1" />
+
+        <input type="hidden" name="keep_personas" id="lx-keep-personas" value="" />
+        <input type="hidden" name="add_personas"  id="lx-add-personas"  value="" />
+        <button type="submit" class="lx-launch">Launch run</button>
+        <p class="lx-meta">Spawns the backend, runs the steps, then saves and exits. The map opens at <a href="{% url 'home' %}">/simulator_home</a>.</p>
+      </form>
+    </div>
+
+    <!-- Right: Previous runs -->
+    <div class="lx-card lx-right">
+      <h2><span class="glyphicon glyphicon-time"></span> Previous runs <span class="cnt">{{ run_count }} total</span></h2>
+      <div class="lx-runs">
+        {% for r in runs %}
+        <div class="lx-run">
+          <div>
+            <div class="nm">{{ r.name }}</div>
+            <div class="sub">Launched {{ r.started_at_label }}
+              · {{ r.steps }} steps
+              {% if r.sim_time %}· reached {{ r.sim_time }}{% endif %}
+              · {{ r.persona_count }} personas</div>
+          </div>
+          <div style="display:flex; align-items:center;">
+            <span class="lx-badge b-{{ r.status }}">{% if r.live %}<span class="lx-dot"></span>{% endif %}{{ r.status }}</span>
+            <span class="lx-actions">
+              {% if r.live %}<a href="{% url 'run_console' r.name %}">Console</a>{% endif %}
+              <a href="{% url 'run_review' r.name %}">Review</a>
+              {% if r.has_replay or r.live %}<a href="{% url 'open_run_map' r.name %}">Map</a>{% endif %}
+              <a href="#" class="del" onclick="deleteRun(event, this, '{{ r.name|escapejs }}')">Delete</a>
+            </span>
+          </div>
+        </div>
+        {% empty %}
+        <p style="color:#9aa0a6; font-size:14px; text-align:center; padding: 40px 0;">No runs yet. Launch one to get started.</p>
+        {% endfor %}
       </div>
     </div>
+  </div>
+
+  <!-- Persona editor panel, spans full width below -->
+  <div id="px-panel" class="px-card">
+    <h2><span class="glyphicon glyphicon-user"></span> Personas <span style="margin-left:auto;font-size:13px;color:#80868b;font-weight:500;background:#f1f3f4;padding:4px 10px;border-radius:10px;" id="px-fork-label"></span></h2>
+    <div id="px-body"><div class="px-loading">Select a fork above to view personas.</div></div>
   </div>
 </div>
 
@@ -222,12 +602,13 @@
       var fieldsHtml = Object.keys(FIELD_LABELS).map(function(k) {
         var val = (p.fields[k] == null ? '' : p.fields[k]);
         if (k === 'living_area') return renderLocationField(idx, val);
-        var input = MULTILINE.indexOf(k) !== -1
+        var isMulti = MULTILINE.indexOf(k) !== -1;
+        var input = isMulti
           ? '<textarea name="' + k + '">' + escHtml(String(val)) + '</textarea>'
           : (k === 'age'
             ? '<input type="number" name="' + k + '" value="' + escHtml(String(val)) + '" />'
             : '<input type="text" name="' + k + '" value="' + escHtml(String(val)) + '" />');
-        return '<div class="px-field"><label>' + FIELD_LABELS[k] + '</label>' + input + '</div>';
+        return '<div class="px-field' + (isMulti ? ' full-width' : '') + '"><label>' + FIELD_LABELS[k] + '</label>' + input + '</div>';
       }).join('');
 
       var cogHtml = COG_FIELDS.map(function(f) {
@@ -242,25 +623,25 @@
         + '<div class="px-persona-hdr" onclick="togglePersona(' + idx + ')">'
         + '<input type="checkbox" class="px-keep-check" value="' + escHtml(p.name) + '" checked '
         + 'onclick="event.stopPropagation()" title="Include this persona in the run" '
-        + 'style="margin-right:2px;cursor:pointer;flex-shrink:0" />'
+        + 'style="margin-right:12px;cursor:pointer;flex-shrink:0" />'
         + '<span class="glyphicon glyphicon-chevron-right px-persona-caret"></span>'
         + '<span class="px-persona-name">' + escHtml(p.name) + '</span>'
         + '</div>'
         + '<div class="px-persona-body">'
-        + fieldsHtml
+        + '<div class="px-fields-grid">' + fieldsHtml + '</div>'
         + '<div class="px-cog-toggle" onclick="toggleCog(' + idx + ')">'
         + '<span class="px-cog-caret glyphicon glyphicon-chevron-right"></span> Cognitive settings'
         + '</div>'
-        + '<div class="px-cog-body" id="px-cog-' + idx + '">' + cogHtml + '</div>'
-        + '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px;">'
+        + '<div class="px-cog-body" id="px-cog-' + idx + '"><div class="px-fields-grid">' + cogHtml + '</div></div>'
+        + '<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:20px; padding-top:16px; border-top:1px solid rgba(0,0,0,0.04);">'
         + '<button class="px-save" onclick="savePersona(\'' + escAttr(simCode) + '\',\'' + escAttr(p.name) + '\',' + idx + ')">Save changes</button>'
-        + '<button class="px-save" style="background:#2a7a2a" onclick="saveToLibrary(' + idx + ')">Save to library</button>'
+        + '<button class="px-save" style="background:#0f9d58" onclick="saveToLibrary(' + idx + ')">Save to library</button>'
         + '<div style="position:relative; display:inline-block">'
-        + '<button class="px-save" style="background:#5a4a8a" onclick="toggleLibPicker(' + idx + ')">Import from library ▾</button>'
-        + '<div id="px-lib-picker-' + idx + '" style="display:none;position:absolute;left:0;top:110%;min-width:220px;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:99;max-height:220px;overflow-y:auto;"></div>'
-        + '</div>'
+        + '<button class="px-save" style="background:#673ab7" onclick="toggleLibPicker(' + idx + ')">Import from library ▾</button>'
+        + '<div id="px-lib-picker-' + idx + '" style="display:none;position:absolute;left:0;top:110%;min-width:240px;background:#fff;border:1px solid #dadce0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:99;max-height:260px;overflow-y:auto;"></div>'
         + '</div>'
         + '<span class="px-msg" id="px-msg-' + idx + '"></span>'
+        + '</div>'
         + '</div></div>';
     }).join('');
     appendAddSection();
@@ -275,12 +656,12 @@
 
   // ── Location (living_area) cascading picker ────────────────────────────────
   function renderLocationField(idx, val) {
-    return '<div class="px-field px-loc-block" data-idx="' + idx + '">'
+    return '<div class="px-field px-loc-block full-width" data-idx="' + idx + '">'
       + '<label>Location <span class="px-hint" title="Where this persona lives: world / sector / arena">?</span></label>'
-      + '<div style="display:flex;gap:6px;flex-wrap:wrap">'
-      + '<select data-level="world" onchange="onLocationChange(' + idx + ',\'world\')" style="flex:1;min-width:110px"></select>'
-      + '<select data-level="sector" onchange="onLocationChange(' + idx + ',\'sector\')" style="flex:1;min-width:150px"></select>'
-      + '<select data-level="arena" onchange="onLocationChange(' + idx + ',\'arena\')" style="flex:1;min-width:150px"></select>'
+      + '<div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">'
+      + '<select data-level="world" onchange="onLocationChange(' + idx + ',\'world\')"></select>'
+      + '<select data-level="sector" onchange="onLocationChange(' + idx + ',\'sector\')"></select>'
+      + '<select data-level="arena" onchange="onLocationChange(' + idx + ',\'arena\')"></select>'
       + '</div>'
       + '<input type="hidden" name="living_area" value="' + escAttr(String(val)) + '" />'
       + '</div>';
@@ -576,19 +957,19 @@
     var body = document.getElementById('px-body');
     var sec = document.createElement('div');
     sec.id = 'px-add-section';
-    sec.style.cssText = 'padding:12px 18px 14px;border-top:1px solid #f0eeea;';
+    sec.style.cssText = 'padding:24px; background:#fff;';
     sec.innerHTML =
-      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
-      + '<span style="font-size:13px;font-weight:500;color:#555">Inject from library</span>'
+      '<div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">'
+      + '<span style="font-size:15px;font-weight:600;color:#202124">Inject from library</span>'
       + '<div style="position:relative">'
-      + '<button type="button" class="px-save" style="padding:4px 14px;font-size:12px;background:#1d5089" '
+      + '<button type="button" class="px-save" style="padding:8px 16px;font-size:13px;background:#1a237e" '
       + 'onclick="toggleAddPicker()">+ Add persona ▾</button>'
-      + '<div id="px-add-picker" style="display:none;position:absolute;left:0;top:110%;min-width:240px;'
-      + 'background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);'
-      + 'z-index:99;max-height:220px;overflow-y:auto;"></div>'
+      + '<div id="px-add-picker" style="display:none;position:absolute;left:0;top:110%;min-width:280px;'
+      + 'background:#fff;border:1px solid #dadce0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);'
+      + 'z-index:99;max-height:260px;overflow-y:auto;"></div>'
       + '</div>'
       + '</div>'
-      + '<div id="px-add-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-height:4px"></div>';
+      + '<div id="px-add-chips" style="display:flex;flex-wrap:wrap;gap:8px;min-height:4px"></div>';
     body.appendChild(sec);
     // Reparent to <body> so the .px-card's overflow:hidden doesn't clip the
     // dropdown (and its scrollbar) when it falls near the card edge.
