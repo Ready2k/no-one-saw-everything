@@ -87,6 +87,43 @@ def test_dialogue_rejects_unsupported_facts(monkeypatch):
     assert result.fallback_reason == "validation_failed"
 
 
+def test_dialogue_allows_forbidden_phrase_already_in_deterministic_text(monkeypatch):
+    """A rewrite must not be rejected for reusing wording that is already
+    present in the deterministic answer it's rewriting, even if that wording
+    also happens to appear in the solution's grading concept groups. A
+    killer's false alibi is deliberately worded close to the true murder
+    window (e.g. Clara's fountain alibi legitimately says 'quarter to
+    eight'), and a faithful paraphrase inherits that overlap without leaking
+    anything the player couldn't already see in the scripted line."""
+
+    test_case_data = get_case("case_001")
+
+    paraphrase = "I was at the fountain from about a quarter to eight, needing some air."
+
+    def mock_get_llm_client():
+        return FakeLLMClient(override_response={"rewritten_text": paraphrase})
+
+    monkeypatch.setattr(rewriter_module, "get_llm_client", mock_get_llm_client)
+
+    clara = next(a for a in test_case_data.agents if a.agent_id == "agent_clara")
+    deterministic_text = (
+        "I was at the fountain from about a quarter to eight until just "
+        "before opening. I needed air."
+    )
+
+    result = rewrite_interview_answer(
+        case=test_case_data,
+        agent=clara,
+        question_text="Where were you during the murder window?",
+        deterministic_text=deterministic_text,
+        allowed_facts=["Clara claims she was at the fountain around 07:45."],
+        pressure_level=0.2,
+    )
+
+    assert result.fallback_used is False
+    assert result.rewritten_text == paraphrase
+
+
 def test_dialogue_rejects_forbidden_facts(monkeypatch):
     """Test that forbidden hidden facts are rejected even if not using role labels."""
     

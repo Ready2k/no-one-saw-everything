@@ -259,6 +259,8 @@ export interface Config {
   playtest_mode: boolean;
   llm_dialogue_enabled: boolean;
   llm_generation_available: boolean;
+  llm_model: string | null;
+  llm_detected_source: string | null;
 }
 
 export interface PlaytestSummary {

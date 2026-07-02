@@ -61,6 +61,8 @@ def get_config():
         "playtest_mode": MYSTERY_PLAYTEST_MODE,
         "llm_dialogue_enabled": llm.dialogue_enabled,
         "llm_generation_available": llm.configured and llm.provider != "fake",
+        "llm_model": llm.model if llm.provider != "fake" else None,
+        "llm_detected_source": llm.detected_source,
     }
 
 

@@ -64,6 +64,7 @@ def _sanitise(
     Returns a rejection reason if invalid, else None.
     """
     text_lower = text.lower()
+    allowed_blob = " ".join(allowed_facts + allowed_context).lower()
 
     # 1. Role labels
     bad_labels = ["killer", "red_herring", "victim_role"]
@@ -84,8 +85,18 @@ def _sanitise(
     # check is if any forbidden fact's key nouns are leaked in a way that suggests guilt.
     # To keep it simple and deterministic, we'll check exact string overlap of long chunks.
     # Actually, the requirement was "forbidden facts passed in forbidden_facts".
+    #
+    # Exempt any forbidden phrase that is already visible in the deterministic
+    # text/allowed context being rewritten: the solution's grading concept
+    # groups (used to score free-text accusations) share vocabulary with
+    # scripted dialogue by design — e.g. a killer's false alibi is
+    # deliberately worded close to the true murder window ("quarter to
+    # eight"). That word overlap is the scripted lie doing its job, not the
+    # model smuggling in a new fact, so a faithful paraphrase must not be
+    # rejected for reusing wording the player could already see.
     for fact in forbidden_facts:
-        if len(fact) > 10 and fact.lower() in text_lower:
+        fact_lower = fact.lower()
+        if len(fact) > 10 and fact_lower in text_lower and fact_lower not in allowed_blob:
             return f"Contains forbidden fact: {fact}"
 
     # 5. Unsupported facts
@@ -94,7 +105,6 @@ def _sanitise(
     # allowed if it appears somewhere in the deterministic answer, the allowed
     # facts, or the question/claim context. Word-boundary match so "Ben" does
     # not trip on "been".
-    allowed_blob = " ".join(allowed_facts + allowed_context).lower()
     for agent in case.agents:
         first_name = agent.full_name.split()[0].lower()
         pattern = rf"\b{re.escape(first_name)}\b"

@@ -10,8 +10,11 @@
     },
     {
       "name": "mystery-backend",
-      "runtimeExecutable": ".venv/bin/uvicorn",
-      "runtimeArgs": ["app.main:app", "--port", "8010"],
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "MYSTERY_LLM_PROVIDER=auto MYSTERY_LLM_DIALOGUE_ENABLED=true .venv/bin/uvicorn app.main:app --port 8010"
+      ],
       "cwd": "mystery/backend",
       "port": 8010
     },
