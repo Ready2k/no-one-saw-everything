@@ -110,6 +110,7 @@ function InterviewPanel({ agentId }: { agentId: string }) {
       });
       setLastResult(result);
       setLastChallenge(null);
+      setFallbackMsg(null);
       refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
@@ -122,6 +123,7 @@ function InterviewPanel({ agentId }: { agentId: string }) {
     if (!freeText.trim()) return;
     setBusy(true);
     setError(null);
+    setFallbackMsg(null);
     try {
       const result = await api.freeTextAsk({
         agent_id: agentId,
@@ -165,6 +167,7 @@ function InterviewPanel({ agentId }: { agentId: string }) {
   const runChallenge = async (s: ChallengeSuggestion) => {
     setBusy(true);
     setError(null);
+    setFallbackMsg(null);
     try {
       const result = await api.challenge({
         target_agent_id: agentId,

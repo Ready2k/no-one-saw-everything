@@ -54,10 +54,13 @@ MYSTERY_PLAYTEST_MODE = os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "
 
 @app.get("/api/config")
 def get_config():
+    from .llm.config import get_llm_config
+
+    llm = get_llm_config()
     return {
         "playtest_mode": MYSTERY_PLAYTEST_MODE,
-        "llm_dialogue_enabled": os.getenv("LLM_PROVIDER") is not None,
-        "llm_generation_available": os.getenv("LLM_PROVIDER") is not None,
+        "llm_dialogue_enabled": llm.dialogue_enabled,
+        "llm_generation_available": llm.configured and llm.provider != "fake",
     }
 
 
@@ -139,6 +142,7 @@ def pin_event(event_id: str):
             and clue.clue_id not in sess.discovered_clue_ids
         ):
             sess.discovered_clue_ids.add(clue.clue_id)
+            log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "observation"})
             newly.append(project_clue(clue))
 
     # Auto-create an event note so the pin shows up on the board.
@@ -172,6 +176,7 @@ def inspect(req: InspectRequest):
         raise HTTPException(404, "No such location")
 
     sess.inspected_location_ids.add(req.location_id)
+    log_telemetry_event(sess, "inspection_performed", {"location_id": req.location_id})
     newly, already, locked = [], [], 0
     for clue in case.clues:
         d = clue.discoverability
@@ -229,6 +234,8 @@ def ask(req: AskRequest):
 
     resp = interview_engine.answer_question(case, sess, req)
     log_telemetry_event(sess, "interview_answered", {"agent_id": req.agent_id, "question_type": req.question_type})
+    for clue in resp.revealed_clues:
+        log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "interview"})
     return interview_engine.public_ask_response(resp)
 
 
@@ -238,7 +245,7 @@ def free_text_ask(req: FreeTextAskRequest):
     sess = session()
     from app.free_text_api import handle_free_text
     resp = handle_free_text(req, case, sess)
-    log_telemetry_event(sess, "interview_asked", {"agent_id": req.agent_id, "question_type": "free_text"})
+    log_telemetry_event(sess, "free_text_question_asked", {"agent_id": req.agent_id})
     log_telemetry_event(sess, "interview_answered", {"agent_id": req.agent_id, "question_type": "free_text"})
     return resp
 
@@ -291,7 +298,10 @@ def challenge_suggestions(agent_id: Optional[str] = None):
                 continue
             seen.add(key)
             claim = sess.claims[rule.challenged_claim_id]
-            log_telemetry_event(sess, "challenge_suggested", {"target_agent_id": rule.target_agent_id, "challenged_claim_id": rule.challenged_claim_id})
+            # Log each suggestion once per session; the UI polls this endpoint.
+            if key not in sess.logged_suggestion_keys:
+                sess.logged_suggestion_keys.add(key)
+                log_telemetry_event(sess, "challenge_suggested", {"target_agent_id": rule.target_agent_id, "challenged_claim_id": rule.challenged_claim_id})
             out.append(
                 {
                     "target_agent_id": rule.target_agent_id,
@@ -312,6 +322,8 @@ def challenge(req: ChallengeRequest):
     try:
         record = challenge_engine.resolve_challenge(case, sess, req)
         log_telemetry_event(sess, "challenge_executed", {"target_agent_id": req.target_agent_id, "outcome": record.outcome})
+        for clue_id in record.revealed_clue_ids:
+            log_telemetry_event(sess, "clue_discovered", {"clue_id": clue_id, "source": "challenge"})
     except ChallengeError as e:
         raise HTTPException(e.status, e.detail)
     return challenge_engine.public_challenge(case, sess, record)
@@ -409,26 +421,28 @@ def get_hints():
 
 @app.get("/api/session/playtest-summary")
 def get_playtest_summary():
+    from .llm.config import get_llm_config
+
     case = case_data()
     sess = session()
-    
+
     player_action_types = {
         "clue_discovered", "inspection_performed", "interview_answered",
         "free_text_question_asked", "challenge_executed", "note_created",
         "marker_updated", "accusation_submitted", "feedback_submitted"
     }
-    
+
     player_action_count = sum(1 for e in sess.event_log if e["type"] in player_action_types)
     telemetry_event_count = len(sess.event_log)
-    
+
     free_text_questions = sum(1 for e in sess.event_log if e["type"] == "interview_answered" and e["data"].get("question_type") == "free_text")
     interviews = sum(1 for e in sess.event_log if e["type"] == "interview_answered") - free_text_questions
-    
+
     return {
         "case_id": case.case.case_id,
         "case_title": case.case.title,
         "case_type": case.case.case_type,
-        "mode": "deterministic", # TODO: dynamic if we track mode in case/session
+        "mode": "llm_dialogue" if get_llm_config().dialogue_enabled else "deterministic",
         "telemetry_event_count": telemetry_event_count,
         "player_action_count": player_action_count,
         "discovered_clues": len(sess.discovered_clue_ids),
@@ -553,20 +567,36 @@ def generate(req: GenerateCaseRequest):
     new_case, fallback_used, fallback_reason, repair_attempts = generate_case(
         req.case_type, req.difficulty, req.seed, req.mode, req.fallback_allowed
     )
-    
+
     # Validate
     val_result = validate_case(new_case)
-    
+
     # Always register if generated, even if imperfect, but you might reject hard errors?
     # Spec says: "reject invalid generated cases". Let's block play if errors exist.
     if val_result["valid"]:
         register_case(new_case)
-    
+
     # Activate session if requested and valid
     active_session_id = None
     if req.activate and val_result["valid"]:
         ACTIVE_CASE_ID = new_case.case.case_id
+        # A fresh activation always means a fresh investigation — otherwise
+        # re-generating the same (type, seed) resurrects a stale session.
+        reset_session(ACTIVE_CASE_ID)
         active_session_id = ACTIVE_CASE_ID
+
+    # Validation messages are developer-oriented and can reference the hidden
+    # killer; redact identity before they cross the API.
+    killer_id = new_case.case.killer_id
+    killer_name = next(
+        (a.full_name for a in new_case.agents if a.agent_id == killer_id), killer_id
+    )
+
+    def _redact(msgs: list[str]) -> list[str]:
+        return [
+            m.replace(killer_id, "[the killer]").replace(killer_name, "[the killer]")
+            for m in msgs
+        ]
 
     return {
         "case_id": new_case.case.case_id,
@@ -579,8 +609,8 @@ def generate(req: GenerateCaseRequest):
         "validation": {
             "valid": val_result["valid"],
             "score": val_result["score"],
-            "warnings": val_result["warnings"],
-            "errors": val_result["errors"],
+            "warnings": _redact(val_result["warnings"]),
+            "errors": _redact(val_result["errors"]),
         },
         "active_session_id": active_session_id
     }

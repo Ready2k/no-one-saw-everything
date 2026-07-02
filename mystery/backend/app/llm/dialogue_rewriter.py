@@ -1,6 +1,7 @@
 """LLM dialogue rewriting module."""
 
 import json
+import re
 from typing import Optional, Dict, Any, List
 from pathlib import Path
 import logging
@@ -51,46 +52,54 @@ def _build_forbidden_facts(case: CaseData, agent: Agent) -> list[str]:
     return forbidden
 
 
-def _sanitise(text: str, forbidden_facts: list[str], allowed_facts: list[str]) -> Optional[str]:
+def _sanitise(
+    text: str,
+    forbidden_facts: list[str],
+    allowed_facts: list[str],
+    case: CaseData,
+    allowed_context: list[str],
+) -> Optional[str]:
     """
     Sanitises LLM text.
     Returns a rejection reason if invalid, else None.
     """
     text_lower = text.lower()
-    
+
     # 1. Role labels
     bad_labels = ["killer", "red_herring", "victim_role"]
     for label in bad_labels:
         if label in text_lower:
             return f"Contains raw role label: {label}"
-            
+
     # 2. JSON leakage
     if "{" in text or "}" in text:
         return "Contains JSON syntax or schema leakage"
-        
+
     # 3. Hidden Event IDs / Clue IDs
     # Rather than checking all IDs, we just look for typical ID formats if they leak,
     # but more robustly, we just check forbidden facts.
-    
+
     # 4. Forbidden facts
-    # We do a basic substring check for very specific forbidden phrases, but a better 
+    # We do a basic substring check for very specific forbidden phrases, but a better
     # check is if any forbidden fact's key nouns are leaked in a way that suggests guilt.
     # To keep it simple and deterministic, we'll check exact string overlap of long chunks.
     # Actually, the requirement was "forbidden facts passed in forbidden_facts".
     for fact in forbidden_facts:
         if len(fact) > 10 and fact.lower() in text_lower:
             return f"Contains forbidden fact: {fact}"
-            
+
     # 5. Unsupported facts
-    # We cannot perfectly check all unsupported facts deterministically without another LLM call.
-    # However, if the text contains proper nouns (names) that are not in the allowed facts or 
-    # the question context, it's likely a hallucination.
-    # Let's check for "Priya" if Priya is not in allowed facts, as an example from the user.
-    # (Simplified deterministic check: reject if specific unexpected names appear).
-    # A generic implementation might look for names not in the allowed text.
-    # For now, we will do a targeted check to satisfy the test requirement.
-    if "Priya" in text and "Priya" not in str(allowed_facts):
-        return "Contains unsupported fact: Priya"
+    # The rewrite may not introduce cast members that the grounded answer never
+    # mentioned — that's how hallucinated sightings get invented. A name is only
+    # allowed if it appears somewhere in the deterministic answer, the allowed
+    # facts, or the question/claim context. Word-boundary match so "Ben" does
+    # not trip on "been".
+    allowed_blob = " ".join(allowed_facts + allowed_context).lower()
+    for agent in case.agents:
+        first_name = agent.full_name.split()[0].lower()
+        pattern = rf"\b{re.escape(first_name)}\b"
+        if re.search(pattern, text_lower) and not re.search(pattern, allowed_blob):
+            return f"Contains unsupported fact: {agent.full_name.split()[0]}"
 
     return None
 
@@ -128,8 +137,11 @@ def rewrite_interview_answer(
             user_prompt=user_prompt,
             schema=DialogueRewrite
         )
-        
-        rejection = _sanitise(result.rewritten_text, forbidden_facts, allowed_facts)
+
+        allowed_context = [question_text, deterministic_text, agent.full_name]
+        rejection = _sanitise(
+            result.rewritten_text, forbidden_facts, allowed_facts, case, allowed_context
+        )
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
             return RewriteResult(
@@ -137,12 +149,12 @@ def rewrite_interview_answer(
                 fallback_used=True,
                 fallback_reason="validation_failed"
             )
-            
+
         return RewriteResult(
             rewritten_text=result.rewritten_text,
             fallback_used=False
         )
-        
+
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
         return RewriteResult(
@@ -191,8 +203,17 @@ def rewrite_challenge_response(
             user_prompt=user_prompt,
             schema=DialogueRewrite
         )
-        
-        rejection = _sanitise(result.rewritten_text, forbidden_facts, allowed_facts)
+
+        allowed_context = [
+            challenged_claim,
+            evidence_clues,
+            player_statement or "",
+            deterministic_text,
+            agent.full_name,
+        ]
+        rejection = _sanitise(
+            result.rewritten_text, forbidden_facts, allowed_facts, case, allowed_context
+        )
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
             return RewriteResult(
@@ -200,12 +221,12 @@ def rewrite_challenge_response(
                 fallback_used=True,
                 fallback_reason="validation_failed"
             )
-            
+
         return RewriteResult(
             rewritten_text=result.rewritten_text,
             fallback_used=False
         )
-        
+
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
         return RewriteResult(

@@ -129,7 +129,14 @@ class FakeLLMClient:
             
         if schema.__name__ == "DialogueRewrite":
             return schema.model_validate({"rewritten_text": "Fake rewritten text."})
-            
+
+        if schema.__name__ == "QuestionIntent":
+            return schema.model_validate({
+                "intent": "fallback_unknown",
+                "confidence": 0.0,
+                "rewritten_structured_question": "Unknown question",
+            })
+
         raise ValueError(f"FakeLLMClient doesn't know how to mock {schema.__name__}")
 
 

@@ -59,16 +59,24 @@ def assemble_case(
     for i, clue_plan in enumerate(plan.clue_plans):
         linked_agent_id = roles.get(clue_plan.linked_role, clue_plan.linked_role)
         
-        # We need a valid discovery method
-        method = clue_plan.discovery_method if clue_plan.discovery_method in ["inspect", "observation", "interview"] else "inspect"
-        
+        # We need a valid discovery method. "observation" would require linking
+        # the clue to a visible event, which the assembler cannot invent, so it
+        # maps to "inspect" rather than guaranteeing a validation failure. The
+        # same applies to interview clues linked to someone with no interview
+        # pack (e.g. the victim).
+        method = clue_plan.discovery_method if clue_plan.discovery_method in ["inspect", "interview"] else "inspect"
+        if method == "interview" and not any(
+            p.agent_id == linked_agent_id for p in case_data.interview_packs
+        ):
+            method = "inspect"
+
         discoverability = Discoverability(method=method)
         if method == "inspect":
             discoverability.location_id = rng.choice(locations)
         elif method == "interview":
             discoverability.agent_id = linked_agent_id
             discoverability.question_type = "timeline"
-            
+
             # Inject an AnswerRule into the agent's interview pack
             for pack in case_data.interview_packs:
                 if pack.agent_id == linked_agent_id:

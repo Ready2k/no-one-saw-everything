@@ -16,6 +16,7 @@ from .models import (
     ChallengeRecord,
     Claim,
     InterviewTranscript,
+    Note,
     SuspicionLevel,
     MarkerType,
     Feedback,
@@ -42,6 +43,9 @@ class Session:
         self.tutorial_enabled: bool = True
         self.tutorial_step: Optional[int] = 0
         self.event_log: list[dict] = []
+        # (claim_id, clue_id) pairs already logged as challenge_suggested, so
+        # polling the suggestions endpoint doesn't flood the telemetry log.
+        self.logged_suggestion_keys: set[tuple[str, str]] = set()
         self.feedback: Optional[Feedback] = None
         self._note_counter = itertools.count(1)
         self._challenge_counter = itertools.count(1)

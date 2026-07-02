@@ -3,6 +3,7 @@
     "object_id": "obj_till_weight",
     "name": "Brass till weight",
     "description": "A heavy brass weight normally kept beside the till to pin down receipts.",
+    "is_weapon": true,
     "normal_location_id": "loc_hobbs_cafe",
     "final_location_id": "loc_cafe_kitchen",
     "access_rules": ["cafe_staff"],

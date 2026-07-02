@@ -4,6 +4,7 @@ from app.question_classifier import classify_question
 from app.llm.question_intent_classifier import classify_question_intent_llm
 from app.interview import answer_question, public_ask_response
 from app import challenge as challenge_engine
+from app.challenge import ChallengeError
 
 def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse:
     if req.agent_id == case.case.victim_id:
@@ -55,7 +56,15 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
                                 evidence_clue_ids=[intent.referenced_clue_id],
                                 player_statement=req.question
                             )
-                            chal_res = challenge_engine.resolve_challenge(case, sess, chal_req)
+                            try:
+                                chal_res = challenge_engine.resolve_challenge(case, sess, chal_req)
+                            except ChallengeError as e:
+                                # Guardrail tripped (e.g. undiscovered evidence);
+                                # degrade gracefully instead of a 500.
+                                return FreeTextAskResponse(
+                                    intent=intent,
+                                    fallback_message=e.detail,
+                                )
                             public_res = challenge_engine.public_challenge(case, sess, chal_res)
                             return FreeTextAskResponse(
                                 intent=intent,
