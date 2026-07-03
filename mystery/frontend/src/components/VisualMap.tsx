@@ -235,9 +235,7 @@ export default function VisualMap({
         style={{
           transform: `translate(${view.tx}px, ${view.ty}px) scale(${view.scale})`,
           transition: smooth.current ? "transform 0.45s ease" : undefined,
-          // Location labels counter-scale against this so they keep a
-          // constant on-screen size at any zoom level.
-          "--map-scale": view.scale,
+
         } as React.CSSProperties}
       >
         <img
