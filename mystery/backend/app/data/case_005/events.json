@@ -1,0 +1,151 @@
+[
+  {
+    "event_id": "ev_0600_clara_finds_deed",
+    "time": "06:00",
+    "location_id": "loc_clara_flat",
+    "agent_ids": ["agent_clara"],
+    "event_type": "object_use",
+    "truth_description": "Clara received the Land Registry extract in the post two days ago. This morning, cross-referencing it with a physical copy of the mortgage deed she found in the Marcus estate papers, she realises both the cafe building and her flat are charged against Owen's debt. She begins drafting the letter to the committee.",
+    "visibility": "private",
+    "object_ids": ["obj_mortgage_deed", "obj_property_register", "obj_clara_note"],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0620_clara_calls_owen",
+    "time": "06:20",
+    "location_id": "loc_clara_flat",
+    "agent_ids": ["agent_clara", "agent_owen"],
+    "event_type": "conversation",
+    "truth_description": "Clara calls Owen and tells him what she has found. She says she is going to the committee. Owen's voice is flat: 'Let's sort this. I'll come to the alley at seven — bring what you have.'",
+    "visibility": "hidden",
+    "importance": 9,
+    "linked_clue_ids": ["clue_clara_called_owen"]
+  },
+  {
+    "event_id": "ev_0630_elias_bench",
+    "time": "06:40",
+    "location_id": "loc_village_square",
+    "agent_ids": ["agent_elias"],
+    "event_type": "routine",
+    "truth_description": "Elias arrives at his bench.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_0645_clara_cafe",
+    "time": "06:45",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": ["agent_clara"],
+    "event_type": "arrival",
+    "truth_description": "Clara comes downstairs to the cafe. She is pale but composed. She takes the mortgage deed and her draft note with her.",
+    "player_description": "Clara opens the cafe from downstairs. The usual early light routine.",
+    "visibility": "public",
+    "visible_to_agent_ids": ["agent_elias"],
+    "object_ids": ["obj_mortgage_deed", "obj_clara_note"],
+    "importance": 6
+  },
+  {
+    "event_id": "ev_0655_owen_leaves_yard",
+    "time": "06:55",
+    "location_id": "loc_owen_house",
+    "agent_ids": ["agent_owen"],
+    "event_type": "hidden_action",
+    "truth_description": "Owen leaves his yard by the back lane, circumventing the square. He carries his belt — he had already thought this through.",
+    "visibility": "hidden",
+    "object_ids": ["obj_owen_belt"],
+    "importance": 8
+  },
+  {
+    "event_id": "ev_0700_nadia_crosses",
+    "time": "07:00",
+    "location_id": "loc_village_square",
+    "agent_ids": ["agent_nadia"],
+    "event_type": "movement",
+    "truth_description": "Nadia walks from the square toward the clinic. She glances down the alley entrance and sees Owen Price turning into the rear alley — she recognises his build and his grey work jacket. She assumes he has a delivery.",
+    "player_description": "Nadia walks through the square at seven. She glances toward the alley entrance.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": ["agent_nadia"],
+    "importance": 8,
+    "linked_clue_ids": ["clue_nadia_sees_owen_alley"]
+  },
+  {
+    "event_id": "ev_0700_clara_alley",
+    "time": "07:00",
+    "location_id": "loc_rear_alley",
+    "agent_ids": ["agent_clara"],
+    "event_type": "movement",
+    "truth_description": "Clara goes to the rear alley as agreed, documents in hand.",
+    "visibility": "hidden",
+    "object_ids": ["obj_mortgage_deed", "obj_clara_note"],
+    "importance": 7
+  },
+  {
+    "event_id": "ev_0703_confrontation_alley",
+    "time": "07:03",
+    "location_id": "loc_rear_alley",
+    "agent_ids": ["agent_owen", "agent_clara"],
+    "event_type": "argument",
+    "truth_description": "Owen demands the documents. Clara refuses — she has copies in the flat. Owen sees there is no deal to be made.",
+    "visibility": "hidden",
+    "object_ids": ["obj_mortgage_deed"],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0709_murder",
+    "time": "07:09",
+    "location_id": "loc_rear_alley",
+    "agent_ids": ["agent_owen", "agent_clara"],
+    "event_type": "murder",
+    "truth_description": "Owen strangles Clara with his belt. She does not cry out — it is over very quickly.",
+    "visibility": "hidden",
+    "object_ids": ["obj_owen_belt"],
+    "importance": 10
+  },
+  {
+    "event_id": "ev_0712_owen_sets_fire",
+    "time": "07:12",
+    "location_id": "loc_rear_alley",
+    "agent_ids": ["agent_owen"],
+    "event_type": "hidden_action",
+    "truth_description": "Owen sets fire to the crate stack near the body using lighter fluid from the pub lighter. He drops the belt behind the bins. He expects the fire to destroy evidence and confuse cause of death.",
+    "visibility": "hidden",
+    "object_ids": ["obj_burn_accelerant", "obj_owen_belt"],
+    "importance": 9,
+    "linked_clue_ids": ["clue_staged_fire", "clue_belt_weapon"]
+  },
+  {
+    "event_id": "ev_0715_owen_slips_back",
+    "time": "07:15",
+    "location_id": "loc_owen_house",
+    "agent_ids": ["agent_owen"],
+    "event_type": "arrival",
+    "truth_description": "Owen returns via the back lane. He texts Col: 'You were here from quarter to seven, got it?' Col arrives at the yard ten minutes later.",
+    "player_description": "Owen returns to his yard by the back lane, out of sight of the square.",
+    "visibility": "hidden",
+    "importance": 8,
+    "linked_clue_ids": ["clue_col_false_alibi"]
+  },
+  {
+    "event_id": "ev_0720_fire_contained",
+    "time": "07:20",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [],
+    "event_type": "environmental",
+    "truth_description": "The damp morning air and concrete floor prevent the fire spreading. It smoulders on the crate stack and goes out within twenty minutes, leaving a scorched wall and ash.",
+    "player_description": "A faint smell of smoke drifts from the rear alley.",
+    "visibility": "public_partial",
+    "audible_to_agent_ids": ["agent_elias"],
+    "importance": 7
+  },
+  {
+    "event_id": "ev_0731_ben_discovery",
+    "time": "07:31",
+    "location_id": "loc_rear_alley",
+    "agent_ids": ["agent_ben"],
+    "event_type": "body_discovery",
+    "truth_description": "Ben, cutting through the alley to the cafe side street on his round, smells smoke and investigates. He finds Clara beside the bins, the smouldering crate stack, and shouts for help.",
+    "player_description": "Ben Carter enters the rear alley. He stops. Shouts.",
+    "visibility": "public",
+    "importance": 10
+  }
+]

@@ -95,6 +95,150 @@ def visible_events(
     return out
 
 
+# ---------------------------------------------------------------------------
+# Map replay projections (visual layer only — same visibility rules apply)
+# ---------------------------------------------------------------------------
+
+# Safe derivation of a visual marker type from a *public* event.
+_PUBLIC_VISUAL_TYPES = {
+    "movement": "agent_move",
+    "arrival": "agent_move",
+    "departure": "agent_move",
+    "routine": "agent_present",
+    "conversation": "conversation_marker",
+    "argument": "conversation_marker",
+    "private_meeting": "conversation_marker",
+    "object_use": "object_marker",
+    "object_drop": "object_marker",
+    "sound": "sound_marker",
+    "body_discovery": "body_discovery",
+}
+
+# For non-public events, only ambiguous marker types may cross the API —
+# an authored visual type that would identify the actor is coerced.
+_AMBIGUOUS_SAFE_TYPES = {"sound_marker", "body_discovery", "unknown_figure", "hidden_activity"}
+
+
+def _visual_event_type(event: Event) -> str:
+    if event.visibility == "public":
+        return event.visual_event_type or _PUBLIC_VISUAL_TYPES.get(
+            event.event_type, "agent_present"
+        )
+    # public_partial / private: never a type that implies a known actor.
+    authored = event.visual_event_type
+    if authored in _AMBIGUOUS_SAFE_TYPES:
+        return authored
+    if event.event_type == "sound":
+        return "sound_marker"
+    if event.event_type == "body_discovery":
+        return "body_discovery"
+    if event.visibility == "private":
+        return "hidden_activity"
+    return "unknown_figure"
+
+
+def project_map_event(event: Event) -> Optional[dict[str, Any]]:
+    """Player-safe map projection of an event, or None if invisible.
+
+    Builds on project_event (same visibility gate) and adds only visual
+    fields. from/to locations are exposed for public events, and for
+    partials only when explicitly authored (the author has already decided
+    the movement itself is observable, e.g. 'a figure crosses the alley').
+    """
+    projected = project_event(event)
+    if projected is None:
+        return None
+    projected["visual_event_type"] = _visual_event_type(event)
+    if event.visibility in ("public", "public_partial"):
+        projected["from_location_id"] = event.from_location_id
+        projected["to_location_id"] = event.to_location_id
+    else:
+        projected["from_location_id"] = None
+        projected["to_location_id"] = None
+    return projected
+
+
+def project_map_location(loc: Location) -> dict[str, Any]:
+    from .map_layout import location_visuals
+
+    position, bounds, layer = location_visuals(loc)
+    projected = project_location(loc)
+    projected["map_position"] = position.model_dump() if position else None
+    projected["map_bounds"] = bounds.model_dump() if bounds else None
+    projected["visual_layer"] = layer
+    return projected
+
+
+def project_map_agent(agent: Agent) -> dict[str, Any]:
+    from .map_layout import agent_sprite
+
+    sprite_id, sprite_asset = agent_sprite(agent)
+    projected = project_agent(agent)
+    projected["sprite_id"] = sprite_id
+    projected["sprite_asset"] = sprite_asset
+    return projected
+
+
+def visible_map_events(
+    case: CaseData,
+    time_from: Optional[str] = None,
+    time_to: Optional[str] = None,
+    location_id: Optional[str] = None,
+    agent_id: Optional[str] = None,
+) -> list[dict[str, Any]]:
+    out = []
+    for event in case.events:
+        projected = project_map_event(event)
+        if projected is None:
+            continue
+        if time_from and minutes(event.time) < minutes(time_from):
+            continue
+        if time_to and minutes(event.time) > minutes(time_to):
+            continue
+        if location_id and event.location_id != location_id:
+            continue
+        # Same rule as visible_events: agent filtering only matches events
+        # where the agent is publicly identifiable.
+        if agent_id and agent_id not in projected["agent_ids"]:
+            continue
+        out.append(projected)
+    out.sort(key=lambda e: minutes(e["time"]))
+    return out
+
+
+def truth_map_events(case: CaseData) -> list[dict[str, Any]]:
+    """The full true timeline for the post-accusation truth replay.
+
+    Only ever call this after an accusation has been judged — the caller
+    is responsible for that gate.
+    """
+    out = []
+    for event in case.events:
+        out.append(
+            {
+                "event_id": event.event_id,
+                "time": event.time,
+                "location_id": event.location_id,
+                "agent_ids": event.agent_ids,
+                "event_type": event.event_type,
+                "description": event.truth_description,
+                "visibility": event.visibility,
+                "importance": event.importance,
+                "visual_event_type": (
+                    "hidden_activity"
+                    if event.event_type in ("murder", "hidden_action")
+                    else event.visual_event_type
+                    or _PUBLIC_VISUAL_TYPES.get(event.event_type, "agent_present")
+                ),
+                "from_location_id": event.from_location_id,
+                "to_location_id": event.to_location_id,
+                "was_hidden": event.visibility in ("hidden", "private"),
+            }
+        )
+    out.sort(key=lambda e: minutes(e["time"]))
+    return out
+
+
 def project_clue(clue: Clue) -> dict[str, Any]:
     return {
         "clue_id": clue.clue_id,

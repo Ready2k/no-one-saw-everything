@@ -1,0 +1,39 @@
+{
+  "killer_id": "agent_ben",
+  "motive": {
+    "canonical": "Ben discovered that Owen had blackmailed his father for twelve years over the village hall arson. He confronted Owen, who was contemptuous, and Ben struck him.",
+    "concept_groups": [
+      ["blackmail", "extortion", "letters", "payments", "money", "dad", "father", "Ted"],
+      ["arson", "village hall", "fire", "2011"],
+      ["confronted", "confrontation", "anger", "revenge", "twelve years"]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with a loose piece of the fountain's stone coping, struck at the fountain in the village square.",
+    "concept_groups": [
+      ["stone", "coping", "fountain", "piece", "blunt", "struck", "hit"],
+      ["fountain", "square", "village square", "rim"]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Ben was seen crossing the square late at night. Elias heard two voices at the fountain, one identified as Owen's. Physical traces — muddy jacket cuff and bootprint — place Ben at the fountain during the murder window.",
+    "concept_groups": [
+      ["seen crossing", "square", "late", "night", "22:35"],
+      ["bootprint", "mud", "jacket", "cuff", "fountain flower bed"],
+      ["home", "alibi", "no alibi", "alone", "no witness", "cannot account"]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_blackmail_letters",
+    "clue_arson_clipping",
+    "clue_ben_cancel_text",
+    "clue_nadia_night_sighting",
+    "clue_elias_voices",
+    "clue_bootprint",
+    "clue_jacket_mud"
+  ],
+  "explanation": "Correct. Ben Carter killed Owen Price. That evening, clearing his late father's belongings, Ben found seven blackmail letters from Owen spanning twelve years — Owen had extorted Ted Carter over the village hall fire of 2011. Ben cancelled his evening plans at 22:00 and went to the square. He confronted Owen at the fountain just before eleven. Owen laughed and said Ted had come to him. Ben seized the loose coping stone from the fountain rim and struck Owen. Nadia saw Ben crossing the square at 22:35; Elias heard two voices from the fountain — Owen's laugh, a younger voice — and saw a figure leave quickly at 23:18. Mud from the flower bed was still on Ben's jacket cuff the next morning. The bootprint in the bed matches his resoled work boot."
+}

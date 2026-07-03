@@ -1,0 +1,50 @@
+[
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_routine",
+    "evidence_clue_ids": ["clue_extra_capsules"],
+    "outcome": "deflect",
+    "response_text": "Those capsules are not mine. Someone put them there — the organiser was left on the clinic counter overnight. This building is not Fort Knox. Ask who else had access.",
+    "emotional_shift": "controlled_alarm",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_log_correction",
+    "evidence_clue_ids": ["clue_dispensary_log_altered", "clue_extra_capsules"],
+    "outcome": "deflect",
+    "response_text": "A correction in a different ink is not evidence of anything except running out of a pen. Medical records are amended constantly. I corrected a transcription error.",
+    "emotional_shift": "defensive_certainty",
+    "pressure_delta": 0.25,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_accepted_change",
+    "evidence_clue_ids": ["clue_nadia_budget_notes", "clue_solicitor_appointment"],
+    "outcome": "partial_admission",
+    "response_text": "...I had made plans. Of course I had made plans. Six figures. A new treatment room. Equipment that could save lives. And Elias was going to give it all to a nephew he'd barely spoken to in twenty years because he got sentimental over Christmas. I was devastated. That is not the same as — I did not do this.",
+    "emotional_shift": "raw",
+    "pressure_delta": 0.4,
+    "sets_claim_status": "highly_disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_nadia_devastated",
+        "summary": "Nadia admits being devastated by Elias's will change but insists it did not drive her to act.",
+        "claim_type": "statement",
+        "truthfulness": "false"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_tamper_deflect",
+    "evidence_clue_ids": ["clue_dispensary_log_altered", "clue_extra_capsules", "clue_dr_haig_prescription"],
+    "outcome": "near_crack",
+    "response_text": "You have my logs, my notes, and a dying man's organiser. I know how it looks. I know exactly how it looks. But you cannot prove I put those capsules there. You cannot prove that.",
+    "emotional_shift": "cornered",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "near_broken"
+  }
+]

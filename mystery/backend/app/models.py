@@ -86,6 +86,18 @@ QuestionType = Literal[
     "location",         # why were you at / what do you know about <location>?
 ]
 
+VisualEventType = Literal[
+    "agent_move",
+    "agent_present",
+    "object_marker",
+    "sound_marker",
+    "body_discovery",
+    "unknown_figure",
+    "hidden_activity",
+    "conversation_marker",
+    "clue_marker",
+]
+
 QuestionIntentType = Literal[
     "alibi",
     "timeline",
@@ -104,6 +116,22 @@ QuestionIntentType = Literal[
 # ---------------------------------------------------------------------------
 # Locked case truth
 # ---------------------------------------------------------------------------
+
+class MapPosition(BaseModel):
+    """A point on the map image, in map-image pixel coordinates."""
+
+    x: float
+    y: float
+
+
+class MapBounds(BaseModel):
+    """A rectangle on the map image, in map-image pixel coordinates."""
+
+    x: float
+    y: float
+    width: float
+    height: float
+
 
 class Relationship(BaseModel):
     target_agent_id: str
@@ -130,6 +158,9 @@ class Agent(BaseModel):
     gossip_tendency: float = 0.5
     conflict_avoidance: float = 0.5
     is_victim: bool = False
+    # Visual-only avatar metadata; the mystery character remains canonical.
+    sprite_id: Optional[str] = None
+    sprite_asset: Optional[str] = None
 
 
 class Location(BaseModel):
@@ -142,6 +173,10 @@ class Location(BaseModel):
     audible_from_location_ids: list[str] = []
     camera_coverage: bool = False
     murder_suitable: bool = False
+    # Visual-only placement on the map image; never drives case logic.
+    map_position: Optional[MapPosition] = None
+    map_bounds: Optional[MapBounds] = None
+    visual_layer: Optional[Literal["exterior", "interior"]] = None
 
 
 class GameObject(BaseModel):
@@ -188,6 +223,10 @@ class Event(BaseModel):
     object_ids: list[str] = []
     importance: int = 5
     linked_clue_ids: list[str] = []
+    # Visual projection hints for the map replay layer (optional).
+    visual_event_type: Optional[VisualEventType] = None
+    from_location_id: Optional[str] = None
+    to_location_id: Optional[str] = None
 
 
 class Discoverability(BaseModel):

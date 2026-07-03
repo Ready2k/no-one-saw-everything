@@ -1,0 +1,82 @@
+[
+  {
+    "memory_id": "mem_owen_mortgage",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": ["agent_owen"],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "Owen had Marcus forge a mortgage on the cafe building as security for a large personal debt. It was never meant to be exercised — but now Clara had found it and was going public.",
+    "emotional_weight": 10,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": ["clue_mortgage_deed", "clue_property_register"]
+  },
+  {
+    "memory_id": "mem_owen_cover_story",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": ["agent_owen", "agent_col"],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "Owen's story: he was in his yard from 06:45 receiving timber. Col was with him. He had nothing to do with the cafe.",
+    "emotional_weight": 8,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": ["clue_col_false_alibi"]
+  },
+  {
+    "memory_id": "mem_clara_discovery",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": ["agent_clara"],
+    "memory_type": "private_secret",
+    "case_function": "victim_trigger",
+    "truth_status": "true",
+    "summary": "Clara received the Land Registry extract two days ago and cross-referenced it with the estate papers this morning. She called Owen at 06:20 and arranged the meeting. She took the deed with her.",
+    "emotional_weight": 9,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": ["clue_property_register", "clue_mortgage_deed", "clue_clara_called_owen"]
+  },
+  {
+    "memory_id": "mem_col_false_alibi",
+    "owner_agent_id": "agent_col",
+    "known_by_agent_ids": ["agent_col", "agent_owen"],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_support",
+    "truth_status": "false",
+    "summary": "Owen texted Col last night: 'If anyone asks, you were at the yard from quarter to seven, got it?' Col showed up late and agreed to the story because Owen is his main client.",
+    "emotional_weight": 7,
+    "shareability": "will_crack_under_pressure",
+    "discoverable_by_player": true,
+    "linked_clue_ids": ["clue_col_false_alibi"]
+  },
+  {
+    "memory_id": "mem_nadia_alley_sighting",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": ["agent_nadia"],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Nadia saw Owen's grey work jacket and distinctive build entering the rear alley at 07:00. She assumed it was routine — but the timing puts him there during the murder window.",
+    "emotional_weight": 7,
+    "confidence": 0.85,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": ["clue_nadia_sees_owen_alley"]
+  },
+  {
+    "memory_id": "mem_elias_smoke",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": ["agent_elias"],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Elias smelled something burning from the alley direction around 07:20 — the fire was going before Ben found it.",
+    "emotional_weight": 4,
+    "confidence": 0.6,
+    "shareability": "will_share",
+    "discoverable_by_player": true,
+    "linked_clue_ids": ["clue_elias_fire_smoke"]
+  }
+]

@@ -1,7 +1,10 @@
 import type { ClaimPublic, CluePublic } from "../types";
-import { useWorld } from "../App";
+import { useUiNav, useWorld } from "../App";
 
 export function ClueCard({ clue, isNew }: { clue: CluePublic; isNew?: boolean }) {
+  const { jumpToMap } = useUiNav();
+  const mapLocationId: string | undefined = clue.linked_location_ids[0];
+  const mapEventId: string | undefined = clue.linked_event_ids[0];
   return (
     <div className={`clue-card ${isNew ? "new" : ""}`}>
       <div className="clue-head">
@@ -9,6 +12,15 @@ export function ClueCard({ clue, isNew }: { clue: CluePublic; isNew?: boolean })
         <span className={`badge strength-${clue.strength}`}>{clue.strength}</span>
         {clue.ambiguity === "high" && <span className="badge ambiguous">ambiguous</span>}
         {isNew && <span className="badge new">new</span>}
+        {(mapLocationId || mapEventId) && (
+          <button
+            className="clue-map-link"
+            title="View on the map"
+            onClick={() => jumpToMap({ locationId: mapLocationId, eventId: mapEventId })}
+          >
+            🗺 map
+          </button>
+        )}
       </div>
       <p>{clue.description}</p>
     </div>

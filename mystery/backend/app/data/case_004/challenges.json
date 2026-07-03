@@ -1,0 +1,68 @@
+[
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_home_evening",
+    "evidence_clue_ids": ["clue_nadia_night_sighting"],
+    "outcome": "deflect",
+    "response_text": "Nadia saw me in the square? Nadia needs her eyes tested. I was home.",
+    "emotional_shift": "sharp",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_home_evening",
+    "evidence_clue_ids": ["clue_nadia_night_sighting", "clue_elias_fleeing_figure"],
+    "outcome": "partial_admission",
+    "response_text": "...I stepped out for air. That's all. I was feeling rough after finding Dad's stuff. I walked around the square. I didn't see Owen. I didn't touch anyone.",
+    "emotional_shift": "cornered",
+    "pressure_delta": 0.35,
+    "sets_claim_status": "reframed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_walked_square",
+        "summary": "Ben now admits he went to the square 'for air' but denies seeing or touching Owen.",
+        "claim_type": "alibi",
+        "time_reference": "23:00",
+        "location_reference_id": "loc_village_square",
+        "truthfulness": "false"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_barely_knew_owen",
+    "evidence_clue_ids": ["clue_blackmail_letters"],
+    "outcome": "near_crack",
+    "response_text": "He ruined my father. Twelve years — twelve years of payments because of something that was an accident. Dad lived with it his whole life. He died afraid Owen would still come after us. You want to know why I'm upset? That's why.",
+    "emotional_shift": "raw_grief",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "partially_broken",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_motive_revealed",
+        "summary": "Ben admits the blackmail and his father's suffering, but does not yet admit to the confrontation at the fountain.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_walked_square",
+    "evidence_clue_ids": ["clue_blackmail_letters", "clue_jacket_mud", "clue_bootprint"],
+    "outcome": "near_crack",
+    "response_text": "I went to the fountain. I confronted him. He laughed at me. He said my dad had come to him — that he'd asked for it. And then he turned away and I — I had the stone in my hand and I don't remember deciding. I remember dropping it.",
+    "emotional_shift": "breaking",
+    "pressure_delta": 0.7,
+    "sets_claim_status": "broken",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_confession",
+        "summary": "Ben admits confronting Owen at the fountain and striking him with the stone.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  }
+]

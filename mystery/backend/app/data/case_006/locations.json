@@ -1,0 +1,64 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The heart of the village. Marcus's house is on the north side.",
+    "connected_location_ids": ["loc_marcus_house", "loc_bookshop", "loc_clinic", "loc_ruth_cottage"],
+    "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_marcus_house",
+    "name": "Marcus Bell's House",
+    "description": "A large Georgian house on the square's north side. Ground floor has a sitting room with a fireside armchair where Marcus is found. The kitchen is where the cocoa was prepared.",
+    "connected_location_ids": ["loc_village_square", "loc_marcus_study"],
+    "access_rules": ["owner", "invited"],
+    "visibility_type": "private",
+    "murder_suitable": true
+  },
+  {
+    "location_id": "loc_marcus_study",
+    "name": "Marcus's Study",
+    "description": "A book-lined study behind the sitting room. Contains the estate papers, the old family photograph, and the solicitor's draft will. The fireplace shows recent ash.",
+    "connected_location_ids": ["loc_marcus_house"],
+    "access_rules": ["owner", "invited"],
+    "visibility_type": "private",
+    "murder_suitable": false
+  },
+  {
+    "location_id": "loc_ruth_cottage",
+    "name": "Ruth's Cottage",
+    "description": "Ruth's small cottage on the far side of the square. The garden has a large stand of foxglove — digitalis purpurea.",
+    "connected_location_ids": ["loc_village_square"],
+    "access_rules": ["owner"],
+    "visibility_type": "private"
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Reed & Bell Bookshop",
+    "description": "Isabella's bookshop. A key location for motive — Marcus was revising his will to redirect her shares.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "Nadia's clinic. Marcus was a patient. His medical records show his cardiac history.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_solicitors_office",
+    "name": "Whittle & Cross Solicitors",
+    "description": "The solicitor's office on the edge of the village. Mr. Whittle holds the new will.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_priya_flat",
+    "name": "Priya's Flat",
+    "description": "Priya's flat, two streets from the square.",
+    "connected_location_ids": ["loc_village_square"],
+    "access_rules": ["owner"],
+    "visibility_type": "private"
+  }
+]

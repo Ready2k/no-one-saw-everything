@@ -32,7 +32,11 @@ from .projections import (
     project_claim,
     project_clue,
     project_location,
+    project_map_agent,
+    project_map_location,
+    truth_map_events,
     visible_events,
+    visible_map_events,
     build_playtest_export,
 )
 from .session import get_session, reset_session
@@ -161,6 +165,59 @@ def pin_event(event_id: str):
     )
     sess.notes[note.note_id] = note
     return {"pinned": True, "new_clues": newly, "note": note}
+
+
+# ---------------------------------------------------------------------------
+# Map replay (visual layer — projections only, never truth)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/map/replay")
+def map_replay(
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    location_id: Optional[str] = None,
+    agent_id: Optional[str] = None,
+    mode: str = "player",
+):
+    """Player-safe projected data for the visual map replay.
+
+    mode=player (default) applies the same visibility rules as /api/events.
+    mode=truth returns the true timeline and is only available after an
+    accusation has been submitted (the reveal gate).
+    """
+    from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
+
+    case = case_data()
+    sess = session()
+
+    if mode not in ("player", "truth"):
+        raise HTTPException(400, "mode must be 'player' or 'truth'")
+    if mode == "truth":
+        if sess.accusation is None:
+            raise HTTPException(403, "The truth is sealed until you make an accusation.")
+        events = truth_map_events(case)
+    else:
+        events = visible_map_events(case, start, end, location_id, agent_id)
+        for e in events:
+            e["pinned"] = e["event_id"] in sess.pinned_event_ids
+
+    return {
+        "case_id": case.case.case_id,
+        "mode": mode,
+        "map": {
+            "asset": MAP_ASSET,
+            "image": MAP_IMAGE,
+            "width": MAP_WIDTH,
+            "height": MAP_HEIGHT,
+        },
+        "time_range": {
+            "start": case.case.sim_start_time,
+            "end": case.case.discovery_time,
+        },
+        "locations": [project_map_location(l) for l in case.locations],
+        "agents": [project_map_agent(a) for a in case.agents],
+        "events": events,
+    }
 
 
 # ---------------------------------------------------------------------------

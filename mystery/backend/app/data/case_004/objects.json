@@ -1,0 +1,81 @@
+[
+  {
+    "object_id": "obj_fountain_stone",
+    "name": "Loose fountain coping stone",
+    "description": "A piece of the fountain's stone coping, approximately 20cm long, found near Owen's body. The east rim of the fountain has a gap where it was broken off. There is a smear of blood on one flat face.",
+    "is_weapon": true,
+    "normal_location_id": "loc_fountain",
+    "final_location_id": "loc_fountain",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_ben"],
+    "last_seen_time": "23:14",
+    "hidden_state": "blood_on_flat_face_stone_near_body",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_blackmail_letters",
+    "name": "Bundle of blackmail letters",
+    "description": "A bundle of seven letters from Owen Price to Ben's father, Ted Carter, spanning twelve years. Each demands cash payments in exchange for silence about a fire that destroyed the old village hall in 2011. Owen's handwriting, Owen's address.",
+    "normal_location_id": "loc_ben_flat",
+    "final_location_id": "loc_ben_flat",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_ben"],
+    "last_seen_time": "22:05",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_ben_phone",
+    "name": "Ben's mobile phone",
+    "description": "Ben's phone. The messages app shows a thread with Priya: at 22:00 Ben sent 'Sorry, can't make it tonight. Found something. Tell you later.' No further messages sent that evening.",
+    "normal_location_id": "loc_ben_flat",
+    "final_location_id": "loc_ben_flat",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_ben", "agent_priya"],
+    "last_seen_time": "22:00",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_owen_pub_receipt",
+    "name": "Owen's pub receipt",
+    "description": "A till receipt in Owen's jacket: three pints at The Mallet & Crown, timestamped 22:48. He left the pub shortly before closing.",
+    "normal_location_id": "loc_pub",
+    "final_location_id": "loc_fountain",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_owen", "agent_fred"],
+    "last_seen_time": "22:48",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_mud_bootprint",
+    "name": "Bootprint in the flower bed",
+    "description": "A bootprint in the moist flower bed beside the fountain — left sole, size 9, with a distinctive V-shaped tread gap consistent with a work boot repair. Ben has his boots resoled each spring at the cobbler on Marsh Lane.",
+    "normal_location_id": "loc_fountain",
+    "final_location_id": "loc_fountain",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_ben"],
+    "last_seen_time": "23:15",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_arson_clipping",
+    "name": "Newspaper clipping — village hall fire",
+    "description": "A yellowed newspaper clipping in the blackmail bundle: '2011 Village Hall Fire — Cause Unknown'. A handwritten note in the margin, in Ted Carter's hand: 'Owen knows. He was there. He's making us pay.'",
+    "normal_location_id": "loc_ben_flat",
+    "final_location_id": "loc_ben_flat",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_ben"],
+    "last_seen_time": "22:05",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_ben_jacket_mud",
+    "name": "Mud on Ben's jacket cuff",
+    "description": "Ben's work jacket, found in his flat: the right cuff is smeared with the same grey-brown mud as the flower bed by the fountain. It is still damp the next morning.",
+    "normal_location_id": "loc_ben_flat",
+    "final_location_id": "loc_ben_flat",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_ben"],
+    "last_seen_time": "23:20",
+    "clue_relevance": "opportunity"
+  }
+]

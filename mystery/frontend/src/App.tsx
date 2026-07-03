@@ -3,6 +3,7 @@ import { api } from "./api";
 import type { AgentPublic, CaseOverview, LocationPublic } from "./types";
 import Overview from "./views/Overview";
 import Rewind from "./views/Rewind";
+import MapReplay from "./views/MapReplay";
 import Places from "./views/Places";
 import Suspects from "./views/Suspects";
 import BoardView from "./views/Board";
@@ -26,9 +27,28 @@ export function useWorld(): World {
   return world;
 }
 
+// Cross-view navigation: lets a case-board clue jump to the map, and the
+// map open a suspect's profile.
+export interface MapJump {
+  locationId?: string;
+  time?: string;
+  eventId?: string;
+}
+
+interface UiNav {
+  jumpToMap: (jump: MapJump) => void;
+}
+
+const UiNavContext = createContext<UiNav>({ jumpToMap: () => {} });
+
+export function useUiNav(): UiNav {
+  return useContext(UiNavContext);
+}
+
 const TABS = [
   { id: "overview", label: "Case" },
   { id: "rewind", label: "Rewind" },
+  { id: "map", label: "Map Replay" },
   { id: "places", label: "Places" },
   { id: "suspects", label: "Suspects" },
   { id: "board", label: "Case Board" },
@@ -42,6 +62,8 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<TabId>("overview");
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [mapJump, setMapJump] = useState<MapJump | null>(null);
+  const [suspectFocus, setSuspectFocus] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([api.caseOverview(), api.agents(), api.locations()])
@@ -70,6 +92,14 @@ export default function App() {
 
   return (
     <WorldContext.Provider value={world}>
+      <UiNavContext.Provider
+        value={{
+          jumpToMap: (jump) => {
+            setMapJump(jump);
+            setTab("map");
+          },
+        }}
+      >
       <div className="app">
         <header className="topbar">
           <div className="brand">
@@ -110,8 +140,18 @@ export default function App() {
         <main className="content">
           {tab === "overview" && <Overview onBegin={() => setTab("rewind")} />}
           {tab === "rewind" && <Rewind />}
+          {tab === "map" && (
+            <MapReplay
+              jump={mapJump}
+              onConsumeJump={() => setMapJump(null)}
+              onOpenSuspect={(agentId) => {
+                setSuspectFocus(agentId);
+                setTab("suspects");
+              }}
+            />
+          )}
           {tab === "places" && <Places />}
-          {tab === "suspects" && <Suspects />}
+          {tab === "suspects" && <Suspects focusAgentId={suspectFocus} />}
           {tab === "board" && <BoardView />}
           {tab === "accuse" && <Accuse />}
         </main>
@@ -130,6 +170,7 @@ export default function App() {
         />
       )}
       <PlaytestPanel />
+      </UiNavContext.Provider>
     </WorldContext.Provider>
   );
 }

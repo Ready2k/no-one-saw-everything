@@ -1,0 +1,137 @@
+[
+  {
+    "agent_id": "agent_elias",
+    "full_name": "Elias Grant",
+    "age": 68,
+    "occupation": "Retired schoolteacher",
+    "traits": ["nosy", "certain of himself", "sentimental"],
+    "portrait": "🎩",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "First on the square bench every morning with his flask. Takes his heart medication at 07:00 with his first tea.",
+    "relationships": [
+      {"target_agent_id": "agent_nadia", "relationship_type": "patient", "affinity": 0.7, "trust": 0.9, "tension": 0.0},
+      {"target_agent_id": "agent_owen", "relationship_type": "old_friend", "affinity": 0.4, "trust": 0.6, "tension": 0.1},
+      {"target_agent_id": "agent_ben", "relationship_type": "acquaintance", "affinity": 0.2, "trust": 0.4, "tension": 0.2}
+    ],
+    "observation_skill": 0.55,
+    "memory_reliability": 0.5,
+    "honesty_baseline": 0.9,
+    "is_victim": true
+  },
+  {
+    "agent_id": "agent_nadia",
+    "full_name": "Nadia Cole",
+    "age": 38,
+    "occupation": "Clinic nurse",
+    "traits": ["observant", "controlled", "trusted"],
+    "portrait": "🩺",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_clinic",
+    "routine_summary": "Early shift at the clinic from 06:50. Checks in on Elias most mornings as part of her patient rounds.",
+    "relationships": [
+      {"target_agent_id": "agent_elias", "relationship_type": "caregiver", "affinity": 0.3, "trust": 0.9, "tension": 0.8},
+      {"target_agent_id": "agent_owen", "relationship_type": "neighbour", "affinity": 0.3, "trust": 0.5, "tension": 0.1},
+      {"target_agent_id": "agent_clara", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+    ],
+    "observation_skill": 0.85,
+    "memory_reliability": 0.85,
+    "honesty_baseline": 0.85,
+    "gossip_tendency": 0.2
+  },
+  {
+    "agent_id": "agent_owen",
+    "full_name": "Owen Price",
+    "age": 47,
+    "occupation": "Builder",
+    "traits": ["blunt", "practical", "loyal to old friends"],
+    "portrait": "🔨",
+    "home_location_id": "loc_owen_house",
+    "work_location_id": "loc_owen_house",
+    "routine_summary": "Crosses the square at 08:00 on his way to the yard. Always stops to say good morning to Elias.",
+    "relationships": [
+      {"target_agent_id": "agent_elias", "relationship_type": "old_friend", "affinity": 0.6, "trust": 0.7, "tension": 0.1},
+      {"target_agent_id": "agent_nadia", "relationship_type": "neighbour", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+    ],
+    "observation_skill": 0.5,
+    "memory_reliability": 0.7,
+    "honesty_baseline": 0.7,
+    "conflict_avoidance": 0.2
+  },
+  {
+    "agent_id": "agent_ben",
+    "full_name": "Ben Carter",
+    "age": 29,
+    "occupation": "Delivery driver",
+    "traits": ["easygoing", "chatty", "observant by accident"],
+    "portrait": "📦",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Morning delivery round. Passes the square multiple times. Has a habit of cutting across near the clinic.",
+    "relationships": [
+      {"target_agent_id": "agent_elias", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1},
+      {"target_agent_id": "agent_nadia", "relationship_type": "acquaintance", "affinity": 0.4, "trust": 0.5, "tension": 0.0}
+    ],
+    "observation_skill": 0.6,
+    "memory_reliability": 0.65,
+    "honesty_baseline": 0.7,
+    "gossip_tendency": 0.8
+  },
+  {
+    "agent_id": "agent_clara",
+    "full_name": "Clara Wells",
+    "age": 36,
+    "occupation": "Cafe manager",
+    "traits": ["organised", "perceptive", "guarded"],
+    "portrait": "🧣",
+    "home_location_id": "loc_clara_flat",
+    "work_location_id": "loc_hobbs_cafe",
+    "routine_summary": "Opens the cafe at 08:00. Always sees Elias on the bench from the cafe window.",
+    "relationships": [
+      {"target_agent_id": "agent_elias", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1},
+      {"target_agent_id": "agent_nadia", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+    ],
+    "observation_skill": 0.7,
+    "memory_reliability": 0.8,
+    "honesty_baseline": 0.7,
+    "conflict_avoidance": 0.5
+  },
+  {
+    "agent_id": "agent_dr_haig",
+    "full_name": "Dr. Haig",
+    "age": 55,
+    "occupation": "Village GP (part-time)",
+    "traits": ["meticulous", "formal", "disinclined to alarm"],
+    "portrait": "👨‍⚕️",
+    "home_location_id": "loc_clinic",
+    "work_location_id": "loc_clinic",
+    "routine_summary": "Arrives at the clinic at 09:00 two days per week. Signs off Nadia's medication dispensing records.",
+    "relationships": [
+      {"target_agent_id": "agent_nadia", "relationship_type": "supervisor", "affinity": 0.6, "trust": 0.8, "tension": 0.1},
+      {"target_agent_id": "agent_elias", "relationship_type": "patient", "affinity": 0.5, "trust": 0.6, "tension": 0.0}
+    ],
+    "observation_skill": 0.8,
+    "memory_reliability": 0.9,
+    "honesty_baseline": 0.9,
+    "gossip_tendency": 0.1
+  },
+  {
+    "agent_id": "agent_ruth",
+    "full_name": "Ruth Calder",
+    "age": 52,
+    "occupation": "Postwoman",
+    "traits": ["methodical", "quiet", "reliable"],
+    "portrait": "✉️",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Passes the square bench at 07:00 on her morning round. Often exchanged greetings with Elias.",
+    "relationships": [
+      {"target_agent_id": "agent_elias", "relationship_type": "acquaintance", "affinity": 0.4, "trust": 0.6, "tension": 0.0},
+      {"target_agent_id": "agent_nadia", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.6, "tension": 0.0}
+    ],
+    "observation_skill": 0.75,
+    "memory_reliability": 0.8,
+    "honesty_baseline": 0.9,
+    "gossip_tendency": 0.3
+  }
+]

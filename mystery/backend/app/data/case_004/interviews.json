@@ -1,0 +1,223 @@
+[
+  {
+    "agent_id": "agent_ben",
+    "default_answers": {
+      "alibi": "Home all evening. Found some old family papers, felt rubbish, went to bed early.",
+      "timeline": "Home from five. Didn't go out.",
+      "last_seen_victim": "Owen? Couple of days ago, maybe. He took a delivery from me.",
+      "relationship": "I barely knew him. He was just around the village.",
+      "evidence": "I don't know anything about that.",
+      "location": "I was home. I told you."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "answer_text": "I was in my flat all evening. Found some of my dad's old stuff in a box and it hit me a bit, so I stayed in. Cancelled my plans with Priya. Went to bed around eleven. I didn't go near the square.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "flat",
+        "claims": [
+          {
+            "claim_id": "claim_ben_home_evening",
+            "summary": "Ben claims he was at home all evening and did not go to the square.",
+            "claim_type": "alibi",
+            "time_reference": "23:00",
+            "location_reference_id": "loc_ben_flat",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": ["What was in the boxes?", "Why did you cancel with Priya?"]
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "Owen? Big bloke, always in the pub. We didn't really talk. He took deliveries sometimes. Nothing personal.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "too_casual",
+        "claims": [
+          {
+            "claim_id": "claim_ben_barely_knew_owen",
+            "summary": "Ben downplays any relationship with Owen.",
+            "claim_type": "relationship",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_blackmail_letters",
+        "answer_text": "Where did you get those. Those are — those are my father's private things.",
+        "answer_type": "partial_admission",
+        "truthfulness": "mistaken",
+        "emotional_shift": "shocked",
+        "claims": [
+          {
+            "claim_id": "claim_ben_father_papers",
+            "summary": "Ben reacts to the letters with shock, acknowledging they belong to his father but not yet admitting their content.",
+            "claim_type": "statement",
+            "truthfulness": "mistaken"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_jacket_mud",
+        "answer_text": "My jacket gets muddy — I'm a delivery driver, I'm outside all day. That mud could be from anywhere.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_ben_mud_routine",
+            "summary": "Ben says the jacket mud is from ordinary work.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_bootprint",
+        "answer_text": "Lots of people wear resoled boots. That's circumstantial. I've been near the fountain dozens of times.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "tense"
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_elias",
+    "default_answers": {
+      "alibi": "Bench at dawn as always. That's when I found him.",
+      "timeline": "I don't sleep well. I'm often at the window late.",
+      "last_seen_victim": "Owen? Briefly, yesterday afternoon. He seemed preoccupied.",
+      "relationship": "Not close. We tolerated each other.",
+      "evidence": "I'll tell you what I saw.",
+      "location": "My bedroom window faces the fountain directly."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "22:00",
+        "time_to": "23:30",
+        "answer_text": "I was at my bedroom window around ten to eleven — I get up in the night, always have. I saw two figures by the fountain. Couldn't make out who, too dark. Then I heard voices — a younger one, raised, and an older one I'd swear was Owen's. The older voice laughed. Then it went quiet. Then, a few minutes later, one figure walked away fast toward the newsagent's end.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "disturbed",
+        "claims": [
+          {
+            "claim_id": "claim_elias_night_witness",
+            "summary": "Elias saw two figures at the fountain around 22:55, heard voices, and one figure leave quickly after 23:15.",
+            "claim_type": "sighting",
+            "time_reference": "23:00",
+            "location_reference_id": "loc_fountain",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_elias_two_figures", "clue_elias_voices", "clue_elias_fleeing_figure"],
+        "suggested_followups": ["Could you tell anything about the younger voice?", "Which direction did the figure go?"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "Home from half nine. I close the clinic, go upstairs.",
+      "timeline": "Evening at home. Early start next morning.",
+      "last_seen_victim": "Owen? Not since the week before last.",
+      "relationship": "A patient occasionally. Not someone I knew well.",
+      "evidence": "If it's relevant, I'll tell you.",
+      "location": "My flat is above the clinic. I can see most of the square."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "22:00",
+        "time_to": "23:00",
+        "answer_text": "I was at home. I was drawing the curtains around half ten and I noticed Ben Carter crossing the square — heading toward the fountain end. I thought it was unusual. He's not normally out at that hour. I didn't think more about it until this morning.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "careful",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_saw_ben",
+            "summary": "Nadia saw Ben crossing the square toward the fountain at about 22:35.",
+            "claim_type": "sighting",
+            "time_reference": "22:35",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_nadia_night_sighting"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_fred",
+    "default_answers": {
+      "alibi": "Behind the bar until close. Eleven on the dot.",
+      "timeline": "Usual evening — steady trade, nothing unusual.",
+      "last_seen_victim": "Owen Price was in last night. Three pints. Left around ten to eleven.",
+      "relationship": "Regular. Known him years.",
+      "evidence": "I see most things that happen in my pub.",
+      "location": "The pub. Always."
+    },
+    "rules": [
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Owen was in from about half nine. Usual three pints, same seat. He seemed preoccupied — didn't chat much, which isn't like him. Left around ten-to-eleven. I watched him out the door. He was fine — walking straight.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "serious",
+        "claims": [
+          {
+            "claim_id": "claim_fred_owen_time",
+            "summary": "Owen was at the pub from about 21:30 and left at 22:48, in reasonable condition.",
+            "claim_type": "sighting",
+            "time_reference": "22:48",
+            "location_reference_id": "loc_pub",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_owen_left_pub"]
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Ben Carter? No, he wasn't in last night. I'd remember — he's a face you notice, always talking to someone. Last night it was just Owen and the usual quiet Tuesday crowd.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "reveals_clue_ids": ["clue_fred_only_saw_owen"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_priya",
+    "default_answers": {
+      "alibi": "Home from seven. Ben was supposed to come over but cancelled.",
+      "timeline": "Quiet evening at home.",
+      "last_seen_victim": "Owen? Not someone I know well.",
+      "relationship": "Barely know him.",
+      "evidence": "I'm not sure how I can help.",
+      "location": "Home."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "answer_text": "Ben cancelled at ten o'clock — said he'd found something and would explain later. I texted back but he didn't reply until this morning. He seemed upset but I didn't want to push.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "worried",
+        "claims": [
+          {
+            "claim_id": "claim_priya_ben_cancelled",
+            "summary": "Priya confirms Ben cancelled their evening plans at 22:00 citing 'something he'd found', and did not reply further until morning.",
+            "claim_type": "statement",
+            "time_reference": "22:00",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_ben_cancel_text"]
+      }
+    ]
+  }
+]

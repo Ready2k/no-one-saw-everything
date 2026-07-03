@@ -1,0 +1,38 @@
+{
+  "killer_id": "agent_owen",
+  "motive": {
+    "canonical": "Clara had discovered that Owen held a fraudulent mortgage over her cafe building and flat. She was going to report it to the committee. Owen killed her to prevent this.",
+    "concept_groups": [
+      ["mortgage", "deed", "property", "building", "cafe", "fraudulent", "forged", "charge"],
+      ["committee", "report", "expose", "reveal", "solicitor", "letter", "going public"],
+      ["debt", "Marcus", "Bell estate", "security"]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Strangulation with a leather belt in the rear alley. The fire was set afterwards to destroy evidence.",
+    "concept_groups": [
+      ["strangled", "strangulation", "belt", "ligature", "choked", "asphyxiation"],
+      ["rear alley", "alley", "bins", "behind the cafe"]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Owen arranged the meeting and was seen entering the alley at 07:00. His alibi — supplied by employee Col Hartley — is fabricated. Ash on his boots places him at the scene.",
+    "concept_groups": [
+      ["alley", "entering", "07:00", "seven o'clock", "grey jacket", "Nadia"],
+      ["alibi", "false alibi", "Col", "fabricated", "fake", "lied", "instructed"],
+      ["ash", "boots", "fire", "scene"]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_mortgage_deed",
+    "clue_belt_weapon",
+    "clue_nadia_sees_owen_alley",
+    "clue_col_false_alibi",
+    "clue_owen_ash_boots",
+    "clue_clara_called_owen"
+  ],
+  "explanation": "Correct. Owen Price killed Clara Wells. Clara had discovered that Owen held a fraudulent mortgage on her cafe building — a charge forged in Marcus Bell's name as security for Owen's debt. She called Owen at 06:20 and arranged a meeting in the rear alley. Owen arrived at 07:00, was seen entering the alley by Nadia, and strangled Clara with his belt when she refused to hand over the documents. He set a fire with lighter fluid to destroy the evidence and conceal cause of death — the damp morning air defeated him. The belt — with his initials on the keeper loop — was found behind the bins. His alibi, provided by employee Col Hartley, was arranged the night before and collapses when Col is pressed: he wasn't there until 07:30. Ash from the alley fire was still on Owen's boot soles when examined."
+}

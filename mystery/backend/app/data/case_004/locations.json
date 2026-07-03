@@ -1,0 +1,64 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The open heart of the village. At night, lit only by a single lamp post near the clinic. Silent except for the fountain.",
+    "connected_location_ids": ["loc_fountain", "loc_pub", "loc_owen_house", "loc_clinic", "loc_elias_house"],
+    "visibility_type": "public",
+    "camera_coverage": false
+  },
+  {
+    "location_id": "loc_fountain",
+    "name": "Village Fountain",
+    "description": "The old stone fountain in the centre of the square. The stone coping is crumbling in places — a loose piece is missing from the east rim.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public",
+    "murder_suitable": true
+  },
+  {
+    "location_id": "loc_pub",
+    "name": "The Mallet & Crown",
+    "description": "The village pub, on the west side of the square. Closes at eleven on weeknights.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_owen_house",
+    "name": "Owen Price's House & Yard",
+    "description": "Owen's house on the corner of the square, timber yard behind. Gate faces the square.",
+    "connected_location_ids": ["loc_village_square"],
+    "access_rules": ["owner"],
+    "visibility_type": "private"
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "The small clinic. Nadia's flat is above it — her living room faces the square.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_elias_house",
+    "name": "Elias's Cottage",
+    "description": "Elias's cottage on the square's south side. His bedroom window faces the fountain.",
+    "connected_location_ids": ["loc_village_square"],
+    "access_rules": ["owner"],
+    "visibility_type": "private"
+  },
+  {
+    "location_id": "loc_priya_flat",
+    "name": "Priya's Flat",
+    "description": "Priya's flat two streets from the square.",
+    "connected_location_ids": ["loc_village_square"],
+    "access_rules": ["owner"],
+    "visibility_type": "private"
+  },
+  {
+    "location_id": "loc_ben_flat",
+    "name": "Ben's Flat",
+    "description": "Ben's small flat above the newsagent, one street from the square.",
+    "connected_location_ids": ["loc_village_square"],
+    "access_rules": ["owner"],
+    "visibility_type": "private"
+  }
+]

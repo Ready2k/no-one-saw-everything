@@ -1,0 +1,139 @@
+[
+  {
+    "event_id": "ev_0600_nadia_learns",
+    "time": "06:00",
+    "location_id": "loc_clinic",
+    "agent_ids": ["agent_nadia"],
+    "event_type": "hidden_action",
+    "truth_description": "Nadia arrives at the clinic early. She opens the filing cabinet and re-reads the bequest letter, then sits still for several minutes. She already knew last night — Elias told her he was 'reconsidering the arrangement' at his Monday check-in. She spent the night deciding.",
+    "visibility": "hidden",
+    "object_ids": ["obj_clinic_bequest_letter"],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0630_nadia_dispensary",
+    "time": "06:30",
+    "location_id": "loc_clinic_dispensary",
+    "agent_ids": ["agent_nadia"],
+    "event_type": "hidden_action",
+    "truth_description": "Nadia prepares Elias's Tuesday pill compartment, adding two digoxin 0.25mg capsules — double his prescribed dose, enough to trigger fatal arrhythmia given his existing condition. She amends the dispensary log to mask the extra draw.",
+    "visibility": "hidden",
+    "object_ids": ["obj_pill_bottle", "obj_dispensary_log"],
+    "importance": 10,
+    "linked_clue_ids": ["clue_dispensary_log_altered", "clue_extra_capsules"]
+  },
+  {
+    "event_id": "ev_0640_elias_arrives",
+    "time": "06:40",
+    "location_id": "loc_elias_bench",
+    "agent_ids": ["agent_elias"],
+    "event_type": "routine",
+    "truth_description": "Elias arrives at his bench with his flask. He sets his notebook on his knee and glances at the solicitor's card in his pocket. He looks content.",
+    "visibility": "public",
+    "object_ids": ["obj_elias_notebook", "obj_solicitor_appointment"],
+    "importance": 4
+  },
+  {
+    "event_id": "ev_0650_nadia_shift",
+    "time": "06:50",
+    "location_id": "loc_clinic",
+    "agent_ids": ["agent_nadia"],
+    "event_type": "routine",
+    "truth_description": "Nadia opens the clinic for the early shift, appearing normal. She unlocks the waiting room and turns on the lights.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_0700_ruth_round",
+    "time": "07:00",
+    "location_id": "loc_village_square",
+    "agent_ids": ["agent_ruth"],
+    "event_type": "routine",
+    "truth_description": "Ruth passes Elias on the bench. He waves his flask at her. He looks perfectly healthy.",
+    "player_description": "The postwoman nods to the old man on the bench. He raises his flask.",
+    "visibility": "public",
+    "importance": 5,
+    "linked_clue_ids": ["clue_ruth_elias_wave"]
+  },
+  {
+    "event_id": "ev_0705_nadia_checks_elias",
+    "time": "07:05",
+    "location_id": "loc_elias_bench",
+    "agent_ids": ["agent_nadia", "agent_elias"],
+    "event_type": "conversation",
+    "truth_description": "Nadia crosses the square to check on Elias as part of her usual routine. She hands him the weekly pill organiser as always. He thanks her warmly and takes his Tuesday morning pills with a sip of tea. She watches him swallow.",
+    "player_description": "Nadia crosses from the clinic and has a brief word with Elias on the bench. She gives him something small.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": ["agent_ruth"],
+    "object_ids": ["obj_pill_bottle"],
+    "importance": 10,
+    "linked_clue_ids": ["clue_nadia_pill_handoff", "clue_ruth_pill_sighting"]
+  },
+  {
+    "event_id": "ev_0710_nadia_returns",
+    "time": "07:10",
+    "location_id": "loc_clinic",
+    "agent_ids": ["agent_nadia"],
+    "event_type": "return",
+    "truth_description": "Nadia returns to the clinic and sits at the reception desk. She picks up a patient file and stares at it without reading.",
+    "visibility": "public",
+    "importance": 4
+  },
+  {
+    "event_id": "ev_0715_ben_round",
+    "time": "07:15",
+    "location_id": "loc_village_square",
+    "agent_ids": ["agent_ben"],
+    "event_type": "movement",
+    "truth_description": "Ben cuts across the square on his round. He glances at Elias on the bench — Elias is still upright, flask in hand, but his free hand is now pressed to his chest.",
+    "player_description": "Ben passes the square bench. The old man is still sitting, but something about his posture looks off.",
+    "visibility": "public",
+    "important": 7,
+    "linked_clue_ids": ["clue_ben_posture"]
+  },
+  {
+    "event_id": "ev_0720_elias_distress",
+    "time": "07:20",
+    "location_id": "loc_elias_bench",
+    "agent_ids": ["agent_elias"],
+    "event_type": "medical_event",
+    "truth_description": "Elias sets down his flask. His heartbeat is wildly irregular. He tries to call out but cannot. He slumps sideways against the bench.",
+    "player_description": "The man on the bench sags sideways. His flask falls. No one is nearby.",
+    "visibility": "public_partial",
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0721_death",
+    "time": "07:21",
+    "location_id": "loc_elias_bench",
+    "agent_ids": ["agent_elias"],
+    "event_type": "murder",
+    "truth_description": "Cardiac arrest from digoxin toxicity. Elias dies on the bench.",
+    "visibility": "hidden",
+    "object_ids": ["obj_pill_bottle"],
+    "importance": 10
+  },
+  {
+    "event_id": "ev_0730_clara_opens",
+    "time": "07:30",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": ["agent_clara"],
+    "event_type": "routine",
+    "truth_description": "Clara opens the cafe. She glances out at the square. She notices Elias seems slumped oddly on the bench but assumes he has nodded off.",
+    "player_description": "Clara opens the cafe. Through the window, Elias appears to be asleep on the bench.",
+    "visibility": "public",
+    "importance": 5,
+    "linked_clue_ids": ["clue_clara_slumped_observation"]
+  },
+  {
+    "event_id": "ev_0800_owen_discovery",
+    "time": "08:00",
+    "location_id": "loc_elias_bench",
+    "agent_ids": ["agent_owen", "agent_elias"],
+    "event_type": "body_discovery",
+    "truth_description": "Owen crosses the square on his usual morning route and claps Elias on the shoulder. Elias falls. Owen shouts for help — the square empties and fills again in seconds.",
+    "player_description": "Owen Price reaches the bench and shakes Elias's shoulder. The old man falls sideways. Owen's shout brings people running.",
+    "visibility": "public",
+    "importance": 10
+  }
+]

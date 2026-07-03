@@ -1,0 +1,123 @@
+[
+  {
+    "event_id": "ev_2200_ben_finds_letters",
+    "time": "22:00",
+    "location_id": "loc_ben_flat",
+    "agent_ids": ["agent_ben"],
+    "event_type": "object_use",
+    "truth_description": "Ben, clearing his late father's boxes, finds the bundle of blackmail letters from Owen. He reads them twice, hands shaking, then sends Priya a message cancelling their evening plan.",
+    "visibility": "private",
+    "object_ids": ["obj_blackmail_letters", "obj_arson_clipping", "obj_ben_phone"],
+    "importance": 9,
+    "linked_clue_ids": ["clue_ben_cancel_text", "clue_blackmail_letters"]
+  },
+  {
+    "event_id": "ev_2230_owen_pub",
+    "time": "22:30",
+    "location_id": "loc_pub",
+    "agent_ids": ["agent_owen"],
+    "event_type": "routine",
+    "truth_description": "Owen is at the pub, drinking steadily. He is in a dark mood — a business deal fell through today.",
+    "player_description": "Owen Price is at the pub, on his third pint.",
+    "visibility": "public",
+    "important": 5
+  },
+  {
+    "event_id": "ev_2235_nadia_window",
+    "time": "22:35",
+    "location_id": "loc_clinic",
+    "agent_ids": ["agent_nadia"],
+    "event_type": "sighting",
+    "truth_description": "Nadia, in her flat above the clinic, glances out the window before drawing the curtains. She notices Ben crossing the square — unusual to see him at this hour.",
+    "player_description": "From an upstairs window, a light is on above the clinic — someone briefly parts the curtain and looks down at the square.",
+    "visibility": "private",
+    "important": 7,
+    "linked_clue_ids": ["clue_nadia_night_sighting"]
+  },
+  {
+    "event_id": "ev_2240_ben_waits",
+    "time": "22:40",
+    "location_id": "loc_fountain",
+    "agent_ids": ["agent_ben"],
+    "event_type": "movement",
+    "truth_description": "Ben reaches the fountain and waits. He has the blackmail bundle in his jacket pocket. He sits on the fountain rim in the dark.",
+    "visibility": "hidden",
+    "object_ids": ["obj_blackmail_letters"],
+    "importance": 7
+  },
+  {
+    "event_id": "ev_2248_owen_leaves_pub",
+    "time": "22:48",
+    "location_id": "loc_pub",
+    "agent_ids": ["agent_owen"],
+    "event_type": "departure",
+    "truth_description": "Owen pays his tab and leaves. Fred notices he is walking straight enough.",
+    "player_description": "Owen Price pays and leaves the pub at about ten to eleven.",
+    "visibility": "public",
+    "visible_to_agent_ids": ["agent_fred"],
+    "object_ids": ["obj_owen_pub_receipt"],
+    "importance": 7,
+    "linked_clue_ids": ["clue_owen_left_pub"]
+  },
+  {
+    "event_id": "ev_2255_elias_window",
+    "time": "22:55",
+    "location_id": "loc_elias_house",
+    "agent_ids": ["agent_elias"],
+    "event_type": "sighting",
+    "truth_description": "Elias, unable to sleep, sits by his bedroom window. He sees two figures near the fountain — one sitting on the rim, one arriving from the pub direction.",
+    "player_description": "A light is on in the cottage facing the fountain. A silhouette moves at the window.",
+    "visibility": "private",
+    "important": 8,
+    "linked_clue_ids": ["clue_elias_two_figures"]
+  },
+  {
+    "event_id": "ev_2300_confrontation",
+    "time": "23:00",
+    "location_id": "loc_fountain",
+    "agent_ids": ["agent_ben", "agent_owen"],
+    "event_type": "argument",
+    "truth_description": "Ben shows Owen the letters. Owen smirks — 'your dad came to me, not the other way round. He wanted protecting.' He is contemptuous and shows no remorse. Ben's voice rises.",
+    "player_description": "From the direction of the fountain, two voices — a younger and an older. The older sounds dismissive.",
+    "visibility": "public_partial",
+    "audible_to_agent_ids": ["agent_elias"],
+    "importance": 9,
+    "linked_clue_ids": ["clue_elias_voices"]
+  },
+  {
+    "event_id": "ev_2314_murder",
+    "time": "23:14",
+    "location_id": "loc_fountain",
+    "agent_ids": ["agent_ben", "agent_owen"],
+    "event_type": "murder",
+    "truth_description": "Owen turns away, laughing. Ben seizes the loose coping stone from the fountain rim and strikes. Owen falls without crying out. Ben stands with the stone in his hand for a long moment, then drops it.",
+    "visibility": "hidden",
+    "object_ids": ["obj_fountain_stone"],
+    "importance": 10
+  },
+  {
+    "event_id": "ev_2318_ben_flees",
+    "time": "23:18",
+    "location_id": "loc_village_square",
+    "agent_ids": ["agent_ben"],
+    "event_type": "departure",
+    "truth_description": "Ben walks quickly back across the square toward his flat. His right cuff is smeared with mud from the flower bed. He stepped in it when he seized the stone.",
+    "player_description": "A figure walks fast across the square from the direction of the fountain and disappears.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": ["agent_elias"],
+    "object_ids": ["obj_ben_jacket_mud"],
+    "importance": 9,
+    "linked_clue_ids": ["clue_elias_fleeing_figure"]
+  },
+  {
+    "event_id": "ev_0640_elias_discovery",
+    "time": "06:40",
+    "location_id": "loc_fountain",
+    "agent_ids": ["agent_elias", "agent_owen"],
+    "event_type": "body_discovery",
+    "truth_description": "Elias arrives at his bench. Owen's body is slumped against the fountain base. Elias stands frozen for several seconds, then shouts.",
+    "player_description": "Elias Grant reaches his morning bench and stops. Owen Price is collapsed beside the fountain. The stone coping lies nearby.",
+    "visibility": "public",
+    "importance": 10
+  }
+]

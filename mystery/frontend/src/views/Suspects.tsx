@@ -21,10 +21,20 @@ const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "cleared", label: "Cleared" },
 ];
 
-export default function Suspects() {
+export default function Suspects({ focusAgentId }: { focusAgentId?: string | null }) {
   const { agents } = useWorld();
   const living = agents.filter((a) => !a.is_victim);
-  const [selectedId, setSelectedId] = useState(living[0]?.agent_id ?? "");
+  const [selectedId, setSelectedId] = useState(
+    (focusAgentId && living.some((a) => a.agent_id === focusAgentId)
+      ? focusAgentId
+      : living[0]?.agent_id) ?? ""
+  );
+  useEffect(() => {
+    if (focusAgentId && living.some((a) => a.agent_id === focusAgentId)) {
+      setSelectedId(focusAgentId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusAgentId]);
   const selected = living.find((a) => a.agent_id === selectedId);
 
   return (

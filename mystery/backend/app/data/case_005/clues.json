@@ -1,0 +1,193 @@
+{
+  "clues": [
+    {
+      "clue_id": "clue_mortgage_deed",
+      "title": "Fraudulent mortgage deed on the cafe building",
+      "clue_type": "document",
+      "description": "Found in Clara's flat: a mortgage document charging Hobbs Cafe and the flat above against Owen Price's debt, signed in Marcus Bell's name. The signature is shaky, unlike Marcus's confident hand on every other document in the estate papers. A second signatory is 'P. Whitfield' — a name that does not appear in any village record.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
+      "supports_conclusion_ids": ["conc_owen_motive"],
+      "linked_agent_ids": ["agent_owen", "agent_clara"],
+      "linked_object_ids": ["obj_mortgage_deed"]
+    },
+    {
+      "clue_id": "clue_property_register",
+      "title": "Land Registry charge — Owen Price as mortgagee",
+      "clue_type": "document",
+      "description": "An official Land Registry extract from Clara's flat, showing a recent charge on the Hobbs Cafe property with Owen Price named as mortgagee. Clara had only received this two days ago.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
+      "supports_conclusion_ids": ["conc_owen_motive"],
+      "linked_agent_ids": ["agent_owen", "agent_clara"],
+      "linked_object_ids": ["obj_property_register"]
+    },
+    {
+      "clue_id": "clue_clara_committee_note",
+      "title": "Clara's unfinished letter to the committee",
+      "clue_type": "document",
+      "description": "On Clara's kitchen table: a draft letter beginning 'I write to report that the property at Hobbs Cafe has been fraudulently mortgaged...' It was never sent. This was why Clara went to the alley.",
+      "strength": "medium",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
+      "supports_conclusion_ids": ["conc_owen_motive"],
+      "linked_agent_ids": ["agent_clara"],
+      "linked_object_ids": ["obj_clara_note"]
+    },
+    {
+      "clue_id": "clue_clara_called_owen",
+      "title": "Clara's phone — outgoing call to Owen at 06:20",
+      "clue_type": "document",
+      "description": "Clara's phone call log: an outgoing call to Owen Price at 06:20, lasting two minutes and sixteen seconds. Owen arranged the meeting in the alley.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
+      "supports_conclusion_ids": ["conc_owen_opportunity", "conc_owen_motive"],
+      "linked_agent_ids": ["agent_clara", "agent_owen"]
+    },
+    {
+      "clue_id": "clue_belt_weapon",
+      "title": "Belt found behind the bins",
+      "clue_type": "physical_evidence",
+      "description": "A wide brown leather belt partially covered by scorched crate debris behind the bins in the rear alley. One buckle end has a blood smear and an impression consistent with the mark on Clara's neck. The inner face of the keeper loop is stamped 'O.P.' — a monogram.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_rear_alley"},
+      "supports_conclusion_ids": ["conc_owen_means", "conc_method"],
+      "linked_agent_ids": ["agent_owen"],
+      "linked_object_ids": ["obj_owen_belt"]
+    },
+    {
+      "clue_id": "clue_staged_fire",
+      "title": "Fire was deliberately set with lighter fluid",
+      "clue_type": "physical_evidence",
+      "description": "The alley fire was started with lighter fluid — the crate stack is soaked with it. A disposable lighter was found in the ash, printed with the Mallet & Crown pub logo — a pub giveaway. Owen drinks there daily.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {"method": "inspect", "location_id": "loc_rear_alley"},
+      "supports_conclusion_ids": ["conc_owen_opportunity", "conc_staged_fire"],
+      "linked_agent_ids": ["agent_owen"],
+      "linked_object_ids": ["obj_burn_accelerant"]
+    },
+    {
+      "clue_id": "clue_nadia_sees_owen_alley",
+      "title": "Nadia saw Owen entering the rear alley at 07:00",
+      "clue_type": "witness_statement",
+      "description": "Nadia walked past the alley entrance at 07:00 and saw a large figure in a grey work jacket turning into the alley. She recognised the build and jacket as Owen's but assumed it was a delivery. This places Owen at the murder scene during the murder window.",
+      "strength": "strong",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {"method": "interview", "agent_id": "agent_nadia", "question_type": "timeline"},
+      "supports_conclusion_ids": ["conc_owen_opportunity"],
+      "linked_agent_ids": ["agent_nadia", "agent_owen"],
+      "linked_event_ids": ["ev_0700_nadia_crosses"]
+    },
+    {
+      "clue_id": "clue_owen_ash_boots",
+      "title": "Charred ash on Owen's boot soles",
+      "clue_type": "physical_evidence",
+      "description": "Owen's work boots, examined at his yard: a layer of fine charred ash on the soles, matching the burnt crate debris in the rear alley. The yard has no ash — it is a timber yard with swept concrete.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {"method": "inspect", "location_id": "loc_owen_house"},
+      "supports_conclusion_ids": ["conc_owen_opportunity"],
+      "linked_agent_ids": ["agent_owen"],
+      "linked_object_ids": ["obj_owen_boot_mud"]
+    },
+    {
+      "clue_id": "clue_col_false_alibi",
+      "title": "Col's alibi is fabricated",
+      "clue_type": "witness_statement",
+      "description": "Col initially claims he was at Owen's yard from 06:45. But his delivery log for Tuesday shows no jobs in the area, the yard CCTV (a fixed camera on the gate) shows the yard empty until 07:24, and Col admits under pressure that Owen asked him 'last night' to say he'd been there.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {"method": "interview", "agent_id": "agent_col", "question_type": "alibi"},
+      "supports_conclusion_ids": ["conc_owen_opportunity", "conc_col_false_alibi"],
+      "linked_agent_ids": ["agent_col", "agent_owen"],
+      "linked_object_ids": ["obj_col_log"]
+    },
+    {
+      "clue_id": "clue_elias_fire_smoke",
+      "title": "Elias smelled smoke before 07:30",
+      "clue_type": "observation",
+      "description": "Elias noticed a faint burnt smell from the direction of the alley at around 07:20 — well before Ben raised the alarm. He thought it was a breakfast mishap.",
+      "strength": "weak",
+      "reliability": 0.6,
+      "ambiguity": "high",
+      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline"},
+      "supports_conclusion_ids": ["conc_staged_fire"],
+      "linked_agent_ids": ["agent_elias"],
+      "linked_event_ids": ["ev_0720_fire_contained"]
+    },
+    {
+      "clue_id": "clue_strangulation_mark",
+      "title": "Strangulation mark consistent with a belt buckle",
+      "clue_type": "physical_evidence",
+      "description": "The ligature mark on Clara's neck has a distinctive oblong impression at one end — the shape of a rectangular belt buckle. Cause of death: asphyxiation. The fire was set after death.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_rear_alley"},
+      "supports_conclusion_ids": ["conc_method"],
+      "linked_object_ids": ["obj_owen_belt"]
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "conc_owen_motive",
+      "type": "motive",
+      "summary": "Clara had discovered the fraudulent mortgage that gave Owen control of her cafe and flat. She was about to go to the committee. Owen killed her to stop it.",
+      "target_agent_id": "agent_owen",
+      "required_for_solution": true,
+      "supported_by_clue_ids": ["clue_mortgage_deed", "clue_property_register", "clue_clara_committee_note", "clue_clara_called_owen"]
+    },
+    {
+      "conclusion_id": "conc_owen_opportunity",
+      "type": "opportunity",
+      "summary": "Owen arranged the meeting in the alley, was seen entering the alley at 07:00, and his fabricated alibi collapses on inspection. His boots carry ash from the alley fire.",
+      "target_agent_id": "agent_owen",
+      "required_for_solution": true,
+      "supported_by_clue_ids": ["clue_nadia_sees_owen_alley", "clue_owen_ash_boots", "clue_col_false_alibi", "clue_clara_called_owen"]
+    },
+    {
+      "conclusion_id": "conc_owen_means",
+      "type": "means",
+      "summary": "The belt with Owen's monogram was used as the ligature. He took it with him and discarded it behind the bins.",
+      "target_agent_id": "agent_owen",
+      "required_for_solution": true,
+      "supported_by_clue_ids": ["clue_belt_weapon", "clue_strangulation_mark"]
+    },
+    {
+      "conclusion_id": "conc_method",
+      "type": "method",
+      "summary": "Clara was strangled with a leather belt in the rear alley at 07:09. The fire was set afterwards to destroy evidence — it failed.",
+      "required_for_solution": true,
+      "supported_by_clue_ids": ["clue_belt_weapon", "clue_strangulation_mark", "clue_staged_fire"]
+    },
+    {
+      "conclusion_id": "conc_staged_fire",
+      "type": "staged_scene",
+      "summary": "The fire was deliberately set with lighter fluid to obscure cause of death and destroy the mortgage documents. The damp conditions defeated the plan.",
+      "required_for_solution": false,
+      "supported_by_clue_ids": ["clue_staged_fire", "clue_elias_fire_smoke"]
+    },
+    {
+      "conclusion_id": "conc_col_false_alibi",
+      "type": "false_alibi",
+      "summary": "Col Hartley was instructed by Owen the night before to claim he was at the yard from 06:45. The delivery log, yard gate camera, and Col's own admission disprove it.",
+      "target_agent_id": "agent_col",
+      "required_for_solution": false,
+      "supported_by_clue_ids": ["clue_col_false_alibi"]
+    }
+  ]
+}

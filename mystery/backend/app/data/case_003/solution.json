@@ -1,0 +1,38 @@
+{
+  "killer_id": "agent_nadia",
+  "motive": {
+    "canonical": "Nadia killed Elias to prevent him changing his will away from the clinic bequest she had built her plans around.",
+    "concept_groups": [
+      ["will", "estate", "bequest", "inheritance", "solicitor", "legacy"],
+      ["clinic", "fund", "budget", "equipment", "renovation"],
+      ["change", "amend", "remove", "redirect", "nephew", "reconsidered"]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Poison — digoxin overdose administered in Elias's morning pill organiser.",
+    "concept_groups": [
+      ["poison", "poisoned", "overdose", "medication", "digoxin", "pills", "capsules"],
+      ["pill organiser", "organiser", "pills", "morning medication", "tablets"]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Nadia prepared the pill organiser unsupervised and delivered it directly to Elias at 07:05. Ruth witnessed the handoff. Elias was healthy at 07:00 and dead by 07:21.",
+    "concept_groups": [
+      ["pill organiser", "gave him", "handoff", "delivered", "07:05", "routine"],
+      ["dispensary", "log", "altered", "falsified", "different ink", "correction"],
+      ["alone", "unsupervised", "only one", "prepared"]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_solicitor_appointment",
+    "clue_elias_notebook",
+    "clue_dispensary_log_altered",
+    "clue_extra_capsules",
+    "clue_nadia_pill_handoff",
+    "clue_nadia_budget_notes"
+  ],
+  "explanation": "Correct. Nadia Cole killed Elias Grant. Elias had promised his cottage estate to the clinic two years ago — an arrangement Nadia had shepherded and planned around in detail. When Elias told her on Monday he was removing the clinic from his will, Nadia spent the night making her decision. At 06:30 she added two 0.25mg digoxin capsules to his Tuesday pill compartment — four times his safe dose — and altered the dispensary log to mask the draw. At 07:05 she delivered the organiser in person, as she always did, and watched him take the pills. He was dead within sixteen minutes. The altered log, the extra capsules, Ruth's eyewitness testimony of the handoff, and Nadia's private budget projections together build the case. The death initially appeared natural — it took a close look at the pill organiser and the dispensary records to reveal the truth."
+}

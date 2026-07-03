@@ -1,0 +1,58 @@
+[
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_home_all_evening",
+    "evidence_clue_ids": ["clue_ruth_visit_evening"],
+    "outcome": "reframe",
+    "response_text": "I did go to Marcus's house. In the early evening. I had a registered letter he hadn't collected. I left it inside using my key and came straight back. That was around six. I was home by half six.",
+    "emotional_shift": "adjusted",
+    "pressure_delta": 0.15,
+    "sets_claim_status": "reframed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ruth_letter_visit",
+        "summary": "Ruth now claims she visited Marcus at 18:00 to leave a registered letter, not for a confrontation.",
+        "claim_type": "statement",
+        "truthfulness": "false"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_vial_harmless",
+    "evidence_clue_ids": ["clue_vial_in_ash", "clue_foxglove_harvest"],
+    "outcome": "deflect",
+    "response_text": "I make plant waters. I told you. Foxglove flowers are beautiful — I wasn't extracting poison. This is speculation.",
+    "emotional_shift": "controlled",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_vial_harmless",
+    "evidence_clue_ids": ["clue_vial_in_ash", "clue_pharmacy_book", "clue_foxglove_harvest", "clue_cocoa_residue"],
+    "outcome": "near_crack",
+    "response_text": "You have a book and a vial and a mug. That is circumstantial. I had a key to his house — yes. I grow foxgloves — yes. But knowing how something might be done is not the same as doing it.",
+    "emotional_shift": "fighting_hard",
+    "pressure_delta": 0.4,
+    "sets_claim_status": "highly_disputed"
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_home_all_evening",
+    "evidence_clue_ids": ["clue_birth_certificate", "clue_whittle_Ruth_reference", "clue_vial_in_ash", "clue_cocoa_residue"],
+    "outcome": "crack",
+    "response_text": "He had the certificate all along. I thought... I thought he'd destroyed his copy years ago. He kept it. Hidden in a book, like a pressed flower. And he still couldn't bring himself to say it out loud. He called me 'the postwoman' to his solicitor. After everything. You have what you need. I'm not going to make this easier for you.",
+    "emotional_shift": "hollow_defeat",
+    "pressure_delta": 0.7,
+    "sets_claim_status": "broken",
+    "new_claims": [
+      {
+        "claim_id": "claim_ruth_implicit_admission",
+        "summary": "Ruth acknowledges the birth certificate, Marcus's knowledge of their relationship, and her sense of grievance — an implicit admission without confession.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  }
+]

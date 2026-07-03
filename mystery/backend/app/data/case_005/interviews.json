@@ -1,0 +1,229 @@
+[
+  {
+    "agent_id": "agent_owen",
+    "default_answers": {
+      "alibi": "My yard. From quarter to seven. Col was with me.",
+      "timeline": "Yard all morning. Nothing to do with that fire.",
+      "last_seen_victim": "Clara? Days ago. She came to the yard with a question about the cafe lease. Normal enough.",
+      "relationship": "Professional. She rented a building connected to the Bell estate. I had an interest.",
+      "evidence": "You'd need to be specific.",
+      "location": "My yard. Ask Col."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "answer_text": "I was in my yard from quarter to seven. Col Hartley arrived not long after — we had timber to sort through. I was there all morning.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "flat",
+        "claims": [
+          {
+            "claim_id": "claim_owen_yard_alibi",
+            "summary": "Owen claims he was at his yard from 06:45, corroborated by Col Hartley.",
+            "claim_type": "alibi",
+            "time_reference": "07:09",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": ["What time did Col arrive?", "Was anyone else there?"]
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "She had a lease arrangement on the cafe building through the Bell estate. I was one of the creditors. There was nothing personal.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "controlled",
+        "claims": [
+          {
+            "claim_id": "claim_owen_nothing_personal",
+            "summary": "Owen downplays the relationship as a routine creditor arrangement.",
+            "claim_type": "relationship",
+            "truthfulness": "mistaken"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_belt_weapon",
+        "answer_text": "That's not mine. Lost that belt weeks ago. Anyone could have picked it up.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "hard",
+        "claims": [
+          {
+            "claim_id": "claim_owen_belt_denial",
+            "summary": "Owen denies the belt is his, claiming he lost it weeks ago.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_mortgage_deed",
+        "answer_text": "That document was a legitimate security arrangement. Marcus agreed to it. It was all done properly.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "controlled",
+        "claims": [
+          {
+            "claim_id": "claim_owen_mortgage_legitimate",
+            "summary": "Owen claims the mortgage deed was a legitimate arrangement that Marcus agreed to.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_owen_ash_boots",
+        "answer_text": "Ash on my boots? I burn waste timber in the yard. Ash gets everywhere.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "dismissive"
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_nadia_sees_owen_alley",
+        "answer_text": "Nadia saw someone in a grey jacket — that could be half the village. She's mistaken.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "hard"
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_col",
+    "default_answers": {
+      "alibi": "I was at Owen's yard from quarter to seven. We sorted timber.",
+      "timeline": "Owen's yard. Same as I said.",
+      "last_seen_victim": "Don't really know Clara.",
+      "relationship": "I work for Owen. Nothing else.",
+      "evidence": "Can't help you there.",
+      "location": "Owen's yard."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "answer_text": "Quarter to seven, Owen's yard. We sorted the week's timber orders. Nothing unusual.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "uncomfortable",
+        "claims": [
+          {
+            "claim_id": "claim_col_yard_alibi",
+            "summary": "Col claims he was at Owen's yard from 06:45.",
+            "claim_type": "alibi",
+            "time_reference": "07:09",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "alibi",
+        "topic_clue_id": "clue_col_false_alibi",
+        "answer_text": "...Look. Owen texted me last night. Said if anyone asked I should say I was there from quarter to seven. I showed up at half seven, more like. There was no timber job. I went along with it because he's my main client and I — I didn't ask why.",
+        "answer_type": "admission",
+        "truthfulness": "true",
+        "emotional_shift": "guilty_relief",
+        "claims": [
+          {
+            "claim_id": "claim_col_admits_false_alibi",
+            "summary": "Col admits Owen asked him to provide a false alibi the night before, and that he was actually at the yard at 07:30, not 06:45.",
+            "claim_type": "alibi",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_col_false_alibi"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "Clinic from seven.",
+      "timeline": "Crossed the square at seven on my way in.",
+      "last_seen_victim": "Clara? Yesterday, briefly, at the cafe.",
+      "relationship": "Acquaintance. She made good coffee.",
+      "evidence": "What specifically?",
+      "location": "I pass the square every morning."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "07:00",
+        "time_to": "07:10",
+        "answer_text": "At seven exactly I crossed the square on my way to the clinic. I glanced down the rear alley — I always do, habit. I saw a big man in a grey work jacket turning into the alley. I thought he had a delivery. Now I'm thinking differently.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "disturbed",
+        "reveals_clue_ids": ["clue_nadia_sees_owen_alley"],
+        "claims": [
+          {
+            "claim_id": "claim_nadia_alley_sighting",
+            "summary": "Nadia saw a large figure in a grey jacket entering the rear alley at 07:00.",
+            "claim_type": "sighting",
+            "time_reference": "07:00",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_elias",
+    "default_answers": {
+      "alibi": "Bench from six-forty. Discovered the fuss at seven-thirty.",
+      "timeline": "Usual morning. Something smelt off around twenty past.",
+      "last_seen_victim": "Clara through the cafe window about six-fifty, setting up inside.",
+      "relationship": "She made a decent pot of tea.",
+      "evidence": "I notice things.",
+      "location": "The bench. Best vantage point in the village."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "07:15",
+        "time_to": "07:30",
+        "answer_text": "Around twenty past I caught a smell — burning, faint, from the alley direction. Thought it was toast or something from the cafe kitchen. Then Ben came running out at half seven and everything changed.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "troubled",
+        "reveals_clue_ids": ["clue_elias_fire_smoke"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_ben",
+    "default_answers": {
+      "alibi": "My round. Found the fire at half seven.",
+      "timeline": "Square, deliveries, round the back at seven-thirty.",
+      "last_seen_victim": "I saw Clara through the cafe window around seven. She looked tense.",
+      "relationship": "She was sound. Good customer.",
+      "evidence": "I can tell you what I found.",
+      "location": "Everywhere on the round."
+    },
+    "rules": [
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "I passed the cafe window at about five past seven. Clara was inside, by the counter. She looked stressed — hands busy, not her usual early calm. Then at half seven I came round the back and found her.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "shaken",
+        "claims": [
+          {
+            "claim_id": "claim_ben_clara_tense",
+            "summary": "Ben saw Clara inside the cafe at 07:05, looking tense.",
+            "claim_type": "sighting",
+            "time_reference": "07:05",
+            "location_reference_id": "loc_hobbs_cafe",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  }
+]

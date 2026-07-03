@@ -31,6 +31,66 @@ export interface CaseOverview {
   murder_window: [string, string];
 }
 
+export interface MapPosition {
+  x: number;
+  y: number;
+}
+
+export interface MapBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export type VisualEventType =
+  | "agent_move"
+  | "agent_present"
+  | "object_marker"
+  | "sound_marker"
+  | "body_discovery"
+  | "unknown_figure"
+  | "hidden_activity"
+  | "conversation_marker"
+  | "clue_marker";
+
+export interface MapLocation extends LocationPublic {
+  map_position: MapPosition | null;
+  map_bounds: MapBounds | null;
+  visual_layer: "exterior" | "interior" | null;
+}
+
+export interface MapAgent extends AgentPublic {
+  sprite_id: string;
+  sprite_asset: string;
+}
+
+export interface MapEvent {
+  event_id: string;
+  time: string;
+  location_id: string;
+  agent_ids: string[];
+  event_type: string;
+  description: string;
+  visibility: "public" | "public_partial" | "private" | "hidden";
+  importance: number;
+  visual_event_type: VisualEventType;
+  from_location_id: string | null;
+  to_location_id: string | null;
+  pinned?: boolean;
+  was_hidden?: boolean;
+}
+
+export interface MapReplayData {
+  case_id: string;
+  mode: "player" | "truth";
+  map: { asset: string; image: string; width: number; height: number };
+  time_range: { start: string; end: string };
+  locations: MapLocation[];
+  agents: MapAgent[];
+  events: MapEvent[];
+}
+
 export interface EventPublic {
   event_id: string;
   time: string;

@@ -1,0 +1,198 @@
+{
+  "clues": [
+    {
+      "clue_id": "clue_blackmail_letters",
+      "title": "Bundle of blackmail letters from Owen",
+      "clue_type": "document",
+      "description": "Seven letters, spanning twelve years, from Owen Price to Ted Carter (Ben's father). Each demands cash in exchange for silence about the 2011 village hall fire. Owen's name, address and handwriting, unmistakable. Ben found these in his father's boxes last night.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat"},
+      "supports_conclusion_ids": ["conc_ben_motive"],
+      "linked_agent_ids": ["agent_ben", "agent_owen"],
+      "linked_object_ids": ["obj_blackmail_letters", "obj_arson_clipping"],
+      "linked_event_ids": ["ev_2200_ben_finds_letters"]
+    },
+    {
+      "clue_id": "clue_arson_clipping",
+      "title": "Ted Carter's note: 'Owen knows'",
+      "clue_type": "document",
+      "description": "A newspaper clipping about the 2011 village hall fire, with a handwritten marginal note from Ben's father: 'Owen knows. He was there. He's making us pay.' The motive is old, the money owed across more than a decade.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat", "required_prior_clue_ids": ["clue_blackmail_letters"]},
+      "supports_conclusion_ids": ["conc_ben_motive"],
+      "linked_agent_ids": ["agent_ben", "agent_owen"],
+      "linked_object_ids": ["obj_arson_clipping"]
+    },
+    {
+      "clue_id": "clue_ben_cancel_text",
+      "title": "Ben cancelled his evening plans at 22:00",
+      "clue_type": "document",
+      "description": "Ben's messages to Priya: at 22:00 he cancelled their meeting with 'Sorry, can't make it tonight. Found something. Tell you later.' No further messages until morning. He went somewhere instead.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_ben", "agent_priya"],
+      "linked_object_ids": ["obj_ben_phone"],
+      "linked_event_ids": ["ev_2200_ben_finds_letters"]
+    },
+    {
+      "clue_id": "clue_owen_left_pub",
+      "title": "Owen left the pub at 22:48",
+      "clue_type": "witness_statement",
+      "description": "Fred confirms Owen paid his tab and left at about 22:48. His route home takes him directly past the fountain. He was carrying nothing and had drunk three pints.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {"method": "interview", "agent_id": "agent_fred", "question_type": "timeline"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_owen", "agent_fred"],
+      "linked_object_ids": ["obj_owen_pub_receipt"],
+      "linked_event_ids": ["ev_2248_owen_leaves_pub"]
+    },
+    {
+      "clue_id": "clue_nadia_night_sighting",
+      "title": "Nadia saw Ben crossing the square after 22:30",
+      "clue_type": "witness_statement",
+      "description": "Nadia was at her living room window at about 22:35 when she saw Ben crossing the square. She thought it was odd — Ben never goes out at that hour. She didn't think more of it until morning.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {"method": "interview", "agent_id": "agent_nadia", "question_type": "timeline"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_nadia", "agent_ben"],
+      "linked_event_ids": ["ev_2235_nadia_window"]
+    },
+    {
+      "clue_id": "clue_elias_two_figures",
+      "title": "Two figures near the fountain before midnight",
+      "clue_type": "witness_statement",
+      "description": "Elias was at his bedroom window at about 22:55. He saw two figures near the fountain — one sitting on the rim, one arriving from the pub direction. He could not make out faces in the dark.",
+      "strength": "medium",
+      "reliability": 0.55,
+      "ambiguity": "high",
+      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_elias"],
+      "linked_event_ids": ["ev_2255_elias_window"]
+    },
+    {
+      "clue_id": "clue_elias_voices",
+      "title": "A younger and an older voice — the older dismissive",
+      "clue_type": "witness_statement",
+      "description": "Elias heard voices from the direction of the fountain around 23:00: a younger voice, rising in anger, and an older one — calm, contemptuous. He heard the older voice laugh once. He recognised the older voice as Owen's.",
+      "strength": "medium",
+      "reliability": 0.6,
+      "ambiguity": "high",
+      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline", "required_prior_clue_ids": ["clue_elias_two_figures"]},
+      "supports_conclusion_ids": ["conc_ben_opportunity", "conc_ben_motive"],
+      "linked_agent_ids": ["agent_elias", "agent_owen", "agent_ben"],
+      "linked_event_ids": ["ev_2300_confrontation"]
+    },
+    {
+      "clue_id": "clue_elias_fleeing_figure",
+      "title": "A figure walked fast across the square after 23:15",
+      "clue_type": "witness_statement",
+      "description": "Elias saw a figure walk quickly across the square from the fountain direction at about 23:18 and disappear toward the newsagent's side street — which is where Ben's flat is.",
+      "strength": "medium",
+      "reliability": 0.55,
+      "ambiguity": "high",
+      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline", "required_prior_clue_ids": ["clue_elias_voices"]},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_elias", "agent_ben"],
+      "linked_event_ids": ["ev_2318_ben_flees"]
+    },
+    {
+      "clue_id": "clue_fountain_stone",
+      "title": "Bloodied fountain stone beside the body",
+      "clue_type": "physical_evidence",
+      "description": "A piece of stone coping from the fountain's east rim, found near the body. One flat face has a blood smear. The gap in the fountain rim shows exactly where it broke off — the stone has been lying loose for months.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_fountain"},
+      "supports_conclusion_ids": ["conc_method"],
+      "linked_object_ids": ["obj_fountain_stone"]
+    },
+    {
+      "clue_id": "clue_bootprint",
+      "title": "Size 9 work boot print in the flower bed",
+      "clue_type": "physical_evidence",
+      "description": "A clear left-foot bootprint in the moist flower bed beside the fountain. Size 9, with a distinctive V-gap in the tread — consistent with a resoled boot. Ben's boots were resoled at Marsh Lane Cobblers last April; the receipt is in his flat.",
+      "strength": "strong",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {"method": "inspect", "location_id": "loc_fountain"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_ben"],
+      "linked_object_ids": ["obj_mud_bootprint"]
+    },
+    {
+      "clue_id": "clue_jacket_mud",
+      "title": "Fountain-bed mud on Ben's jacket cuff",
+      "clue_type": "physical_evidence",
+      "description": "Ben's work jacket, found in his flat: the right cuff carries a smear of grey-brown mud identical to the soil in the fountain flower bed. It is still damp the next morning.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_ben"],
+      "linked_object_ids": ["obj_ben_jacket_mud"]
+    },
+    {
+      "clue_id": "clue_ben_no_evening_alibi",
+      "title": "Ben cannot account for his evening",
+      "clue_type": "witness_statement",
+      "description": "Ben claims he stayed in all evening after cancelling with Priya. Priya cannot corroborate this. No one saw him indoors. He lives alone.",
+      "strength": "medium",
+      "reliability": 0.6,
+      "ambiguity": "high",
+      "discoverability": {"method": "interview", "agent_id": "agent_ben", "question_type": "alibi"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_ben"]
+    },
+    {
+      "clue_id": "clue_fred_only_saw_owen",
+      "title": "Ben was not in the pub that evening",
+      "clue_type": "witness_statement",
+      "description": "Fred confirms Ben was not in the pub that evening. Owen drank alone. This rules out the pub as Ben's alibi location.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {"method": "interview", "agent_id": "agent_fred", "question_type": "alibi"},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_fred", "agent_ben"]
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "conc_ben_motive",
+      "type": "motive",
+      "summary": "Ben discovered that Owen had blackmailed his father for twelve years over the village hall arson. He found the letters the same evening and confronted Owen.",
+      "target_agent_id": "agent_ben",
+      "required_for_solution": true,
+      "supported_by_clue_ids": ["clue_blackmail_letters", "clue_arson_clipping", "clue_elias_voices"]
+    },
+    {
+      "conclusion_id": "conc_ben_opportunity",
+      "type": "opportunity",
+      "summary": "Ben cancelled his evening plans at 22:00, was seen crossing the square at 22:35, had no verifiable alibi for the murder window, and carries physical traces of the fountain flower bed.",
+      "target_agent_id": "agent_ben",
+      "required_for_solution": true,
+      "supported_by_clue_ids": ["clue_ben_cancel_text", "clue_nadia_night_sighting", "clue_elias_two_figures", "clue_elias_fleeing_figure", "clue_bootprint", "clue_jacket_mud", "clue_ben_no_evening_alibi"]
+    },
+    {
+      "conclusion_id": "conc_method",
+      "type": "method",
+      "summary": "Owen was struck with a loose piece of the fountain's stone coping. The bloodied stone was found beside the body; the gap in the fountain rim is fresh.",
+      "required_for_solution": true,
+      "supported_by_clue_ids": ["clue_fountain_stone"]
+    }
+  ]
+}

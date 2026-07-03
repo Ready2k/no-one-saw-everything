@@ -1,0 +1,20 @@
+{
+  "case_id": "case_006",
+  "case_type": "conspiracy",
+  "title": "The Bell Estate",
+  "status": "locked",
+  "victim_id": "agent_marcus",
+  "killer_id": "agent_ruth",
+  "motive_summary": "Marcus Bell rewrote his estate beneficiaries on the day he died, cutting out his business partner Isabella and the clinic in favour of a distant nephew. Ruth Calder — secretly Marcus's half-sister, cut out of the family inheritance decades ago — had waited years for this opening. She poisoned Marcus's evening cocoa with a plant extract, knowing the death would be attributed to his heart condition. She intended to contest the will as next-of-kin.",
+  "method": "poison",
+  "weapon_id": "obj_digitalis_vial",
+  "murder_location_id": "loc_marcus_house",
+  "time_of_death": "22:40",
+  "discovery_time": "07:15",
+  "discovered_by": "agent_priya",
+  "discovery_location_id": "loc_marcus_house",
+  "sim_start_time": "18:00",
+  "murder_window": ["21:00", "23:00"],
+  "overview_text": "07:15 — Marcus Bell, the village's retired property developer, is found dead in his chair by Priya Shah, who had a standing early-morning appointment. The death initially appears natural — Marcus had a known heart condition. The investigation spans the previous evening from 18:00.",
+  "notes": "This is the hardest case. Ruth is trusted, methodical, and superficially helpful. Her connection to Marcus is not on any public record — investigators must find the family documents she thought she had already destroyed."
+}

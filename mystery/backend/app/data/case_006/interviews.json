@@ -1,0 +1,270 @@
+[
+  {
+    "agent_id": "agent_ruth",
+    "default_answers": {
+      "alibi": "Home all evening. Gardening, then bed by nine.",
+      "timeline": "The usual. My round finishes by three. After that, at home.",
+      "last_seen_victim": "Marcus? His registered post was signed for yesterday morning. I haven't spoken to him properly in months.",
+      "relationship": "Just his postwoman. He was pleasant. It's terrible news.",
+      "evidence": "I'm not sure what I could know about that.",
+      "location": "Entirely at home."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "answer_text": "I finished my round at three, walked home, did some gardening — the foxgloves need deadheading at this time of year — and was in by eight. I went to bed at nine. I heard about Marcus this morning and it was a shock.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "composed_concern",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_home_all_evening",
+            "summary": "Ruth claims she was home all evening and was in bed by nine.",
+            "claim_type": "alibi",
+            "time_reference": "21:00",
+            "location_reference_id": "loc_ruth_cottage",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": ["Did anyone see you at home?", "When did you last visit Marcus's house?"]
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "I deliver his post. He sometimes asks me to take in registered items when he's away. He gave me a spare key for that. There's nothing beyond that.",
+        "answer_type": "partial_admission",
+        "truthfulness": "mistaken",
+        "emotional_shift": "careful",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_key_admitted",
+            "summary": "Ruth admits she has a spare key to Marcus's house, framing it as routine post collection.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_ruth_key"]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_vial_in_ash",
+        "answer_text": "A vial in my fireplace? I use all sorts in the garden. I make plant waters — feverfew, lavender. The ash is from weeks of burning. You can't tell when that was put in there.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "controlled",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_vial_harmless",
+            "summary": "Ruth claims the vial could be from ordinary garden plant extracts, not foxglove poison.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_birth_certificate",
+        "answer_text": "...Where did you find that.",
+        "answer_type": "shock",
+        "truthfulness": "true",
+        "emotional_shift": "shattered",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_certificate_shock",
+            "summary": "Ruth does not deny the birth certificate — her immediate response reveals she knew it existed and thought it was destroyed.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_foxglove_harvest",
+        "answer_text": "I grow foxgloves for the bees. The cut stems are just deadheading — maintenance. There's nothing unusual about that.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "flat",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_foxglove_garden",
+            "summary": "Ruth says the foxgloves are ornamental and the cut marks are routine gardening.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "topic_clue_id": "clue_birth_certificate",
+        "answer_text": "He knew. He always knew. He never said a word to me — not in twenty years of delivering his post, not once. He left me a spare key and smiled. That was all he gave me.",
+        "answer_type": "admission",
+        "truthfulness": "true",
+        "emotional_shift": "breaking",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_relationship_revealed",
+            "summary": "Ruth admits Marcus was her half-brother, that he always knew, and that he never acknowledged her.",
+            "claim_type": "relationship",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_birth_certificate", "clue_elias_bell_girl"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_isabella",
+    "default_answers": {
+      "alibi": "Home from eight. I walked out of Marcus's house and went straight home.",
+      "timeline": "Visited Marcus in the evening. Left at eight. Home alone after.",
+      "last_seen_victim": "Last night. We argued about the will.",
+      "relationship": "Thirty-year business partnership. He was about to dismantle it.",
+      "evidence": "I was furious. I won't pretend otherwise. But I didn't touch him.",
+      "location": "His house at seven, then home."
+    },
+    "rules": [
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "I was at his house at seven last night. I'd seen the draft will — there was a copy on his desk. We argued. He was immovable. I left at eight in no fit state. I was home the rest of the evening. I did not kill him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "raw_anger",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_left_eight",
+            "summary": "Isabella confirms she left Marcus's house at 20:00 after an argument about the will.",
+            "claim_type": "sighting",
+            "time_reference": "20:00",
+            "location_reference_id": "loc_marcus_house",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_isabella_argument"]
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Home from eight. My neighbour on the right — she can hear through the wall when I put the music on. I was loud. I was furious. Music until past midnight.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "reveals_clue_ids": ["clue_isabella_alibi"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_elias",
+    "default_answers": {
+      "alibi": "Bench all morning. Heard about Marcus from Priya.",
+      "timeline": "Yesterday evening I was on the square for a while before dark.",
+      "last_seen_victim": "Marcus? Not in days. He doesn't often come to the square.",
+      "relationship": "We knew each other. I respected him.",
+      "evidence": "I keep track of the village.",
+      "location": "The bench is my office."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "18:00",
+        "time_to": "20:00",
+        "answer_text": "Yesterday evening, around half six, I saw Ruth coming out of Marcus's front door. That struck me — she's usually done with deliveries by three. Then at seven or so, there were voices from Marcus's house — a woman's voice, I think, and Marcus. Sounded unhappy. A woman left at eight — Isabella Reed, I'd know that coat anywhere.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "interested",
+        "claims": [
+          {
+            "claim_id": "claim_elias_ruth_door",
+            "summary": "Elias saw Ruth leaving Marcus's front door at about 18:30.",
+            "claim_type": "sighting",
+            "time_reference": "18:30",
+            "location_reference_id": "loc_marcus_house",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_ruth_visit_evening", "clue_isabella_argument"]
+      },
+      {
+        "question_type": "relationship",
+        "topic_clue_id": "clue_revised_will",
+        "answer_text": "Bell family? Now that you mention it — there was a rumour, decades back. Henry Bell — Marcus's father — fathered a girl on the south lane. A woman named Doris Calder. The baby was called Ruth, I think. The family paid them off and they moved away. I'd forgotten all about it until now.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "startled",
+        "reveals_clue_ids": ["clue_elias_bell_girl"],
+        "claims": [
+          {
+            "claim_id": "claim_elias_bell_girl",
+            "summary": "Elias recalls the village rumour about a Bell illegitimate daughter named Ruth Calder.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "Home. I heard this morning.",
+      "timeline": "Clinic until six, then home.",
+      "last_seen_victim": "Marcus? Last week at a routine appointment. Stable but fragile.",
+      "relationship": "His primary care contact. I'm shocked — though he was at risk.",
+      "evidence": "Show me what you have.",
+      "location": "Home from six."
+    },
+    "rules": [
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_cocoa_residue",
+        "answer_text": "A greenish residue in the mug? Let me think. His prescription didn't include anything green. That sounds like a plant extract. If it's a cardiac glycoside and he had a cardiac history... yes, that would do it. Ninety minutes, maybe less. No visible trauma. It would look exactly like a natural cardiac arrest.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "horrified",
+        "reveals_clue_ids": ["clue_nadia_cardiac_glycoside"],
+        "claims": [
+          {
+            "claim_id": "claim_nadia_glycoside",
+            "summary": "Nadia confirms a plant-based cardiac glycoside in the mug would have killed Marcus within 90 minutes, appearing like natural cardiac arrest.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_foxglove_harvest",
+        "answer_text": "Foxglove — digitalis purpurea. That's the primary natural source. If someone had been growing it deliberately and extracted the glycoside... it would take knowledge and time. But it's documented in pharmacy texts. It's not impossible to do at home.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "reveals_clue_ids": ["clue_nadia_cardiac_glycoside"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_solicitor",
+    "default_answers": {
+      "alibi": "My office. I handle matters there.",
+      "timeline": "Marcus came in yesterday at five.",
+      "last_seen_victim": "Yesterday afternoon for the will revision.",
+      "relationship": "My client. Confidentiality applies.",
+      "evidence": "I can answer direct factual questions.",
+      "location": "My office only."
+    },
+    "rules": [
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_revised_will",
+        "answer_text": "Mr. Bell came in at five yesterday. He signed the draft of a revised will. I cannot give you the contents without a proper legal process — but I can confirm the will was in the process of being changed. He made a handwritten note at the bottom. He told me 'R.' referred to Ruth Calder, the local postwoman — 'an old family matter', he said. He did not elaborate.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "precise",
+        "reveals_clue_ids": ["clue_whittle_Ruth_reference"],
+        "claims": [
+          {
+            "claim_id": "claim_whittle_R",
+            "summary": "Mr. Whittle confirms Marcus identified 'R.' as Ruth Calder and called it 'an old family matter.'",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  }
+]

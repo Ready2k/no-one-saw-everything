@@ -1,0 +1,275 @@
+[
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "Clinic from before seven. I checked on Elias at five past, as I always do. Returned to the clinic. Heard Owen shout at eight.",
+      "timeline": "My routine, as every morning. Nothing unusual.",
+      "last_seen_victim": "At five past seven. He was fine. He seemed — pleased about something.",
+      "relationship": "I've looked after Elias for six years. This is devastating.",
+      "evidence": "You'll need to be specific.",
+      "location": "The clinic, the square, back to the clinic. That's all."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "answer_text": "I opened the clinic at ten to seven. I prepared the morning medications — routine. At five past I walked over to give Elias his pill organiser, as I do every Tuesday when he can't collect it himself. He was well. Cheerful, actually. I went back to the clinic. At eight I heard Owen.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "composed",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_routine",
+            "summary": "Nadia describes her morning as entirely routine, including the pill handoff at 07:05.",
+            "claim_type": "alibi",
+            "time_reference": "07:05",
+            "location_reference_id": "loc_elias_bench",
+            "truthfulness": "mistaken"
+          }
+        ],
+        "suggested_followups": ["What exactly did you give him this morning?", "Who prepared his pill organiser?"]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_extra_capsules",
+        "answer_text": "Those capsules — I cannot explain that. Someone must have interfered with the organiser between when I prepared it and when I gave it to him. I prepare it the night before — it was on the clinic counter. Anyone could have —",
+        "answer_type": "deflect",
+        "truthfulness": "false",
+        "emotional_shift": "rattled",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_tamper_deflect",
+            "summary": "Nadia claims the extra capsules could have been added by someone else after she prepared the organiser.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_dispensary_log_altered",
+        "answer_text": "I made an error in the log and corrected it. That is standard procedure. A different ink means I ran out of blue and used what was to hand. There is nothing sinister in a correction.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "very_controlled",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_log_correction",
+            "summary": "Nadia says the altered log entry is an ordinary correction, not evidence of falsification.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_nadia_budget_notes",
+        "answer_text": "...Those are private notes. That notebook is locked. How did you —",
+        "answer_type": "partial_admission",
+        "truthfulness": "mistaken",
+        "emotional_shift": "shaken",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_budget_found",
+            "summary": "Nadia is caught off-guard by the budget notes and does not immediately deny their significance.",
+            "claim_type": "statement",
+            "truthfulness": "mistaken"
+          }
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "Elias was my patient for six years. I administered his medication, monitored his heart, sat with him through two scares. I cared for him. People can care for someone and still find them difficult.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "careful"
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_elias_notebook",
+        "answer_text": "He told me on Monday he was reconsidering. I told him it was his decision. I was... hurt. Of course I was. Two years of planning. But I accepted it. I would not —",
+        "answer_type": "partial_admission",
+        "truthfulness": "false",
+        "emotional_shift": "near_breaking",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_accepted_change",
+            "summary": "Nadia admits Elias told her about the will change but claims she had accepted it.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_ruth",
+    "default_answers": {
+      "alibi": "My round. I always start at seven sharp.",
+      "timeline": "I can give you every house and the time I reached it.",
+      "last_seen_victim": "Elias? At seven exactly. He waved at me. He was fine.",
+      "relationship": "Just the postwoman. We say good morning most days.",
+      "evidence": "I keep my eyes open on a round.",
+      "location": "The square bench is one of my landmarks."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "07:00",
+        "time_to": "07:15",
+        "answer_text": "At seven exactly I passed Elias — he waved his flask, same as always. Then at five past, Nadia came out of the clinic and went to him. She gave him something — small, like a little box — and he took some pills with his tea. I watched for a moment because it was sweet, really, her caring for him like that. Then I moved on.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "troubled_now",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_timeline",
+            "summary": "Ruth confirms Elias was healthy at 07:00 and that Nadia gave him pills from a small box at 07:05.",
+            "claim_type": "sighting",
+            "time_reference": "07:05",
+            "location_reference_id": "loc_elias_bench",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_nadia_pill_handoff", "clue_ruth_pill_sighting", "clue_ruth_elias_wave"],
+        "suggested_followups": ["Did you see what was in the box?", "How did Elias seem after taking them?"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_ben",
+    "default_answers": {
+      "alibi": "On my round. Square, side streets, back. Same route every day.",
+      "timeline": "I go through the square twice usually.",
+      "last_seen_victim": "I waved at Elias about quarter past, maybe.",
+      "relationship": "Good bloke. Bit opinionated. Always on that bench.",
+      "evidence": "Tell me what you've found.",
+      "location": "Everywhere on the route."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "07:10",
+        "time_to": "07:20",
+        "answer_text": "I went through the square at about quarter past. Elias was still on the bench but he looked — odd. Hand on his chest, slumped forward slightly. I thought it was the cold getting to him — he's always complaining about drafts. I didn't stop. I wish I had.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "guilty",
+        "claims": [
+          {
+            "claim_id": "claim_ben_posture",
+            "summary": "Ben noticed Elias with his hand on his chest at 07:15 but did not stop.",
+            "claim_type": "sighting",
+            "time_reference": "07:15",
+            "location_reference_id": "loc_elias_bench",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": ["clue_ben_posture"],
+        "suggested_followups": ["Had he seemed well earlier in the morning?"]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_debt_notice",
+        "answer_text": "The old court notice? Yeah, that was my dad's debt — he borrowed off Elias back in the day and never fully paid it back. It's practically ancient history. If you think I'd hurt Elias over a grand, you've got me all wrong. I liked the man.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "reveals_clue_ids": ["clue_ben_alibi"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_owen",
+    "default_answers": {
+      "alibi": "Yard in the morning. I always stop to see Elias at eight.",
+      "timeline": "Yard, then square at eight. I'm the one who found him.",
+      "last_seen_victim": "Yesterday evening. We had a pint. He seemed happy enough.",
+      "relationship": "Old friends. Twenty-odd years.",
+      "evidence": "Ask me straight.",
+      "location": "Square, just at eight."
+    },
+    "rules": [
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Yesterday evening at the pub. He said he'd sorted some family business, something about a nephew. Seemed lighter than he'd been in a while. I thought it was good, whatever it was. I didn't think it would be the last time I'd talk to him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "grief",
+        "claims": [
+          {
+            "claim_id": "claim_owen_pub",
+            "summary": "Owen last saw Elias at the pub the previous evening. Elias mentioned 'sorting family business' and seemed relieved.",
+            "claim_type": "sighting",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "He was the nosiest man in the village and never wrong when it mattered. I'll miss him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "subdued"
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_clara",
+    "default_answers": {
+      "alibi": "Cafe from half six. Opened at eight as usual.",
+      "timeline": "Prep, then open. I saw Elias from the window.",
+      "last_seen_victim": "From the window at half seven or so.",
+      "relationship": "Regular customer. Sweet old man.",
+      "evidence": "I can tell you what I saw from the cafe window.",
+      "location": "The bench is visible from the till."
+    },
+    "rules": [
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Half seven, maybe a bit before. He was on his bench, slumped to one side. I thought he was asleep — he does that sometimes in the warm months. I should have gone to check. I keep thinking I should have gone to check.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "guilty",
+        "reveals_clue_ids": ["clue_clara_slumped_observation"]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_dr_haig",
+    "default_answers": {
+      "alibi": "I arrive at nine on clinic days. I was not here this morning.",
+      "timeline": "I can speak only to Elias's medical record.",
+      "last_seen_victim": "Monday, for his usual check. His heart was irregular but stable.",
+      "relationship": "Patient of twelve years. His condition required careful management.",
+      "evidence": "Show me what you have and I'll tell you what it means.",
+      "location": "I have no reason to be at the square before nine."
+    },
+    "rules": [
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_extra_capsules",
+        "answer_text": "Two 0.25mg capsules? His prescription is 0.125mg once daily. Two of those would be four times his therapeutic dose. Given his arrhythmia and reduced renal function... yes, that would kill him. Rapidly. Within thirty minutes of ingestion.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "horrified",
+        "reveals_clue_ids": ["clue_dr_haig_prescription"],
+        "claims": [
+          {
+            "claim_id": "claim_dr_haig_lethal",
+            "summary": "Dr. Haig confirms two 0.25mg digoxin capsules would be a fatal dose for Elias within thirty minutes.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_dispensary_log_altered",
+        "answer_text": "I sign off Nadia's dispensing records weekly. I trusted her completely — she is meticulous. If you're telling me this entry has been altered... show me. I want to see it myself.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "disbelieving",
+        "reveals_clue_ids": ["clue_dispensary_log_altered"]
+      }
+    ]
+  }
+]

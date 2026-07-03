@@ -12,6 +12,7 @@ import type {
   LocationPublic,
   Note,
   AgentPublic,
+  MapReplayData,
   QuestionType,
   SuspicionLevel,
   TranscriptMessage,
@@ -48,6 +49,18 @@ export const api = {
       Object.entries(params).filter(([, v]) => v) as [string, string][]
     );
     return request<EventPublic[]>(`/api/events?${qs}`);
+  },
+  mapReplay: (params?: {
+    start?: string;
+    end?: string;
+    location_id?: string;
+    agent_id?: string;
+    mode?: "player" | "truth";
+  }) => {
+    const qs = new URLSearchParams(
+      Object.entries(params ?? {}).filter(([, v]) => v) as [string, string][]
+    );
+    return request<MapReplayData>(`/api/map/replay?${qs}`);
   },
   pinEvent: (eventId: string) =>
     request<{ pinned: boolean; new_clues: CluePublic[]; note: Note }>(

@@ -1,0 +1,19 @@
+{
+  "case_id": "case_005",
+  "case_type": "cover_up",
+  "title": "The Rear Alley Fire",
+  "status": "locked",
+  "victim_id": "agent_clara",
+  "killer_id": "agent_owen",
+  "motive_summary": "Clara discovered that the cafe building — and her flat — had been secretly mortgaged by Marcus against Owen's debt without her knowledge. After Marcus's death it legally transferred to Owen. Clara threatened to take the fraudulent mortgage to the committee. Owen killed her before she could.",
+  "method": "strangulation",
+  "weapon_id": "obj_owen_belt",
+  "murder_location_id": "loc_rear_alley",
+  "time_of_death": "07:09",
+  "discovery_time": "07:31",
+  "discovered_by": "agent_ben",
+  "discovery_location_id": "loc_rear_alley",
+  "sim_start_time": "06:00",
+  "murder_window": ["07:00", "07:20"],
+  "overview_text": "07:31 — Ben Carter discovers a fire in the rear alley behind Hobbs Cafe. Clara Wells is found dead nearby, partially obscured by smoke. The fire, lit to destroy evidence, was contained by the damp morning air. The morning can be rewound from 06:00."
+}
