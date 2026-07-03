@@ -10,17 +10,17 @@
     "min_groups": 2
   },
   "method": {
-    "canonical": "Poison — digoxin overdose administered in Elias's morning pill organiser.",
+    "canonical": "Poison — digoxin overdose administered in Elias's afternoon pill organiser.",
     "concept_groups": [
       ["poison", "poisoned", "overdose", "medication", "digoxin", "pills", "capsules"],
-      ["pill organiser", "organiser", "pills", "morning medication", "tablets"]
+      ["pill organiser", "organiser", "pills", "afternoon medication", "tablets"]
     ],
     "min_groups": 2
   },
   "opportunity": {
-    "canonical": "Nadia prepared the pill organiser unsupervised and delivered it directly to Elias at 07:05. Ruth witnessed the handoff. Elias was healthy at 07:00 and dead by 07:21.",
+    "canonical": "Nadia prepared the pill organiser unsupervised and delivered it directly to Elias at 17:05. Ruth witnessed the handoff. Elias was healthy at 17:00 and dead by 17:21.",
     "concept_groups": [
-      ["pill organiser", "gave him", "handoff", "delivered", "07:05", "routine"],
+      ["pill organiser", "gave him", "handoff", "delivered", "17:05", "routine"],
       ["dispensary", "log", "altered", "falsified", "different ink", "correction"],
       ["alone", "unsupervised", "only one", "prepared"]
     ],
@@ -34,5 +34,5 @@
     "clue_nadia_pill_handoff",
     "clue_nadia_budget_notes"
   ],
-  "explanation": "Correct. Nadia Cole killed Elias Grant. Elias had promised his cottage estate to the clinic two years ago — an arrangement Nadia had shepherded and planned around in detail. When Elias told her on Monday he was removing the clinic from his will, Nadia spent the night making her decision. At 06:30 she added two 0.25mg digoxin capsules to his Tuesday pill compartment — four times his safe dose — and altered the dispensary log to mask the draw. At 07:05 she delivered the organiser in person, as she always did, and watched him take the pills. He was dead within sixteen minutes. The altered log, the extra capsules, Ruth's eyewitness testimony of the handoff, and Nadia's private budget projections together build the case. The death initially appeared natural — it took a close look at the pill organiser and the dispensary records to reveal the truth."
+  "explanation": "Correct. Nadia Cole killed Elias Grant. Elias had promised his cottage estate to the clinic two years ago — an arrangement Nadia had shepherded and planned around in detail. When Elias told her on Monday he was removing the clinic from his will, Nadia spent the night making her decision. At 16:30 she added two 0.25mg digoxin capsules to his Tuesday pill compartment — four times his safe dose — and altered the dispensary log to mask the draw. At 17:05 she delivered the organiser in person, as she always did, and watched him take the pills. He was dead within sixteen minutes. The altered log, the extra capsules, Ruth's eyewitness testimony of the handoff, and Nadia's private budget projections together build the case. The death initially appeared natural — it took a close look at the pill organiser and the dispensary records to reveal the truth."
 }

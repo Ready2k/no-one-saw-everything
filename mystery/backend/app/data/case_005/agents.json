@@ -4,114 +4,222 @@
     "full_name": "Clara Wells",
     "age": 36,
     "occupation": "Cafe manager",
-    "traits": ["organised", "determined", "proud"],
+    "traits": [
+      "organised",
+      "determined",
+      "proud"
+    ],
     "portrait": "🧣",
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Down by half six to prep the cafe. Was due at the rear alley at 07:00 to take a linen delivery.",
     "relationships": [
-      {"target_agent_id": "agent_owen", "relationship_type": "adversary", "affinity": -0.8, "trust": 0.0, "tension": 1.0},
-      {"target_agent_id": "agent_ben", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1},
-      {"target_agent_id": "agent_nadia", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "adversary",
+        "affinity": -0.8,
+        "trust": 0.0,
+        "tension": 1.0
+      },
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.7,
     "memory_reliability": 0.8,
     "honesty_baseline": 0.7,
-    "is_victim": true
+    "is_victim": true,
+    "sprite_asset": "Abigail_Chen.png"
   },
   {
     "agent_id": "agent_owen",
     "full_name": "Owen Price",
     "age": 47,
     "occupation": "Builder",
-    "traits": ["calculating", "pragmatic", "capable of violence"],
+    "traits": [
+      "calculating",
+      "pragmatic",
+      "capable of violence"
+    ],
     "portrait": "🔨",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Yard from early. Claims he was receiving a supplier call at 07:00. His forged alibi will need to be dismantled.",
     "relationships": [
-      {"target_agent_id": "agent_clara", "relationship_type": "adversary", "affinity": -0.7, "trust": 0.0, "tension": 1.0},
-      {"target_agent_id": "agent_elias", "relationship_type": "old_acquaintance", "affinity": 0.2, "trust": 0.3, "tension": 0.1},
-      {"target_agent_id": "agent_col", "relationship_type": "employee", "affinity": 0.5, "trust": 0.6, "tension": 0.0}
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "adversary",
+        "affinity": -0.7,
+        "trust": 0.0,
+        "tension": 1.0
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "old_acquaintance",
+        "affinity": 0.2,
+        "trust": 0.3,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_col",
+        "relationship_type": "employee",
+        "affinity": 0.5,
+        "trust": 0.6,
+        "tension": 0.0
+      }
     ],
     "observation_skill": 0.5,
     "memory_reliability": 0.7,
     "honesty_baseline": 0.3,
-    "conflict_avoidance": 0.1
+    "conflict_avoidance": 0.1,
+    "sprite_asset": "Carlos_Gomez.png"
   },
   {
     "agent_id": "agent_ben",
     "full_name": "Ben Carter",
     "age": 29,
     "occupation": "Delivery driver",
-    "traits": ["easygoing", "chatty", "reliable witness"],
+    "traits": [
+      "easygoing",
+      "chatty",
+      "reliable witness"
+    ],
     "portrait": "📦",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Morning delivery round. Discovers the fire at 07:31.",
     "relationships": [
-      {"target_agent_id": "agent_clara", "relationship_type": "acquaintance", "affinity": 0.4, "trust": 0.6, "tension": 0.1},
-      {"target_agent_id": "agent_owen", "relationship_type": "acquaintance", "affinity": 0.1, "trust": 0.2, "tension": 0.3}
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "acquaintance",
+        "affinity": 0.4,
+        "trust": 0.6,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "acquaintance",
+        "affinity": 0.1,
+        "trust": 0.2,
+        "tension": 0.3
+      }
     ],
     "observation_skill": 0.6,
     "memory_reliability": 0.65,
     "honesty_baseline": 0.75,
-    "gossip_tendency": 0.8
+    "gossip_tendency": 0.8,
+    "sprite_asset": "Ryan_Park.png"
   },
   {
     "agent_id": "agent_nadia",
     "full_name": "Nadia Cole",
     "age": 38,
     "occupation": "Clinic nurse",
-    "traits": ["observant", "practical", "discreet"],
+    "traits": [
+      "observant",
+      "practical",
+      "discreet"
+    ],
     "portrait": "🩺",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift. Crosses the square between 06:50 and 07:00. Will have seen something crucial.",
     "relationships": [
-      {"target_agent_id": "agent_clara", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1},
-      {"target_agent_id": "agent_owen", "relationship_type": "neighbour", "affinity": 0.1, "trust": 0.3, "tension": 0.2}
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "neighbour",
+        "affinity": 0.1,
+        "trust": 0.3,
+        "tension": 0.2
+      }
     ],
     "observation_skill": 0.85,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
-    "gossip_tendency": 0.2
+    "gossip_tendency": 0.2,
+    "sprite_asset": "Ayesha_Khan.png"
   },
   {
     "agent_id": "agent_elias",
     "full_name": "Elias Grant",
     "age": 68,
     "occupation": "Retired schoolteacher",
-    "traits": ["nosy", "certain of himself", "harmless"],
+    "traits": [
+      "nosy",
+      "certain of himself",
+      "harmless"
+    ],
     "portrait": "🎩",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "On the bench from 06:40. His view of the square and alley entrance will matter.",
     "relationships": [
-      {"target_agent_id": "agent_clara", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1},
-      {"target_agent_id": "agent_owen", "relationship_type": "acquaintance", "affinity": -0.2, "trust": 0.3, "tension": 0.3}
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "acquaintance",
+        "affinity": -0.2,
+        "trust": 0.3,
+        "tension": 0.3
+      }
     ],
     "observation_skill": 0.55,
     "memory_reliability": 0.5,
     "honesty_baseline": 0.9,
-    "gossip_tendency": 0.9
+    "gossip_tendency": 0.9,
+    "sprite_asset": "Adam_Smith.png"
   },
   {
     "agent_id": "agent_col",
     "full_name": "Col Hartley",
     "age": 44,
     "occupation": "Timber delivery driver",
-    "traits": ["straightforward", "loyal", "susceptible to pressure"],
+    "traits": [
+      "straightforward",
+      "loyal",
+      "susceptible to pressure"
+    ],
     "portrait": "🚛",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Owen's regular delivery driver. Owen asked him last night to say he was at the yard from 06:45 if anyone asked.",
     "relationships": [
-      {"target_agent_id": "agent_owen", "relationship_type": "employee", "affinity": 0.4, "trust": 0.4, "tension": 0.5}
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "employee",
+        "affinity": 0.4,
+        "trust": 0.4,
+        "tension": 0.5
+      }
     ],
     "observation_skill": 0.5,
     "memory_reliability": 0.6,
     "honesty_baseline": 0.4,
-    "conflict_avoidance": 0.7
+    "conflict_avoidance": 0.7,
+    "sprite_asset": "Ethan_Brooks.png"
   }
 ]

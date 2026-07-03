@@ -4,7 +4,7 @@
     "challenged_claim_id": "claim_priya_stockroom_all_morning",
     "evidence_clue_ids": ["clue_invoice_discrepancy"],
     "outcome": "deflect",
-    "response_text": "The driver logged the time wrong on his copy — happens constantly. I signed at eight-ten when he came back to the door. The gap you're seeing isn't a gap, it's a clerical error.",
+    "response_text": "The driver logged the time wrong on his copy — happens constantly. I signed at twelve-ten when he came back to the door. The gap you're seeing isn't a gap, it's a clerical error.",
     "emotional_shift": "tense",
     "pressure_delta": 0.15,
     "sets_claim_status": "disputed"
@@ -33,7 +33,7 @@
         "claim_id": "claim_priya_checked_back_door",
         "summary": "Priya now admits she went to the rear door but claims she only looked out, not in.",
         "claim_type": "alibi",
-        "time_reference": "08:42",
+        "time_reference": "12:42",
         "location_reference_id": "loc_bookshop_back",
         "truthfulness": "false"
       }
@@ -53,18 +53,18 @@
     "target_agent_id": "agent_priya",
     "challenged_claim_id": "claim_priya_stockroom_all_morning",
     "evidence_clue_ids": ["clue_crash_sound", "clue_invoice_discrepancy"],
-    "outcome": "near_crack",
+    "outcome": "partial_admission",
     "response_text": "I... I want a moment. Please. I need to think about what I'm saying. I didn't do anything to Isabella. You have to believe that. Whatever else you think you've found, I didn't — I wouldn't —",
     "emotional_shift": "close_to_breaking",
     "pressure_delta": 0.4,
-    "sets_claim_status": "highly_disputed"
+    "sets_claim_status": "disputed"
   },
   {
     "target_agent_id": "agent_owen",
     "challenged_claim_id": "claim_owen_yard",
     "evidence_clue_ids": ["clue_owen_bookshop_pass"],
     "outcome": "reframe",
-    "response_text": "I walked past the bookshop on my way to the builders' merchants at eight-twenty. I stopped for half a second to see if Isabella was in — I wanted a word before I got her solicitor's next letter. She wasn't at the window. I kept walking. I was back in my yard by half past at the latest.",
+    "response_text": "I walked past the bookshop on my way to the builders' merchants at twelve-twenty. I stopped for half a second to see if Isabella was in — I wanted a word before I got her solicitor's next letter. She wasn't at the window. I kept walking. I was back in my yard by half past at the latest.",
     "emotional_shift": "steady",
     "pressure_delta": 0.1,
     "sets_claim_status": "confirmed",

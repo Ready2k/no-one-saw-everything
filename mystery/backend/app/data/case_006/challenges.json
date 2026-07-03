@@ -31,21 +31,21 @@
     "target_agent_id": "agent_ruth",
     "challenged_claim_id": "claim_ruth_vial_harmless",
     "evidence_clue_ids": ["clue_vial_in_ash", "clue_pharmacy_book", "clue_foxglove_harvest", "clue_cocoa_residue"],
-    "outcome": "near_crack",
+    "outcome": "partial_admission",
     "response_text": "You have a book and a vial and a mug. That is circumstantial. I had a key to his house — yes. I grow foxgloves — yes. But knowing how something might be done is not the same as doing it.",
     "emotional_shift": "fighting_hard",
     "pressure_delta": 0.4,
-    "sets_claim_status": "highly_disputed"
+    "sets_claim_status": "disputed"
   },
   {
     "target_agent_id": "agent_ruth",
     "challenged_claim_id": "claim_ruth_home_all_evening",
     "evidence_clue_ids": ["clue_birth_certificate", "clue_whittle_Ruth_reference", "clue_vial_in_ash", "clue_cocoa_residue"],
-    "outcome": "crack",
+    "outcome": "partial_admission",
     "response_text": "He had the certificate all along. I thought... I thought he'd destroyed his copy years ago. He kept it. Hidden in a book, like a pressed flower. And he still couldn't bring himself to say it out loud. He called me 'the postwoman' to his solicitor. After everything. You have what you need. I'm not going to make this easier for you.",
     "emotional_shift": "hollow_defeat",
     "pressure_delta": 0.7,
-    "sets_claim_status": "broken",
+    "sets_claim_status": "disputed",
     "new_claims": [
       {
         "claim_id": "claim_ruth_implicit_admission",

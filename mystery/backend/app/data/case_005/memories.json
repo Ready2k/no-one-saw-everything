@@ -47,7 +47,7 @@
     "truth_status": "false",
     "summary": "Owen texted Col last night: 'If anyone asks, you were at the yard from quarter to seven, got it?' Col showed up late and agreed to the story because Owen is his main client.",
     "emotional_weight": 7,
-    "shareability": "will_crack_under_pressure",
+    "shareability": "will_lie",
     "discoverable_by_player": true,
     "linked_clue_ids": ["clue_col_false_alibi"]
   },

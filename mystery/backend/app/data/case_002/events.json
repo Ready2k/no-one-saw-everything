@@ -31,7 +31,7 @@
   },
   {
     "event_id": "ev_0700_priya_arrives_bookshop",
-    "time": "07:00",
+    "time": "11:00",
     "location_id": "loc_bookshop",
     "agent_ids": ["agent_priya"],
     "event_type": "arrival",
@@ -42,7 +42,7 @@
   },
   {
     "event_id": "ev_0710_solicitor_letter_delivered",
-    "time": "07:10",
+    "time": "11:10",
     "location_id": "loc_bookshop",
     "agent_ids": ["agent_ruth"],
     "event_type": "routine",
@@ -56,7 +56,7 @@
   },
   {
     "event_id": "ev_0730_ben_round",
-    "time": "07:30",
+    "time": "11:30",
     "location_id": "loc_village_square",
     "agent_ids": ["agent_ben"],
     "event_type": "movement",
@@ -66,7 +66,7 @@
   },
   {
     "event_id": "ev_0800_priya_sees_letter",
-    "time": "08:00",
+    "time": "12:00",
     "location_id": "loc_bookshop",
     "agent_ids": ["agent_priya"],
     "event_type": "object_use",
@@ -78,7 +78,7 @@
   },
   {
     "event_id": "ev_0805_priya_safe",
-    "time": "08:05",
+    "time": "12:05",
     "location_id": "loc_bookshop_back",
     "agent_ids": ["agent_priya"],
     "event_type": "hidden_action",
@@ -89,12 +89,12 @@
   },
   {
     "event_id": "ev_0810_invoice_signed",
-    "time": "08:10",
+    "time": "12:10",
     "location_id": "loc_bookshop",
     "agent_ids": ["agent_priya"],
     "event_type": "object_use",
     "truth_description": "Priya signs the delivery invoice in the stockroom — but the driver has already gone. She back-dates it by five minutes.",
-    "player_description": "A delivery receipt on the stockroom table, signed by Priya at 08:10.",
+    "player_description": "A delivery receipt on the stockroom table, signed by Priya at 12:10.",
     "visibility": "public",
     "object_ids": ["obj_stockroom_invoice"],
     "importance": 6,
@@ -102,7 +102,7 @@
   },
   {
     "event_id": "ev_0825_owen_confronts_bookshop",
-    "time": "08:25",
+    "time": "12:25",
     "location_id": "loc_village_square",
     "agent_ids": ["agent_owen"],
     "event_type": "movement",
@@ -115,7 +115,7 @@
   },
   {
     "event_id": "ev_0832_isabella_arrives",
-    "time": "08:32",
+    "time": "12:32",
     "location_id": "loc_bookshop",
     "agent_ids": ["agent_isabella"],
     "event_type": "arrival",
@@ -128,11 +128,11 @@
   },
   {
     "event_id": "ev_0835_confrontation",
-    "time": "08:35",
+    "time": "12:35",
     "location_id": "loc_bookshop_back",
     "agent_ids": ["agent_isabella", "agent_priya"],
     "event_type": "argument",
-    "truth_description": "Isabella confronts Priya about the forged signature. Voices rise. Priya claims the signature was witnessed correctly. Isabella calls her a liar and says she will hand everything to the solicitor at 09:30.",
+    "truth_description": "Isabella confronts Priya about the forged signature. Voices rise. Priya claims the signature was witnessed correctly. Isabella calls her a liar and says she will hand everything to the solicitor at 13:30.",
     "visibility": "hidden",
     "audible_to_agent_ids": [],
     "importance": 10,
@@ -140,7 +140,7 @@
   },
   {
     "event_id": "ev_0840_sound_crash",
-    "time": "08:40",
+    "time": "12:40",
     "location_id": "loc_rear_alley",
     "agent_ids": [],
     "event_type": "sound",
@@ -153,7 +153,7 @@
   },
   {
     "event_id": "ev_0843_murder",
-    "time": "08:43",
+    "time": "12:43",
     "location_id": "loc_bookshop_back",
     "agent_ids": ["agent_priya", "agent_isabella"],
     "event_type": "murder",
@@ -164,7 +164,7 @@
   },
   {
     "event_id": "ev_0845_priya_stages",
-    "time": "08:45",
+    "time": "12:45",
     "location_id": "loc_bookshop_back",
     "agent_ids": ["agent_priya"],
     "event_type": "hidden_action",
@@ -176,7 +176,7 @@
   },
   {
     "event_id": "ev_0848_priya_stockroom_return",
-    "time": "08:48",
+    "time": "12:48",
     "location_id": "loc_bookshop",
     "agent_ids": ["agent_priya"],
     "event_type": "arrival",
@@ -188,7 +188,7 @@
   },
   {
     "event_id": "ev_0850_ruth_alley_sighting",
-    "time": "08:50",
+    "time": "12:50",
     "location_id": "loc_rear_alley",
     "agent_ids": ["agent_ruth"],
     "event_type": "sighting",
@@ -201,7 +201,7 @@
   },
   {
     "event_id": "ev_0900_ben_cafe_chat",
-    "time": "09:00",
+    "time": "13:00",
     "location_id": "loc_hobbs_cafe",
     "agent_ids": ["agent_ben"],
     "event_type": "routine",
@@ -212,7 +212,7 @@
   },
   {
     "event_id": "ev_0915_nadia_discovery",
-    "time": "09:15",
+    "time": "13:15",
     "location_id": "loc_bookshop_back",
     "agent_ids": ["agent_nadia", "agent_isabella"],
     "event_type": "body_discovery",

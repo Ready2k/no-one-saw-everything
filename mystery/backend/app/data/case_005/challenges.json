@@ -23,31 +23,31 @@
     "target_agent_id": "agent_owen",
     "challenged_claim_id": "claim_owen_yard_alibi",
     "evidence_clue_ids": ["clue_col_false_alibi", "clue_nadia_sees_owen_alley"],
-    "outcome": "deflect_harder",
+    "outcome": "deflect",
     "response_text": "Nadia's wrong and Col's muddled. You're building a case on two unreliable witnesses. I was at my yard.",
     "emotional_shift": "brittle",
     "pressure_delta": 0.3,
-    "sets_claim_status": "highly_disputed"
+    "sets_claim_status": "disputed"
   },
   {
     "target_agent_id": "agent_owen",
     "challenged_claim_id": "claim_owen_yard_alibi",
     "evidence_clue_ids": ["clue_nadia_sees_owen_alley", "clue_belt_weapon", "clue_owen_ash_boots", "clue_mortgage_deed"],
-    "outcome": "near_crack",
+    "outcome": "partial_admission",
     "response_text": "You've got a belt in a bin, a nurse who saw a grey jacket, and a document that Marcus signed of his own free will. That's not a murder case. That's guesswork. I want a solicitor.",
     "emotional_shift": "hardened_refusal",
     "pressure_delta": 0.5,
-    "sets_claim_status": "near_broken"
+    "sets_claim_status": "disputed"
   },
   {
     "target_agent_id": "agent_col",
     "challenged_claim_id": "claim_col_yard_alibi",
     "evidence_clue_ids": ["clue_col_false_alibi"],
-    "outcome": "admission",
+    "outcome": "partial_admission",
     "response_text": "...He texted me the night before. Said to say I was there from quarter to seven if anyone asked. I turned up at half seven and there was no timber job. I shouldn't have agreed. I knew something was wrong when he sent that text.",
     "emotional_shift": "relieved_guilty",
     "pressure_delta": 0.6,
-    "sets_claim_status": "broken",
+    "sets_claim_status": "disputed",
     "reveals_clue_ids": ["clue_col_false_alibi"]
   }
 ]

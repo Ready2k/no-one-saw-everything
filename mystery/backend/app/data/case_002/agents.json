@@ -4,134 +4,265 @@
     "full_name": "Isabella Reed",
     "age": 41,
     "occupation": "Bookshop owner",
-    "traits": ["ambitious", "wounded", "composed"],
+    "traits": [
+      "ambitious",
+      "wounded",
+      "composed"
+    ],
     "portrait": "📚",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
+    "routine_summary": "Opens the bookshop at nine; lunchtime is for paperwork and coffee at Hobbs.",
     "relationships": [
-      {"target_agent_id": "agent_priya", "relationship_type": "employer", "affinity": 0.3, "trust": 0.5, "tension": 0.6},
-      {"target_agent_id": "agent_owen", "relationship_type": "acquaintance", "affinity": -0.2, "trust": 0.2, "tension": 0.5},
-      {"target_agent_id": "agent_nadia", "relationship_type": "neighbour", "affinity": 0.4, "trust": 0.6, "tension": 0.1}
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "employer",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.6
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "acquaintance",
+        "affinity": -0.2,
+        "trust": 0.2,
+        "tension": 0.5
+      },
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "neighbour",
+        "affinity": 0.4,
+        "trust": 0.6,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.75,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.6,
-    "is_victim": true
+    "is_victim": true,
+    "sprite_asset": "Isabella_Rodriguez.png"
   },
   {
     "agent_id": "agent_priya",
     "full_name": "Priya Shah",
     "age": 33,
     "occupation": "Bookshop assistant",
-    "traits": ["careful", "quietly ruthless", "conflict-averse surface"],
+    "traits": [
+      "careful",
+      "quietly ruthless",
+      "conflict-averse surface"
+    ],
     "portrait": "🌸",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Opens the bookshop stockroom early, sorts deliveries, then waits for Isabella.",
+    "routine_summary": "Sorts lunchtime deliveries in the stockroom, then waits for Isabella.",
     "relationships": [
-      {"target_agent_id": "agent_isabella", "relationship_type": "employee", "affinity": -0.4, "trust": 0.2, "tension": 0.9},
-      {"target_agent_id": "agent_ben", "relationship_type": "secret_relationship", "affinity": 0.9, "trust": 0.8, "tension": 0.3},
-      {"target_agent_id": "agent_nadia", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "employee",
+        "affinity": -0.4,
+        "trust": 0.2,
+        "tension": 0.9
+      },
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "secret_relationship",
+        "affinity": 0.9,
+        "trust": 0.8,
+        "tension": 0.3
+      },
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.7,
     "memory_reliability": 0.8,
     "honesty_baseline": 0.4,
-    "conflict_avoidance": 0.85
+    "conflict_avoidance": 0.85,
+    "sprite_asset": "Priya_Kapoor.png"
   },
   {
     "agent_id": "agent_ben",
     "full_name": "Ben Carter",
     "age": 29,
     "occupation": "Delivery driver",
-    "traits": ["easygoing", "chatty", "bad at secrets"],
+    "traits": [
+      "easygoing",
+      "chatty",
+      "bad at secrets"
+    ],
     "portrait": "📦",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
-    "routine_summary": "Morning delivery round through the square and rear alley.",
+    "routine_summary": "Lunchtime delivery round through the square and rear alley.",
     "relationships": [
-      {"target_agent_id": "agent_priya", "relationship_type": "secret_relationship", "affinity": 0.9, "trust": 0.8, "tension": 0.3},
-      {"target_agent_id": "agent_isabella", "relationship_type": "acquaintance", "affinity": 0.1, "trust": 0.3, "tension": 0.2}
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "secret_relationship",
+        "affinity": 0.9,
+        "trust": 0.8,
+        "tension": 0.3
+      },
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "acquaintance",
+        "affinity": 0.1,
+        "trust": 0.3,
+        "tension": 0.2
+      }
     ],
     "observation_skill": 0.6,
     "memory_reliability": 0.65,
     "honesty_baseline": 0.7,
-    "gossip_tendency": 0.8
+    "gossip_tendency": 0.8,
+    "sprite_asset": "Ryan_Park.png"
   },
   {
     "agent_id": "agent_owen",
     "full_name": "Owen Price",
     "age": 47,
     "occupation": "Builder",
-    "traits": ["blunt", "hot-tempered", "proud"],
+    "traits": [
+      "blunt",
+      "hot-tempered",
+      "proud"
+    ],
     "portrait": "🔨",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
-    "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
+    "routine_summary": "In the timber yard; takes deliveries around eleven-thirty.",
     "relationships": [
-      {"target_agent_id": "agent_isabella", "relationship_type": "debtor", "affinity": -0.4, "trust": 0.2, "tension": 0.8},
-      {"target_agent_id": "agent_priya", "relationship_type": "acquaintance", "affinity": 0.1, "trust": 0.3, "tension": 0.1}
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "debtor",
+        "affinity": -0.4,
+        "trust": 0.2,
+        "tension": 0.8
+      },
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "acquaintance",
+        "affinity": 0.1,
+        "trust": 0.3,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.5,
     "memory_reliability": 0.7,
     "honesty_baseline": 0.55,
-    "conflict_avoidance": 0.2
+    "conflict_avoidance": 0.2,
+    "sprite_asset": "Carlos_Gomez.png"
   },
   {
     "agent_id": "agent_nadia",
     "full_name": "Nadia Cole",
     "age": 38,
     "occupation": "Clinic nurse",
-    "traits": ["observant", "practical", "discreet"],
+    "traits": [
+      "observant",
+      "practical",
+      "discreet"
+    ],
     "portrait": "🩺",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
+    "routine_summary": "Lunch shift at the clinic; crosses the square a few times.",
     "relationships": [
-      {"target_agent_id": "agent_isabella", "relationship_type": "neighbour", "affinity": 0.4, "trust": 0.6, "tension": 0.1},
-      {"target_agent_id": "agent_priya", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "neighbour",
+        "affinity": 0.4,
+        "trust": 0.6,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.85,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
-    "gossip_tendency": 0.2
+    "gossip_tendency": 0.2,
+    "sprite_asset": "Ayesha_Khan.png"
   },
   {
     "agent_id": "agent_elias",
     "full_name": "Elias Grant",
     "age": 68,
     "occupation": "Retired schoolteacher",
-    "traits": ["nosy", "certain of himself", "harmless"],
+    "traits": [
+      "nosy",
+      "certain of himself",
+      "harmless"
+    ],
     "portrait": "🎩",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
-    "routine_summary": "First on the square bench every morning with a flask and opinions.",
+    "routine_summary": "On the square bench every day around midday with a flask and opinions.",
     "relationships": [
-      {"target_agent_id": "agent_isabella", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.2},
-      {"target_agent_id": "agent_owen", "relationship_type": "acquaintance", "affinity": -0.2, "trust": 0.3, "tension": 0.3}
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.2
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "acquaintance",
+        "affinity": -0.2,
+        "trust": 0.3,
+        "tension": 0.3
+      }
     ],
     "observation_skill": 0.55,
     "memory_reliability": 0.5,
     "honesty_baseline": 0.9,
-    "gossip_tendency": 0.9
+    "gossip_tendency": 0.9,
+    "sprite_asset": "Adam_Smith.png"
   },
   {
     "agent_id": "agent_ruth",
     "full_name": "Ruth Calder",
     "age": 52,
     "occupation": "Postwoman",
-    "traits": ["methodical", "quiet", "reliable"],
+    "traits": [
+      "methodical",
+      "quiet",
+      "reliable"
+    ],
     "portrait": "✉️",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
-    "routine_summary": "Morning post round starts at 07:30, takes her past the bookshop around 08:45.",
+    "routine_summary": "Midday post round starts at 11:30, takes her past the bookshop around 12:45.",
     "relationships": [
-      {"target_agent_id": "agent_isabella", "relationship_type": "acquaintance", "affinity": 0.2, "trust": 0.5, "tension": 0.1},
-      {"target_agent_id": "agent_priya", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "acquaintance",
+        "affinity": 0.2,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.75,
     "memory_reliability": 0.8,
     "honesty_baseline": 0.9,
-    "gossip_tendency": 0.3
+    "gossip_tendency": 0.3,
+    "sprite_asset": "Sarah_Whitmore.png"
   }
 ]

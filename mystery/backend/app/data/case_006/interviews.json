@@ -31,7 +31,7 @@
       {
         "question_type": "relationship",
         "answer_text": "I deliver his post. He sometimes asks me to take in registered items when he's away. He gave me a spare key for that. There's nothing beyond that.",
-        "answer_type": "partial_admission",
+        "answer_type": "claim",
         "truthfulness": "mistaken",
         "emotional_shift": "careful",
         "claims": [
@@ -64,7 +64,7 @@
         "question_type": "evidence",
         "topic_clue_id": "clue_birth_certificate",
         "answer_text": "...Where did you find that.",
-        "answer_type": "shock",
+        "answer_type": "denial",
         "truthfulness": "true",
         "emotional_shift": "shattered",
         "claims": [
@@ -96,7 +96,7 @@
         "question_type": "relationship",
         "topic_clue_id": "clue_birth_certificate",
         "answer_text": "He knew. He always knew. He never said a word to me — not in twenty years of delivering his post, not once. He left me a spare key and smiled. That was all he gave me.",
-        "answer_type": "admission",
+        "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "breaking",
         "claims": [

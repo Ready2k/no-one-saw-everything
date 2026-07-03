@@ -125,7 +125,7 @@
         "question_type": "alibi",
         "topic_clue_id": "clue_col_false_alibi",
         "answer_text": "...Look. Owen texted me last night. Said if anyone asked I should say I was there from quarter to seven. I showed up at half seven, more like. There was no timber job. I went along with it because he's my main client and I — I didn't ask why.",
-        "answer_type": "admission",
+        "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "guilty_relief",
         "claims": [

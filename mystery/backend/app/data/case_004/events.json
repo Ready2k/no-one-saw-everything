@@ -110,13 +110,13 @@
     "linked_clue_ids": ["clue_elias_fleeing_figure"]
   },
   {
-    "event_id": "ev_0640_elias_discovery",
-    "time": "06:40",
+    "event_id": "ev_2345_elias_discovery",
+    "time": "23:45",
     "location_id": "loc_fountain",
     "agent_ids": ["agent_elias", "agent_owen"],
     "event_type": "body_discovery",
-    "truth_description": "Elias arrives at his bench. Owen's body is slumped against the fountain base. Elias stands frozen for several seconds, then shouts.",
-    "player_description": "Elias Grant reaches his morning bench and stops. Owen Price is collapsed beside the fountain. The stone coping lies nearby.",
+    "truth_description": "Elias, unable to sleep, looks out his bedroom window. He notices a dark shape slumped against the fountain base. He goes down to investigate and finds Owen.",
+    "player_description": "Elias Grant looks from his window, goes down to the square, and stops in shock. Owen Price is collapsed beside the fountain. The stone coping lies nearby.",
     "visibility": "public",
     "importance": 10
   }

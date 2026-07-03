@@ -1,14 +1,14 @@
 [
   {
     "object_id": "obj_pill_bottle",
-    "name": "Elias's morning pill organiser",
-    "description": "A weekly pill organiser Nadia prepares for Elias at the start of each week. The Tuesday morning compartment contains two extra pale capsules among his usual white tablets — they are not his prescribed medication.",
+    "name": "Elias's afternoon pill organiser",
+    "description": "A weekly pill organiser Nadia prepares for Elias at the start of each week. The Tuesday afternoon compartment contains two extra pale capsules among his usual white tablets — they are not his prescribed medication.",
     "is_weapon": true,
     "normal_location_id": "loc_elias_bench",
     "final_location_id": "loc_clinic_dispensary",
     "access_rules": ["nurse"],
     "touched_by_agent_ids": ["agent_nadia", "agent_elias"],
-    "last_seen_time": "07:05",
+    "last_seen_time": "17:05",
     "hidden_state": "extra_capsules_dissolved_in_system",
     "clue_relevance": "weapon"
   },
@@ -20,19 +20,19 @@
     "final_location_id": "loc_clinic_dispensary",
     "access_rules": ["nurse", "doctor"],
     "touched_by_agent_ids": ["agent_nadia", "agent_dr_haig"],
-    "last_seen_time": "07:00",
+    "last_seen_time": "17:00",
     "hidden_state": "falsified_dosage_entry",
     "clue_relevance": "weapon"
   },
   {
     "object_id": "obj_solicitor_appointment",
     "name": "Solicitor appointment card",
-    "description": "A card in Elias's coat pocket: 'Whittle & Cross, 10:00 — re: will amendment, final signature.' Elias had an appointment this morning to finalise a change to his will.",
+    "description": "A card in Elias's coat pocket: 'Whittle & Cross, 10:00 — re: will amendment, final signature.' Elias had an appointment this afternoon to finalise a change to his will.",
     "normal_location_id": "loc_elias_bench",
     "final_location_id": "loc_elias_bench",
     "access_rules": [],
     "touched_by_agent_ids": ["agent_elias"],
-    "last_seen_time": "07:00",
+    "last_seen_time": "17:00",
     "clue_relevance": "motive"
   },
   {
@@ -43,7 +43,7 @@
     "final_location_id": "loc_clinic",
     "access_rules": ["nurse", "doctor"],
     "touched_by_agent_ids": ["agent_nadia", "agent_elias"],
-    "last_seen_time": "06:30",
+    "last_seen_time": "16:30",
     "clue_relevance": "motive"
   },
   {
@@ -54,7 +54,7 @@
     "final_location_id": "loc_elias_bench",
     "access_rules": [],
     "touched_by_agent_ids": ["agent_elias"],
-    "last_seen_time": "07:00",
+    "last_seen_time": "17:00",
     "clue_relevance": "motive"
   },
   {
@@ -65,7 +65,7 @@
     "final_location_id": "loc_elias_bench",
     "access_rules": [],
     "touched_by_agent_ids": ["agent_elias"],
-    "last_seen_time": "07:00",
+    "last_seen_time": "17:00",
     "clue_relevance": "red_herring_motive"
   },
   {
@@ -76,7 +76,7 @@
     "final_location_id": "loc_clinic",
     "access_rules": ["owner"],
     "touched_by_agent_ids": ["agent_nadia"],
-    "last_seen_time": "06:50",
+    "last_seen_time": "16:50",
     "hidden_state": "hidden_in_locked_drawer",
     "clue_relevance": "motive"
   }

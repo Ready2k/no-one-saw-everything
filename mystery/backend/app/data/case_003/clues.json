@@ -4,7 +4,7 @@
       "clue_id": "clue_solicitor_appointment",
       "title": "Solicitor appointment card in Elias's pocket",
       "clue_type": "document",
-      "description": "Found in Elias's coat pocket: a card from Whittle & Cross confirming a 10:00 appointment 're: will amendment, final signature.' Elias had made arrangements to change his will this morning.",
+      "description": "Found in Elias's coat pocket: a card from Whittle & Cross confirming a 10:00 appointment 're: will amendment, final signature.' Elias had made arrangements to change his will this afternoon.",
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
@@ -56,7 +56,7 @@
       "clue_id": "clue_extra_capsules",
       "title": "Two unknown capsules in the pill organiser",
       "clue_type": "physical_evidence",
-      "description": "The pill organiser recovered from the bench: the Tuesday morning compartment contains two pale yellow capsules that are not Elias's prescribed tablets. His prescription is for white digoxin 0.125mg tablets. The pale capsules appear to be a higher-dose formulation.",
+      "description": "The pill organiser recovered from the bench: the Tuesday afternoon compartment contains two pale yellow capsules that are not Elias's prescribed tablets. His prescription is for white digoxin 0.125mg tablets. The pale capsules appear to be a higher-dose formulation.",
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
@@ -67,9 +67,9 @@
     },
     {
       "clue_id": "clue_nadia_pill_handoff",
-      "title": "Nadia handed Elias the pills at 07:05",
+      "title": "Nadia handed Elias the pills at 17:05",
       "clue_type": "witness_statement",
-      "description": "Ruth saw Nadia cross the square at 07:05 and give Elias something small from her hand. Elias took it with his tea. Ruth thought nothing of it — it was Nadia's routine.",
+      "description": "Ruth saw Nadia cross the square at 17:05 and give Elias something small from her hand. Elias took it with his tea. Ruth thought nothing of it — it was Nadia's routine.",
       "strength": "medium",
       "reliability": 0.85,
       "ambiguity": "medium",
@@ -93,9 +93,9 @@
     },
     {
       "clue_id": "clue_ruth_elias_wave",
-      "title": "Elias was healthy at 07:00",
+      "title": "Elias was healthy at 17:00",
       "clue_type": "witness_statement",
-      "description": "Ruth passed Elias at 07:00 — he waved his flask at her in his usual greeting. He was perfectly alert. He died within twenty-one minutes of Nadia's visit.",
+      "description": "Ruth passed Elias at 17:00 — he waved his flask at her in his usual greeting. He was perfectly alert. He died within twenty-one minutes of Nadia's visit.",
       "strength": "medium",
       "reliability": 0.9,
       "ambiguity": "medium",
@@ -106,9 +106,9 @@
     },
     {
       "clue_id": "clue_ben_posture",
-      "title": "Elias's hand on his chest at 07:15",
+      "title": "Elias's hand on his chest at 17:15",
       "clue_type": "observation",
-      "description": "Ben passed the bench at 07:15 and noticed Elias had one hand pressed to his chest. Elias's posture had changed — he was leaning rather than sitting upright. Ben assumed he was cold.",
+      "description": "Ben passed the bench at 17:15 and noticed Elias had one hand pressed to his chest. Elias's posture had changed — he was leaning rather than sitting upright. Ben assumed he was evening chill.",
       "strength": "weak",
       "reliability": 0.65,
       "ambiguity": "high",
@@ -144,9 +144,9 @@
     },
     {
       "clue_id": "clue_clara_slumped_observation",
-      "title": "Elias appeared to be asleep at 07:30",
+      "title": "Elias appeared to be asleep at 17:30",
       "clue_type": "observation",
-      "description": "Clara noticed from the cafe window at 07:30 that Elias looked oddly slumped on his bench. She assumed he'd dozed off — he often did on warm mornings. She did not go out to check.",
+      "description": "Clara noticed from the cafe window at 17:30 that Elias looked oddly slumped on his bench. She assumed he'd dozed off — he often did on warm afternoons. She did not go out to check.",
       "strength": "weak",
       "reliability": 0.7,
       "ambiguity": "high",
@@ -172,7 +172,7 @@
       "clue_id": "clue_ben_alibi",
       "title": "Ben's round is corroborated",
       "clue_type": "witness_statement",
-      "description": "Ben's delivery receipts, timestamped by three separate shopkeepers, place him at the square only briefly at 07:15 — too late to have tampered with the pills before Nadia delivered them.",
+      "description": "Ben's delivery receipts, timestamped by three separate shopkeepers, place him at the square only briefly at 17:15 — too late to have tampered with the pills before Nadia delivered them.",
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "low",
@@ -185,7 +185,7 @@
     {
       "conclusion_id": "conc_nadia_motive",
       "type": "motive",
-      "summary": "Elias had directed his cottage estate to the clinic in his will — an arrangement Nadia managed and depended on. He was changing it this morning. Nadia's budget projections show how much she had invested in this bequest.",
+      "summary": "Elias had directed his cottage estate to the clinic in his will — an arrangement Nadia managed and depended on. He was changing it this afternoon. Nadia's budget projections show how much she had invested in this bequest.",
       "target_agent_id": "agent_nadia",
       "required_for_solution": true,
       "supported_by_clue_ids": ["clue_solicitor_appointment", "clue_elias_notebook", "clue_clinic_bequest_letter", "clue_nadia_budget_notes"]
@@ -201,7 +201,7 @@
     {
       "conclusion_id": "conc_nadia_opportunity",
       "type": "opportunity",
-      "summary": "Nadia was the last person to see Elias alive. She handed him the pill organiser at 07:05. He was healthy at 07:00 and dead by 07:21 — entirely within Nadia's window of contact.",
+      "summary": "Nadia was the last person to see Elias alive. She handed him the pill organiser at 17:05. He was healthy at 17:00 and dead by 17:21 — entirely within Nadia's window of contact.",
       "target_agent_id": "agent_nadia",
       "required_for_solution": true,
       "supported_by_clue_ids": ["clue_nadia_pill_handoff", "clue_ruth_pill_sighting", "clue_ruth_elias_wave"]
@@ -209,7 +209,7 @@
     {
       "conclusion_id": "conc_method",
       "type": "method",
-      "summary": "Elias died of digoxin overdose at 07:21. The extra capsules in the pill organiser were not his prescription. His collapse followed Nadia's pill handoff by sixteen minutes.",
+      "summary": "Elias died of digoxin overdose at 17:21. The extra capsules in the pill organiser were not his prescription. His collapse followed Nadia's pill handoff by sixteen minutes.",
       "required_for_solution": true,
       "supported_by_clue_ids": ["clue_extra_capsules", "clue_dr_haig_prescription", "clue_ben_posture", "clue_clara_slumped_observation"]
     },

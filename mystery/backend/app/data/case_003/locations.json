@@ -34,7 +34,7 @@
   {
     "location_id": "loc_hobbs_cafe",
     "name": "Hobbs Cafe",
-    "description": "The village cafe. Clara opens at 08:00. The window faces the square bench.",
+    "description": "The village cafe. Clara opens at 18:00. The window faces the square bench.",
     "connected_location_ids": ["loc_village_square"],
     "visibility_type": "public"
   },

@@ -19,9 +19,9 @@
         "claims": [
           {
             "claim_id": "claim_priya_stockroom_all_morning",
-            "summary": "Priya claims she was in the stockroom from 07:00 until Nadia arrived at 09:15.",
+            "summary": "Priya claims she was in the stockroom from 11:00 until Nadia arrived at 13:15.",
             "claim_type": "alibi",
-            "time_reference": "08:45",
+            "time_reference": "12:45",
             "location_reference_id": "loc_bookshop",
             "truthfulness": "false"
           }
@@ -30,8 +30,8 @@
       },
       {
         "question_type": "timeline",
-        "time_from": "08:30",
-        "time_to": "09:00",
+        "time_from": "12:30",
+        "time_to": "13:00",
         "answer_text": "That whole stretch I was in the stockroom. I put some music on quietly — through one earphone, so I could hear if Isabella needed me. She didn't call out. I didn't check on her. I should have.",
         "answer_type": "claim",
         "truthfulness": "false",
@@ -39,9 +39,9 @@
         "claims": [
           {
             "claim_id": "claim_priya_stockroom_all_morning",
-            "summary": "Priya claims she was in the stockroom from 07:00 until Nadia arrived at 09:15.",
+            "summary": "Priya claims she was in the stockroom from 11:00 until Nadia arrived at 13:15.",
             "claim_type": "alibi",
-            "time_reference": "08:45",
+            "time_reference": "12:45",
             "location_reference_id": "loc_bookshop",
             "truthfulness": "false"
           }
@@ -56,9 +56,9 @@
         "claims": [
           {
             "claim_id": "claim_priya_last_saw_isabella",
-            "summary": "Priya claims she last saw Isabella when she arrived at 08:32 and heard nothing further.",
+            "summary": "Priya claims she last saw Isabella when she arrived at 12:32 and heard nothing further.",
             "claim_type": "sighting",
-            "time_reference": "08:32",
+            "time_reference": "12:32",
             "location_reference_id": "loc_bookshop",
             "truthfulness": "false"
           }
@@ -151,7 +151,7 @@
     "agent_id": "agent_owen",
     "default_answers": {
       "alibi": "My yard. All morning. Concrete to pour — doesn't wait for anyone.",
-      "timeline": "Yard from seven. Danny and Lee were with me until half nine.",
+      "timeline": "Yard from seven. Danny and Lee were with me until half past one.",
       "last_seen_victim": "Couple of days ago. She sent me another letter — her solicitor, third reminder. Like I hadn't heard the first two.",
       "relationship": "She lent me money and enjoyed reminding me of it. I'm not going to pretend it was friendly.",
       "evidence": "You'd need to be more specific.",
@@ -160,16 +160,16 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I was pouring a concrete base in my yard from seven this morning. Danny Marsh and Lee Tuck were with me. Concrete sets when it sets — you can't leave it. We finished around half nine. Ask them both.",
+        "answer_text": "I was pouring a concrete base in my yard from seven this morning. Danny Marsh and Lee Tuck were with me. Concrete sets when it sets — you can't leave it. We finished around half past one. Ask them both.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "steady",
         "claims": [
           {
             "claim_id": "claim_owen_yard",
-            "summary": "Owen was pouring concrete with two workers from 07:00 to approximately 09:30.",
+            "summary": "Owen was pouring concrete with two workers from 11:00 to approximately 13:30.",
             "claim_type": "alibi",
-            "time_reference": "08:45",
+            "time_reference": "12:45",
             "location_reference_id": "loc_owen_house",
             "truthfulness": "true"
           }
@@ -215,8 +215,8 @@
     "rules": [
       {
         "question_type": "timeline",
-        "time_from": "08:20",
-        "time_to": "09:00",
+        "time_from": "12:20",
+        "time_to": "13:00",
         "answer_text": "Owen was prowling past the bookshop around twenty-five past eight, waving a bit of paper. He stood at the window for a good ten seconds — I thought he was going to go in. He didn't. Then Isabella arrived at half past, went straight in. Nothing unusual until the carrying-on inside.",
         "answer_type": "claim",
         "truthfulness": "true",
@@ -224,17 +224,17 @@
         "claims": [
           {
             "claim_id": "claim_elias_owen_window",
-            "summary": "Elias says Owen paused at the bookshop window at 08:25 before walking on.",
+            "summary": "Elias says Owen paused at the bookshop window at 12:25 before walking on.",
             "claim_type": "sighting",
-            "time_reference": "08:25",
+            "time_reference": "12:25",
             "location_reference_id": "loc_bookshop",
             "truthfulness": "true"
           },
           {
             "claim_id": "claim_elias_isabella_arrival",
-            "summary": "Elias confirms Isabella arrived at 08:32, earlier than her usual time.",
+            "summary": "Elias confirms Isabella arrived at 12:32, earlier than her usual time.",
             "claim_type": "sighting",
-            "time_reference": "08:32",
+            "time_reference": "12:32",
             "location_reference_id": "loc_bookshop",
             "truthfulness": "true"
           }
@@ -251,9 +251,9 @@
         "claims": [
           {
             "claim_id": "claim_elias_morning_account",
-            "summary": "Elias's full morning account: Priya at 07:00, Ruth at 07:10, Owen at 08:25, Isabella at 08:32.",
+            "summary": "Elias's full lunchtime account: Priya at 11:00, Ruth at 11:10, Owen at 12:25, Isabella at 12:32.",
             "claim_type": "sighting",
-            "time_reference": "08:32",
+            "time_reference": "12:32",
             "location_reference_id": "loc_village_square",
             "truthfulness": "true"
           }
@@ -299,8 +299,8 @@
       },
       {
         "question_type": "timeline",
-        "time_from": "08:30",
-        "time_to": "09:15",
+        "time_from": "12:30",
+        "time_to": "13:15",
         "answer_text": "I was at the clinic until nine-ten. I walked over to borrow a book. Priya said Isabella was in the back. I went through. I wish she'd been right.",
         "answer_type": "claim",
         "truthfulness": "true"
@@ -320,8 +320,8 @@
     "rules": [
       {
         "question_type": "timeline",
-        "time_from": "07:00",
-        "time_to": "08:00",
+        "time_from": "11:00",
+        "time_to": "12:00",
         "answer_text": "I delivered to the bookshop at seven-ten. Sealed letter from Whittle & Cross — I remember because it's a solicitor's franking, you notice those. Pushed it through the slot and moved on. Nothing unusual.",
         "answer_type": "claim",
         "truthfulness": "true",
@@ -329,9 +329,9 @@
         "claims": [
           {
             "claim_id": "claim_ruth_letter_time",
-            "summary": "Ruth delivered the Whittle & Cross letter at 07:10, sealed.",
+            "summary": "Ruth delivered the Whittle & Cross letter at 11:10, sealed.",
             "claim_type": "statement",
-            "time_reference": "07:10",
+            "time_reference": "11:10",
             "location_reference_id": "loc_bookshop",
             "truthfulness": "true"
           }
@@ -340,8 +340,8 @@
       },
       {
         "question_type": "timeline",
-        "time_from": "08:35",
-        "time_to": "09:00",
+        "time_from": "12:35",
+        "time_to": "13:00",
         "answer_text": "I was back along the rear alley finishing up at about twenty to nine. I heard something from the back of the bookshop — a bang, like a chair going over. I thought nothing of it. Then at about ten-to, I noticed the back window was broken and there was a bit of thread on the door latch. Green. I only thought to mention it when the fuss started.",
         "answer_type": "claim",
         "truthfulness": "true",
@@ -349,9 +349,9 @@
         "claims": [
           {
             "claim_id": "claim_ruth_crash",
-            "summary": "Ruth heard a crash at about 08:40 from the bookshop back room, and later noticed a broken window and green thread on the rear latch.",
+            "summary": "Ruth heard a crash at about 12:40 from the bookshop back room, and later noticed a broken window and green thread on the rear latch.",
             "claim_type": "sighting",
-            "time_reference": "08:40",
+            "time_reference": "12:40",
             "location_reference_id": "loc_rear_alley",
             "truthfulness": "true"
           }
@@ -364,7 +364,7 @@
   {
     "agent_id": "agent_ben",
     "default_answers": {
-      "alibi": "My round, as per usual. Van by the square from half seven.",
+      "alibi": "My round, as per usual. Van by the square from half eleven.",
       "timeline": "Square, deliveries, van. Same as every day.",
       "last_seen_victim": "Last proper conversation? Yesterday, when she signed for a parcel.",
       "relationship": "She was all right to me. Bit cool, but fair.",
@@ -374,8 +374,8 @@
     "rules": [
       {
         "question_type": "timeline",
-        "time_from": "08:40",
-        "time_to": "09:00",
+        "time_from": "12:40",
+        "time_to": "13:00",
         "answer_text": "I was loading up to leave around twenty-to. Went back down the alley to pick up an empty crate. Noticed the back window of the bookshop was broken — one pane, small. The glass was in the alley. Well, mostly. Thought it must have been a delivery gone wrong. Then I heard about Isabella.",
         "answer_type": "claim",
         "truthfulness": "true",
@@ -383,9 +383,9 @@
         "claims": [
           {
             "claim_id": "claim_ben_window",
-            "summary": "Ben noticed the broken bookshop back window at about 08:50 in the rear alley.",
+            "summary": "Ben noticed the broken bookshop back window at about 12:50 in the rear alley.",
             "claim_type": "sighting",
-            "time_reference": "08:50",
+            "time_reference": "12:50",
             "location_reference_id": "loc_rear_alley",
             "truthfulness": "true"
           }

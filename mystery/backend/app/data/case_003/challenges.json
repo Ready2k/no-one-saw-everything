@@ -27,7 +27,7 @@
     "response_text": "...I had made plans. Of course I had made plans. Six figures. A new treatment room. Equipment that could save lives. And Elias was going to give it all to a nephew he'd barely spoken to in twenty years because he got sentimental over Christmas. I was devastated. That is not the same as — I did not do this.",
     "emotional_shift": "raw",
     "pressure_delta": 0.4,
-    "sets_claim_status": "highly_disputed",
+    "sets_claim_status": "disputed",
     "new_claims": [
       {
         "claim_id": "claim_nadia_devastated",
@@ -41,10 +41,10 @@
     "target_agent_id": "agent_nadia",
     "challenged_claim_id": "claim_nadia_tamper_deflect",
     "evidence_clue_ids": ["clue_dispensary_log_altered", "clue_extra_capsules", "clue_dr_haig_prescription"],
-    "outcome": "near_crack",
+    "outcome": "partial_admission",
     "response_text": "You have my logs, my notes, and a dying man's organiser. I know how it looks. I know exactly how it looks. But you cannot prove I put those capsules there. You cannot prove that.",
     "emotional_shift": "cornered",
     "pressure_delta": 0.5,
-    "sets_claim_status": "near_broken"
+    "sets_claim_status": "disputed"
   }
 ]

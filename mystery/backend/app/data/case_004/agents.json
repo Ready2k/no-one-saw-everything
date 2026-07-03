@@ -4,114 +4,222 @@
     "full_name": "Owen Price",
     "age": 47,
     "occupation": "Builder",
-    "traits": ["blunt", "hot-tempered", "calculating about money"],
+    "traits": [
+      "blunt",
+      "hot-tempered",
+      "calculating about money"
+    ],
     "portrait": "🔨",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Evening: pub until ten, then home via the square.",
     "relationships": [
-      {"target_agent_id": "agent_ben", "relationship_type": "blackmailer", "affinity": 0.1, "trust": 0.1, "tension": 0.9},
-      {"target_agent_id": "agent_elias", "relationship_type": "old_acquaintance", "affinity": 0.2, "trust": 0.4, "tension": 0.1},
-      {"target_agent_id": "agent_priya", "relationship_type": "acquaintance", "affinity": 0.1, "trust": 0.3, "tension": 0.1}
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "blackmailer",
+        "affinity": 0.1,
+        "trust": 0.1,
+        "tension": 0.9
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "old_acquaintance",
+        "affinity": 0.2,
+        "trust": 0.4,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "acquaintance",
+        "affinity": 0.1,
+        "trust": 0.3,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.5,
     "memory_reliability": 0.7,
     "honesty_baseline": 0.4,
-    "is_victim": true
+    "is_victim": true,
+    "sprite_asset": "Carlos_Gomez.png"
   },
   {
     "agent_id": "agent_ben",
     "full_name": "Ben Carter",
     "age": 29,
     "occupation": "Delivery driver",
-    "traits": ["usually easygoing", "fiercely loyal to family", "hides pain behind humour"],
+    "traits": [
+      "usually easygoing",
+      "fiercely loyal to family",
+      "hides pain behind humour"
+    ],
     "portrait": "📦",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Evening: stays in usually. That night he went to the square after finding his father's papers.",
     "relationships": [
-      {"target_agent_id": "agent_owen", "relationship_type": "blackmail_victim_family", "affinity": -0.9, "trust": 0.0, "tension": 1.0},
-      {"target_agent_id": "agent_priya", "relationship_type": "secret_relationship", "affinity": 0.9, "trust": 0.8, "tension": 0.3},
-      {"target_agent_id": "agent_elias", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1}
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "blackmail_victim_family",
+        "affinity": -0.9,
+        "trust": 0.0,
+        "tension": 1.0
+      },
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "secret_relationship",
+        "affinity": 0.9,
+        "trust": 0.8,
+        "tension": 0.3
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.6,
     "memory_reliability": 0.65,
     "honesty_baseline": 0.7,
-    "gossip_tendency": 0.8
+    "gossip_tendency": 0.8,
+    "sprite_asset": "Ryan_Park.png"
   },
   {
     "agent_id": "agent_elias",
     "full_name": "Elias Grant",
     "age": 68,
     "occupation": "Retired schoolteacher",
-    "traits": ["nosy", "sleepless at night", "early riser"],
+    "traits": [
+      "nosy",
+      "sleepless at night",
+      "early riser"
+    ],
     "portrait": "🎩",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Often up at odd hours — lights on past midnight. Always the first on the bench at dawn.",
     "relationships": [
-      {"target_agent_id": "agent_owen", "relationship_type": "acquaintance", "affinity": 0.3, "trust": 0.5, "tension": 0.1},
-      {"target_agent_id": "agent_ben", "relationship_type": "acquaintance", "affinity": 0.2, "trust": 0.4, "tension": 0.1}
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "acquaintance",
+        "affinity": 0.2,
+        "trust": 0.4,
+        "tension": 0.1
+      }
     ],
     "observation_skill": 0.55,
     "memory_reliability": 0.5,
     "honesty_baseline": 0.9,
-    "gossip_tendency": 0.9
+    "gossip_tendency": 0.9,
+    "sprite_asset": "Adam_Smith.png"
   },
   {
     "agent_id": "agent_priya",
     "full_name": "Priya Shah",
     "age": 33,
     "occupation": "Bookshop assistant",
-    "traits": ["careful", "kind", "conflict-averse"],
+    "traits": [
+      "careful",
+      "kind",
+      "conflict-averse"
+    ],
     "portrait": "🌸",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Home by evening. That night, she and Ben were supposed to meet at ten. He cancelled with a vague message.",
     "relationships": [
-      {"target_agent_id": "agent_ben", "relationship_type": "secret_relationship", "affinity": 0.9, "trust": 0.8, "tension": 0.3}
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "secret_relationship",
+        "affinity": 0.9,
+        "trust": 0.8,
+        "tension": 0.3
+      }
     ],
     "observation_skill": 0.7,
     "memory_reliability": 0.8,
     "honesty_baseline": 0.65,
-    "conflict_avoidance": 0.85
+    "conflict_avoidance": 0.85,
+    "sprite_asset": "Priya_Kapoor.png"
   },
   {
     "agent_id": "agent_nadia",
     "full_name": "Nadia Cole",
     "age": 38,
     "occupation": "Clinic nurse",
-    "traits": ["observant", "practical", "discreet"],
+    "traits": [
+      "observant",
+      "practical",
+      "discreet"
+    ],
     "portrait": "🩺",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
     "routine_summary": "Home by nine-thirty most evenings. Window faces the square.",
     "relationships": [
-      {"target_agent_id": "agent_owen", "relationship_type": "neighbour", "affinity": 0.2, "trust": 0.4, "tension": 0.1},
-      {"target_agent_id": "agent_ben", "relationship_type": "acquaintance", "affinity": 0.4, "trust": 0.5, "tension": 0.0}
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "neighbour",
+        "affinity": 0.2,
+        "trust": 0.4,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "acquaintance",
+        "affinity": 0.4,
+        "trust": 0.5,
+        "tension": 0.0
+      }
     ],
     "observation_skill": 0.85,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
-    "gossip_tendency": 0.2
+    "gossip_tendency": 0.2,
+    "sprite_asset": "Ayesha_Khan.png"
   },
   {
     "agent_id": "agent_fred",
     "full_name": "Fred Dunmore",
     "age": 60,
     "occupation": "Pub landlord",
-    "traits": ["gregarious", "sharp memory for faces", "discreet about personal matters"],
+    "traits": [
+      "gregarious",
+      "sharp memory for faces",
+      "discreet about personal matters"
+    ],
     "portrait": "🍺",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_pub",
     "routine_summary": "Closes the pub at 23:00. Saw both Owen and Ben that evening.",
     "relationships": [
-      {"target_agent_id": "agent_owen", "relationship_type": "regular_customer", "affinity": 0.5, "trust": 0.5, "tension": 0.0},
-      {"target_agent_id": "agent_ben", "relationship_type": "occasional_customer", "affinity": 0.4, "trust": 0.5, "tension": 0.0}
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "regular_customer",
+        "affinity": 0.5,
+        "trust": 0.5,
+        "tension": 0.0
+      },
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "occasional_customer",
+        "affinity": 0.4,
+        "trust": 0.5,
+        "tension": 0.0
+      }
     ],
     "observation_skill": 0.7,
     "memory_reliability": 0.8,
     "honesty_baseline": 0.8,
-    "gossip_tendency": 0.5
+    "gossip_tendency": 0.5,
+    "sprite_asset": "Tom_Moreno.png"
   }
 ]

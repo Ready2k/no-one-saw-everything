@@ -47,7 +47,7 @@
         "question_type": "evidence",
         "topic_clue_id": "clue_blackmail_letters",
         "answer_text": "Where did you get those. Those are — those are my father's private things.",
-        "answer_type": "partial_admission",
+        "answer_type": "claim",
         "truthfulness": "mistaken",
         "emotional_shift": "shocked",
         "claims": [

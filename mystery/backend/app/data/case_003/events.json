@@ -1,7 +1,7 @@
 [
   {
     "event_id": "ev_0600_nadia_learns",
-    "time": "06:00",
+    "time": "16:00",
     "location_id": "loc_clinic",
     "agent_ids": ["agent_nadia"],
     "event_type": "hidden_action",
@@ -12,7 +12,7 @@
   },
   {
     "event_id": "ev_0630_nadia_dispensary",
-    "time": "06:30",
+    "time": "16:30",
     "location_id": "loc_clinic_dispensary",
     "agent_ids": ["agent_nadia"],
     "event_type": "hidden_action",
@@ -24,7 +24,7 @@
   },
   {
     "event_id": "ev_0640_elias_arrives",
-    "time": "06:40",
+    "time": "16:40",
     "location_id": "loc_elias_bench",
     "agent_ids": ["agent_elias"],
     "event_type": "routine",
@@ -35,7 +35,7 @@
   },
   {
     "event_id": "ev_0650_nadia_shift",
-    "time": "06:50",
+    "time": "16:50",
     "location_id": "loc_clinic",
     "agent_ids": ["agent_nadia"],
     "event_type": "routine",
@@ -45,7 +45,7 @@
   },
   {
     "event_id": "ev_0700_ruth_round",
-    "time": "07:00",
+    "time": "17:00",
     "location_id": "loc_village_square",
     "agent_ids": ["agent_ruth"],
     "event_type": "routine",
@@ -57,11 +57,11 @@
   },
   {
     "event_id": "ev_0705_nadia_checks_elias",
-    "time": "07:05",
+    "time": "17:05",
     "location_id": "loc_elias_bench",
     "agent_ids": ["agent_nadia", "agent_elias"],
     "event_type": "conversation",
-    "truth_description": "Nadia crosses the square to check on Elias as part of her usual routine. She hands him the weekly pill organiser as always. He thanks her warmly and takes his Tuesday morning pills with a sip of tea. She watches him swallow.",
+    "truth_description": "Nadia crosses the square to check on Elias as part of her usual routine. She hands him the weekly pill organiser as always. He thanks her warmly and takes his Tuesday afternoon pills with a sip of tea. She watches him swallow.",
     "player_description": "Nadia crosses from the clinic and has a brief word with Elias on the bench. She gives him something small.",
     "visibility": "public_partial",
     "visible_to_agent_ids": ["agent_ruth"],
@@ -71,7 +71,7 @@
   },
   {
     "event_id": "ev_0710_nadia_returns",
-    "time": "07:10",
+    "time": "17:10",
     "location_id": "loc_clinic",
     "agent_ids": ["agent_nadia"],
     "event_type": "return",
@@ -81,7 +81,7 @@
   },
   {
     "event_id": "ev_0715_ben_round",
-    "time": "07:15",
+    "time": "17:15",
     "location_id": "loc_village_square",
     "agent_ids": ["agent_ben"],
     "event_type": "movement",
@@ -93,7 +93,7 @@
   },
   {
     "event_id": "ev_0720_elias_distress",
-    "time": "07:20",
+    "time": "17:20",
     "location_id": "loc_elias_bench",
     "agent_ids": ["agent_elias"],
     "event_type": "medical_event",
@@ -104,7 +104,7 @@
   },
   {
     "event_id": "ev_0721_death",
-    "time": "07:21",
+    "time": "17:21",
     "location_id": "loc_elias_bench",
     "agent_ids": ["agent_elias"],
     "event_type": "murder",
@@ -115,7 +115,7 @@
   },
   {
     "event_id": "ev_0730_clara_opens",
-    "time": "07:30",
+    "time": "17:30",
     "location_id": "loc_hobbs_cafe",
     "agent_ids": ["agent_clara"],
     "event_type": "routine",
@@ -127,11 +127,11 @@
   },
   {
     "event_id": "ev_0800_owen_discovery",
-    "time": "08:00",
+    "time": "18:00",
     "location_id": "loc_elias_bench",
     "agent_ids": ["agent_owen", "agent_elias"],
     "event_type": "body_discovery",
-    "truth_description": "Owen crosses the square on his usual morning route and claps Elias on the shoulder. Elias falls. Owen shouts for help — the square empties and fills again in seconds.",
+    "truth_description": "Owen crosses the square on his usual afternoon route and claps Elias on the shoulder. Elias falls. Owen shouts for help — the square empties and fills again in seconds.",
     "player_description": "Owen Price reaches the bench and shakes Elias's shoulder. The old man falls sideways. Owen's shout brings people running.",
     "visibility": "public",
     "importance": 10

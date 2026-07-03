@@ -33,11 +33,11 @@
     "target_agent_id": "agent_ben",
     "challenged_claim_id": "claim_ben_barely_knew_owen",
     "evidence_clue_ids": ["clue_blackmail_letters"],
-    "outcome": "near_crack",
+    "outcome": "partial_admission",
     "response_text": "He ruined my father. Twelve years — twelve years of payments because of something that was an accident. Dad lived with it his whole life. He died afraid Owen would still come after us. You want to know why I'm upset? That's why.",
     "emotional_shift": "raw_grief",
     "pressure_delta": 0.5,
-    "sets_claim_status": "partially_broken",
+    "sets_claim_status": "disputed",
     "new_claims": [
       {
         "claim_id": "claim_ben_motive_revealed",
@@ -51,11 +51,11 @@
     "target_agent_id": "agent_ben",
     "challenged_claim_id": "claim_ben_walked_square",
     "evidence_clue_ids": ["clue_blackmail_letters", "clue_jacket_mud", "clue_bootprint"],
-    "outcome": "near_crack",
+    "outcome": "partial_admission",
     "response_text": "I went to the fountain. I confronted him. He laughed at me. He said my dad had come to him — that he'd asked for it. And then he turned away and I — I had the stone in my hand and I don't remember deciding. I remember dropping it.",
     "emotional_shift": "breaking",
     "pressure_delta": 0.7,
-    "sets_claim_status": "broken",
+    "sets_claim_status": "disputed",
     "new_claims": [
       {
         "claim_id": "claim_ben_confession",
