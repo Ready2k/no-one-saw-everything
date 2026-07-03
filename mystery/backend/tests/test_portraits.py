@@ -42,6 +42,12 @@ def test_project_agent_round_trips_portrait_art():
     }
 
 
+def test_case_overview_includes_scene_description():
+    overview = client.get("/api/case").json()
+    assert "scene_description" in overview
+    assert isinstance(overview["scene_description"], str)  # empty = client fallback
+
+
 def test_board_suspects_include_pressure():
     board = client.get("/api/board").json()
     assert board["suspects"], "case must have suspects"

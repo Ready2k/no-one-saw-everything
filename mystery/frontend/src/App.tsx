@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "./api";
 import type { AgentPublic, CaseOverview, LocationPublic } from "./types";
+import Intro from "./views/Intro";
 import Overview from "./views/Overview";
 import Rewind from "./views/Rewind";
 import MapReplay from "./views/MapReplay";
@@ -57,10 +58,15 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
+// The body-discovery intro plays once per case; the flag is cleared when a
+// fresh investigation is started so a new session sees it again.
+const introSeenKey = (caseId: string) => `mystery_intro_seen_${caseId}`;
+
 export default function App() {
   const [world, setWorld] = useState<World | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<TabId>("overview");
+  const [showIntro, setShowIntro] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [mapJump, setMapJump] = useState<MapJump | null>(null);
   const [suspectFocus, setSuspectFocus] = useState<string | null>(null);
@@ -77,6 +83,7 @@ export default function App() {
           locationName: (id) =>
             locations.find((l) => l.location_id === id)?.name ?? id,
         });
+        setShowIntro(!localStorage.getItem(introSeenKey(caseOverview.case_id)));
       })
       .catch((e) => setError(String(e)));
   }, []);
@@ -89,6 +96,20 @@ export default function App() {
       </div>
     );
   if (!world) return <div className="app-loading">Opening the case file…</div>;
+
+  if (showIntro) {
+    return (
+      <WorldContext.Provider value={world}>
+        <Intro
+          onBegin={() => {
+            localStorage.setItem(introSeenKey(world.caseOverview.case_id), "1");
+            setShowIntro(false);
+            setTab("overview");
+          }}
+        />
+      </WorldContext.Provider>
+    );
+  }
 
   return (
     <WorldContext.Provider value={world}>
@@ -123,6 +144,7 @@ export default function App() {
               onClick={async () => {
                 if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
                   await api.reset();
+                  localStorage.removeItem(introSeenKey(world.caseOverview.case_id));
                   location.reload();
                 }
               }}

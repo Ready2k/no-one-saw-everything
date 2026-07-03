@@ -565,3 +565,66 @@ textarea { min-height: 70px; resize: vertical; }
   .map-replay { grid-template-columns: 1fr; }
   .map-side { position: static; max-height: none; }
 }
+
+/* Body discovery intro scene */
+.intro-scene {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 2rem;
+}
+.intro-skip {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.4rem;
+  background: none;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+}
+.intro-skip:hover { color: inherit; border-color: currentColor; }
+.intro-stage {
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  text-align: center;
+}
+.intro-time { font-size: 1.4rem; letter-spacing: 0.2em; color: var(--accent); margin: 0; }
+.intro-victim { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+.intro-victim h1 { margin: 0; font-size: 2rem; }
+.intro-victim .portrait { font-size: 3rem; }
+.intro-description { color: var(--muted); line-height: 1.6; margin: 0; }
+.intro-place { display: flex; flex-direction: column; align-items: center; gap: 0.7rem; }
+.intro-map-crop {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  image-rendering: pixelated;
+  background-repeat: no-repeat;
+  max-width: 100%;
+}
+.intro-witness-row { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+.intro-witness { white-space: nowrap; }
+.intro-cta { font-size: 1.05rem; padding: 0.7rem 1.6rem; }
+
+/* Staged reveal: each beat fades in on a delay. */
+.intro-beat { opacity: 0; animation: intro-fade 0.7s ease forwards; }
+.intro-time { animation-delay: 0.2s; }
+.intro-victim { animation-delay: 0.9s; }
+.intro-description { animation-delay: 1.8s; }
+.intro-place { animation-delay: 2.6s; }
+.intro-witnesses { animation-delay: 3.3s; }
+.intro-cta { animation-delay: 3.9s; }
+@keyframes intro-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-beat { animation: none; opacity: 1; }
+  .visual-map { transition: none !important; }
+}

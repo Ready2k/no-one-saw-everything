@@ -36,6 +36,7 @@ export interface CaseOverview {
   discovery_location: LocationPublic;
   sim_start_time: string;
   murder_window: [string, string];
+  scene_description: string;
 }
 
 export interface MapPosition {

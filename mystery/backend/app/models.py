@@ -296,6 +296,9 @@ class CaseFile(BaseModel):
     sim_start_time: str = "06:00"
     murder_window: tuple[str, str] = ("07:45", "08:00")
     overview_text: str = ""
+    # Optional flavour text for the body-discovery intro scene; empty means
+    # the client falls back to overview_text.
+    scene_description: str = ""
 
 
 # ---------------------------------------------------------------------------

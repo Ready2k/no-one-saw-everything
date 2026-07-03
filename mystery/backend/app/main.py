@@ -100,6 +100,7 @@ def get_case():
         "discovery_location": project_location(location),
         "sim_start_time": case.sim_start_time,
         "murder_window": list(case.murder_window),
+        "scene_description": case.scene_description,
     }
 
 
