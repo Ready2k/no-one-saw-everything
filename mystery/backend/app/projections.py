@@ -22,6 +22,7 @@ def project_agent(agent: Agent) -> dict[str, Any]:
         "occupation": agent.occupation,
         "traits": agent.traits,
         "portrait": agent.portrait,
+        "portrait_art": agent.portrait_art.model_dump() if agent.portrait_art else None,
         "home_location_id": agent.home_location_id,
         "work_location_id": agent.work_location_id,
         "routine_summary": agent.routine_summary,

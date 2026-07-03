@@ -1,10 +1,14 @@
 """Render the original the_ville.tmx tilemap to a static PNG.
 
 One-off build tool for the map replay layer: composites the visual tile
-layers (skipping logic/marker layers) and writes a downscaled PNG to
-mystery/frontend/public/map/the_ville.png. Coordinates used by the game
-are in the 719x513 reference space; the output keeps the same aspect
-ratio so percentage-based placement is unaffected.
+layers (skipping logic/marker layers) and writes a PNG to
+mystery/frontend/public/map/the_ville.png at the tileset's native
+resolution (no resampling — a resize here would smooth the flat-color
+pixel art, and that softness then gets baked in permanently, showing up
+as blur once the frontend's map-replay zoom stretches it further).
+Coordinates used by the game are in the 719x513 reference space; percentage
+-based placement is resolution-independent so this stays in sync regardless
+of the output's actual pixel dimensions.
 
 Usage: python3 mystery/scripts/render_map.py
 """
@@ -19,7 +23,6 @@ from PIL import Image
 REPO = Path(__file__).resolve().parents[2]
 TMX = REPO / "environment/frontend_server/static_dirs/assets/the_ville/visuals/the_ville.tmx"
 OUT = REPO / "mystery/frontend/public/map/the_ville.png"
-OUT_WIDTH = 1438  # 2x the 719x513 reference space
 
 VISUAL_LAYERS = [
     "Bottom Ground",
@@ -95,10 +98,8 @@ def main() -> None:
             canvas.paste(tile, (x, y), tile)
         print(f"composited {name}")
 
-    out_height = round(canvas.height * OUT_WIDTH / canvas.width)
-    scaled = canvas.resize((OUT_WIDTH, out_height), Image.Resampling.LANCZOS)
-    scaled.convert("RGB").save(OUT, optimize=True)
-    print(f"wrote {OUT} ({OUT_WIDTH}x{out_height})")
+    canvas.convert("RGB").save(OUT, optimize=True)
+    print(f"wrote {OUT} ({canvas.width}x{canvas.height})")
 
 
 if __name__ == "__main__":

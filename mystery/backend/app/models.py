@@ -141,6 +141,18 @@ class Relationship(BaseModel):
     tension: float = 0.0
 
 
+class PortraitState(BaseModel):
+    """Optional per-expression portrait asset paths (cosmetic only).
+
+    Any state may be absent; the frontend falls back through
+    cracking > defensive > calm > the legacy emoji `portrait`.
+    """
+
+    calm: Optional[str] = None
+    defensive: Optional[str] = None
+    cracking: Optional[str] = None
+
+
 class Agent(BaseModel):
     agent_id: str
     full_name: str
@@ -148,6 +160,7 @@ class Agent(BaseModel):
     occupation: str
     traits: list[str] = []
     portrait: Optional[str] = None  # emoji or asset path for MVP
+    portrait_art: Optional[PortraitState] = None
     home_location_id: Optional[str] = None
     work_location_id: Optional[str] = None
     routine_summary: str = ""

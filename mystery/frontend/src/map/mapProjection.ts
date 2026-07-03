@@ -58,8 +58,13 @@ export function buildTracks(data: MapReplayData): Map<string, TrackPoint[]> {
 
 function spread(index: number, count: number): { dx: number; dy: number } {
   if (count <= 1) return { dx: 0, dy: 0 };
-  const angle = (2 * Math.PI * index) / count;
-  return { dx: Math.cos(angle) * 12, dy: Math.sin(angle) * 12 };
+  // Radius grows with crowd size so agents sharing a default location (e.g.
+  // several villagers with no authored home, parked at the square) don't
+  // fully overlap. Map coordinates are in the ~719-wide reference space;
+  // the map view supports zooming in to resolve dense clusters further.
+  const radius = Math.min(50, 20 + count * 7);
+  const angle = (2 * Math.PI * index) / count - Math.PI / 2;
+  return { dx: Math.cos(angle) * radius, dy: Math.sin(angle) * radius };
 }
 
 /** Where each agent is drawn at minute t — last known sighting, with

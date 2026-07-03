@@ -1,3 +1,9 @@
+export interface PortraitState {
+  calm: string | null;
+  defensive: string | null;
+  cracking: string | null;
+}
+
 export interface AgentPublic {
   agent_id: string;
   full_name: string;
@@ -5,6 +11,7 @@ export interface AgentPublic {
   occupation: string;
   traits: string[];
   portrait: string | null;
+  portrait_art: PortraitState | null;
   home_location_id: string | null;
   work_location_id: string | null;
   routine_summary: string;
@@ -242,6 +249,7 @@ export type SuspicionLevel =
 export interface BoardSuspect {
   agent: AgentPublic;
   suspicion: SuspicionLevel;
+  pressure: number;
   claims: ClaimPublic[];
   linked_clues: CluePublic[];
   pinned_notes: Note[];

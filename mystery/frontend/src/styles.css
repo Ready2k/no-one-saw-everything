@@ -173,6 +173,10 @@ textarea { min-height: 70px; resize: vertical; }
 .suspect.active { border-color: var(--accent); }
 .suspect-name { display: block; font-weight: 600; }
 .portrait { font-size: 1.6rem; }
+.portrait-img { object-fit: cover; border-radius: 6px; vertical-align: middle; }
+.portrait-img.portrait-small { width: 2rem; height: 2rem; }
+.portrait-img.portrait-large { width: 3rem; height: 3rem; }
+.portrait-img.expression-cracking { filter: saturate(1.15) contrast(1.05); }
 
 .interview-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
 .interview-head h2 { margin: 0; }
@@ -391,7 +395,7 @@ textarea { min-height: 70px; resize: vertical; }
   font-size: 0.8rem;
 }
 
-.visual-map {
+.visual-map-viewport {
   position: relative;
   width: 100%;
   border: 1px solid var(--line);
@@ -399,7 +403,20 @@ textarea { min-height: 70px; resize: vertical; }
   overflow: hidden;
   background: #0d0f14;
   user-select: none;
+  cursor: grab;
+  touch-action: none;
 }
+.visual-map-viewport:active { cursor: grabbing; }
+
+.visual-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.visual-map.zoomed { cursor: move; }
 .visual-map-image {
   position: absolute;
   inset: 0;
@@ -407,6 +424,25 @@ textarea { min-height: 70px; resize: vertical; }
   height: 100%;
   image-rendering: pixelated;
   filter: saturate(0.85) brightness(0.9);
+  pointer-events: none;
+}
+
+.map-zoom-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.map-zoom-controls button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  line-height: 1;
+  font-size: 1rem;
+  background: rgba(29, 32, 41, 0.88);
 }
 
 .map-loc-bounds {
@@ -420,7 +456,7 @@ textarea { min-height: 70px; resize: vertical; }
 
 .map-loc-label {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(calc(1 / var(--map-scale, 1)));
   font-size: 0.62rem;
   padding: 1px 6px;
   border-radius: 8px;

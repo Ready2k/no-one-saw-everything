@@ -41,6 +41,40 @@
       ],
       "cwd": "mystery/frontend",
       "port": 5174
+    },
+    {
+      "name": "mystery-backend-alt2",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", ".venv/bin/uvicorn app.main:app --port 8012"],
+      "cwd": "mystery/backend",
+      "port": 8012
+    },
+    {
+      "name": "mystery-frontend-alt2",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "MYSTERY_API_PORT=8012 npm run dev -- --port 5175 --strictPort"
+      ],
+      "cwd": "mystery/frontend",
+      "port": 5175
+    },
+    {
+      "name": "mystery-backend-alt3",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", ".venv/bin/uvicorn app.main:app --port 8013"],
+      "cwd": "mystery/backend",
+      "port": 8013
+    },
+    {
+      "name": "mystery-frontend-alt3",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "MYSTERY_API_PORT=8013 npm run dev -- --port 5176 --strictPort"
+      ],
+      "cwd": "mystery/frontend",
+      "port": 5176
     }
   ]
 }

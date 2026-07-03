@@ -11,6 +11,7 @@ import type {
   TranscriptMessage,
 } from "../types";
 import { ClueCard } from "./shared";
+import Portrait from "../components/Portrait";
 
 const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "unknown", label: "Unmarked" },
@@ -24,6 +25,7 @@ const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
 export default function Suspects({ focusAgentId }: { focusAgentId?: string | null }) {
   const { agents } = useWorld();
   const living = agents.filter((a) => !a.is_victim);
+  const [pressureById, setPressureById] = useState<Record<string, number>>({});
   const [selectedId, setSelectedId] = useState(
     (focusAgentId && living.some((a) => a.agent_id === focusAgentId)
       ? focusAgentId
@@ -46,7 +48,7 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
             className={`suspect ${selectedId === a.agent_id ? "active" : ""}`}
             onClick={() => setSelectedId(a.agent_id)}
           >
-            <span className="portrait">{a.portrait}</span>
+            <Portrait agent={a} pressure={pressureById[a.agent_id] ?? 0} />
             <span>
               <span className="suspect-name">{a.full_name}</span>
               <span className="muted small">{a.occupation}</span>
@@ -54,12 +56,27 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
           </button>
         ))}
       </div>
-      {selected && <InterviewPanel key={selected.agent_id} agentId={selected.agent_id} />}
+      {selected && (
+        <InterviewPanel
+          key={selected.agent_id}
+          agentId={selected.agent_id}
+          pressure={pressureById[selected.agent_id] ?? 0}
+          onPressures={setPressureById}
+        />
+      )}
     </div>
   );
 }
 
-function InterviewPanel({ agentId }: { agentId: string }) {
+function InterviewPanel({
+  agentId,
+  pressure,
+  onPressures,
+}: {
+  agentId: string;
+  pressure: number;
+  onPressures: (pressures: Record<string, number>) => void;
+}) {
   const { agents, locations, caseOverview } = useWorld();
   const agent = agents.find((a) => a.agent_id === agentId)!;
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
@@ -101,8 +118,11 @@ function InterviewPanel({ agentId }: { agentId: string }) {
     api.board().then((b) => {
       const me = b.suspects.find((s) => s.agent.agent_id === agentId);
       if (me) setSuspicion(me.suspicion);
+      onPressures(
+        Object.fromEntries(b.suspects.map((s) => [s.agent.agent_id, s.pressure ?? 0]))
+      );
     });
-  }, [agentId]);
+  }, [agentId, onPressures]);
 
   useEffect(refresh, [refresh]);
 
@@ -200,7 +220,7 @@ function InterviewPanel({ agentId }: { agentId: string }) {
       <div className="interview-head">
         <div>
           <h2>
-            {agent.portrait} {agent.full_name}
+            <Portrait agent={agent} pressure={pressure} size="large" /> {agent.full_name}
           </h2>
           <p className="muted">
             {agent.occupation}, {agent.age} · {agent.traits.join(", ")}

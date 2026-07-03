@@ -1,13 +1,14 @@
 import type { MapAgent } from "../types";
 import { SPRITE_SHEET, spriteUrl } from "../map/mapAssets";
 
-// A single idle frame cropped from the original 96x128 Smallville sheet.
-// The sprite is only a visual avatar — the label always shows the
-// canonical mystery character name.
+// A single idle frame cropped from the original Smallville sheet, drawn at
+// exactly one map-tile's on-screen footprint (see MAP_GRID) so characters
+// stay proportionate to furniture/buildings at any zoom level.
 export default function AgentSprite({
   agent,
   x,
   y,
+  size,
   stale,
   lastSeen,
   onClick,
@@ -15,6 +16,7 @@ export default function AgentSprite({
   agent: MapAgent;
   x: number;
   y: number;
+  size: { width: number; height: number };
   stale: boolean;
   lastSeen: string | null;
   onClick?: () => void;
@@ -33,10 +35,11 @@ export default function AgentSprite({
       <span
         className="map-agent-sprite"
         style={{
-          width: SPRITE_SHEET.frameWidth,
-          height: SPRITE_SHEET.frameHeight,
+          width: size.width,
+          height: size.height,
           backgroundImage: `url(${spriteUrl(agent.sprite_asset)})`,
-          backgroundPosition: `${SPRITE_SHEET.idleDownX}px ${SPRITE_SHEET.idleDownY}px`,
+          backgroundSize: `${SPRITE_SHEET.cols * size.width}px ${SPRITE_SHEET.rows * size.height}px`,
+          backgroundPosition: `${-SPRITE_SHEET.idleCol * size.width}px ${-SPRITE_SHEET.idleRow * size.height}px`,
         }}
       />
       <span className="map-agent-name">

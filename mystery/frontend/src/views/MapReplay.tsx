@@ -210,6 +210,7 @@ export default function MapReplay({
           markers={markers}
           selectedEventId={selectedEvent?.event_id ?? null}
           selectedLocationId={selectedLocationId}
+          focusLocationId={locationFilter || null}
           onSelectEvent={(e) => {
             setSelectedEvent(e);
             setSelectedLocationId(null);

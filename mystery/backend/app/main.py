@@ -556,6 +556,7 @@ def board():
             {
                 "agent": project_agent(agent),
                 "suspicion": sess.suspicion.get(agent.agent_id, "unknown"),
+                "pressure": round(sess.pressure_for(agent.agent_id), 3),
                 "claims": agent_claims,
                 "linked_clues": linked_clues,
                 "pinned_notes": pinned_notes,

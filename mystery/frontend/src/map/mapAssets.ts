@@ -10,12 +10,27 @@ export function spriteUrl(spriteAsset: string): string {
   return `/map/sprites/${spriteAsset}`;
 }
 
-// Original Smallville character sheets are 96x128: a 3x4 grid of 32x32
-// frames (columns: step-left / idle / step-right; rows: down / left /
-// right / up). We render the idle, facing-down frame.
+// Original Smallville character sheets are a 3x4 grid of frames (columns:
+// step-left / idle / step-right; rows: down / left / right / up). We render
+// the idle, facing-down frame. Expressed as grid indices (not pixels) so the
+// frame can be drawn at any on-screen size via background-size scaling.
 export const SPRITE_SHEET = {
-  frameWidth: 32,
-  frameHeight: 32,
-  idleDownX: -32, // middle column
-  idleDownY: 0, // top row
+  cols: 3,
+  rows: 4,
+  idleCol: 1,
+  idleRow: 0,
 } as const;
+
+// the_ville tilemap is 140x100 tiles of 32px each (see maze_meta_info.json).
+// An agent's on-screen footprint should track 1/140 of the map's width and
+// 1/100 of its height — not a fixed pixel size, or it ends up wildly out of
+// scale relative to furniture/buildings at any given zoom.
+export const MAP_GRID = { cols: 140, rows: 100 } as const;
+
+// The original Phaser renderer (environment/frontend_server/templates/demo/
+// main_script.html) draws each 32x32 character frame at displayWidth=40
+// against tile_width=32 (`new_sprite.displayWidth = 40; scaleY = scaleX`) —
+// i.e. characters are deliberately drawn at 1.25x a tile, not exactly 1:1,
+// so they read clearly and overlap neighboring tiles slightly. Matched here
+// so sprite proportions agree with the source game.
+export const AGENT_TILE_SCALE = 40 / 32;
