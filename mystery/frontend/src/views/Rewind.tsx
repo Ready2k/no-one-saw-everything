@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, hhmm, minutes } from "../api";
 import { useWorld } from "../App";
-import type { CluePublic, EventPublic } from "../types";
+import type { CluePublic, EventPublic, LocationPublic } from "../types";
+import LocationTransition, {
+  shouldPlayLocationTransition,
+} from "../components/LocationTransition";
 
 export default function Rewind() {
   const { caseOverview, agents, locations, locationName, agentName } = useWorld();
@@ -14,6 +17,7 @@ export default function Rewind() {
   const [agentId, setAgentId] = useState("");
   const [events, setEvents] = useState<EventPublic[]>([]);
   const [toast, setToast] = useState<CluePublic[] | null>(null);
+  const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
 
   const refresh = useCallback(() => {
     api
@@ -43,6 +47,12 @@ export default function Rewind() {
 
   return (
     <div className="rewind">
+      {transitionLoc && (
+        <LocationTransition
+          location={transitionLoc}
+          onDone={() => setTransitionLoc(null)}
+        />
+      )}
       <div className="rewind-controls panel">
         <div className="range-row">
           <label>
@@ -75,7 +85,15 @@ export default function Rewind() {
           </label>
         </div>
         <div className="filter-row">
-          <select value={locationId} onChange={(e) => setLocationId(e.target.value)}>
+          <select
+            value={locationId}
+            onChange={(e) => {
+              const id = e.target.value;
+              setLocationId(id);
+              const loc = locations.find((l) => l.location_id === id);
+              if (loc && shouldPlayLocationTransition(id)) setTransitionLoc(loc);
+            }}
+          >
             <option value="">All locations</option>
             {locations.map((l) => (
               <option key={l.location_id} value={l.location_id}>

@@ -180,6 +180,9 @@ class Location(BaseModel):
     location_id: str
     name: str
     description: str = ""
+    # Optional establishing-shot asset path (cosmetic only); absent means the
+    # client falls back to a map crop or skips the transition.
+    illustration: Optional[str] = None
     connected_location_ids: list[str] = []
     access_rules: list[str] = []
     visibility_type: Literal["public", "private"] = "public"
@@ -390,6 +393,8 @@ class Solution(BaseModel):
     opportunity: SolutionCriterion
     key_clue_ids: list[str] = []          # the clues that prove the case
     explanation: str = ""                  # shown on a correct reveal
+    epilogues: dict[str, str] = Field(default_factory=dict)
+
 
 
 # ---------------------------------------------------------------------------
@@ -627,6 +632,13 @@ class RedHerringExplanation(BaseModel):
     actually_innocent_because: str
 
 
+class EpilogueCard(BaseModel):
+    agent_id: str
+    agent_name: str
+    text: str
+
+
+
 class TimelineEntry(BaseModel):
     time: str
     description: str
@@ -636,6 +648,9 @@ class TimelineEntry(BaseModel):
 class AccusationResult(BaseModel):
     accusation_id: str
     case_id: str
+    # Who the player accused — only ever returned post-accusation.
+    accused_agent_id: str = ""
+    accused_name: str = ""
     score: int
     killer_correct: bool
     motive_correct: bool
@@ -655,7 +670,9 @@ class AccusationResult(BaseModel):
     key_clues_found: list[str] = []
     key_clues_missed: list[str] = []
     red_herring_explanations: list[RedHerringExplanation] = []
+    epilogues: list[EpilogueCard] = Field(default_factory=list)
     player_evidence_used: list[str] = []
+
     detective_rating: str = ""
 
 # ---------------------------------------------------------------------------

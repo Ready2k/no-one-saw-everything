@@ -25,6 +25,7 @@ export interface LocationPublic {
   description: string;
   connected_location_ids: string[];
   visibility_type: "public" | "private";
+  illustration: string | null;
 }
 
 export interface CaseOverview {
@@ -310,9 +311,18 @@ export interface RedHerringExplanation {
   actually_innocent_because: string;
 }
 
+export interface EpilogueCard {
+  agent_id: string;
+  agent_name: string;
+  text: string;
+}
+
+
 export interface AccusationResult {
   accusation_id: string;
   case_id: string;
+  accused_agent_id: string;
+  accused_name: string;
   score: number;
   killer_correct: boolean;
   motive_correct: boolean;
@@ -331,6 +341,7 @@ export interface AccusationResult {
   key_clues_found: string[];
   key_clues_missed: string[];
   red_herring_explanations: RedHerringExplanation[];
+  epilogues: EpilogueCard[];
   player_evidence_used: string[];
   detective_rating: string;
 }

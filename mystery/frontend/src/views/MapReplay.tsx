@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api, hhmm, minutes } from "../api";
 import { useWorld, type MapJump } from "../App";
-import type { CluePublic, MapEvent, MapReplayData } from "../types";
+import type { CluePublic, LocationPublic, MapEvent, MapReplayData } from "../types";
+import LocationTransition, {
+  shouldPlayLocationTransition,
+} from "../components/LocationTransition";
 import VisualMap from "../components/VisualMap";
 import MapTimeline from "../components/MapTimeline";
 import { markerMeta } from "../components/EventMarker";
 import { agentPinsAt, buildTracks, markersAt } from "../map/mapProjection";
+import { audioManager } from "../audio";
 
 const TICK_MS = 600; // real ms per replayed game-minute at 1x
 
@@ -33,6 +37,7 @@ export default function MapReplay({
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [inspectResult, setInspectResult] = useState<string | null>(null);
   const [toast, setToast] = useState<CluePublic[] | null>(null);
+  const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
 
   // Full-range fetch; filtering is applied client-side on already-projected
   // (player-safe) data so agent position tracks stay complete.
@@ -129,6 +134,7 @@ export default function MapReplay({
   const pinEvent = async (event: MapEvent) => {
     const result = await api.pinEvent(event.event_id);
     if (result.new_clues.length) {
+      audioManager.playStinger("clue_discovered");
       setToast(result.new_clues);
       setTimeout(() => setToast(null), 6000);
     }
@@ -150,6 +156,7 @@ export default function MapReplay({
   const inspectLocation = async (locationId: string) => {
     const result = await api.inspect(locationId);
     if (result.new_clues.length) {
+      audioManager.playStinger("clue_discovered");
       setToast(result.new_clues);
       setTimeout(() => setToast(null), 6000);
     }
@@ -162,6 +169,12 @@ export default function MapReplay({
 
   return (
     <div className="map-replay">
+      {transitionLoc && (
+        <LocationTransition
+          location={transitionLoc}
+          onDone={() => setTransitionLoc(null)}
+        />
+      )}
       <div className="map-replay-main">
         <div className="map-toolbar panel">
           <select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)}>
@@ -219,6 +232,8 @@ export default function MapReplay({
             setSelectedLocationId(id);
             setSelectedEvent(null);
             setInspectResult(null);
+            const loc = data.locations.find((l) => l.location_id === id);
+            if (loc && shouldPlayLocationTransition(id)) setTransitionLoc(loc);
           }}
           onSelectAgent={onOpenSuspect}
         />

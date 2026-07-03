@@ -11,6 +11,11 @@ import BoardView from "./views/Board";
 import Accuse from "./views/Accuse";
 import GenerateCaseModal from "./views/GenerateCaseModal";
 import { PlaytestPanel } from "./views/PlaytestPanel";
+import AudioControls from "./components/AudioControls";
+import CinematicsToggle from "./components/CinematicsToggle";
+import RankBadge from "./components/RankBadge";
+import { audioManager } from "./audio";
+import { clearCaseStarted, markCaseStarted } from "./progress";
 
 export interface World {
   caseOverview: CaseOverview;
@@ -84,9 +89,16 @@ export default function App() {
             locations.find((l) => l.location_id === id)?.name ?? id,
         });
         setShowIntro(!localStorage.getItem(introSeenKey(caseOverview.case_id)));
+        markCaseStarted(caseOverview.case_id);
       })
       .catch((e) => setError(String(e)));
   }, []);
+
+  useEffect(() => {
+    if (tab !== "accuse") {
+      audioManager.playAmbient("investigation");
+    }
+  }, [tab]);
 
   if (error)
     return (
@@ -139,6 +151,9 @@ export default function App() {
             ))}
           </nav>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <RankBadge />
+            <CinematicsToggle />
+            <AudioControls />
             <select
               value={world.caseOverview.case_id}
               onChange={async (e) => {
@@ -157,6 +172,7 @@ export default function App() {
                 if (confirm(`Switch to ${caseNames[newCaseId]}? Your current progress will be lost.`)) {
                   await api.activate(newCaseId);
                   localStorage.removeItem(introSeenKey(newCaseId));
+                  clearCaseStarted(newCaseId);
                   location.reload();
                 }
               }}
@@ -183,6 +199,7 @@ export default function App() {
                 if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
                   await api.reset();
                   localStorage.removeItem(introSeenKey(world.caseOverview.case_id));
+                  clearCaseStarted(world.caseOverview.case_id);
                   location.reload();
                 }
               }}

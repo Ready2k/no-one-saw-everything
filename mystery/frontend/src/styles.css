@@ -336,9 +336,74 @@ textarea { min-height: 70px; resize: vertical; }
 }
 .small-button { font-size: 0.78rem; align-self: flex-start; }
 
+/* Question console */
 .question-builder { display: flex; flex-direction: column; gap: 0.6rem; }
 .question-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+.flex-1 { flex: 1; min-width: 0; }
+.free-text-row { flex-wrap: nowrap; }
+.free-text-input {
+  padding: 12px 14px;
+  font-size: 1.02rem;
+  border-color: rgba(216, 162, 74, 0.45);
+  background: #12141b;
+}
+.free-text-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(216, 162, 74, 0.18);
+}
+.ask-btn { padding: 12px 26px; font-size: 1rem; border-color: var(--accent); flex-shrink: 0; }
+.input-help { margin: -0.2rem 0 0 2px; }
+.question-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.2rem 0;
+}
+.question-divider::before, .question-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--line);
+}
+
+/* Structured questioning cards */
+.structured-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: stretch; }
+.structured-card { display: flex; flex-direction: column; gap: 0.5rem; }
+.structured-card .question-row { margin-top: auto; }
+.structured-card > p { margin: 0; }
+.structured-title {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.structured-card.evidence { border-color: rgba(200, 80, 60, 0.5); }
+.structured-card.evidence .structured-title { color: var(--danger); }
+.confront-btn {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #f5e9e6;
+  font-weight: 700;
+}
+.confront-btn:hover:not(:disabled) { background: #de6450; border-color: #de6450; }
+.confront-btn:disabled { background: var(--panel-2); color: var(--muted); font-weight: 400; }
+.disabled-hint { margin: 0; font-style: italic; }
+
 .revealed { margin-top: 1rem; }
+
+/* Interrogation layout responsiveness */
+@media (max-width: 1180px) {
+  .suspects { grid-template-columns: 230px minmax(0, 1fr); }
+  .judgement-panel { grid-column: 2; position: static; }
+}
+@media (max-width: 900px) {
+  .suspect-list { position: static; max-height: none; flex-direction: row; flex-wrap: wrap; }
+  .suspect-list .roster-title { width: 100%; }
+  .judgement-panel { grid-column: auto; }
+  .structured-cards { grid-template-columns: 1fr; }
+  .free-text-row { flex-wrap: wrap; }
+}
 
 /* Board */
 .board { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 1.2rem; align-items: start; }
@@ -879,3 +944,194 @@ textarea { min-height: 70px; resize: vertical; }
   0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
   100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
 }
+
+/* --- Accusation Ceremony --- */
+.ceremony-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ceremony-controls {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 100;
+}
+
+.ceremony-content {
+  width: 100%;
+  max-width: 800px;
+}
+
+.ceremony-content.step-suspense {
+  background: #000;
+  color: #fff;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.ceremony-killer h1 {
+  font-size: 3rem;
+  margin-top: 1rem;
+  color: var(--accent);
+}
+
+.ceremony-killer .portrait {
+  font-size: 8rem;
+  line-height: 1;
+}
+
+.ceremony-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ceremony-map-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.timeline-text-feed {
+  max-height: 300px;
+  overflow-y: auto;
+  text-align: left;
+  background: var(--surface);
+  padding: 1rem;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.ceremony-event {
+  margin-bottom: 0.5rem;
+}
+
+.ceremony-score .score-number {
+  font-size: 5rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.ceremony-score .detective-rating {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.ceremony-score .score-verdict {
+  font-size: 1.5rem;
+  opacity: 0.8;
+}
+
+.epilogues-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  text-align: left;
+}
+
+.epilogue-card {
+  padding: 1.5rem;
+}
+
+.epilogue-card h3 {
+  margin-top: 0;
+  color: var(--accent);
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
+.scale-in {
+  animation: scaleIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion) {
+  .fade-in, .scale-in {
+    animation: none !important;
+  }
+}
+
+
+/* Location establishing shot (Phase C) */
+.loc-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(10, 11, 15, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  cursor: pointer;
+  animation: loc-transition-fade 0.6s ease forwards;
+}
+.loc-transition h2 { margin: 0; letter-spacing: 0.06em; }
+.loc-transition-art { max-width: min(70vw, 480px); max-height: 50vh; border-radius: 10px; }
+.loc-transition-crop {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  image-rendering: pixelated;
+  background-repeat: no-repeat;
+  max-width: 100%;
+}
+@keyframes loc-transition-fade {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loc-transition { display: none; }
+}
+
+/* Detective rank & history (Phase G) */
+.rank-badge-wrap { position: relative; }
+.rank-badge { font-size: 0.82rem; white-space: nowrap; }
+.rank-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 340px;
+  max-height: 60vh;
+  overflow-y: auto;
+  z-index: 20;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+.rank-popover h3 { margin: 0 0 0.6rem; font-size: 0.95rem; }
+.rank-history-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--line);
+}
+.rank-history-title { font-weight: 600; }
+
+.reveal-actions { display: flex; gap: 0.8rem; margin-top: 1rem; }
+.share-card { white-space: pre-wrap; font-family: inherit; margin-top: 0.8rem; cursor: pointer; }

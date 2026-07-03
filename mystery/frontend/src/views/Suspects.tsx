@@ -13,7 +13,8 @@ import type {
   TranscriptMessage,
 } from "../types";
 import { ClueCard } from "./shared";
-import Portrait, { DEFENSIVE_THRESHOLD } from "../components/Portrait";
+import Portrait, { DEFENSIVE_THRESHOLD, CRACKING_THRESHOLD } from "../components/Portrait";
+import { audioManager } from "../audio";
 
 const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "unknown", label: "Unmarked" },
@@ -170,6 +171,25 @@ function InterviewPanel({
     const el = transcriptRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [transcript, lastResult, lastChallenge, busy]);
+
+  // Audio trigger: Contradiction locked
+  useEffect(() => {
+    if (lastChallenge && lastChallenge.outcome === "contradiction_locked") {
+      audioManager.playStinger("contradiction_locked");
+    }
+  }, [lastChallenge]);
+
+  // Audio trigger: Pressure thresholds
+  const prevPressureRef = useRef(pressure);
+  useEffect(() => {
+    const prev = prevPressureRef.current;
+    if (prev < DEFENSIVE_THRESHOLD && pressure >= DEFENSIVE_THRESHOLD) {
+      audioManager.playStinger("pressure_defensive");
+    } else if (prev < CRACKING_THRESHOLD && pressure >= CRACKING_THRESHOLD) {
+      audioManager.playStinger("pressure_cracking");
+    }
+    prevPressureRef.current = pressure;
+  }, [pressure]);
 
   const ask = async (
     questionType: QuestionType,

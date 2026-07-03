@@ -1,21 +1,32 @@
 import { useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
-import type { InspectResult } from "../types";
+import type { InspectResult, LocationPublic } from "../types";
 import { ClueCard } from "./shared";
 import { MagnifyingSearch } from "../components/MagnifyingSearch";
+import { audioManager } from "../audio";
+import LocationTransition, {
+  shouldPlayLocationTransition,
+} from "../components/LocationTransition";
 
 export default function Places() {
   const { locations } = useWorld();
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<InspectResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
 
   const inspect = async (locationId: string) => {
+    const loc = locations.find((l) => l.location_id === locationId);
+    if (loc && shouldPlayLocationTransition(locationId)) setTransitionLoc(loc);
     setSelected(locationId);
     setBusy(true);
     try {
-      setResult(await api.inspect(locationId));
+      const res = await api.inspect(locationId);
+      if (res.new_clues?.length) {
+        audioManager.playStinger("clue_discovered");
+      }
+      setResult(res);
     } finally {
       setBusy(false);
     }
@@ -25,11 +36,12 @@ export default function Places() {
     if (!result) return;
     try {
       const discoveredClue = await api.discoverClue(clueId);
-      setResult(prev => {
+      audioManager.playStinger("clue_discovered");
+      setResult((prev: InspectResult | null) => {
         if (!prev) return prev;
         return {
           ...prev,
-          hidden_clues: prev.hidden_clues.filter(c => c.clue_id !== clueId),
+          hidden_clues: prev.hidden_clues.filter((c: any) => c.clue_id !== clueId),
           known_clues: [...prev.known_clues, discoveredClue],
         };
       });
@@ -40,6 +52,12 @@ export default function Places() {
 
   return (
     <div className="places">
+      {transitionLoc && (
+        <LocationTransition
+          location={transitionLoc}
+          onDone={() => setTransitionLoc(null)}
+        />
+      )}
       <div className="place-list panel">
         <h2>Search the village</h2>
         <p className="muted small">
@@ -85,7 +103,7 @@ export default function Places() {
             <h3>Found evidence</h3>
             {result.known_clues.length > 0 ? (
                <div className="found-evidence-list">
-                 {result.known_clues.map((c) => (
+                 {result.known_clues.map((c: any) => (
                    <ClueCard key={c.clue_id} clue={c} />
                  ))}
                </div>

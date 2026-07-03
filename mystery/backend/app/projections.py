@@ -38,6 +38,7 @@ def project_location(loc: Location) -> dict[str, Any]:
         "description": loc.description,
         "connected_location_ids": loc.connected_location_ids,
         "visibility_type": loc.visibility_type,
+        "illustration": loc.illustration,
     }
 
 

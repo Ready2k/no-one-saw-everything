@@ -2,49 +2,9 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
 import type { MapReplayData } from "../types";
-import { mapImageUrl } from "../map/mapAssets";
+import { getMapInfo } from "../map/mapInfo";
+import MapCrop from "../components/MapCrop";
 import Portrait from "../components/Portrait";
-
-// Fixed crop viewport for the discovery-location illustration; the map is
-// pixel art, so the crop is scaled with image-rendering: pixelated in CSS.
-const CROP_W = 340;
-const CROP_H = 200;
-const CROP_PAD = 1.8; // bounds fill ~1/pad of the crop
-
-function DiscoveryMapCrop({ data, locationId }: { data: MapReplayData; locationId: string }) {
-  const loc = data.locations.find((l) => l.location_id === locationId);
-  if (!loc) return null;
-  const { width, height } = data.map;
-  let cx: number;
-  let cy: number;
-  let scale: number;
-  if (loc.map_bounds) {
-    const b = loc.map_bounds;
-    cx = b.x + b.width / 2;
-    cy = b.y + b.height / 2;
-    scale = Math.min(CROP_W / (b.width * CROP_PAD), CROP_H / (b.height * CROP_PAD));
-  } else if (loc.map_position) {
-    cx = loc.map_position.x;
-    cy = loc.map_position.y;
-    scale = 2;
-  } else {
-    return null;
-  }
-  return (
-    <div
-      className="intro-map-crop"
-      style={{
-        width: CROP_W,
-        height: CROP_H,
-        backgroundImage: `url(${mapImageUrl(data.map.image)})`,
-        backgroundSize: `${width * scale}px ${height * scale}px`,
-        backgroundPosition: `${CROP_W / 2 - cx * scale}px ${CROP_H / 2 - cy * scale}px`,
-      }}
-      role="img"
-      aria-label={`Map view of ${loc.name}`}
-    />
-  );
-}
 
 export default function Intro({ onBegin }: { onBegin: () => void }) {
   const { caseOverview: c, agents } = useWorld();
@@ -53,7 +13,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
 
   // Cosmetic enrichments — the scene works without either of these.
   useEffect(() => {
-    api.mapReplay().then(setMapData).catch(() => {});
+    getMapInfo().then(setMapData).catch(() => {});
     api
       .events({
         location_id: c.discovery_location.location_id,
@@ -98,10 +58,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
         </p>
         <div className="intro-beat intro-place">
           {mapData && (
-            <DiscoveryMapCrop
-              data={mapData}
-              locationId={c.discovery_location.location_id}
-            />
+            <MapCrop data={mapData} locationId={c.discovery_location.location_id} />
           )}
           <p className="muted">
             Found in the <strong>{c.discovery_location.name}</strong> by{" "}

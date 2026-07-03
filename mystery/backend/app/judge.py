@@ -17,6 +17,7 @@ from .models import (
     RedHerringExplanation,
     SolutionCriterion,
     TimelineEntry,
+    EpilogueCard,
 )
 from .session import Session
 from .case_store import minutes
@@ -105,6 +106,25 @@ def _red_herring_explanations(case: CaseData) -> list[RedHerringExplanation]:
     return out
 
 
+def _epilogue_cards(case: CaseData) -> list[EpilogueCard]:
+    if not case.solution.epilogues:
+        return []
+    
+    name = {a.agent_id: a.full_name for a in case.agents}
+    out = []
+    for agent_id, text in case.solution.epilogues.items():
+        if not text.strip():
+            continue
+        out.append(
+            EpilogueCard(
+                agent_id=agent_id,
+                agent_name=name.get(agent_id, agent_id),
+                text=text.strip(),
+            )
+        )
+    return out
+
+
 def judge_accusation(
     case: CaseData, session: Session, req: AccusationRequest
 ) -> AccusationResult:
@@ -178,6 +198,8 @@ def judge_accusation(
     result = AccusationResult(
         accusation_id="accuse_001",
         case_id=case.case.case_id,
+        accused_agent_id=req.accused_agent_id,
+        accused_name=_name(case, req.accused_agent_id),
         score=score,
         killer_correct=killer_correct,
         motive_correct=motive_correct,
@@ -196,6 +218,7 @@ def judge_accusation(
         key_clues_found=key_clues_found,
         key_clues_missed=key_clues_missed,
         red_herring_explanations=_red_herring_explanations(case),
+        epilogues=_epilogue_cards(case),
         player_evidence_used=player_evidence_used,
         detective_rating=_detective_rating(score),
     )

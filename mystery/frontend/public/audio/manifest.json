@@ -1,0 +1,27 @@
+{
+  "ambient": {
+    "investigation_1": "/audio/ambient/investigation.mp3",
+    "investigation_2": "/audio/ambient/The_Desk_at_Three.mp3",
+    "investigation_3": "/audio/ambient/The_Clock_Across_The_Room.mp3",
+    "accusation": "/audio/ambient/accusation.mp3"
+  },
+  "playlists": {
+    "investigation": [
+      "investigation_1",
+      "investigation_2",
+      "investigation_3"
+    ]
+  },
+  "stingers": {
+    "clue_discovered": "/audio/stingers/clue_discovered.mp3",
+    "contradiction_locked": "/audio/stingers/contradiction_locked.mp3",
+    "pressure_defensive": "/audio/stingers/pressure_defensive.mp3",
+    "pressure_cracking": "/audio/stingers/pressure_cracking.mp3",
+    "accusation_submitted": "/audio/stingers/accusation_submitted.mp3",
+    "case_solved": "/audio/stingers/case_solved.mp3",
+    "case_failed": "/audio/stingers/case_failed.mp3"
+  },
+  "ui": {
+    "click": "/audio/ui/click.mp3"
+  }
+}

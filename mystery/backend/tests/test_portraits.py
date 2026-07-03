@@ -42,6 +42,32 @@ def test_project_agent_round_trips_portrait_art():
     }
 
 
+def test_locations_expose_illustration_with_null_default():
+    locations = client.get("/api/locations").json()
+    assert locations, "case must have locations"
+    for loc in locations:
+        assert "illustration" in loc
+        assert loc["illustration"] is None  # case_001 ships no art assets
+
+
+def test_accusation_result_names_the_accused():
+    living = [a for a in client.get("/api/agents").json() if not a["is_victim"]]
+    accused = living[0]
+    result = client.post(
+        "/api/accuse",
+        json={
+            "accused_agent_id": accused["agent_id"],
+            "motive_answer": "",
+            "method_answer": "",
+            "opportunity_answer": "",
+            "supporting_note_ids": [],
+            "supporting_clue_ids": [],
+        },
+    ).json()
+    assert result["accused_agent_id"] == accused["agent_id"]
+    assert result["accused_name"] == accused["full_name"]
+
+
 def test_case_overview_includes_scene_description():
     overview = client.get("/api/case").json()
     assert "scene_description" in overview
