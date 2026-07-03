@@ -70,6 +70,23 @@ def register_case(case_data: CaseData):
     _GENERATED_CASES[case_data.case.case_id] = case_data
 
 
+_ACTIVE_START_TIME: str | None = None
+
+
+def set_active_start_time(start_time: str) -> None:
+    global _ACTIVE_START_TIME
+    _ACTIVE_START_TIME = start_time
+
+
 def minutes(hhmm: str) -> int:
     h, m = hhmm.split(":")
-    return int(h) * 60 + int(m)
+    mins = int(h) * 60 + int(m)
+    
+    global _ACTIVE_START_TIME
+    if _ACTIVE_START_TIME:
+        sh, sm = _ACTIVE_START_TIME.split(":")
+        start_mins = int(sh) * 60 + int(sm)
+        if mins < start_mins:
+            mins += 1440
+            
+    return mins

@@ -45,6 +45,9 @@ from .telemetry import log_telemetry_event
 
 ACTIVE_CASE_ID = "case_001"
 
+from .case_store import set_active_start_time
+set_active_start_time(fetch_case(ACTIVE_CASE_ID).case.sim_start_time)
+
 app = FastAPI(title="No One Saw Everything", version="0.1.0")
 
 app.add_middleware(
@@ -641,6 +644,7 @@ def generate(req: GenerateCaseRequest):
     active_session_id = None
     if req.activate and val_result["valid"]:
         ACTIVE_CASE_ID = new_case.case.case_id
+        set_active_start_time(new_case.case.sim_start_time)
         # A fresh activation always means a fresh investigation — otherwise
         # re-generating the same (type, seed) resurrects a stale session.
         reset_session(ACTIVE_CASE_ID)
@@ -693,6 +697,7 @@ def activate_case(req: ActivateCaseRequest):
             raise HTTPException(status_code=404, detail="Case not found")
             
     ACTIVE_CASE_ID = req.case_id
+    set_active_start_time(fetch_case(ACTIVE_CASE_ID).case.sim_start_time)
     reset_session(ACTIVE_CASE_ID)
     
     return {"active_session_id": ACTIVE_CASE_ID}
