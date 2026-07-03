@@ -12,6 +12,7 @@ export interface AgentPublic {
   traits: string[];
   portrait: string | null;
   portrait_art: PortraitState | null;
+  sprite_asset: string | null;
   home_location_id: string | null;
   work_location_id: string | null;
   routine_summary: string;
@@ -279,9 +280,19 @@ export interface HintsResponse {
   tutorial_hints: string[];
 }
 
+export interface ClueHotspot {
+  clue_id: string;
+  x: number;
+  y: number;
+  radius: number;
+  discovery_text?: string;
+  title: string;
+}
+
 export interface InspectResult {
-  location: LocationPublic;
+  location: MapLocation;
   new_clues: CluePublic[];
+  hidden_clues: ClueHotspot[];
   known_clues: CluePublic[];
   hint: string | null;
 }

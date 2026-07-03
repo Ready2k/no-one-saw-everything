@@ -3,6 +3,7 @@ import { api } from "../api";
 import { useWorld } from "../App";
 import type { Board, CluePublic, Note, HintsResponse, MarkerType } from "../types";
 import { ClaimRow, ClueCard } from "./shared";
+import Portrait from "../components/Portrait";
 
 export default function BoardView() {
   const { agents } = useWorld();
@@ -64,7 +65,7 @@ export default function BoardView() {
         {board.suspects.map((s) => (
           <div key={s.agent.agent_id} className={`suspect-card suspicion-${s.suspicion}`}>
             <div className="suspect-card-head">
-              <span className="portrait">{s.agent.portrait}</span>
+              <Portrait agent={s.agent} pressure={s.pressure ?? 0} />
               <div>
                 <strong>{s.agent.full_name}</strong>
                 <div className="muted small">{s.agent.occupation}</div>

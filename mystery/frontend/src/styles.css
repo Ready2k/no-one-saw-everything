@@ -754,3 +754,128 @@ textarea { min-height: 70px; resize: vertical; }
   .intro-beat { animation: none; opacity: 1; }
   .visual-map { transition: none !important; }
 }
+
+.magnifying-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #000;
+  cursor: crosshair;
+  margin-bottom: 1rem;
+}
+
+.zoom-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  background: rgba(0,0,0,0.6);
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.2);
+  align-items: center;
+}
+
+.zoom-controls button {
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.zoom-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.zoom-controls .zoom-level {
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0 4px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.magnifying-crop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+.magnifying-lens {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.lens-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.lens-glass {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 5px rgba(0,0,0,0.8);
+  border: 4px solid #333;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lens-handle {
+  position: absolute;
+  bottom: -30px;
+  right: -30px;
+  width: 15px;
+  height: 50px;
+  background: #222;
+  border-radius: 4px;
+  transform: rotate(-45deg);
+  transform-origin: top left;
+  box-shadow: inset 2px 0 5px rgba(255,255,255,0.1), 2px 2px 5px rgba(0,0,0,0.5);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hotspot-active .lens-glass {
+  border-color: #ffd700;
+  box-shadow: inset 0 0 15px rgba(255,215,0,0.3), 0 0 10px rgba(255,215,0,0.8);
+}
+
+.hotspot-hint {
+  position: absolute;
+  width: 4%;
+  height: 4%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.magnifying-container.hotspot-active .hotspot-hint.active {
+  opacity: 1;
+  animation: pulse-glint 1.5s infinite alternate;
+}
+
+@keyframes pulse-glint {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+  100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}

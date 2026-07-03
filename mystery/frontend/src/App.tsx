@@ -138,7 +138,45 @@ export default function App() {
               </button>
             ))}
           </nav>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <select
+              value={world.caseOverview.case_id}
+              onChange={async (e) => {
+                const newCaseId = e.target.value;
+                if (newCaseId === world.caseOverview.case_id) return;
+                
+                const caseNames: Record<string, string> = {
+                  case_001: "Case 1: The Storage Room Murder",
+                  case_002: "Case 2: The Locked Bookshop",
+                  case_003: "Case 3: The Clinic After Hours",
+                  case_004: "Case 4: The Fountain at Midnight",
+                  case_005: "Case 5: The Rear Alley Fire",
+                  case_006: "Case 6: The Bell Estate",
+                };
+                
+                if (confirm(`Switch to ${caseNames[newCaseId]}? Your current progress will be lost.`)) {
+                  await api.activate(newCaseId);
+                  localStorage.removeItem(introSeenKey(newCaseId));
+                  location.reload();
+                }
+              }}
+              style={{
+                background: "var(--bg-panel)",
+                color: "var(--text)",
+                border: "1px solid var(--border)",
+                borderRadius: "4px",
+                padding: "4px 8px",
+                cursor: "pointer",
+                outline: "none"
+              }}
+            >
+              <option value="case_001">Case 1: Storage Room Murder</option>
+              <option value="case_002">Case 2: Locked Bookshop</option>
+              <option value="case_003">Case 3: Clinic After Hours</option>
+              <option value="case_004">Case 4: Fountain at Midnight</option>
+              <option value="case_005">Case 5: Rear Alley Fire</option>
+              <option value="case_006">Case 6: The Bell Estate</option>
+            </select>
             <button
               className="reset"
               onClick={async () => {

@@ -194,7 +194,7 @@
       "conflict-averse"
     ],
     "portrait": "\ud83c\udf38",
-    "home_location_id": "loc_village_square",
+    "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
     "relationships": [
@@ -238,7 +238,7 @@
       "discreet"
     ],
     "portrait": "\ud83e\ude7a",
-    "home_location_id": "loc_village_square",
+    "home_location_id": "loc_nadia_flat",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
     "relationships": [
@@ -268,7 +268,7 @@
       "harmless"
     ],
     "portrait": "\ud83c\udfa9",
-    "home_location_id": "loc_village_square",
+    "home_location_id": "loc_elias_house",
     "work_location_id": "loc_village_square",
     "routine_summary": "First on the square bench every morning with a flask and opinions.",
     "relationships": [

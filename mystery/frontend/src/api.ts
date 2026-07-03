@@ -35,8 +35,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json();
 }
 
+let activeSimStartTime: string | undefined = undefined;
+
 export const api = {
-  caseOverview: () => request<CaseOverview>("/api/case"),
+  caseOverview: async () => {
+    const data = await request<CaseOverview>("/api/case");
+    activeSimStartTime = data.sim_start_time;
+    return data;
+  },
   agents: () => request<AgentPublic[]>("/api/agents"),
   locations: () => request<LocationPublic[]>("/api/locations"),
   events: (params: {
@@ -71,6 +77,11 @@ export const api = {
     request<InspectResult>("/api/inspect", {
       method: "POST",
       body: JSON.stringify({ location_id: locationId }),
+    }),
+  discoverClue: (clueId: string) =>
+    request<CluePublic>("/api/discover_clue", {
+      method: "POST",
+      body: JSON.stringify({ clue_id: clueId }),
     }),
   clues: () => request<CluePublic[]>("/api/clues"),
   ask: (payload: {
@@ -200,11 +211,19 @@ export const api = {
 
 export function minutes(hhmm: string): number {
   const [h, m] = hhmm.split(":").map(Number);
-  return h * 60 + m;
+  let mins = h * 60 + m;
+  if (activeSimStartTime) {
+    const [sh, sm] = activeSimStartTime.split(":").map(Number);
+    const startMins = sh * 60 + sm;
+    if (mins < startMins) {
+      mins += 1440;
+    }
+  }
+  return mins;
 }
 
 export function hhmm(mins: number): string {
-  const h = Math.floor(mins / 60);
+  const h = Math.floor(mins / 60) % 24;
   const m = mins % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }

@@ -3,6 +3,7 @@ import { api } from "../api";
 import { useWorld } from "../App";
 import type { InspectResult } from "../types";
 import { ClueCard } from "./shared";
+import { MagnifyingSearch } from "../components/MagnifyingSearch";
 
 export default function Places() {
   const { locations } = useWorld();
@@ -17,6 +18,23 @@ export default function Places() {
       setResult(await api.inspect(locationId));
     } finally {
       setBusy(false);
+    }
+  };
+
+  const handleDiscover = async (clueId: string) => {
+    if (!result) return;
+    try {
+      const discoveredClue = await api.discoverClue(clueId);
+      setResult(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          hidden_clues: prev.hidden_clues.filter(c => c.clue_id !== clueId),
+          known_clues: [...prev.known_clues, discoveredClue],
+        };
+      });
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -45,30 +63,40 @@ export default function Places() {
         {!result && <p className="muted">Pick a location to search it.</p>}
         {busy && <p className="muted">Searching…</p>}
         {result && !busy && (
-          <>
+          <div className="places-scroll-container">
             <h2>{result.location.name}</h2>
+            
+            {result.location.visibility_type === "private" && (
+               <div className="alert warning" style={{ marginBottom: "1rem" }}>
+                 <strong>Private area.</strong> You can search, but this may affect suspicion/trust if seen.
+               </div>
+            )}
+            
+            <MagnifyingSearch
+               bounds={result.location.map_bounds}
+               hiddenClues={result.hidden_clues || []}
+               onDiscover={handleDiscover}
+            />
+
+            <div className="search-status" style={{ marginBottom: "1rem" }}>
+               <p style={{ margin: 0 }}><strong>Search status:</strong> {(result.known_clues.length)} / {(result.known_clues.length + (result.hidden_clues?.length || 0))} clues found</p>
+            </div>
+
+            <h3>Found evidence</h3>
+            {result.known_clues.length > 0 ? (
+               <div className="found-evidence-list">
+                 {result.known_clues.map((c) => (
+                   <ClueCard key={c.clue_id} clue={c} />
+                 ))}
+               </div>
+            ) : (
+               <p className="muted">Nothing found yet.</p>
+            )}
+
+            <h3 style={{ marginTop: "1rem" }}>Notes</h3>
             <p>{result.location.description}</p>
-            {result.new_clues.length > 0 && (
-              <>
-                <h3>Found</h3>
-                {result.new_clues.map((c) => (
-                  <ClueCard key={c.clue_id} clue={c} isNew />
-                ))}
-              </>
-            )}
-            {result.known_clues.length > 0 && (
-              <>
-                <h3>Already catalogued</h3>
-                {result.known_clues.map((c) => (
-                  <ClueCard key={c.clue_id} clue={c} />
-                ))}
-              </>
-            )}
-            {result.new_clues.length === 0 && result.known_clues.length === 0 && (
-              <p className="muted">Nothing of obvious interest here.</p>
-            )}
             {result.hint && <p className="hint-text">{result.hint}</p>}
-          </>
+          </div>
         )}
       </div>
     </div>

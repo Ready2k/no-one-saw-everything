@@ -1,17 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
 import type {
   AskResult,
+  BoardSuspect,
   ChallengeResult,
   ChallengeSuggestion,
+  ClaimPublic,
   CluePublic,
   QuestionType,
   SuspicionLevel,
   TranscriptMessage,
 } from "../types";
 import { ClueCard } from "./shared";
-import Portrait from "../components/Portrait";
+import Portrait, { DEFENSIVE_THRESHOLD } from "../components/Portrait";
 
 const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "unknown", label: "Unmarked" },
@@ -22,10 +24,33 @@ const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "cleared", label: "Cleared" },
 ];
 
+const SUSPICION_LABEL = Object.fromEntries(
+  SUSPICION_LEVELS.map((s) => [s.value, s.label])
+) as Record<SuspicionLevel, string>;
+
+interface SuspectBoardState {
+  pressure: number;
+  suspicion: SuspicionLevel;
+}
+
+/** Demeanour derived from the interview so far — cosmetic, never feeds game logic. */
+function interviewState(
+  transcriptLen: number,
+  suspicion: SuspicionLevel,
+  pressure: number,
+  contradicted: boolean
+): { label: string; tone: string } {
+  if (suspicion === "cleared") return { label: "Cleared", tone: "cleared" };
+  if (transcriptLen === 0) return { label: "Unquestioned", tone: "unquestioned" };
+  if (contradicted) return { label: "Contradicted", tone: "contradicted" };
+  if (pressure >= DEFENSIVE_THRESHOLD) return { label: "Evasive", tone: "evasive" };
+  return { label: "Cooperative", tone: "cooperative" };
+}
+
 export default function Suspects({ focusAgentId }: { focusAgentId?: string | null }) {
   const { agents } = useWorld();
   const living = agents.filter((a) => !a.is_victim);
-  const [pressureById, setPressureById] = useState<Record<string, number>>({});
+  const [boardState, setBoardState] = useState<Record<string, SuspectBoardState>>({});
   const [selectedId, setSelectedId] = useState(
     (focusAgentId && living.some((a) => a.agent_id === focusAgentId)
       ? focusAgentId
@@ -39,29 +64,49 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
   }, [focusAgentId]);
   const selected = living.find((a) => a.agent_id === selectedId);
 
+  const onBoardState = useCallback((suspects: BoardSuspect[]) => {
+    setBoardState(
+      Object.fromEntries(
+        suspects.map((s) => [
+          s.agent.agent_id,
+          { pressure: s.pressure ?? 0, suspicion: s.suspicion },
+        ])
+      )
+    );
+  }, []);
+
   return (
     <div className="suspects">
-      <div className="suspect-list panel">
-        {living.map((a) => (
-          <button
-            key={a.agent_id}
-            className={`suspect ${selectedId === a.agent_id ? "active" : ""}`}
-            onClick={() => setSelectedId(a.agent_id)}
-          >
-            <Portrait agent={a} pressure={pressureById[a.agent_id] ?? 0} />
-            <span>
-              <span className="suspect-name">{a.full_name}</span>
-              <span className="muted small">{a.occupation}</span>
-            </span>
-          </button>
-        ))}
-      </div>
+      <aside className="suspect-list panel">
+        <p className="roster-title">Suspects</p>
+        {living.map((a) => {
+          const info = boardState[a.agent_id];
+          return (
+            <button
+              key={a.agent_id}
+              className={`suspect ${selectedId === a.agent_id ? "active" : ""}`}
+              onClick={() => setSelectedId(a.agent_id)}
+            >
+              <Portrait agent={a} pressure={info?.pressure ?? 0} />
+              <span>
+                <span className="suspect-name">{a.full_name}</span>
+                <span className="muted small">{a.occupation}</span>
+                {info && info.suspicion !== "unknown" && (
+                  <span className={`list-suspicion suspicion-${info.suspicion}`}>
+                    {SUSPICION_LABEL[info.suspicion]}
+                  </span>
+                )}
+              </span>
+            </button>
+          );
+        })}
+      </aside>
       {selected && (
         <InterviewPanel
           key={selected.agent_id}
           agentId={selected.agent_id}
-          pressure={pressureById[selected.agent_id] ?? 0}
-          onPressures={setPressureById}
+          pressure={boardState[selected.agent_id]?.pressure ?? 0}
+          onBoardState={onBoardState}
         />
       )}
     </div>
@@ -71,17 +116,18 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
 function InterviewPanel({
   agentId,
   pressure,
-  onPressures,
+  onBoardState,
 }: {
   agentId: string;
   pressure: number;
-  onPressures: (pressures: Record<string, number>) => void;
+  onBoardState: (suspects: BoardSuspect[]) => void;
 }) {
   const { agents, locations, caseOverview } = useWorld();
   const agent = agents.find((a) => a.agent_id === agentId)!;
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
   const [lastResult, setLastResult] = useState<AskResult | null>(null);
   const [clues, setClues] = useState<CluePublic[]>([]);
+  const [claims, setClaims] = useState<ClaimPublic[]>([]);
   const [suspicion, setSuspicion] = useState<SuspicionLevel>("unknown");
   const [suggestions, setSuggestions] = useState<ChallengeSuggestion[]>([]);
   const [lastChallenge, setLastChallenge] = useState<ChallengeResult | null>(null);
@@ -93,23 +139,16 @@ function InterviewPanel({
   const [locationTopic, setLocationTopic] = useState("");
   const [freeText, setFreeText] = useState("");
   const [fallbackMsg, setFallbackMsg] = useState<string | null>(null);
+  const transcriptRef = useRef<HTMLDivElement>(null);
 
+  const firstName = agent.full_name.split(" ")[0];
   const victimName = caseOverview.victim.full_name.split(" ")[0];
-  const placeholders = [
-    `Ask a question or accuse them of a contradiction...`,
-    `"Where were you between ${caseOverview.murder_window[0]} and ${caseOverview.murder_window[1]}?"`,
-    `"How did you know ${victimName}?"`,
-    `"What were you doing at ${caseOverview.discovery_time}?"`,
-    clues.length > 0 ? `"Can you explain this ${clues[0].title.toLowerCase()}?"` : `"Why should I believe you?"`,
-  ];
-  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const placeholder = `Ask ${firstName} about ${victimName}, the timeline, a place, or discovered evidence…`;
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPlaceholderIdx((i) => (i + 1) % placeholders.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [placeholders.length]);
+  const contradicted =
+    suggestions.length > 0 ||
+    claims.some((c) => c.player_known_status === "disputed");
+  const state = interviewState(transcript.length, suspicion, pressure, contradicted);
 
   const refresh = useCallback(() => {
     api.transcript(agentId).then(setTranscript);
@@ -117,14 +156,20 @@ function InterviewPanel({
     api.challengeSuggestions(agentId).then(setSuggestions);
     api.board().then((b) => {
       const me = b.suspects.find((s) => s.agent.agent_id === agentId);
-      if (me) setSuspicion(me.suspicion);
-      onPressures(
-        Object.fromEntries(b.suspects.map((s) => [s.agent.agent_id, s.pressure ?? 0]))
-      );
+      if (me) {
+        setSuspicion(me.suspicion);
+        setClaims(me.claims);
+      }
+      onBoardState(b.suspects);
     });
-  }, [agentId, onPressures]);
+  }, [agentId, onBoardState]);
 
   useEffect(refresh, [refresh]);
+
+  useEffect(() => {
+    const el = transcriptRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [transcript, lastResult, lastChallenge, busy]);
 
   const ask = async (
     questionType: QuestionType,
@@ -216,19 +261,308 @@ function InterviewPanel({
   };
 
   return (
-    <div className="interview">
-      <div className="interview-head">
-        <div>
-          <h2>
-            <Portrait agent={agent} pressure={pressure} size="large" /> {agent.full_name}
-          </h2>
-          <p className="muted">
-            {agent.occupation}, {agent.age} · {agent.traits.join(", ")}
-          </p>
-          <p className="muted small">{agent.routine_summary}</p>
+    <>
+      <div className="interview interrogation-main">
+        <div className="dossier panel">
+          <div className="dossier-portrait">
+            <Portrait agent={agent} pressure={pressure} size="large" />
+          </div>
+          <div className="dossier-body">
+            <div className="dossier-title">
+              <h2>{agent.full_name}</h2>
+              <span className={`badge suspect-state state-${state.tone}`}>{state.label}</span>
+            </div>
+            <p className="muted dossier-meta">
+              {agent.occupation} · {agent.age}
+            </p>
+            <div className="trait-chips">
+              {agent.traits.map((t) => (
+                <span key={t} className="trait-chip">
+                  {t}
+                </span>
+              ))}
+            </div>
+            <p className="muted small dossier-routine">{agent.routine_summary}</p>
+          </div>
         </div>
+
+        <div className="transcript-card panel">
+          <div className="transcript-head">
+            <span className="rec-dot" aria-hidden="true" />
+            <span className="transcript-title">Interview transcript</span>
+            <span className="muted small transcript-count">
+              {transcript.length === 0
+                ? "not started"
+                : `${transcript.length} exchange${transcript.length === 1 ? "" : "s"}`}
+            </span>
+          </div>
+          <div className="transcript" ref={transcriptRef}>
+            {transcript.length === 0 && (
+              <p className="muted transcript-empty">
+                You haven't questioned {firstName} yet. Open with a question below — start
+                with their alibi, or ask anything in your own words.
+              </p>
+            )}
+            {transcript.map((m, i) => (
+              <div
+                key={i}
+                className={`bubble ${m.speaker} ${
+                  m.revealed_clue_ids.length > 0 ? "important" : ""
+                }`}
+              >
+                <span className="bubble-speaker">
+                  {m.speaker === "player" ? "You" : firstName}
+                </span>
+                <p>
+                  {m.text}
+                  {m.deterministic_text && m.deterministic_text !== m.text && (
+                    <span
+                      className="muted small"
+                      title={m.deterministic_text}
+                      style={{ cursor: "help", marginLeft: "8px" }}
+                    >
+                      ✨
+                    </span>
+                  )}
+                </p>
+                {m.revealed_clue_ids.length > 0 && (
+                  <p className="small badge new">
+                    revealed: {m.revealed_clue_ids.join(", ")}
+                  </p>
+                )}
+              </div>
+            ))}
+            {busy && (
+              <p className="muted small emotional">{firstName} is considering their answer…</p>
+            )}
+            {lastResult?.emotional_shift && (
+              <p className="muted small emotional">
+                {firstName} seems {lastResult.emotional_shift}.
+              </p>
+            )}
+            {lastResult && lastResult.suggested_followups.length > 0 && (
+              <div className="followups">
+                {lastResult.suggested_followups.map((f, i) => (
+                  <span key={i} className="followup-chip">
+                    {f}
+                  </span>
+                ))}
+              </div>
+            )}
+            {lastResult && (
+              <button className="small-button" onClick={noteFromAnswer}>
+                Save answer as note
+              </button>
+            )}
+            {lastChallenge && (
+              <div className={`challenge-response outcome-${lastChallenge.outcome}`}>
+                <span className="badge outcome">
+                  {lastChallenge.outcome.replace(/_/g, " ")}
+                </span>
+                {lastChallenge.emotional_shift && (
+                  <span className="muted small">
+                    {" "}
+                    {firstName} seems {lastChallenge.emotional_shift}.
+                  </span>
+                )}
+                {lastChallenge.pressure_delta > 0 && (
+                  <span className="muted small pressure-up"> pressure ↑</span>
+                )}
+                {lastChallenge.revealed_memories.map((m) => (
+                  <p key={m.memory_id} className="small revealed-memory">
+                    🗝️ {m.summary}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {error && <p className="error">{error}</p>}
+        {fallbackMsg && <p className="error fallback-message">{fallbackMsg}</p>}
+
+        {suggestions.length > 0 && (
+          <div className="challenge-builder panel">
+            <h3>Contradictions you can press</h3>
+            <p className="muted small">
+              You hold evidence that conflicts with what {firstName} has told you. Confront
+              them.
+            </p>
+            {suggestions.map((s) => (
+              <div
+                key={`${s.challenged_claim_id}:${s.evidence_clue_id}`}
+                className="challenge-card"
+              >
+                <div className="challenge-claim">
+                  <span className={`badge status-${s.claim_status}`}>{s.claim_status}</span>
+                  <span>“{s.claim_text}”</span>
+                </div>
+                <div className="challenge-evidence">
+                  <span className="muted small">contradicted by</span> {s.evidence_title}
+                </div>
+                <button className="challenge-btn" disabled={busy} onClick={() => runChallenge(s)}>
+                  Challenge
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="question-builder panel">
+          <div className="question-row free-text-row">
+            <input
+              type="text"
+              className="flex-1 free-text-input"
+              placeholder={placeholder}
+              value={freeText}
+              onChange={(e) => {
+                setFreeText(e.target.value);
+                setFallbackMsg(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") submitFreeText();
+              }}
+              disabled={busy}
+            />
+            <button
+              className="primary ask-btn"
+              disabled={busy || !freeText.trim()}
+              title={!freeText.trim() ? "Type a question first" : undefined}
+              onClick={submitFreeText}
+            >
+              Ask
+            </button>
+          </div>
+          <p className="muted small input-help">
+            Ask about people, places, times, motives, or evidence.
+          </p>
+          <div className="question-divider">
+            <span className="muted small">or use predefined topics</span>
+          </div>
+          <div className="question-row">
+            <button disabled={busy} onClick={() => ask("alibi")}>
+              Ask alibi ({caseOverview.murder_window[0]}–{caseOverview.murder_window[1]})
+            </button>
+            <button disabled={busy} onClick={() => ask("last_seen_victim")}>
+              Last saw {victimName}?
+            </button>
+            <button disabled={busy} onClick={() => ask("relationship")}>
+              Relationship with victim
+            </button>
+          </div>
+          <div className="question-row">
+            <input
+              type="time"
+              value={timeRef}
+              min={caseOverview.sim_start_time}
+              max={caseOverview.discovery_time}
+              onChange={(e) => setTimeRef(e.target.value)}
+            />
+            <button disabled={busy} onClick={() => ask("timeline", { time_reference: timeRef })}>
+              What were you doing at {timeRef}?
+            </button>
+          </div>
+        </div>
+
+        <div className="structured-cards">
+          <div className="structured-card panel">
+            <h3 className="structured-title">Question about a place</h3>
+            <p className="muted small">
+              Ask {firstName} what they know about a location on the estate.
+            </p>
+            <div className="question-row">
+              <select
+                className="flex-1"
+                value={locationTopic}
+                onChange={(e) => setLocationTopic(e.target.value)}
+              >
+                <option value="">Pick a place…</option>
+                {locations.map((l) => (
+                  <option key={l.location_id} value={l.location_id}>
+                    {l.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                disabled={busy || !locationTopic}
+                title={!locationTopic ? "Pick a place first" : undefined}
+                onClick={() => ask("location", { topic_location_id: locationTopic })}
+              >
+                Ask about this place
+              </button>
+            </div>
+            {!locationTopic && (
+              <p className="muted small disabled-hint">Pick a place to enable the question.</p>
+            )}
+          </div>
+
+          <div className="structured-card evidence panel">
+            <h3 className="structured-title">Confront with evidence</h3>
+            <p className="muted small">
+              Put a discovered clue in front of {firstName} and watch their reaction.
+            </p>
+            <div className="question-row">
+              <select
+                className="flex-1"
+                value={clueTopic}
+                onChange={(e) => setClueTopic(e.target.value)}
+              >
+                <option value="">Pick discovered evidence…</option>
+                {clues.map((c) => (
+                  <option key={c.clue_id} value={c.clue_id}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
+              <button
+                className="confront-btn"
+                disabled={busy || !clueTopic}
+                title={
+                  clues.length === 0
+                    ? "No evidence discovered yet"
+                    : !clueTopic
+                      ? "Pick evidence first"
+                      : undefined
+                }
+                onClick={() => ask("evidence", { topic_clue_id: clueTopic })}
+              >
+                Confront with evidence
+              </button>
+            </div>
+            {clues.length === 0 ? (
+              <p className="muted small disabled-hint">
+                No evidence discovered yet — search Places to find some.
+              </p>
+            ) : (
+              !clueTopic && (
+                <p className="muted small disabled-hint">
+                  Pick evidence to enable the confrontation.
+                </p>
+              )
+            )}
+          </div>
+        </div>
+
+        {lastResult && lastResult.revealed_clues.length > 0 && (
+          <div className="revealed">
+            {lastResult.revealed_clues.map((c) => (
+              <ClueCard key={c.clue_id} clue={c} isNew />
+            ))}
+          </div>
+        )}
+
+        {lastChallenge && lastChallenge.revealed_clues.length > 0 && (
+          <div className="revealed">
+            {lastChallenge.revealed_clues.map((c) => (
+              <ClueCard key={c.clue_id} clue={c} isNew />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <aside className="judgement-panel panel">
+        <p className="judgement-title">Your judgement</p>
         <label className="suspicion-select">
-          Your judgement
           <select
             value={suspicion}
             onChange={async (e) => {
@@ -244,189 +578,21 @@ function InterviewPanel({
             ))}
           </select>
         </label>
-      </div>
-
-      <div className="transcript">
-        {transcript.length === 0 && (
-          <p className="muted">You haven't questioned {agent.full_name.split(" ")[0]} yet.</p>
-        )}
-        {transcript.map((m, i) => (
-          <div key={i} className={`bubble ${m.speaker}`}>
-            <p>
-              {m.text}
-              {m.deterministic_text && m.deterministic_text !== m.text && (
-                <span className="muted small" title={m.deterministic_text} style={{ cursor: "help", marginLeft: "8px" }}>
-                  ✨
-                </span>
-              )}
-            </p>
-            {m.revealed_clue_ids.length > 0 && (
-              <p className="small badge new">revealed: {m.revealed_clue_ids.join(", ")}</p>
-            )}
+        <p className="muted small">Your judgement is private until you're ready to accuse.</p>
+        <div className="judgement-state">
+          <span className="muted small">Demeanour</span>
+          <span className={`badge suspect-state state-${state.tone}`}>{state.label}</span>
+        </div>
+        <div className="pressure-block">
+          <span className="muted small">Pressure</span>
+          <div className="pressure-meter" title={`Pressure: ${Math.round(pressure * 100)}%`}>
+            <div
+              className="pressure-fill"
+              style={{ width: `${Math.min(100, Math.round(pressure * 100))}%` }}
+            />
           </div>
-        ))}
-        {lastResult?.emotional_shift && (
-          <p className="muted small emotional">
-            {agent.full_name.split(" ")[0]} seems {lastResult.emotional_shift}.
-          </p>
-        )}
-        {lastResult && lastResult.suggested_followups.length > 0 && (
-          <div className="followups">
-            {lastResult.suggested_followups.map((f, i) => (
-              <span key={i} className="followup-chip">
-                {f}
-              </span>
-            ))}
-          </div>
-        )}
-        {lastResult && (
-          <button className="small-button" onClick={noteFromAnswer}>
-            Save answer as note
-          </button>
-        )}
-        {lastChallenge && (
-          <div className={`challenge-response outcome-${lastChallenge.outcome}`}>
-            <span className="badge outcome">{lastChallenge.outcome.replace(/_/g, " ")}</span>
-            {lastChallenge.emotional_shift && (
-              <span className="muted small">
-                {" "}
-                {agent.full_name.split(" ")[0]} seems {lastChallenge.emotional_shift}.
-              </span>
-            )}
-            {lastChallenge.pressure_delta > 0 && (
-              <span className="muted small pressure-up"> pressure ↑</span>
-            )}
-            {lastChallenge.revealed_memories.map((m) => (
-              <p key={m.memory_id} className="small revealed-memory">
-                🗝️ {m.summary}
-              </p>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {error && <p className="error">{error}</p>}
-      {fallbackMsg && <p className="error fallback-message">{fallbackMsg}</p>}
-
-      {suggestions.length > 0 && (
-        <div className="challenge-builder panel">
-          <h3>Contradictions you can press</h3>
-          <p className="muted small">
-            You hold evidence that conflicts with what {agent.full_name.split(" ")[0]} has told
-            you. Confront them.
-          </p>
-          {suggestions.map((s) => (
-            <div key={`${s.challenged_claim_id}:${s.evidence_clue_id}`} className="challenge-card">
-              <div className="challenge-claim">
-                <span className={`badge status-${s.claim_status}`}>{s.claim_status}</span>
-                <span>“{s.claim_text}”</span>
-              </div>
-              <div className="challenge-evidence">
-                <span className="muted small">contradicted by</span> {s.evidence_title}
-              </div>
-              <button className="challenge-btn" disabled={busy} onClick={() => runChallenge(s)}>
-                Challenge
-              </button>
-            </div>
-          ))}
         </div>
-      )}
-
-      <div className="question-builder panel">
-        <div className="question-row free-text-row">
-          <input
-            type="text"
-            className="flex-1"
-            placeholder={placeholders[placeholderIdx]}
-            value={freeText}
-            onChange={(e) => {
-              setFreeText(e.target.value);
-              setFallbackMsg(null);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") submitFreeText();
-            }}
-            disabled={busy}
-          />
-          <button disabled={busy || !freeText.trim()} onClick={submitFreeText}>
-            Ask
-          </button>
-        </div>
-        <div className="question-divider">
-          <span className="muted small">or use predefined topics</span>
-        </div>
-        <div className="question-row">
-          <button disabled={busy} onClick={() => ask("alibi")}>
-            Ask alibi ({caseOverview.murder_window[0]}–{caseOverview.murder_window[1]})
-          </button>
-          <button disabled={busy} onClick={() => ask("last_seen_victim")}>
-            Last saw {caseOverview.victim.full_name.split(" ")[0]}?
-          </button>
-          <button disabled={busy} onClick={() => ask("relationship")}>
-            Relationship with victim
-          </button>
-        </div>
-        <div className="question-row">
-          <input
-            type="time"
-            value={timeRef}
-            min={caseOverview.sim_start_time}
-            max={caseOverview.discovery_time}
-            onChange={(e) => setTimeRef(e.target.value)}
-          />
-          <button disabled={busy} onClick={() => ask("timeline", { time_reference: timeRef })}>
-            What were you doing at {timeRef}?
-          </button>
-        </div>
-        <div className="question-row">
-          <select value={locationTopic} onChange={(e) => setLocationTopic(e.target.value)}>
-            <option value="">Pick a place…</option>
-            {locations.map((l) => (
-              <option key={l.location_id} value={l.location_id}>
-                {l.name}
-              </option>
-            ))}
-          </select>
-          <button
-            disabled={busy || !locationTopic}
-            onClick={() => ask("location", { topic_location_id: locationTopic })}
-          >
-            Ask about this place
-          </button>
-        </div>
-        <div className="question-row">
-          <select value={clueTopic} onChange={(e) => setClueTopic(e.target.value)}>
-            <option value="">Pick discovered evidence…</option>
-            {clues.map((c) => (
-              <option key={c.clue_id} value={c.clue_id}>
-                {c.title}
-              </option>
-            ))}
-          </select>
-          <button
-            disabled={busy || !clueTopic}
-            onClick={() => ask("evidence", { topic_clue_id: clueTopic })}
-          >
-            Confront with evidence
-          </button>
-        </div>
-      </div>
-
-      {lastResult && lastResult.revealed_clues.length > 0 && (
-        <div className="revealed">
-          {lastResult.revealed_clues.map((c) => (
-            <ClueCard key={c.clue_id} clue={c} isNew />
-          ))}
-        </div>
-      )}
-
-      {lastChallenge && lastChallenge.revealed_clues.length > 0 && (
-        <div className="revealed">
-          {lastChallenge.revealed_clues.map((c) => (
-            <ClueCard key={c.clue_id} clue={c} isNew />
-          ))}
-        </div>
-      )}
-    </div>
+      </aside>
+    </>
   );
 }

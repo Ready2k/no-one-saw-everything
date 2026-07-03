@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { AgentPublic } from "../types";
+import { SPRITE_SHEET } from "../map/mapAssets";
 
 // Pressure is a 0-1 cumulative value from the session (see backend
 // session.py). Expressions switch at these thresholds; tune freely —
@@ -24,6 +25,43 @@ function portraitAsset(agent: AgentPublic, expression: ExpressionState): string 
   return art.calm ?? art.defensive ?? art.cracking;
 }
 
+// The idle facing-down frame sits at column 1, row 0 of the 3×4 sprite sheet.
+const IDLE_COL = SPRITE_SHEET.idleCol; // 1
+const IDLE_ROW = SPRITE_SHEET.idleRow; // 0
+const SHEET_COLS = SPRITE_SHEET.cols;  // 3
+const SHEET_ROWS = SPRITE_SHEET.rows;  // 4
+
+/**
+ * Render a div that crops just the idle-down frame out of a sprite sheet,
+ * sized to fill the portrait slot exactly.
+ */
+function SpritePortrait({
+  spriteAsset,
+  name,
+  size,
+}: {
+  spriteAsset: string;
+  name: string;
+  size: "small" | "large";
+}) {
+  // The sprite sheet's idle col is at col-index 1 of 3; we want to show only
+  // that cell. We do this via background-size + background-position on a div.
+  return (
+    <span
+      className={`portrait portrait-sprite portrait-${size}`}
+      title={name}
+      style={{
+        backgroundImage: `url(/map/sprites/${spriteAsset})`,
+        backgroundSize: `${SHEET_COLS * 100}% ${SHEET_ROWS * 100}%`,
+        backgroundPosition: `${(IDLE_COL / (SHEET_COLS - 1)) * 100}% ${(IDLE_ROW / (SHEET_ROWS - 1)) * 100}%`,
+        backgroundRepeat: "no-repeat",
+        display: "inline-block",
+        imageRendering: "pixelated",
+      }}
+    />
+  );
+}
+
 export default function Portrait({
   agent,
   pressure = 0,
@@ -36,16 +74,30 @@ export default function Portrait({
   const [broken, setBroken] = useState(false);
   const expression = expressionForPressure(pressure);
   const asset = broken ? null : portraitAsset(agent, expression);
-  if (!asset) {
-    // Legacy fallback: emoji string rendered as text, exactly as before.
-    return <span className={`portrait portrait-${size}`}>{agent.portrait}</span>;
+
+  // Priority 1: explicit portrait_art image
+  if (asset) {
+    return (
+      <img
+        className={`portrait portrait-img portrait-${size} expression-${expression}`}
+        src={asset}
+        alt={`${agent.full_name} (${expression})`}
+        onError={() => setBroken(true)}
+      />
+    );
   }
-  return (
-    <img
-      className={`portrait portrait-img portrait-${size} expression-${expression}`}
-      src={asset}
-      alt={`${agent.full_name} (${expression})`}
-      onError={() => setBroken(true)}
-    />
-  );
+
+  // Priority 2: sprite sheet idle frame (character image, not emoji)
+  if (agent.sprite_asset && !broken) {
+    return (
+      <SpritePortrait
+        spriteAsset={agent.sprite_asset}
+        name={agent.full_name}
+        size={size}
+      />
+    );
+  }
+
+  // Priority 3: legacy emoji fallback
+  return <span className={`portrait portrait-${size}`}>{agent.portrait}</span>;
 }

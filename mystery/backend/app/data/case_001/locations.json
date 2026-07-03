@@ -262,5 +262,74 @@
       "height": 30
     },
     "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_priya_flat",
+    "name": "Priya's Flat",
+    "description": "A small flat where Priya Shah lives.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 200,
+      "y": 350
+    },
+    "map_bounds": {
+      "x": 170,
+      "y": 330,
+      "width": 60,
+      "height": 40
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_nadia_flat",
+    "name": "Nadia's Flat",
+    "description": "Nadia Cole's neat and tidy apartment.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 240,
+      "y": 350
+    },
+    "map_bounds": {
+      "x": 210,
+      "y": 330,
+      "width": 60,
+      "height": 40
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_elias_house",
+    "name": "Elias Grant's House",
+    "description": "A quiet little house belonging to the retired schoolteacher Elias Grant.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 291,
+      "y": 372
+    },
+    "map_bounds": {
+      "x": 258,
+      "y": 328,
+      "width": 67,
+      "height": 92
+    },
+    "visual_layer": "interior"
   }
 ]

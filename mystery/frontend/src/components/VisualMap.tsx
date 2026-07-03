@@ -73,6 +73,7 @@ export default function VisualMap({
   // True while the view change came from a focus jump (dropdown selection),
   // so that jump animates; direct wheel/drag input stays immediate.
   const smooth = useRef(false);
+  const [showLabels, setShowLabels] = useState(true);
 
   const clampView = (scale: number, tx: number, ty: number) => {
     const el = viewportRef.current;
@@ -228,6 +229,14 @@ export default function VisualMap({
         <button type="button" onClick={resetView} title="Reset view" disabled={view.scale === 1}>
           ⟲
         </button>
+        <button 
+          type="button" 
+          onClick={() => setShowLabels(s => !s)} 
+          title={showLabels ? "Hide labels" : "Show labels"}
+          style={{ fontSize: '1rem', marginTop: '4px', opacity: showLabels ? 1 : 0.5 }}
+        >
+          👁
+        </button>
       </div>
 
       <div
@@ -261,17 +270,19 @@ export default function VisualMap({
                   }}
                 />
               )}
-              <button
-                className={`map-loc-label ${selected ? "selected" : ""}`}
-                style={{
-                  left: pct(loc.map_position.x, width),
-                  top: pct(loc.map_position.y, height),
-                }}
-                onClick={() => onSelectLocation(loc.location_id)}
-                title={loc.description}
-              >
-                {loc.name}
-              </button>
+              {showLabels && (
+                <button
+                  className={`map-loc-label ${selected ? "selected" : ""}`}
+                  style={{
+                    left: pct(loc.map_position.x, width),
+                    top: pct(loc.map_position.y, height),
+                  }}
+                  onClick={() => onSelectLocation(loc.location_id)}
+                  title={loc.description}
+                >
+                  {loc.name}
+                </button>
+              )}
             </div>
           );
         })}

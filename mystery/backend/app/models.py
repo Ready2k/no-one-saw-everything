@@ -251,6 +251,12 @@ class Discoverability(BaseModel):
     location_id: Optional[str] = None
     object_id: Optional[str] = None
     required_prior_clue_ids: list[str] = []
+    
+    # Hotspot fields for map inspection
+    x: Optional[float] = None          # Percentage 0-100 across the room crop
+    y: Optional[float] = None          # Percentage 0-100 down the room crop
+    radius: Optional[float] = 8.0      # Radius percentage
+    discovery_text: Optional[str] = None
 
 
 class Clue(BaseModel):

@@ -1,4 +1,5 @@
 import { useWorld } from "../App";
+import Portrait from "../components/Portrait";
 
 export default function Overview({ onBegin }: { onBegin: () => void }) {
   const { caseOverview: c } = useWorld();
@@ -12,7 +13,7 @@ export default function Overview({ onBegin }: { onBegin: () => void }) {
           <div>
             <dt>Found by</dt>
             <dd>
-              {c.discovered_by.portrait} {c.discovered_by.full_name}
+              <Portrait agent={c.discovered_by} /> {c.discovered_by.full_name}
             </dd>
           </div>
           <div>

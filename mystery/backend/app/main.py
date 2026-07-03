@@ -240,7 +240,8 @@ def inspect(req: InspectRequest):
 
     sess.inspected_location_ids.add(req.location_id)
     log_telemetry_event(sess, "inspection_performed", {"location_id": req.location_id})
-    newly, already, locked = [], [], 0
+    hidden_clues, already, locked = [], [], 0
+    import hashlib
     for clue in case.clues:
         d = clue.discoverability
         if d.method != "inspect" or d.location_id != req.location_id:
@@ -251,19 +252,51 @@ def inspect(req: InspectRequest):
         if any(p not in sess.discovered_clue_ids for p in d.required_prior_clue_ids):
             locked += 1  # something is here, but the player lacks context
             continue
-        sess.discovered_clue_ids.add(clue.clue_id)
-        log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "inspect"})
-        newly.append(project_clue(clue))
+            
+        x = d.x
+        y = d.y
+        if x is None or y is None:
+            seed_str = f"{case.case.case_id}:{req.location_id}:{clue.clue_id}"
+            digest = hashlib.md5(seed_str.encode("utf-8")).hexdigest()
+            x = 10 + ((int(digest[0:4], 16) / 65535.0) * 80)
+            y = 10 + ((int(digest[4:8], 16) / 65535.0) * 80)
+            
+        hidden_clues.append({
+            "clue_id": clue.clue_id,
+            "x": x,
+            "y": y,
+            "radius": d.radius if d.radius is not None else 8.0,
+            "discovery_text": d.discovery_text,
+            "title": clue.title,
+        })
 
     hint = None
     if locked:
         hint = "Something about this place feels off, but you can't put your finger on it yet."
+    from .projections import project_map_location
     return {
-        "location": project_location(location),
-        "new_clues": newly,
+        "location": project_map_location(location),
+        "new_clues": [], # deprecated but kept for frontend compatibility if needed
+        "hidden_clues": hidden_clues,
         "known_clues": already,
         "hint": hint,
     }
+
+
+class DiscoverClueRequest(BaseModel):
+    clue_id: str
+
+@app.post("/api/discover_clue")
+def discover_clue(req: DiscoverClueRequest):
+    case = case_data()
+    sess = session()
+    clue = next((c for c in case.clues if c.clue_id == req.clue_id), None)
+    if not clue:
+        raise HTTPException(404, "No such clue")
+    if clue.clue_id not in sess.discovered_clue_ids:
+        sess.discovered_clue_ids.add(clue.clue_id)
+        log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "magnifying_glass"})
+    return project_clue(clue)
 
 
 @app.get("/api/clues")
