@@ -1,0 +1,96 @@
+[
+  {
+    "object_id": "obj_cocoa_mug",
+    "name": "Marcus's cocoa mug",
+    "description": "Marcus's fireside mug, still on the side table. A faint greenish residue clings to the inside rim. The mug is still faintly damp — suggesting the cocoa was warm a few hours ago.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_marcus_house",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_ruth", "agent_marcus"],
+    "last_seen_time": "21:10",
+    "hidden_state": "green_residue_inside_rim",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_digitalis_vial",
+    "name": "Empty digitalis extract vial",
+    "description": "A small glass vial, unlabelled, found in the ash of Ruth's cottage fireplace the morning after — the glass is heat-cracked but intact enough to confirm a plant-based glycoside residue. Consistent with foxglove extract.",
+    "is_weapon": true,
+    "normal_location_id": "loc_ruth_cottage",
+    "final_location_id": "loc_ruth_cottage",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_ruth"],
+    "last_seen_time": "23:00",
+    "hidden_state": "in_fireplace_ash",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_foxglove_garden",
+    "name": "Foxglove stand in Ruth's garden",
+    "description": "A substantial stand of foxglove (digitalis purpurea) in Ruth's garden, partly harvested. Several stems show fresh cut marks at the base, as if material was removed recently.",
+    "normal_location_id": "loc_ruth_cottage",
+    "final_location_id": "loc_ruth_cottage",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_ruth"],
+    "last_seen_time": "19:00",
+    "hidden_state": "cut_marks_on_stems",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_birth_certificate",
+    "name": "Ruth's original birth certificate",
+    "description": "Found folded inside the binding of a book in Marcus's study: Ruth Margaret Bell, born 1973, father: Henry Bell — the same father as Marcus Bell. The mother is listed as Doris Calder. Ruth is Marcus's illegitimate half-sister, never acknowledged.",
+    "normal_location_id": "loc_marcus_study",
+    "final_location_id": "loc_marcus_study",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_marcus", "agent_ruth"],
+    "last_seen_time": "18:30",
+    "hidden_state": "folded_inside_book_binding",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_revised_will",
+    "name": "Marcus's revised will — draft",
+    "description": "In the study: a draft of Marcus's revised will, removing Isabella and the clinic as beneficiaries and directing the estate to 'Thomas Bell, nephew.' Crucially, a handwritten note at the bottom in Marcus's hand: 'To be finalised Thursday — but if R. contests, she may have legal standing.' Marcus knew.",
+    "normal_location_id": "loc_marcus_study",
+    "final_location_id": "loc_marcus_study",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_marcus", "agent_solicitor"],
+    "last_seen_time": "17:00",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_burnt_document",
+    "name": "Burnt document in Marcus's fireplace",
+    "description": "Recent ash in Marcus's study fireplace — burnt last night. The surviving fragment of charred paper shows the letters '...Calder...' and '...Bell, 19...' — consistent with a birth record.",
+    "normal_location_id": "loc_marcus_study",
+    "final_location_id": "loc_marcus_study",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_ruth"],
+    "last_seen_time": "21:00",
+    "hidden_state": "charred_fragment_in_ash",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_elias_memory",
+    "name": "Elias's memory — 'Bell girl'",
+    "description": "Not a physical object — an interview clue. Elias, if asked carefully, recalls that there was a Bell girl in the village decades ago — born of Henry Bell and a woman who lived on the south lane. The child was raised elsewhere. He thinks her name was Ruth.",
+    "normal_location_id": "loc_village_square",
+    "final_location_id": "loc_village_square",
+    "access_rules": [],
+    "touched_by_agent_ids": [],
+    "last_seen_time": "07:30",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_ruth_key",
+    "name": "Marcus's spare key — in Ruth's possession",
+    "description": "Ruth has a spare key to Marcus's house, given for registered post delivery. It is the only non-family key. Ruth does not mention having it.",
+    "normal_location_id": "loc_ruth_cottage",
+    "final_location_id": "loc_ruth_cottage",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_ruth", "agent_marcus"],
+    "last_seen_time": "21:00",
+    "clue_relevance": "opportunity"
+  }
+]
