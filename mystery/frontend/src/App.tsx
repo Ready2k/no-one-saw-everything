@@ -10,6 +10,7 @@ import Suspects from "./views/Suspects";
 import BoardView from "./views/Board";
 import Accuse from "./views/Accuse";
 import GenerateCaseModal from "./views/GenerateCaseModal";
+import LlmSettingsModal from "./views/LlmSettingsModal";
 import { PlaytestPanel } from "./views/PlaytestPanel";
 import AudioControls from "./components/AudioControls";
 import CinematicsToggle from "./components/CinematicsToggle";
@@ -52,16 +53,17 @@ export function useUiNav(): UiNav {
 }
 
 const TABS = [
-  { id: "overview", label: "Case" },
+  { id: "overview", label: "Case File" },
   { id: "rewind", label: "Rewind" },
   { id: "map", label: "Map Replay" },
   { id: "places", label: "Places" },
   { id: "suspects", label: "Suspects" },
   { id: "board", label: "Case Board" },
-  { id: "accuse", label: "Accuse" },
 ] as const;
 
-type TabId = (typeof TABS)[number]["id"];
+// "accuse" lives outside TABS: it renders as its own dramatic tab on the far
+// right of the nav rail rather than in the routine investigation tabs.
+type TabId = (typeof TABS)[number]["id"] | "accuse";
 
 // The body-discovery intro plays once per case; the flag is cleared when a
 // fresh investigation is started so a new session sees it again.
@@ -73,6 +75,7 @@ export default function App() {
   const [tab, setTab] = useState<TabId>("overview");
   const [showIntro, setShowIntro] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showLlmSettingsModal, setShowLlmSettingsModal] = useState(false);
   const [mapJump, setMapJump] = useState<MapJump | null>(null);
   const [suspectFocus, setSuspectFocus] = useState<string | null>(null);
 
@@ -135,9 +138,81 @@ export default function App() {
       >
       <div className="app">
         <header className="topbar">
-          <div className="brand">
-            <span className="brand-title">No One Saw Everything</span>
-            <span className="brand-case">{world.caseOverview.title}</span>
+          <div className="masthead">
+            <div className="brand">
+              <span className="brand-eyebrow">Detective Bureau · Homicide Division</span>
+              <span className="brand-title">No One Saw Everything</span>
+            </div>
+            <label className="case-docket" title="Open a different case file — current progress will be lost">
+              <span className="docket-label">Case Nº</span>
+              <select
+                className="docket-select"
+                value={world.caseOverview.case_id}
+                onChange={async (e) => {
+                  const newCaseId = e.target.value;
+                  if (newCaseId === world.caseOverview.case_id) return;
+
+                  const caseNames: Record<string, string> = {
+                    case_001: "Case 1: The Storage Room Murder",
+                    case_002: "Case 2: The Locked Bookshop",
+                    case_003: "Case 3: The Clinic After Hours",
+                    case_004: "Case 4: The Fountain at Midnight",
+                    case_005: "Case 5: The Rear Alley Fire",
+                    case_006: "Case 6: The Bell Estate",
+                  };
+
+                  if (confirm(`Switch to ${caseNames[newCaseId]}? Your current progress will be lost.`)) {
+                    await api.activate(newCaseId);
+                    localStorage.removeItem(introSeenKey(newCaseId));
+                    clearCaseStarted(newCaseId);
+                    location.reload();
+                  }
+                }}
+              >
+                <option value="case_001">001 · The Storage Room Murder</option>
+                <option value="case_002">002 · The Locked Bookshop</option>
+                <option value="case_003">003 · The Clinic After Hours</option>
+                <option value="case_004">004 · The Fountain at Midnight</option>
+                <option value="case_005">005 · The Rear Alley Fire</option>
+                <option value="case_006">006 · The Bell Estate</option>
+              </select>
+            </label>
+            <div className="desk-tools">
+              <RankBadge />
+              <span className="tool-divider" />
+              <CinematicsToggle />
+              <AudioControls />
+              <span className="tool-divider" />
+              <button
+                className="tool-btn"
+                title="Wipe your notes and discoveries and work this case again from the start"
+                onClick={async () => {
+                  if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
+                    await api.reset();
+                    localStorage.removeItem(introSeenKey(world.caseOverview.case_id));
+                    clearCaseStarted(world.caseOverview.case_id);
+                    location.reload();
+                  }
+                }}
+              >
+                Reopen Case
+              </button>
+              <button
+                className="tool-btn seal"
+                title="Commission a brand-new case from the case writer"
+                onClick={() => setShowGenerateModal(true)}
+              >
+                ✒ New Case
+              </button>
+              <button
+                className="tool-btn icon-only"
+                title="LLM settings — configure the model behind case generation and dialogue"
+                aria-label="LLM settings"
+                onClick={() => setShowLlmSettingsModal(true)}
+              >
+                ⚙
+              </button>
+            </div>
           </div>
           <nav className="tabs">
             {TABS.map((t) => (
@@ -149,70 +224,15 @@ export default function App() {
                 {t.label}
               </button>
             ))}
+            <span className="tabs-case-note">{world.caseOverview.title}</span>
+            <button
+              className={tab === "accuse" ? "tab accuse active" : "tab accuse"}
+              title="Name the killer — this closes the case"
+              onClick={() => setTab("accuse")}
+            >
+              ⚖ Accuse
+            </button>
           </nav>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <RankBadge />
-            <CinematicsToggle />
-            <AudioControls />
-            <select
-              value={world.caseOverview.case_id}
-              onChange={async (e) => {
-                const newCaseId = e.target.value;
-                if (newCaseId === world.caseOverview.case_id) return;
-                
-                const caseNames: Record<string, string> = {
-                  case_001: "Case 1: The Storage Room Murder",
-                  case_002: "Case 2: The Locked Bookshop",
-                  case_003: "Case 3: The Clinic After Hours",
-                  case_004: "Case 4: The Fountain at Midnight",
-                  case_005: "Case 5: The Rear Alley Fire",
-                  case_006: "Case 6: The Bell Estate",
-                };
-                
-                if (confirm(`Switch to ${caseNames[newCaseId]}? Your current progress will be lost.`)) {
-                  await api.activate(newCaseId);
-                  localStorage.removeItem(introSeenKey(newCaseId));
-                  clearCaseStarted(newCaseId);
-                  location.reload();
-                }
-              }}
-              style={{
-                background: "var(--bg-panel)",
-                color: "var(--text)",
-                border: "1px solid var(--border)",
-                borderRadius: "4px",
-                padding: "4px 8px",
-                cursor: "pointer",
-                outline: "none"
-              }}
-            >
-              <option value="case_001">Case 1: Storage Room Murder</option>
-              <option value="case_002">Case 2: Locked Bookshop</option>
-              <option value="case_003">Case 3: Clinic After Hours</option>
-              <option value="case_004">Case 4: Fountain at Midnight</option>
-              <option value="case_005">Case 5: Rear Alley Fire</option>
-              <option value="case_006">Case 6: The Bell Estate</option>
-            </select>
-            <button
-              className="reset"
-              onClick={async () => {
-                if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
-                  await api.reset();
-                  localStorage.removeItem(introSeenKey(world.caseOverview.case_id));
-                  clearCaseStarted(world.caseOverview.case_id);
-                  location.reload();
-                }
-              }}
-            >
-              New investigation
-            </button>
-            <button
-              className="primary"
-              onClick={() => setShowGenerateModal(true)}
-            >
-              Generate Case
-            </button>
-          </div>
         </header>
         <main className="content">
           {tab === "overview" && <Overview onBegin={() => setTab("rewind")} />}
@@ -245,6 +265,9 @@ export default function App() {
             location.reload();
           }}
         />
+      )}
+      {showLlmSettingsModal && (
+        <LlmSettingsModal onClose={() => setShowLlmSettingsModal(false)} />
       )}
       <PlaytestPanel />
       </UiNavContext.Provider>

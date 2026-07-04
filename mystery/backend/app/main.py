@@ -73,6 +73,93 @@ def get_config():
     }
 
 
+class LLMSettingsUpdate(BaseModel):
+    provider: str  # "fake" | "auto" | "openai_compatible"
+    base_url: Optional[str] = None
+    api_key: Optional[str] = None
+    model: Optional[str] = None
+    dialogue_enabled: bool = False
+
+
+@app.get("/api/llm-settings")
+def get_llm_settings():
+    """Returns the saved LLM settings (if any) plus the currently effective config,
+    so the in-game Settings panel can show what will actually be used."""
+    from .llm.config import get_llm_config, load_saved_settings
+
+    saved = load_saved_settings()
+    effective = get_llm_config()
+    return {
+        "saved": saved.model_dump() if saved else None,
+        "effective": {
+            "provider": effective.provider,
+            "base_url": effective.base_url,
+            "model": effective.model,
+            "configured": effective.configured,
+            "fallback_reason": effective.fallback_reason,
+            "detected_source": effective.detected_source,
+            "dialogue_enabled": effective.dialogue_enabled,
+        },
+    }
+
+
+@app.put("/api/llm-settings")
+def update_llm_settings(payload: LLMSettingsUpdate):
+    from .llm.config import SavedLLMSettings, save_settings, get_llm_config
+
+    if payload.provider not in ("fake", "auto", "openai_compatible"):
+        raise HTTPException(status_code=400, detail="Invalid provider")
+    if payload.provider == "openai_compatible" and (not payload.base_url or not payload.model):
+        raise HTTPException(
+            status_code=400,
+            detail="base_url and model are required for the openai_compatible provider",
+        )
+
+    save_settings(SavedLLMSettings(**payload.model_dump()))
+
+    from .llm import discovery
+    discovery.reset_cache()
+
+    return get_llm_settings()
+
+
+class ModelDiscoveryRequest(BaseModel):
+    base_url: str
+    api_key: Optional[str] = None
+
+
+@app.post("/api/llm-settings/models")
+def discover_llm_models(payload: ModelDiscoveryRequest):
+    """Auto-discovers models available at a user-supplied base_url, for the
+    Custom (OpenAI-compatible) provider's Model dropdown."""
+    from .llm.discovery import list_models_for_base_url
+
+    if not payload.base_url.strip():
+        raise HTTPException(status_code=400, detail="base_url is required")
+
+    models = list_models_for_base_url(payload.base_url.strip(), payload.api_key)
+    return {"models": models}
+
+
+@app.post("/api/llm-settings/probe")
+def probe_llm_settings():
+    """Runs auto-detection now (bypassing the cache) so the Settings panel can
+    show whether a local LLM host is currently reachable before the user saves
+    provider='auto'."""
+    from .llm.discovery import detect_llm
+
+    detected = detect_llm(force=True)
+    if detected is None:
+        return {"found": False}
+    return {
+        "found": True,
+        "host_id": detected.host_id,
+        "endpoint": detected.endpoint,
+        "model": detected.model,
+        "source": detected.source,
+    }
+
+
 def case_data():
     return fetch_case(ACTIVE_CASE_ID)
 

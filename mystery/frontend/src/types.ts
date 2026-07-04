@@ -354,6 +354,37 @@ export interface Config {
   llm_detected_source: string | null;
 }
 
+export interface LlmSettingsSaved {
+  provider: "fake" | "auto" | "openai_compatible";
+  base_url: string | null;
+  api_key: string | null;
+  model: string | null;
+  dialogue_enabled: boolean;
+}
+
+export interface LlmSettingsEffective {
+  provider: string;
+  base_url: string | null;
+  model: string | null;
+  configured: boolean;
+  fallback_reason: string | null;
+  detected_source: string | null;
+  dialogue_enabled: boolean;
+}
+
+export interface LlmSettingsResponse {
+  saved: LlmSettingsSaved | null;
+  effective: LlmSettingsEffective;
+}
+
+export interface LlmProbeResult {
+  found: boolean;
+  host_id?: string;
+  endpoint?: string;
+  model?: string;
+  source?: string;
+}
+
 export interface PlaytestSummary {
   case_id: string;
   case_title: string;

@@ -10,7 +10,7 @@ export default function RankBadge() {
   return (
     <div className="rank-badge-wrap">
       <button
-        className="rank-badge"
+        className="tool-btn rank-badge"
         onClick={() => setOpen(!open)}
         title="Your detective record"
       >

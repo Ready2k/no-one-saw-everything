@@ -14,21 +14,27 @@ export default function AudioControls() {
   };
 
   return (
-    <div className="audio-controls" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+    <div className="audio-controls">
       {!state.unlocked ? (
-        <button className="primary small" onClick={handleUnlock}>
-          Enable Sound
+        <button
+          className="tool-btn"
+          title="Enable music and sound effects"
+          onClick={handleUnlock}
+        >
+          ♪ Sound
         </button>
       ) : (
         <>
-          <button 
-            className="icon-button" 
+          <button
+            className={state.muted ? "tool-btn icon-only tool-off" : "tool-btn icon-only"}
             onClick={() => audioManager.toggleMute()}
             title={state.muted ? "Unmute" : "Mute"}
+            aria-label={state.muted ? "Unmute" : "Mute"}
           >
             {state.muted ? "🔇" : "🔊"}
           </button>
           <input
+            className="volume-slider"
             type="range"
             min="0"
             max="1"
@@ -37,7 +43,6 @@ export default function AudioControls() {
             onChange={(e) => audioManager.setVolume(parseFloat(e.target.value))}
             disabled={state.muted}
             title="Volume"
-            style={{ width: "80px" }}
           />
         </>
       )}

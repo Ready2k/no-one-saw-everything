@@ -85,6 +85,23 @@
       ],
       "cwd": "mystery/frontend",
       "port": 5176
+    },
+    {
+      "name": "mystery-backend-alt4",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", ".venv/bin/uvicorn app.main:app --port 8014"],
+      "cwd": "mystery/backend",
+      "port": 8014
+    },
+    {
+      "name": "mystery-frontend-alt4",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "MYSTERY_API_PORT=8014 npm run dev -- --port 5177 --strictPort"
+      ],
+      "cwd": "mystery/frontend",
+      "port": 5177
     }
   ]
 }

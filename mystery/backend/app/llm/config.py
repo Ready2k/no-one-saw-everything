@@ -1,8 +1,49 @@
+import json
 import os
+from pathlib import Path
 from pydantic import BaseModel
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Settings saved from the in-game LLM Settings panel (App.tsx gear icon ->
+# LlmSettingsModal). These override environment variables so the game can be
+# configured without restarting the backend process or editing shell env.
+SETTINGS_FILE = Path(__file__).parent.parent / "data" / "llm_settings.json"
+
+
+class SavedLLMSettings(BaseModel):
+    provider: str = "fake"  # "fake" | "auto" | "openai_compatible"
+    base_url: str | None = None
+    api_key: str | None = None
+    model: str | None = None
+    dialogue_enabled: bool = False
+
+
+def normalize_base_url(base_url: str) -> str:
+    """Users often paste a bare host:port (e.g. copied from Ollama docs)
+    without a scheme, which urllib rejects outright. Default to http://."""
+    base_url = base_url.strip()
+    if base_url and not base_url.startswith(("http://", "https://")):
+        return f"http://{base_url}"
+    return base_url
+
+
+def load_saved_settings() -> SavedLLMSettings | None:
+    try:
+        if SETTINGS_FILE.exists():
+            return SavedLLMSettings(**json.loads(SETTINGS_FILE.read_text()))
+    except (OSError, ValueError) as e:
+        logger.warning(f"Failed to read saved LLM settings, ignoring: {e}")
+    return None
+
+
+def save_settings(settings: SavedLLMSettings) -> None:
+    if settings.base_url:
+        settings.base_url = normalize_base_url(settings.base_url)
+    SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    SETTINGS_FILE.write_text(settings.model_dump_json(indent=2))
+
 
 class LLMConfig(BaseModel):
     provider: str
@@ -16,12 +57,15 @@ class LLMConfig(BaseModel):
     detected_source: str | None = None  # how "auto" found this config, if it did
 
 def get_llm_config() -> LLMConfig:
-    provider = os.environ.get("MYSTERY_LLM_PROVIDER", "fake").lower()
-    base_url = os.environ.get("MYSTERY_LLM_BASE_URL")
-    api_key = os.environ.get("MYSTERY_LLM_API_KEY")
-    model = os.environ.get("MYSTERY_LLM_MODEL")
+    saved = load_saved_settings()
+
+    provider = (saved.provider if saved else None) or os.environ.get("MYSTERY_LLM_PROVIDER", "fake")
+    provider = provider.lower()
+    base_url = (saved.base_url if saved else None) or os.environ.get("MYSTERY_LLM_BASE_URL")
+    api_key = (saved.api_key if saved else None) or os.environ.get("MYSTERY_LLM_API_KEY")
+    model = (saved.model if saved else None) or os.environ.get("MYSTERY_LLM_MODEL")
     timeout = int(os.environ.get("MYSTERY_LLM_TIMEOUT_SECONDS", "60"))
-    dialogue_env = os.environ.get("MYSTERY_LLM_DIALOGUE_ENABLED")
+    dialogue_env = "true" if (saved and saved.dialogue_enabled) else os.environ.get("MYSTERY_LLM_DIALOGUE_ENABLED")
 
     if provider == "fake":
         return LLMConfig(

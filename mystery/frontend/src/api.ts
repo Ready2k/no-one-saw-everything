@@ -21,6 +21,8 @@ import type {
   Config,
   PlaytestSummary,
   Feedback,
+  LlmSettingsResponse,
+  LlmProbeResult,
 } from "./types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -201,6 +203,24 @@ export const api = {
       body: JSON.stringify({ case_id: caseId }),
     }),
   getConfig: () => request<Config>("/api/config"),
+  getLlmSettings: () => request<LlmSettingsResponse>("/api/llm-settings"),
+  updateLlmSettings: (payload: {
+    provider: "fake" | "auto" | "openai_compatible";
+    base_url?: string;
+    api_key?: string;
+    model?: string;
+    dialogue_enabled: boolean;
+  }) =>
+    request<LlmSettingsResponse>("/api/llm-settings", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+  probeLlm: () => request<LlmProbeResult>("/api/llm-settings/probe", { method: "POST" }),
+  discoverLlmModels: (payload: { base_url: string; api_key?: string }) =>
+    request<{ models: string[] }>("/api/llm-settings/models", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   getPlaytestSummary: () => request<PlaytestSummary>("/api/session/playtest-summary"),
   getPlaytestExport: () => request<any>("/api/session/playtest-export"),
   submitFeedback: (payload: Feedback) => request<{ status: string }>("/api/session/feedback", {

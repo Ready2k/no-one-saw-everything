@@ -67,6 +67,78 @@ def _models_for_host(endpoint: str) -> list[str]:
     return sorted(names)
 
 
+# User-driven "Refresh" checks a single endpoint (unlike the multi-host
+# background auto-probe), so it can afford a longer timeout — mDNS ".local"
+# hostname resolution in particular can take several seconds.
+_USER_PROBE_TIMEOUT_SECONDS = 6.0
+
+
+def _describe_error(exc: Exception) -> str:
+    if isinstance(exc, urllib.error.HTTPError):
+        return f"HTTP {exc.code} from server"
+    if isinstance(exc, urllib.error.URLError):
+        reason = exc.reason
+        text = str(reason)
+        if "nodename nor servname" in text or "Name or service not known" in text:
+            return "Could not resolve hostname — check for typos, or try the IP address instead"
+        if isinstance(reason, TimeoutError) or "timed out" in text.lower():
+            return "Connection timed out — host may be unreachable from this machine"
+        if "Connection refused" in text:
+            return "Connection refused — is the server running on that port?"
+        return f"Connection failed: {text}"
+    if isinstance(exc, TimeoutError):
+        return "Connection timed out — host may be unreachable from this machine"
+    if isinstance(exc, ValueError):
+        return "Server did not return valid JSON"
+    return f"Connection failed: {exc}"
+
+
+def list_models_for_base_url(base_url: str, api_key: Optional[str] = None) -> tuple[list[str], Optional[str]]:
+    """Auto-discovers models available at a user-supplied base_url, for the
+    Custom (OpenAI-compatible) LLM Settings option. Tries Ollama's /api/tags
+    against the host root first (works whether the user entered the bare
+    host or the /v1 suffix), then falls back to the OpenAI-compatible
+    /models list endpoint.
+
+    Returns (models, error). error is a human-readable reason set only when
+    both attempts failed and no models were found.
+    """
+    from .config import normalize_base_url
+
+    base_url = normalize_base_url(base_url)
+    root = base_url.rstrip("/")
+    if root.endswith("/v1"):
+        root = root[: -len("/v1")]
+
+    last_error: Optional[str] = None
+
+    try:
+        with urllib.request.urlopen(f"{root}/api/tags", timeout=_USER_PROBE_TIMEOUT_SECONDS) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        names = sorted(m.get("name", "") for m in data.get("models", []) if m.get("name"))
+        if names:
+            return names, None
+        last_error = "Endpoint responded but reported no models"
+    except (urllib.error.URLError, TimeoutError, ValueError, OSError) as e:
+        last_error = _describe_error(e)
+
+    url = f"{base_url.rstrip('/')}/models"
+    req = urllib.request.Request(url)
+    if api_key:
+        req.add_header("Authorization", f"Bearer {api_key}")
+    try:
+        with urllib.request.urlopen(req, timeout=_USER_PROBE_TIMEOUT_SECONDS) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        names = sorted(m.get("id", "") for m in data.get("data", []) if m.get("id"))
+        if names:
+            return names, None
+        last_error = "Endpoint responded but reported no models"
+    except (urllib.error.URLError, TimeoutError, ValueError, OSError) as e:
+        last_error = _describe_error(e)
+
+    return [], last_error
+
+
 def _read_shared_settings() -> Optional[dict]:
     try:
         if _SHARED_SETTINGS_FILE.exists():

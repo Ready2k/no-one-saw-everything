@@ -4,3 +4,4 @@ frontend/dist/
 __pycache__/
 .pytest_cache/
 frontend/tsconfig.tsbuildinfo
+backend/app/data/llm_settings.json
