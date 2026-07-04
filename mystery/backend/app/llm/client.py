@@ -20,6 +20,18 @@ class LLMClient(Protocol):
     ) -> T:
         ...
 
+    def generate_chat(
+        self,
+        *,
+        messages: list[dict[str, str]],
+        schema: Type[T] | None = None,
+        temperature: float = 0.2,
+        timeout_seconds: int = 60,
+        response_format_json: bool = True,
+    ) -> Any:
+        ...
+
+
 
 VALID_FAKE_PLAN = {
     "case_type": "blackmail",
@@ -31,6 +43,7 @@ VALID_FAKE_PLAN = {
         "{RH1_ID}": "Has a dark secret.",
         "{RH2_ID}": "Wanted the victim dead too."
     },
+    "scene_description": "The fake murder scene description.",
     "seeded_memories": [
         {
             "owner_role": "{KILLER_ID}",
@@ -139,6 +152,85 @@ class FakeLLMClient:
 
         raise ValueError(f"FakeLLMClient doesn't know how to mock {schema.__name__}")
 
+    def generate_chat(
+        self,
+        *,
+        messages: list[dict[str, str]],
+        schema: Type[T] | None = None,
+        temperature: float = 0.2,
+        timeout_seconds: int = 60,
+        response_format_json: bool = True,
+    ) -> Any:
+        self.calls += 1
+        if self.calls <= self.fail_count:
+            raise RuntimeError("Fake LLM timeout or error")
+            
+        if self.override_response is not None:
+            if schema:
+                return schema.model_validate(self.override_response)
+            return json.dumps(self.override_response)
+            
+        if schema is not None:
+            if schema.__name__ == "CasePlan":
+                return schema.model_validate(VALID_FAKE_PLAN)
+            if schema.__name__ == "DialogueRewrite":
+                return schema.model_validate({"rewritten_text": "Fake rewritten text."})
+            if schema.__name__ == "QuestionIntent":
+                return schema.model_validate({
+                    "intent": "fallback_unknown",
+                    "confidence": 0.0,
+                    "rewritten_structured_question": "Unknown question",
+                })
+            if schema.__name__ == "PlotOutlinePlan":
+                return schema.model_validate({
+                    "title": "The Fake Planner Murder",
+                    "motive_variant": "The victim was blackmailed.",
+                    "victim_rationale": "Victim was angry.",
+                    "killer_rationale": "Killer had enough.",
+                    "red_herring_rationales": {
+                        "{RH1_ID}": "Has a dark secret.",
+                        "{RH2_ID}": "Wanted the victim dead too."
+                    },
+                    "scene_description": "The fake murder scene description."
+                })
+            if schema.__name__ == "CluesPlan":
+                return schema.model_validate({"clue_plans": VALID_FAKE_PLAN["clue_plans"]})
+            if schema.__name__ == "MemoriesPlan":
+                return schema.model_validate({
+                    "seeded_memories": VALID_FAKE_PLAN["seeded_memories"],
+                    "witness_fragments": VALID_FAKE_PLAN["witness_fragments"]
+                })
+            if schema.__name__ == "FlavourPlan":
+                return schema.model_validate({
+                    "interview_flavour": VALID_FAKE_PLAN["interview_flavour"],
+                    "reveal_narration": VALID_FAKE_PLAN["reveal_narration"]
+                })
+        
+        last_message = messages[-1]["content"] if messages else ""
+        if "plot outline" in last_message.lower():
+            return json.dumps({
+                "title": "The Fake Planner Murder",
+                "motive_variant": "The victim was blackmailed.",
+                "victim_rationale": "Victim was angry.",
+                "killer_rationale": "Killer had enough.",
+                "red_herring_rationales": {
+                    "{RH1_ID}": "Has a dark secret.",
+                    "{RH2_ID}": "Wanted the victim dead too."
+                },
+                "scene_description": "The fake murder scene description."
+            })
+        if "clue plans" in last_message.lower():
+            return json.dumps({
+                "clue_plans": VALID_FAKE_PLAN["clue_plans"]
+            })
+        if "seeded memories" in last_message.lower():
+            return json.dumps({
+                "seeded_memories": VALID_FAKE_PLAN["seeded_memories"],
+                "witness_fragments": VALID_FAKE_PLAN["witness_fragments"]
+            })
+        return json.dumps(VALID_FAKE_PLAN)
+
+
 
 class OpenAICompatibleLLMClient:
     def __init__(self, base_url: str, api_key: str | None, model: str):
@@ -161,13 +253,22 @@ class OpenAICompatibleLLMClient:
             "Authorization": f"Bearer {self.api_key}"
         }
         
+        # Inject the JSON schema into the system prompt to guide JSON formatting
+        schema_json = json.dumps(schema.model_json_schema(), indent=2)
+        system_prompt_with_schema = (
+            f"{system_prompt}\n\n"
+            f"Response format MUST be a JSON object conforming to the following JSON Schema:\n"
+            f"{schema_json}"
+        )
+        
         data = {
             "model": self.model,
             "messages": [
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": system_prompt_with_schema},
                 {"role": "user", "content": user_prompt}
             ],
             "temperature": temperature,
+            "max_tokens": 8192,
             "response_format": {"type": "json_object"}
         }
         
@@ -179,6 +280,62 @@ class OpenAICompatibleLLMClient:
                 return schema.model_validate_json(content)
         except Exception as e:
             raise RuntimeError(f"LLM API Error: {e}")
+
+    def generate_chat(
+        self,
+        *,
+        messages: list[dict[str, str]],
+        schema: Type[T] | None = None,
+        temperature: float = 0.2,
+        timeout_seconds: int = 60,
+        response_format_json: bool = True,
+    ) -> Any:
+        url = f"{self.base_url.rstrip('/')}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        
+        processed_messages = []
+        for msg in messages:
+            processed_messages.append({"role": msg["role"], "content": msg["content"]})
+            
+        if schema is not None:
+            schema_json = json.dumps(schema.model_json_schema(), indent=2)
+            for msg in processed_messages:
+                if msg["role"] == "system":
+                    msg["content"] = (
+                        f"{msg['content']}\n\n"
+                        f"Response format MUST be a JSON object conforming to the following JSON Schema:\n"
+                        f"{schema_json}"
+                    )
+                    break
+            else:
+                processed_messages.insert(0, {
+                    "role": "system",
+                    "content": f"Response format MUST be a JSON object conforming to the following JSON Schema:\n{schema_json}"
+                })
+        
+        data = {
+            "model": self.model,
+            "messages": processed_messages,
+            "temperature": temperature,
+            "max_tokens": 8192,
+        }
+        if response_format_json:
+            data["response_format"] = {"type": "json_object"}
+            
+        req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
+                resp_data = json.loads(response.read().decode("utf-8"))
+                content = resp_data["choices"][0]["message"]["content"]
+                if schema is not None:
+                    return schema.model_validate_json(content)
+                return content
+        except Exception as e:
+            raise RuntimeError(f"LLM API Error: {e}")
+
 
 
 def get_llm_client() -> LLMClient:

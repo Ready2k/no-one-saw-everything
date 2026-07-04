@@ -74,12 +74,42 @@ def generate_case(
     with open(template_path) as f:
         template_str = f.read()
 
+    # --- LOCATION REMAPPING ---
+    # To prevent cases always happening in the cafe, we remap the template's physical path.
+    LOCATION_VECTORS = [
+        ("loc_hobbs_cafe", "loc_cafe_kitchen", "loc_cafe_storage"),
+        ("loc_village_square", "loc_bookshop", "loc_bookshop"),
+        ("loc_village_square", "loc_marcus_house", "loc_marcus_house"),
+        ("loc_village_square", "loc_clinic", "loc_clinic"),
+        ("loc_village_square", "loc_elias_house", "loc_elias_house"),
+        ("loc_village_square", "loc_nadia_flat", "loc_nadia_flat"),
+        ("loc_village_square", "loc_owen_house", "loc_owen_house"),
+        ("loc_village_square", "loc_priya_flat", "loc_priya_flat"),
+    ]
+    selected_vector = rng.choice(LOCATION_VECTORS)
+    template_str = template_str.replace("loc_hobbs_cafe", selected_vector[0])
+    template_str = template_str.replace("loc_cafe_kitchen", selected_vector[1])
+    template_str = template_str.replace("loc_cafe_storage", selected_vector[2])
+
+    # --- TIME SHIFTING ---
+    # Shift all HH:MM timestamps by a random offset to prevent the murder always happening at 08:12
+    import re
+    time_shift_minutes = rng.randint(-180, 180)
+    
+    def shift_time(match):
+        h, m = map(int, match.group(0).split(':'))
+        total_mins = (h * 60 + m + time_shift_minutes) % (24 * 60)
+        return f"{total_mins // 60:02d}:{total_mins % 60:02d}"
+
+    template_str = re.sub(r'\b\d{2}:\d{2}\b', shift_time, template_str)
+
     # Replace roles
     for placeholder, value in roles.items():
         template_str = template_str.replace(placeholder, value)
         
     # Generate unique case ID
-    case_id = f"gen_{case_type}_{seed}"
+    import time
+    case_id = f"gen_{case_type}_{seed}_{int(time.time())}"
     template_str = template_str.replace(f"template_{case_type}", case_id)
 
     # Parse back to dict

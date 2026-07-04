@@ -1,0 +1,220 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The open heart of the village, with a stone fountain, benches, and a view of the cafe and bookshop fronts.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_bookshop",
+      "loc_clinic",
+      "loc_rear_alley",
+      "loc_marcus_house",
+      "loc_owen_house"
+    ],
+    "access_rules": [],
+    "visibility_type": "public",
+    "audible_from_location_ids": [],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_village_square",
+    "name": "Hobbs Cafe",
+    "description": "The village cafe. Counter, tables, and the till at the front; kitchen behind.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_bookshop"
+    ],
+    "access_rules": [],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_village_square"
+    ],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Cafe Kitchen",
+    "description": "The working kitchen behind the cafe counter. Coat hooks, sink, mop bucket in the corner.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_bookshop"
+    ],
+    "access_rules": [
+      "staff"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [
+      "loc_village_square"
+    ],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Cafe Storage Room",
+    "description": "A cramped storage room behind the kitchen, stacked with crates. A rear door opens onto the alley.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_bookshop",
+      "loc_rear_alley"
+    ],
+    "access_rules": [
+      "staff",
+      "keyholder"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [
+      "loc_bookshop",
+      "loc_rear_alley"
+    ],
+    "camera_coverage": false,
+    "murder_suitable": true,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_rear_alley",
+    "name": "Rear Alley",
+    "description": "A narrow service alley running behind the cafe and bookshop. Bins, crates, and the cafe's rear door.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_bookshop",
+      "loc_bookshop"
+    ],
+    "access_rules": [],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_bookshop"
+    ],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Reed & Bell Bookshop",
+    "description": "Elias Grant's bookshop, part-funded by Isabella Reed. Its back door opens onto the rear alley.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_rear_alley"
+    ],
+    "access_rules": [],
+    "visibility_type": "public",
+    "audible_from_location_ids": [],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "A small clinic on the square where Priya Shah Cole works the early shift.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [],
+    "visibility_type": "public",
+    "audible_from_location_ids": [],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_marcus_house",
+    "name": "Isabella Reed's House",
+    "description": "Isabella Reed's house on the edge of the square. His study holds the cafe's books.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_owen_house",
+    "name": "Nadia Cole's House & Yard",
+    "description": "Nadia Cole's house and builder's timber yard on the far side of the square.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_clara_flat",
+    "name": "Flat above Hobbs Cafe",
+    "description": "Owen Price's small flat above the cafe, reached by a side stair.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  },
+  {
+    "location_id": "loc_fountain",
+    "name": "Fountain",
+    "description": "The stone fountain in the middle of the village square.",
+    "illustration": null,
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [],
+    "visibility_type": "public",
+    "audible_from_location_ids": [],
+    "camera_coverage": false,
+    "murder_suitable": false,
+    "map_position": null,
+    "map_bounds": null,
+    "visual_layer": null
+  }
+]

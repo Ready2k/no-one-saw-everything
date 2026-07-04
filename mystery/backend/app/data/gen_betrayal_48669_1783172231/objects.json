@@ -1,0 +1,94 @@
+[
+  {
+    "object_id": "obj_till_weight",
+    "name": "Brass Brass till weight",
+    "description": "A heavy brass weight normally kept beside the till to pin down receipts.",
+    "normal_location_id": "loc_hobbs_cafe",
+    "final_location_id": "loc_cafe_kitchen",
+    "access_rules": [
+      "cafe_staff"
+    ],
+    "touched_by_agent_ids": [
+      "agent_owen",
+      "agent_nadia"
+    ],
+    "last_seen_time": "07:36",
+    "hidden_state": "cleaned_and_damp_in_mop_bucket",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_ledger_page",
+    "name": "Torn ledger page",
+    "description": "A page torn from the cafe ledger, columns of till takings with discrepancies circled in red ink.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_cafe_storage",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "last_seen_time": "07:52",
+    "hidden_state": null,
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_blue_coat",
+    "name": "Blue wool coat",
+    "description": "Owen Price's blue coat, well known around the village.",
+    "normal_location_id": "loc_cafe_kitchen",
+    "final_location_id": "loc_cafe_kitchen",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_owen"
+    ],
+    "last_seen_time": "08:00",
+    "hidden_state": "right_sleeve_damp_and_smudged",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_loan_ledger",
+    "name": "Nadia Cole's loan book",
+    "description": "A private notebook in Nadia Cole's study recording money he is owed.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_marcus_house",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "last_seen_time": "06:20",
+    "hidden_state": null,
+    "clue_relevance": "red_herring_motive"
+  },
+  {
+    "object_id": "obj_partnership_letter",
+    "name": "Partnership letter",
+    "description": "A signed letter in Nadia Cole's coat pocket naming Priya Shah \u2014 not Ben Carter \u2014 as partner in the bookshop expansion.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_cafe_storage",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "last_seen_time": "07:52",
+    "hidden_state": null,
+    "clue_relevance": "red_herring_motive"
+  },
+  {
+    "object_id": "obj_isabella_note",
+    "name": "Ben Carter's handwritten note",
+    "description": "A folded note in Nadia Cole's pocket: 'We settle this at 8. Don't make me ask twice. \u2014 I.R.'",
+    "normal_location_id": "loc_bookshop",
+    "final_location_id": "loc_cafe_storage",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_ben",
+      "agent_nadia"
+    ],
+    "last_seen_time": "07:52",
+    "hidden_state": null,
+    "clue_relevance": "red_herring"
+  }
+]

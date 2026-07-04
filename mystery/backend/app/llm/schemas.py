@@ -1,6 +1,6 @@
 """Pydantic schemas for LLM mystery generation."""
 
-from typing import Dict, List, Literal
+from typing import Dict, List, Literal, Any
 from pydantic import BaseModel
 
 
@@ -11,8 +11,8 @@ class SeededMemoryPlan(BaseModel):
     case_function: str
     truth_status: str
     summary: str
-    intended_discovery_path: str
-    linked_clue_purpose: str
+    intended_discovery_path: str | None = None
+    linked_clue_purpose: str | None = None
 
 
 class CluePlan(BaseModel):
@@ -28,7 +28,7 @@ class WitnessFragmentPlan(BaseModel):
     witness_role: str
     observation_summary: str
     reliability: str
-    complicates_timeline_for_role: str
+    complicates_timeline_for_role: str | None = None
 
 
 class CasePlan(BaseModel):
@@ -38,11 +38,31 @@ class CasePlan(BaseModel):
     victim_rationale: str
     killer_rationale: str
     red_herring_rationales: Dict[str, str]
+    scene_description: str
     seeded_memories: List[SeededMemoryPlan]
     clue_plans: List[CluePlan]
     witness_fragments: List[WitnessFragmentPlan]
-    interview_flavour: Dict[str, Dict[str, str]]
+    interview_flavour: Dict[str, Dict[str, Any]]
     reveal_narration: str
 
 class DialogueRewrite(BaseModel):
     rewritten_text: str
+
+class PlotOutlinePlan(BaseModel):
+    title: str
+    motive_variant: str
+    victim_rationale: str
+    killer_rationale: str
+    red_herring_rationales: Dict[str, str] = {}
+    scene_description: str
+
+class CluesPlan(BaseModel):
+    clue_plans: List[CluePlan] = []
+
+class MemoriesPlan(BaseModel):
+    seeded_memories: List[SeededMemoryPlan] = []
+    witness_fragments: List[WitnessFragmentPlan] = []
+
+class FlavourPlan(BaseModel):
+    interview_flavour: Dict[str, Dict[str, Any]] = {}
+    reveal_narration: str = ""

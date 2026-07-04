@@ -69,8 +69,15 @@ type TabId = (typeof TABS)[number]["id"] | "accuse";
 // fresh investigation is started so a new session sees it again.
 const introSeenKey = (caseId: string) => `mystery_intro_seen_${caseId}`;
 
+export interface CaseMeta {
+  case_id: string;
+  title: string;
+  case_type: string;
+}
+
 export default function App() {
   const [world, setWorld] = useState<World | null>(null);
+  const [cases, setCases] = useState<CaseMeta[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<TabId>("overview");
   const [showIntro, setShowIntro] = useState(false);
@@ -80,8 +87,8 @@ export default function App() {
   const [suspectFocus, setSuspectFocus] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([api.caseOverview(), api.agents(), api.locations()])
-      .then(([caseOverview, agents, locations]) => {
+    Promise.all([api.caseOverview(), api.agents(), api.locations(), api.cases()])
+      .then(([caseOverview, agents, locations, availableCases]) => {
         setWorld({
           caseOverview,
           agents,
@@ -91,6 +98,7 @@ export default function App() {
           locationName: (id) =>
             locations.find((l) => l.location_id === id)?.name ?? id,
         });
+        setCases(availableCases);
         setShowIntro(!localStorage.getItem(introSeenKey(caseOverview.case_id)));
         markCaseStarted(caseOverview.case_id);
       })
@@ -152,16 +160,10 @@ export default function App() {
                   const newCaseId = e.target.value;
                   if (newCaseId === world.caseOverview.case_id) return;
 
-                  const caseNames: Record<string, string> = {
-                    case_001: "Case 1: The Storage Room Murder",
-                    case_002: "Case 2: The Locked Bookshop",
-                    case_003: "Case 3: The Clinic After Hours",
-                    case_004: "Case 4: The Fountain at Midnight",
-                    case_005: "Case 5: The Rear Alley Fire",
-                    case_006: "Case 6: The Bell Estate",
-                  };
+                  const targetCase = cases.find((c) => c.case_id === newCaseId);
+                  const caseTitle = targetCase ? targetCase.title : newCaseId;
 
-                  if (confirm(`Switch to ${caseNames[newCaseId]}? Your current progress will be lost.`)) {
+                  if (confirm(`Switch to ${caseTitle}? Your current progress will be lost.`)) {
                     await api.activate(newCaseId);
                     localStorage.removeItem(introSeenKey(newCaseId));
                     clearCaseStarted(newCaseId);
@@ -169,12 +171,16 @@ export default function App() {
                   }
                 }}
               >
-                <option value="case_001">001 · The Storage Room Murder</option>
-                <option value="case_002">002 · The Locked Bookshop</option>
-                <option value="case_003">003 · The Clinic After Hours</option>
-                <option value="case_004">004 · The Fountain at Midnight</option>
-                <option value="case_005">005 · The Rear Alley Fire</option>
-                <option value="case_006">006 · The Bell Estate</option>
+                {cases.map((c, index) => {
+                  const prefix = c.case_id.startsWith("case_")
+                    ? String(index + 1).padStart(3, "0")
+                    : "Gen";
+                  return (
+                    <option key={c.case_id} value={c.case_id}>
+                      {prefix} · {c.title}
+                    </option>
+                  );
+                })}
               </select>
             </label>
             <div className="desk-tools">

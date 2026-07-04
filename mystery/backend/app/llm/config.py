@@ -22,10 +22,19 @@ class SavedLLMSettings(BaseModel):
 
 def normalize_base_url(base_url: str) -> str:
     """Users often paste a bare host:port (e.g. copied from Ollama docs)
-    without a scheme, which urllib rejects outright. Default to http://."""
+    without a scheme, which urllib rejects outright. Default to http://.
+    Also auto-appends '/v1' path suffix if it's missing for OpenAI compatibility."""
     base_url = base_url.strip()
-    if base_url and not base_url.startswith(("http://", "https://")):
-        return f"http://{base_url}"
+    if not base_url:
+        return base_url
+    if not base_url.startswith(("http://", "https://")):
+        base_url = f"http://{base_url}"
+    
+    from urllib.parse import urlparse, urlunparse
+    parsed = urlparse(base_url)
+    if not parsed.path or parsed.path == "/":
+        parsed = parsed._replace(path="/v1")
+        base_url = urlunparse(parsed)
     return base_url
 
 

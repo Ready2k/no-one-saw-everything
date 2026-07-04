@@ -1,0 +1,23 @@
+{
+  "case_id": "gen_debt_132132321_1783172021",
+  "case_type": "debt",
+  "title": "The High-Stakes Settlement",
+  "status": "locked",
+  "victim_id": "agent_marcus",
+  "killer_id": "agent_elias",
+  "motive_summary": "Financial Ruin/Debt Collection Gone Wrong",
+  "method": "blunt_force",
+  "weapon_id": "obj_till_weight",
+  "murder_location_id": "loc_cafe_storage",
+  "time_of_death": "07:56",
+  "discovery_time": "08:12",
+  "discovered_by": "agent_priya",
+  "discovery_location_id": "loc_cafe_storage",
+  "sim_start_time": "06:00",
+  "murder_window": [
+    "07:45",
+    "08:00"
+  ],
+  "overview_text": "The body of Marcus Bell was discovered in the dimly lit drawing room of the estate, Cafe Storage Room. The scene suggested a struggle, with overturned furniture and scattered papers. Marcus Bell had been struck forcefully, and the primary cause of death appeared to be blunt force trauma inflicted by Brass till weight. The body was subsequently discovered by Priya Shah, who immediately called for assistance.",
+  "scene_description": "The body of Marcus Bell was discovered in the dimly lit drawing room of the estate, Cafe Storage Room. The scene suggested a struggle, with overturned furniture and scattered papers. Marcus Bell had been struck forcefully, and the primary cause of death appeared to be blunt force trauma inflicted by Brass till weight. The body was subsequently discovered by Priya Shah, who immediately called for assistance."
+}

@@ -194,6 +194,12 @@ def get_case():
     }
 
 
+@app.get("/api/cases")
+def get_cases():
+    from .case_store import list_all_cases
+    return list_all_cases()
+
+
 @app.get("/api/agents")
 def get_agents():
     return [project_agent(a) for a in case_data().agents]
@@ -758,7 +764,9 @@ def generate(req: GenerateCaseRequest):
     # Always register if generated, even if imperfect, but you might reject hard errors?
     # Spec says: "reject invalid generated cases". Let's block play if errors exist.
     if val_result["valid"]:
+        from .case_store import save_case_to_disk
         register_case(new_case)
+        save_case_to_disk(new_case)
 
     # Activate session if requested and valid
     active_session_id = None

@@ -1,0 +1,668 @@
+[
+  {
+    "event_id": "ev_0600_marcus_wakes",
+    "time": "06:00",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "routine",
+    "truth_description": "Marcus Bell rises early and takes his coffee into the study.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 2,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0615_marcus_ledger",
+    "time": "06:15",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Marcus Bell works through the cafe ledger in his study and slips a torn page into his coat pocket.",
+    "player_description": "A light is on in Marcus Bell's study.",
+    "visibility": "private",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_ledger_page",
+      "obj_loan_ledger"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_ledger_page"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0630_clara_opens",
+    "time": "06:30",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "routine",
+    "truth_description": "Ben Carter comes down from her flat and starts prepping the cafe: chairs down, machine on, float counted.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 3,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0640_elias_bench",
+    "time": "06:40",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_isabella"
+    ],
+    "event_type": "routine",
+    "truth_description": "Isabella Reed takes his usual bench in the square with a flask of tea, facing the cafe.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 2,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0645_marcus_arrives",
+    "time": "06:45",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Marcus Bell arrives at the cafe. He and Ben Carter exchange a few stiff words; the room goes quiet when he checks the till.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_isabella"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 6,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0650_nadia_shift",
+    "time": "06:50",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "routine",
+    "truth_description": "Owen Price opens up the clinic for the early shift.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 2,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0700_priya_stockroom",
+    "time": "07:00",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "routine",
+    "truth_description": "Clara Wells lets herself into the bookshop to sort the morning delivery in the stockroom.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 2,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0705_owen_argument",
+    "time": "07:05",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias",
+      "agent_marcus"
+    ],
+    "event_type": "argument",
+    "truth_description": "Elias Grant confronts Marcus Bell outside the cafe. Voices rise fast \u2014 money, a deadline, the committee. Elias Grant jabs a finger at Marcus Bell's chest before storming off.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_isabella",
+      "agent_owen",
+      "agent_ben"
+    ],
+    "audible_to_agent_ids": [
+      "agent_isabella",
+      "agent_owen"
+    ],
+    "object_ids": [],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_owen_argument"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0715_owen_yard",
+    "time": "07:15",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Elias Grant returns to his yard, still fuming, and starts hauling timber about.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 4,
+    "linked_clue_ids": [
+      "clue_owen_delivery"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0720_isabella_note",
+    "time": "07:20",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_priya",
+      "agent_marcus"
+    ],
+    "event_type": "object_drop",
+    "truth_description": "Priya Shah strides into the cafe, presses a folded note into Marcus Bell's hand without a word, and leaves.",
+    "player_description": "Priya Shah enters the cafe briefly and hands Marcus Bell something small, then leaves without ordering.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_ben",
+      "agent_isabella"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_isabella_note"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_isabella_note"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0730_ben_round",
+    "time": "07:30",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "movement",
+    "truth_description": "Nadia Cole parks his van by the square and starts his delivery round, crates stacked on a trolley.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 3,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0736_till_weight",
+    "time": "07:36",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Ben Carter tidies the counter, moving the Brass till weight onto the receipt pile.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_marcus"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_till_weight_missing"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0740_marcus_summons",
+    "time": "07:40",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Marcus Bell tells Ben Carter, quietly: 'Storage room, before we open. Last chance to say it in your own words.'",
+    "player_description": "Marcus Bell speaks to Ben Carter in a low voice near the kitchen door. A phrase drifts through the open window: '...storage room, before we open...'",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [
+      "agent_owen"
+    ],
+    "object_ids": [],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_nadia_overheard"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0740_isabella_clinic",
+    "time": "07:40",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_priya",
+      "agent_owen"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Priya Shah arrives at the clinic, tense and pale, and asks Owen Price to check her blood pressure before 'a difficult meeting'.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_isabella_clinic"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0744_clara_exits",
+    "time": "07:44",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "departure",
+    "truth_description": "Ben Carter takes her blue coat and slips out of the cafe's front door, turning towards the square.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_isabella"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0745_ben_priya_meet",
+    "time": "07:45",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_nadia",
+      "agent_clara"
+    ],
+    "event_type": "private_meeting",
+    "truth_description": "Nadia Cole and Clara Wells meet behind the bookshop's back door, out of sight, talking in whispers.",
+    "player_description": "Two figures stand close together at the bookshop end of the alley, mostly hidden by the bins.",
+    "visibility": "private",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_ben_priya_meeting"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0747_blue_coat",
+    "time": "07:47",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "movement",
+    "truth_description": "Ben Carter, in her blue coat, cuts from the square into the rear alley and stops by the cafe's rear door.",
+    "player_description": "A figure in a blue coat enters the rear alley from the square and moves towards the cafe's rear door.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_nadia"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_ben_sighting"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0752_marcus_storage",
+    "time": "07:52",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Marcus Bell walks through the kitchen into the storage room carrying his coat, the ledger page in the pocket.",
+    "player_description": "Marcus Bell is no longer visible in the cafe front.",
+    "visibility": "private",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_ledger_page",
+      "obj_partnership_letter",
+      "obj_isabella_note"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0753_clara_rear_door",
+    "time": "07:53",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "movement",
+    "truth_description": "Ben Carter enters the storage room through the rear door, the Brass till weight in her coat pocket.",
+    "player_description": null,
+    "visibility": "hidden",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0756_murder",
+    "time": "07:56",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_ben",
+      "agent_marcus"
+    ],
+    "event_type": "murder",
+    "truth_description": "The confrontation turns. Marcus Bell says the committee will hear everything at nine. Ben Carter strikes him with the Brass till weight.",
+    "player_description": null,
+    "visibility": "hidden",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 10,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0756_sound",
+    "time": "07:56",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [],
+    "event_type": "sound",
+    "truth_description": "The blow is audible in the alley as a dull thud.",
+    "player_description": "A dull thud is heard from inside the cafe's back rooms.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [
+      "agent_nadia",
+      "agent_clara"
+    ],
+    "object_ids": [],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_storage_sound"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0758_rear_door",
+    "time": "07:58",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "movement",
+    "truth_description": "Ben Carter slips out of the rear door, pulls it shut, and walks quickly up the alley towards the square, one hand pressed into her coat pocket.",
+    "player_description": "The cafe's rear door opens briefly. A figure leaves carrying something small and walks quickly towards the square.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_rear_door"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0759_ben_priya_leave",
+    "time": "07:59",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_nadia",
+      "agent_clara"
+    ],
+    "event_type": "departure",
+    "truth_description": "Nadia Cole and Clara Wells separate hurriedly \u2014 Clara Wells back through the bookshop's rear door, Nadia Cole around to his van.",
+    "player_description": "The two figures at the bookshop end of the alley separate and leave in different directions.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 5,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0800_cafe_opens",
+    "time": "08:00",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "routine",
+    "truth_description": "Ben Carter re-enters through the front, hangs her coat in the kitchen, and unlocks the cafe doors two minutes late, visibly flushed.",
+    "player_description": "Ben Carter opens the cafe doors, slightly late, looking flustered.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_isabella"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0802_weight_hidden",
+    "time": "08:02",
+    "location_id": "loc_cafe_kitchen",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "Ben Carter rinses the Brass till weight at the kitchen sink and pushes it down into the mop bucket.",
+    "player_description": null,
+    "visibility": "hidden",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0803_elias_coffee",
+    "time": "08:03",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_ben"
+    ],
+    "event_type": "routine",
+    "truth_description": "Isabella Reed comes in for his usual coffee. Ben Carter fumbles his change; he remarks that she looks like she's seen a ghost.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 5,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0805_isabella_arrives",
+    "time": "08:05",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_priya"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Priya Shah arrives for her 8 o'clock meeting with Marcus Bell and takes a table, drumming her fingers.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_ben",
+      "agent_isabella"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 6,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0810_isabella_asks",
+    "time": "08:10",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_priya",
+      "agent_ben"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Priya Shah demands to know where Marcus Bell is. Ben Carter, not meeting her eyes, says he's probably out the back.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_isabella"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 7,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0812_discovery",
+    "time": "08:12",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_priya",
+      "agent_marcus"
+    ],
+    "event_type": "body_discovery",
+    "truth_description": "Priya Shah pushes through the kitchen into the storage room and finds Marcus Bell dead on the floor. Her scream empties the square.",
+    "player_description": "Priya Shah finds Marcus Bell dead in the storage room. Her scream is heard across the square.",
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 10,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  }
+]

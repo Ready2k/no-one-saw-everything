@@ -1,0 +1,23 @@
+{
+  "case_id": "gen_betrayal_48669_1783172231",
+  "case_type": "betrayal",
+  "title": "The Affair at Blackwood Manor",
+  "status": "locked",
+  "victim_id": "agent_nadia",
+  "killer_id": "agent_owen",
+  "motive_summary": "Exposure of a deep, long-standing personal secret (romantic infidelity/professional deceit).",
+  "method": "blunt_force",
+  "weapon_id": "obj_till_weight",
+  "murder_location_id": "loc_cafe_storage",
+  "time_of_death": "07:56",
+  "discovery_time": "08:12",
+  "discovered_by": "agent_ben",
+  "discovery_location_id": "loc_cafe_storage",
+  "sim_start_time": "06:00",
+  "murder_window": [
+    "07:45",
+    "08:00"
+  ],
+  "overview_text": "The body of Nadia Cole was discovered in the dimly lit library, located in the 'Cafe Storage Room'. The victim lay slumped against a heavy oak desk, having sustained fatal injuries from what appears to be a blunt force trauma inflicted by an ornate letter opener, identified as the 'Brass till weight'. The body was tragically found by Ben Carter, who immediately called for assistance.",
+  "scene_description": "The body of Nadia Cole was discovered in the dimly lit library, located in the 'Cafe Storage Room'. The victim lay slumped against a heavy oak desk, having sustained fatal injuries from what appears to be a blunt force trauma inflicted by an ornate letter opener, identified as the 'Brass till weight'. The body was tragically found by Ben Carter, who immediately called for assistance."
+}

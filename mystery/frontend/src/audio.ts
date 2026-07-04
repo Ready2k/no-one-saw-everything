@@ -25,7 +25,7 @@ const COOLDOWNS: Record<string, number> = {
 
 class AudioManager {
   private state: AudioState = {
-    unlocked: false,
+    unlocked: true,
     muted: localStorage.getItem('audio_muted') === 'true',
     volume: parseFloat(localStorage.getItem('audio_volume') || String(DEFAULT_MASTER)),
   };
@@ -45,6 +45,22 @@ class AudioManager {
     Howler.volume(this.state.volume);
     Howler.mute(this.state.muted);
     this.init();
+
+    // Auto-unlock/resume audio context on first user interaction
+    const unlockAudio = () => {
+      const ctx = Howler.ctx;
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      window.removeEventListener('click', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+      window.removeEventListener('touchstart', unlockAudio);
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('click', unlockAudio);
+      window.addEventListener('keydown', unlockAudio);
+      window.addEventListener('touchstart', unlockAudio);
+    }
   }
 
   private async init() {
@@ -52,6 +68,11 @@ class AudioManager {
       const res = await fetch('/audio/manifest.json');
       if (!res.ok) throw new Error('Manifest not found');
       this.manifest = await res.json();
+      if (this.currentAmbient) {
+        const name = this.currentAmbient;
+        this.currentAmbient = null;
+        this.playAmbient(name);
+      }
     } catch (e) {
       if ((import.meta as any).env.DEV) {
         console.warn('Audio manifest failed to load, audio is disabled.', e);
@@ -71,16 +92,10 @@ class AudioManager {
   }
 
   public unlock() {
-    if (this.state.unlocked) return;
-    this.state.unlocked = true;
-    
-    // Play silent buffer to unlock audio context on mobile
     const ctx = Howler.ctx;
     if (ctx && ctx.state === 'suspended') {
       ctx.resume();
     }
-    
-    this.notify();
   }
 
   public setVolume(value: number) {

@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 
 from ..models import CaseData
-from .schemas import CasePlan
+from .schemas import CasePlan, PlotOutlinePlan, CluesPlan, MemoriesPlan, FlavourPlan
 from .client import get_llm_client
 from .case_assembler import assemble_case
 from ..validator import validate_case
@@ -41,30 +41,133 @@ def generate_llm_case(
 
     client = get_llm_client()
     
-    sys_prompt = load_prompt("case_plan_system")
-    user_prompt = load_prompt("case_plan_user").format(
-        case_type=case_type,
-        difficulty=difficulty,
-        VICTIM_ID="{VICTIM_ID}",
-        KILLER_ID="{KILLER_ID}",
-        RH1_ID="{RH1_ID}",
-        RH2_ID="{RH2_ID}",
-        WITNESS1_ID="{WITNESS1_ID}",
-        WITNESS2_ID="{WITNESS2_ID}",
-        WITNESS3_ID="{WITNESS3_ID}",
-        WITNESS4_ID="{WITNESS4_ID}"
-    )
+    # Phase 1: Plot Outline
+    import random
+    rng = random.Random(seed)
+    sub_themes = [
+        "A hidden romantic affair gone wrong",
+        "A secret gambling debt",
+        "A dispute over a stolen antique",
+        "Blackmail regarding a past crime",
+        "A bitter inheritance dispute",
+        "A forged document or fraud",
+        "A petty rivalry that escalated too far",
+        "A dark secret from their childhood",
+    ]
+    theme = rng.choice(sub_themes)
+    
+    messages = [
+        {"role": "system", "content": "You are a creative murder mystery architect writing a case for a detective game."},
+        {"role": "user", "content": f"""Generate a murder mystery plot outline of type '{case_type}' and difficulty '{difficulty}'.
+The core motive and plot MUST revolve around this theme: '{theme}'.
+Allowed roles to reference: {{VICTIM_ID}}, {{KILLER_ID}}, {{RH1_ID}}, {{RH2_ID}}, {{WITNESS1_ID}}, {{WITNESS2_ID}}, {{WITNESS3_ID}}, {{WITNESS4_ID}}.
+
+Define the following outline details in a JSON response:
+- title: A fitting title for the mystery.
+- motive_variant: A brief explanation of the motive.
+- victim_rationale: Why the victim was killed.
+- killer_rationale: Why the killer did it.
+- red_herring_rationales: A dictionary mapping '{{RH1_ID}}' and '{{RH2_ID}}' to their suspicious but innocent rationales.
+- scene_description: A paragraph explaining the discovery of the body. You MUST use the following placeholders instead of hardcoding names, locations, or weapons:
+  * '{{VICTIM_NAME}}' for the victim's name.
+  * '{{WEAPON_NAME}}' for the weapon used.
+  * '{{murder_location}}' for the room where the body was found.
+  * '{{discovered_by_name}}' for the person who discovered the body.
+
+Format the output strictly as a JSON object matching the required schema."""}
+    ]
     
     try:
-        plan = client.generate_json(
-            system_prompt=sys_prompt,
-            user_prompt=user_prompt,
-            schema=CasePlan,
-            temperature=0.2
-        )
+        plot_plan = client.generate_chat(messages=messages, schema=PlotOutlinePlan, temperature=0.8)
+        messages.append({"role": "assistant", "content": plot_plan.model_dump_json()})
     except Exception as e:
-        logger.error(f"LLM generation failed: {e}")
+        logger.error(f"LLM plot generation failed: {e}")
         return None, "provider_error", 0
+
+    # Phase 2: Clue Plans
+    messages.append({"role": "user", "content": """Based on the plot outline, generate 5 clue plans.
+Allowed roles to reference: {VICTIM_ID}, {KILLER_ID}, {RH1_ID}, {RH2_ID}, {WITNESS1_ID}, {WITNESS2_ID}, {WITNESS3_ID}, {WITNESS4_ID}
+Allowed clue types: document, physical_evidence, observation, witness_statement, confession, object_trail
+Allowed discovery methods: inspect, observation, interview
+
+Rules:
+1. Every critical conclusion (motive, means, opportunity) needs discoverable clues.
+2. Every red herring needs an innocence anchor.
+3. Keep clue text and descriptions player-facing and relatively ambiguous (do not reveal the murder outright).
+
+Format the output strictly as a JSON object matching the required schema."""})
+    
+    try:
+        clues_plan = client.generate_chat(messages=messages, schema=CluesPlan, temperature=0.7)
+        messages.append({"role": "assistant", "content": clues_plan.model_dump_json()})
+    except Exception as e:
+        logger.error(f"LLM clues generation failed: {e}")
+        return None, "provider_error", 0
+
+    # Phase 3: Seeded Memories and Witness Fragments
+    messages.append({"role": "user", "content": """Based on the plot and clue plans, generate the seeded memories and witness fragments.
+
+CRITICAL RULES FOR MEMORIES:
+1. The killer suspect ({KILLER_ID}) MUST have exactly three memories assigned with these case_function values:
+   - "killer_motive": The memory establishing the true motive.
+   - "opportunity_setup": The memory establishing how/when they entered the scene or opportunity.
+   - "false_alibi_reason": The memory establishing their false alibi or why they lied about their whereabouts.
+2. Other suspects/roles (e.g. {RH1_ID}, {RH2_ID}) can have memories with these case_function values:
+   - "red_herring_motive", "innocence_anchor", "clue_support", "false_alibi_support", "victim_trigger", "killer_trigger".
+3. memory_type must be one of: "private_secret", "shared_secret", "rumour", "witness_fragment", "false_belief", "deliberate_lie", "innocent_secret", "observed", "cover_story".
+4. truth_status must be one of: "true", "false", "mistaken", "rumour", "unknown".
+
+Format the output strictly as a JSON object matching the required schema."""})
+
+    try:
+        memories_plan = client.generate_chat(messages=messages, schema=MemoriesPlan, temperature=0.7)
+    except Exception as e:
+        logger.error(f"LLM memories generation failed: {e}")
+        return None, "provider_error", 0
+
+    # Phase 4: Interview Flavour and Reveal Narration
+    flavour_messages = [
+        {"role": "system", "content": "You are a creative murder mystery architect writing a case for a detective game."},
+        {"role": "user", "content": f"""We have the following plot outline:
+{plot_plan.model_dump_json()}
+
+Generate the interview flavour and final reveal narration.
+Allowed roles: {{VICTIM_ID}}, {{KILLER_ID}}, {{RH1_ID}}, {{RH2_ID}}, {{WITNESS1_ID}}, {{WITNESS2_ID}}, {{WITNESS3_ID}}, {{WITNESS4_ID}}
+
+Rules:
+1. interview_flavour maps suspect roles (e.g. {{KILLER_ID}}) to a dict containing a 'general' key with a string value describing their attitude/relationship.
+2. The values under each role in interview_flavour MUST be simple string values (e.g. 'general': 'text'). Do NOT use lists for values.
+3. reveal_narration is a paragraph describing how the mystery is resolved upon accusation.
+
+Format the output strictly as a JSON object matching the required schema."""}
+    ]
+    try:
+        flavour_plan = client.generate_chat(messages=flavour_messages, schema=FlavourPlan, temperature=0.5)
+    except Exception as e:
+        logger.error(f"LLM flavour generation failed: {e}")
+        return None, "provider_error", 0
+
+    try:
+        merged_dict = {
+            "case_type": case_type,
+            "title": plot_plan.title,
+            "motive_variant": plot_plan.motive_variant,
+            "victim_rationale": plot_plan.victim_rationale,
+            "killer_rationale": plot_plan.killer_rationale,
+            "red_herring_rationales": plot_plan.red_herring_rationales,
+            "scene_description": plot_plan.scene_description,
+            "clue_plans": [c.model_dump() for c in clues_plan.clue_plans],
+            "seeded_memories": [m.model_dump() for m in memories_plan.seeded_memories],
+            "witness_fragments": [w.model_dump() for w in memories_plan.witness_fragments],
+            "interview_flavour": flavour_plan.interview_flavour,
+            "reveal_narration": flavour_plan.reveal_narration
+        }
+        plan = CasePlan.model_validate(merged_dict)
+    except Exception as e:
+        logger.error(f"CasePlan validation failed on merged dictionary: {e}")
+        return None, "validation_failed", 0
+
+
         
     for attempt in range(MAX_LLM_REPAIR_ATTEMPTS + 1):
         # Assemble

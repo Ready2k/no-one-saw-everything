@@ -70,6 +70,71 @@ def register_case(case_data: CaseData):
     _GENERATED_CASES[case_data.case.case_id] = case_data
 
 
+def save_case_to_disk(case_data: CaseData) -> None:
+    """Persists a procedurally generated CaseData to disk."""
+    case_id = case_data.case.case_id
+    case_dir = DATA_DIR / case_id
+    case_dir.mkdir(parents=True, exist_ok=True)
+
+    with open(case_dir / "case.json", "w") as f:
+        json.dump(json.loads(case_data.case.model_dump_json()), f, indent=2)
+    with open(case_dir / "agents.json", "w") as f:
+        json.dump([json.loads(a.model_dump_json()) for a in case_data.agents], f, indent=2)
+    with open(case_dir / "locations.json", "w") as f:
+        json.dump([json.loads(l.model_dump_json()) for l in case_data.locations], f, indent=2)
+    with open(case_dir / "objects.json", "w") as f:
+        json.dump([json.loads(o.model_dump_json()) for o in case_data.objects], f, indent=2)
+    with open(case_dir / "memories.json", "w") as f:
+        json.dump([json.loads(m.model_dump_json()) for m in case_data.memories], f, indent=2)
+    with open(case_dir / "events.json", "w") as f:
+        json.dump([json.loads(e.model_dump_json()) for e in case_data.events], f, indent=2)
+    with open(case_dir / "interviews.json", "w") as f:
+        json.dump([json.loads(i.model_dump_json()) for i in case_data.interview_packs], f, indent=2)
+    with open(case_dir / "challenges.json", "w") as f:
+        json.dump([json.loads(c.model_dump_json()) for c in case_data.challenge_rules], f, indent=2)
+    with open(case_dir / "solution.json", "w") as f:
+        json.dump(json.loads(case_data.solution.model_dump_json()), f, indent=2)
+
+    clue_pack = {
+        "clues": [json.loads(c.model_dump_json()) for c in case_data.clues],
+        "conclusions": [json.loads(con.model_dump_json()) for con in case_data.conclusions]
+    }
+    with open(case_dir / "clues.json", "w") as f:
+        json.dump(clue_pack, f, indent=2)
+
+
+def list_all_cases() -> list[dict[str, str]]:
+    """Lists all available cases from the data directory (both static and persistent generated)."""
+    cases = []
+    if not DATA_DIR.exists():
+        return cases
+
+    for p in DATA_DIR.iterdir():
+        if p.is_dir() and p.name != "templates":
+            case_json_path = p / "case.json"
+            if case_json_path.exists():
+                try:
+                    with open(case_json_path) as f:
+                        case_info = json.load(f)
+                    cases.append({
+                        "case_id": p.name,
+                        "title": case_info.get("title", "Untitled Case"),
+                        "case_type": case_info.get("case_type", "unknown")
+                    })
+                except Exception:
+                    pass
+
+    # Sort case_001, case_002... first, then others (procedural generated cases)
+    def sort_key(c):
+        cid = c["case_id"]
+        if cid.startswith("case_"):
+            return (0, cid)
+        return (1, cid)
+
+    cases.sort(key=sort_key)
+    return cases
+
+
 _ACTIVE_START_TIME: str | None = None
 
 

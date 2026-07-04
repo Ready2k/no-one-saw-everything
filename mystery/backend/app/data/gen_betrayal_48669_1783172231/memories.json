@@ -1,0 +1,93 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "The killer overheard a conversation suggesting that the victim was about to use evidence of their affair (with {WITNESS2_ID}) and professional malpractice against them.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_isabella"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "opportunity_setup",
+    "truth_status": "false",
+    "summary": "The killer claims they were in the West Wing garden from 8 PM to 10 PM, alone, tending to rare orchids. This alibi is fabricated because they were actually confronting the victim nearby.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "false_alibi_reason",
+    "truth_status": "true",
+    "summary": "The killer recalls seeing the victim alone and vulnerable near the library entrance shortly before the incident, providing a clear window of opportunity.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "{RH1_ID} and the victim had a professional disagreement over estate management, which is documented in records, but this dispute was purely financial and non-violent.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_elias"
+    ],
+    "memory_type": "rumour",
+    "case_function": "red_herring_motive",
+    "truth_status": "rumour",
+    "summary": "A rumour circulating among the staff suggests that {RH2_ID} was involved in blackmailing the victim over an old family secret, creating circumstantial suspicion.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

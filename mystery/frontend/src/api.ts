@@ -227,6 +227,7 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+  cases: () => request<{ case_id: string; title: string; case_type: string }[]>("/api/cases"),
 };
 
 export function minutes(hhmm: string): number {

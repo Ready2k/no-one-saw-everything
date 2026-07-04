@@ -8,6 +8,62 @@ from copy import deepcopy
 from ..models import CaseData, CaseFile, Agent, Location, GameObject, SeededMemory, Event, Clue, Conclusion, AgentInterviewPack, ChallengeRule, Solution, Discoverability, AnswerRule
 from .schemas import CasePlan
 
+def resolve_role(role_key: str, roles: Dict[str, str]) -> str:
+    if not role_key:
+        return role_key
+    if role_key in roles:
+        return roles[role_key]
+    braced = f"{{{role_key}}}"
+    if braced in roles:
+        return roles[braced]
+    stripped = role_key.strip("{}")
+    for k, v in roles.items():
+        if k.strip("{}") == stripped:
+            return v
+    return role_key
+
+def normalize_memory_type(val: str) -> str:
+    val = val.lower().strip()
+    allowed = {"private_secret", "shared_secret", "rumour", "witness_fragment", "false_belief", "deliberate_lie", "innocent_secret", "observed", "cover_story"}
+    if val in allowed:
+        return val
+    if "secret" in val:
+        return "private_secret"
+    if "lie" in val:
+        return "deliberate_lie"
+    if "witness" in val or "fragment" in val:
+        return "witness_fragment"
+    if "observe" in val:
+        return "observed"
+    if "rumor" in val or "rumour" in val:
+        return "rumour"
+    return "private_secret"
+
+def normalize_truth_status(val: str) -> str:
+    val = val.lower().strip()
+    allowed = {"true", "false", "mistaken", "rumour", "unknown"}
+    if val in allowed:
+        return val
+    if "true" in val or "correct" in val:
+        return "true"
+    if "false" in val or "lie" in val:
+        return "false"
+    if "mistake" in val:
+        return "mistaken"
+    if "rumor" in val or "rumour" in val:
+        return "rumour"
+    return "true"
+
+def normalize_ambiguity(val: str) -> str:
+    val = val.lower().strip()
+    if val in {"low", "medium", "high"}:
+        return val
+    if "low" in val:
+        return "low"
+    if "high" in val:
+        return "high"
+    return "medium"
+
 def assemble_case(
     plan: CasePlan,
     base_case_data: CaseData,
@@ -26,6 +82,36 @@ def assemble_case(
     case_data.case.title = plan.title
     case_data.case.motive_summary = plan.motive_variant
     
+    # Resolve murder location name
+    murder_loc_name = "the room"
+    for loc in case_data.locations:
+        if loc.location_id == case_data.case.murder_location_id:
+            murder_loc_name = loc.name
+            break
+            
+    # Resolve discoverer name
+    discoverer_name = "someone"
+    for agent in case_data.agents:
+        if agent.agent_id == case_data.case.discovered_by:
+            discoverer_name = agent.full_name
+            break
+            
+    # Substitute placeholders in scene_description
+    desc = plan.scene_description
+    desc = desc.replace("{VICTIM_NAME}", roles.get("{VICTIM_NAME}", "the victim"))
+    desc = desc.replace("{WEAPON_NAME}", roles.get("{WEAPON_NAME}", "the weapon"))
+    desc = desc.replace("{murder_location}", murder_loc_name)
+    desc = desc.replace("{discovered_by_name}", discoverer_name)
+    
+    # Also replace any other roles that might be mentioned (e.g. {KILLER_NAME})
+    for placeholder, val in roles.items():
+        desc = desc.replace(placeholder, val)
+        stripped = placeholder.strip("{}")
+        desc = desc.replace(stripped, val)
+        
+    case_data.case.scene_description = desc
+    case_data.case.overview_text = desc
+    
     # 2. Update Solution Text
     case_data.solution.explanation = plan.reveal_narration
     case_data.solution.motive.canonical = plan.killer_rationale
@@ -34,16 +120,43 @@ def assemble_case(
     # The deterministic scaffold might have its own memories, we can replace or append.
     # Let's replace them to use the LLM's rich memories.
     new_memories = []
+    killer_agent_id = roles.get("{KILLER_ID}")
+    killer_req_funcs = ["killer_motive", "opportunity_setup", "false_alibi_reason"]
+    killer_mem_count = 0
+    
+    valid_agent_ids = [a.agent_id for a in case_data.agents]
     for i, mem_plan in enumerate(plan.seeded_memories):
-        owner_id = roles.get(mem_plan.owner_role, mem_plan.owner_role)
-        known_by = [roles.get(r, r) for r in mem_plan.known_by_roles]
+        owner_id = resolve_role(mem_plan.owner_role, roles)
+        if owner_id not in valid_agent_ids:
+            owner_id = killer_agent_id
+
+        known_by = [resolve_role(r, roles) for r in mem_plan.known_by_roles]
+        known_by = [r for r in known_by if r in valid_agent_ids]
+        if not known_by:
+            known_by = [owner_id]
         
+        # Normalize enums
+        m_type = normalize_memory_type(mem_plan.memory_type)
+        t_status = normalize_truth_status(mem_plan.truth_status)
+        
+        # Enforce killer memory seeds required by validator, map others safely
+        if owner_id == killer_agent_id:
+            if killer_mem_count < len(killer_req_funcs):
+                case_function = killer_req_funcs[killer_mem_count]
+            else:
+                case_function = "clue_support"
+            killer_mem_count += 1
+        elif owner_id in (roles.get("{RH1_ID}"), roles.get("{RH2_ID}")):
+            case_function = "red_herring_motive"
+        else:
+            case_function = "clue_support"
+            
         new_memories.append(SeededMemory(
             memory_id=f"mem_llm_{i}",
             owner_agent_id=owner_id,
-            memory_type=mem_plan.memory_type, # e.g. 'secret', 'observation'
-            truth_status=mem_plan.truth_status, # e.g. 'true', 'false'
-            case_function=mem_plan.case_function, # e.g. 'motive', 'alibi'
+            memory_type=m_type,
+            truth_status=t_status,
+            case_function=case_function,
             summary=mem_plan.summary,
             known_by_agent_ids=known_by
         ))
@@ -57,7 +170,9 @@ def assemble_case(
     locations = [l.location_id for l in case_data.locations]
     
     for i, clue_plan in enumerate(plan.clue_plans):
-        linked_agent_id = roles.get(clue_plan.linked_role, clue_plan.linked_role)
+        linked_agent_id = resolve_role(clue_plan.linked_role, roles)
+        if linked_agent_id not in valid_agent_ids:
+            linked_agent_id = killer_agent_id
         
         # We need a valid discovery method. "observation" would require linking
         # the clue to a visible event, which the assembler cannot invent, so it
@@ -93,7 +208,7 @@ def assemble_case(
             description=clue_plan.player_facing_description,
             strength="medium",
             reliability=0.8,
-            ambiguity=clue_plan.ambiguity_level,
+            ambiguity=normalize_ambiguity(clue_plan.ambiguity_level),
             discoverability=discoverability,
             supports_conclusion_ids=[], # Can't blindly map to deterministic conclusions without risk
             linked_agent_ids=[linked_agent_id] if linked_agent_id in [a.agent_id for a in case_data.agents] else []
@@ -103,7 +218,7 @@ def assemble_case(
     # 5. Witness Fragments
     # We can inject these into the agent interview packs
     for frag in plan.witness_fragments:
-        agent_id = roles.get(frag.witness_role, frag.witness_role)
+        agent_id = resolve_role(frag.witness_role, roles)
         for pack in case_data.interview_packs:
             if pack.agent_id == agent_id:
                 pack.default_answers["timeline"] = frag.observation_summary
@@ -111,7 +226,7 @@ def assemble_case(
     # 6. Interview Flavour
     # Map interview_flavour dictionary
     for role_key, flavours in plan.interview_flavour.items():
-        agent_id = roles.get(role_key, role_key)
+        agent_id = resolve_role(role_key, roles)
         for pack in case_data.interview_packs:
             if pack.agent_id == agent_id:
                 # Update fallback text or rules if we want to be fancy

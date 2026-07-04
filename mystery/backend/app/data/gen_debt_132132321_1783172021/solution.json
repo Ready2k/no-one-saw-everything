@@ -1,0 +1,94 @@
+{
+  "killer_id": "agent_elias",
+  "motive": {
+    "canonical": "The killer was trapped in a cycle of debt related to a failed business venture involving the victim. The victim's refusal to cooperate or forgive the debt meant total ruin, forcing the killer to eliminate the threat before they were exposed.",
+    "concept_groups": [
+      [
+        "till",
+        "cash",
+        "money",
+        "takings",
+        "cafe funds"
+      ],
+      [
+        "steal",
+        "stole",
+        "stolen",
+        "theft",
+        "thief",
+        "skim",
+        "embezzl",
+        "took",
+        "taking"
+      ],
+      [
+        "blackmail",
+        "expose",
+        "confess",
+        "committee",
+        "threat",
+        "reveal",
+        "ledger"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with the Brass till weight, in the storage room.",
+    "concept_groups": [
+      [
+        "blunt",
+        "struck",
+        "strike",
+        "hit",
+        "bludgeon",
+        "blow",
+        "beat"
+      ],
+      [
+        "Brass till weight",
+        "weight",
+        "brass"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Elias Grant was at the cafe's rear door during the murder window and lied about being at the fountain.",
+    "concept_groups": [
+      [
+        "alley",
+        "storage",
+        "rear",
+        "back door",
+        "back way",
+        "cafe back"
+      ],
+      [
+        "fountain",
+        "alibi",
+        "lied",
+        "lie",
+        "false"
+      ],
+      [
+        "window",
+        "murder window",
+        "before open",
+        "07:5",
+        "07:4",
+        "quarter to eight"
+      ]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_ledger_page",
+    "clue_ben_sighting",
+    "clue_till_weight_found",
+    "clue_rear_door",
+    "clue_nadia_overheard"
+  ],
+  "explanation": "The truth emerges when the detective connects the physical evidence\u2014the unique strain marks on the weapon matching a specialized piece of equipment only owned by {KILLER_ID}\u2014with the motive. It becomes clear that the struggle was not about an unrelated investment scheme, but a desperate confrontation over the misappropriated funds. {KILLER_ID}, cornered by the victim's imminent exposure, panicked and used the nearest heavy object, the {WEAPON_NAME}, to silence them permanently, leaving behind a trail of desperation disguised as professional conflict.",
+  "epilogues": {}
+}
