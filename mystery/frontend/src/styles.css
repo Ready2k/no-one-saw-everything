@@ -1135,3 +1135,68 @@ textarea { min-height: 70px; resize: vertical; }
 
 .reveal-actions { display: flex; gap: 0.8rem; margin-top: 1rem; }
 .share-card { white-space: pre-wrap; font-family: inherit; margin-top: 0.8rem; cursor: pointer; }
+
+/* Challenge contradiction beat (Phase D) */
+.contradiction-beat {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(10, 11, 15, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  cursor: pointer;
+  padding: 2rem;
+}
+.beat-cards { display: flex; align-items: center; gap: 1rem; max-width: 860px; }
+.beat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  max-width: 340px;
+}
+.beat-card p { margin: 0.4rem 0 0; }
+.beat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.beat-claim { border-color: var(--accent-2); animation: beat-slam-left 0.55s cubic-bezier(0.6, 0, 0.8, 1) both; }
+.beat-evidence { border-color: var(--accent); animation: beat-slam-right 0.55s cubic-bezier(0.6, 0, 0.8, 1) both; }
+.beat-vs {
+  font-size: 2.2rem;
+  color: var(--danger);
+  font-weight: 700;
+  animation: beat-flash 0.4s ease 0.55s both;
+}
+@keyframes beat-slam-left {
+  from { transform: translateX(-45vw); opacity: 0; }
+  80% { transform: translateX(12px); opacity: 1; }
+  to { transform: none; }
+}
+@keyframes beat-slam-right {
+  from { transform: translateX(45vw); opacity: 0; }
+  80% { transform: translateX(-12px); opacity: 1; }
+  to { transform: none; }
+}
+@keyframes beat-flash {
+  from { opacity: 0; transform: scale(2.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+.beat-outcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: 560px;
+  text-align: center;
+  animation: intro-fade 0.4s ease both;
+}
+.beat-outcome p { margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .contradiction-beat { display: none; }
+}

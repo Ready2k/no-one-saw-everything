@@ -14,7 +14,21 @@ import type {
 } from "../types";
 import { ClueCard } from "./shared";
 import Portrait, { DEFENSIVE_THRESHOLD, CRACKING_THRESHOLD } from "../components/Portrait";
+import ContradictionBeat from "../components/ContradictionBeat";
 import { audioManager } from "../audio";
+import { cinematicsEnabled } from "../settings";
+
+interface BeatData {
+  claimText: string;
+  evidenceText: string;
+  outcomeText: string;
+  outcomeLabel: string;
+}
+
+// Existing engine outcomes that represent a caught contradiction (both also
+// create a contradiction note backend-side); purely a frontend selection.
+const beatOutcome = (o: ChallengeResult["outcome"]) =>
+  o === "contradiction_locked" || o === "partial_admission";
 
 const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "unknown", label: "Unmarked" },
@@ -132,6 +146,7 @@ function InterviewPanel({
   const [suspicion, setSuspicion] = useState<SuspicionLevel>("unknown");
   const [suggestions, setSuggestions] = useState<ChallengeSuggestion[]>([]);
   const [lastChallenge, setLastChallenge] = useState<ChallengeResult | null>(null);
+  const [beat, setBeat] = useState<BeatData | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -228,8 +243,28 @@ function InterviewPanel({
         setLastResult(result.answer);
         setLastChallenge(null);
       } else if (result.challenge_result) {
-        setLastChallenge(result.challenge_result as ChallengeResult);
+        const cr = result.challenge_result as ChallengeResult;
+        setLastChallenge(cr);
         setLastResult(null);
+        if (beatOutcome(cr.outcome) && cinematicsEnabled()) {
+          // Best-effort lookups from already-public data; generic labels if
+          // either side can't be resolved.
+          const claims = await api.claims(agentId).catch(() => [] as ClaimPublic[]);
+          const claimText =
+            claims.find((c) => c.claim_id === cr.challenged_claim_id)?.claim_text ??
+            "Their story";
+          const evidenceText =
+            clues
+              .filter((c) => cr.evidence_clue_ids.includes(c.clue_id))
+              .map((c) => c.title)
+              .join(", ") || "the evidence you hold";
+          setBeat({
+            claimText,
+            evidenceText,
+            outcomeText: cr.response_text,
+            outcomeLabel: cr.outcome.replace(/_/g, " "),
+          });
+        }
       } else if (result.challenge_suggestion) {
         setLastResult(null);
         setLastChallenge(null);
@@ -272,6 +307,16 @@ function InterviewPanel({
       });
       setLastChallenge(result);
       setLastResult(null);
+      // Phase D: stage the collision only for caught contradictions; with
+      // cinematics off the plain result below renders immediately.
+      if (beatOutcome(result.outcome) && cinematicsEnabled()) {
+        setBeat({
+          claimText: s.claim_text,
+          evidenceText: s.evidence_title,
+          outcomeText: result.response_text,
+          outcomeLabel: result.outcome.replace(/_/g, " "),
+        });
+      }
       refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
@@ -282,6 +327,15 @@ function InterviewPanel({
 
   return (
     <>
+      {beat && (
+        <ContradictionBeat
+          claimText={beat.claimText}
+          evidenceText={beat.evidenceText}
+          outcomeText={beat.outcomeText}
+          outcomeLabel={beat.outcomeLabel}
+          onDone={() => setBeat(null)}
+        />
+      )}
       <div className="interview interrogation-main">
         <div className="dossier panel">
           <div className="dossier-portrait">
