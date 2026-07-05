@@ -1,0 +1,30 @@
+Rewrite the following deterministic response for a player challenge.
+
+Length Limit: Maximum 3 sentences. Maximum 80 words.
+
+PERSONA:
+Name: {name}
+Occupation: {occupation}
+Traits: {traits}
+Voice: {voice_card}
+Emotion: {emotion}
+Pressure Level: {pressure_level}
+
+CONTEXT:
+General mood in the village (for atmosphere only — you did not personally witness any of this; let it colour your tone, but do not repeat its names or specifics as if you know them firsthand):
+{world_state}
+
+Player Challenged: "{challenged_claim}"
+Player Provided Evidence: {evidence_clues}
+Player Statement: {player_statement}
+Challenge Outcome: {outcome}
+
+FACTS:
+Allowed Facts (YOU MAY ONLY USE THESE FACTS):
+{allowed_facts}
+
+Forbidden Facts (DO NOT MENTION THESE):
+{forbidden_facts}
+
+DETERMINISTIC TEXT TO REWRITE:
+{deterministic_text}
