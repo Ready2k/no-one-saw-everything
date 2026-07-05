@@ -5,6 +5,7 @@ from app.llm.question_intent_classifier import classify_question_intent_llm
 from app.llm.config import get_llm_config
 from app.llm.dialogue_rewriter import generate_open_ended_response
 from app.interview import answer_question, public_ask_response
+from app.world_state import build_conversation_context, build_world_state_digest
 from app import challenge as challenge_engine
 from app.challenge import ChallengeError
 
@@ -32,10 +33,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         agent = next(a for a in case.agents if a.agent_id == req.agent_id)
         pressure = sess.pressure_for(req.agent_id)
         transcript = sess.transcript_for(req.agent_id)
-        recent_exchange = [
-            f"{'Detective' if m.speaker == 'player' else agent.full_name}: {m.text}"
-            for m in transcript.messages[-6:]
-        ]
+        recent_exchange = build_conversation_context(sess, agent)
 
         result = generate_open_ended_response(
             case=case,
@@ -43,6 +41,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
             question_text=req.question,
             pressure_level=pressure,
             recent_exchange=recent_exchange or None,
+            world_state=build_world_state_digest(case, sess, req.agent_id) or None,
         )
 
         transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))

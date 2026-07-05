@@ -150,6 +150,13 @@ class FakeLLMClient:
                 "rewritten_structured_question": "Unknown question",
             })
 
+        if schema.__name__ == "AgentBeliefState":
+            return schema.model_validate({
+                "worry_level": 0.2,
+                "current_suspicion_target": None,
+                "talking_points": ["I just want this settled quietly."],
+            })
+
         raise ValueError(f"FakeLLMClient doesn't know how to mock {schema.__name__}")
 
     def generate_chat(

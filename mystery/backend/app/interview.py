@@ -25,6 +25,7 @@ from .session import Session
 from .case_store import minutes
 from .llm.config import get_llm_config
 from .llm.dialogue_rewriter import rewrite_interview_answer
+from .world_state import build_conversation_context, build_world_state_digest
 
 QUESTION_TEXT = {
     "alibi": "Where were you during the murder window, between 07:45 and 08:00?",
@@ -162,13 +163,10 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         agent = next(a for a in case.agents if a.agent_id == req.agent_id)
         pressure = session.pressure_for(req.agent_id)
 
-        # Last few turns of this interview (display text only — already shown
-        # to the player) so the rewrite can keep conversational continuity.
-        transcript = session.transcript_for(req.agent_id)
-        recent_exchange = [
-            f"{'Detective' if m.speaker == 'player' else agent.full_name}: {m.text}"
-            for m in transcript.messages[-6:]
-        ]
+        # Recent turns verbatim plus an extractive summary of the interview's
+        # earlier statements (spec 15 Phase B), so long interrogations keep
+        # continuity with their own opening.
+        recent_exchange = build_conversation_context(session, agent)
 
         rewrite_result = rewrite_interview_answer(
             case=case,
@@ -179,11 +177,24 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
             pressure_level=pressure,
             recent_exchange=recent_exchange or None,
             emotion=emotional_shift or "neutral",
+            world_state=build_world_state_digest(case, session, req.agent_id) or None,
         )
         display_answer = rewrite_result.rewritten_text
         llm_rewrite_used = True
         llm_rewrite_fallback = rewrite_result.fallback_used
         llm_rewrite_fallback_reason = rewrite_result.fallback_reason
+
+    if revealed:
+        # Spec 15 Phase C: newly surfaced evidence is a belief-update trigger
+        # for the agents it points at. Fire-and-forget; no-op unless enabled.
+        from .llm.belief_updater import schedule_belief_updates
+
+        schedule_belief_updates(
+            case,
+            session,
+            [aid for clue in revealed for aid in clue.linked_agent_ids],
+            "The detective has turned up new evidence in the case.",
+        )
 
     _record(
         session,

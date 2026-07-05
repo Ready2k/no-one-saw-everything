@@ -114,6 +114,21 @@ def _sanitise(
     return None
 
 
+def _format_world_state(world_state: Optional[list[str]]) -> str:
+    """World-state digest lines (spec 15 Phase A). Deliberately *not* added
+    to the sanitiser's allowed context: the digest is atmosphere the model
+    may allude to, but parroting its specifics (another suspect's name, a
+    broken claim's content) back as first-person testimony must still be
+    rejected by the unsupported-fact / forbidden-fact checks."""
+    if not world_state:
+        return "None"
+    return "- " + "\n- ".join(world_state)
+
+
+def _voice_card(agent: Agent) -> str:
+    return agent.voice_card or "No particular mannerisms."
+
+
 def _diegetic_fallback(deterministic_text: str, pressure_level: float) -> str:
     """Frames a fallback-to-deterministic-text as the character deliberately
     clamming up, rather than an invisible swap back to the exact same line
@@ -138,6 +153,7 @@ def rewrite_interview_answer(
     pressure_level: float,
     recent_exchange: Optional[list[str]] = None,
     emotion: str = "neutral",
+    world_state: Optional[list[str]] = None,
 ) -> RewriteResult:
 
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
@@ -149,10 +165,12 @@ def rewrite_interview_answer(
         name=agent.full_name,
         occupation=agent.occupation,
         traits=", ".join(agent.traits),
+        voice_card=_voice_card(agent),
         emotion=emotion or "neutral",
         pressure_level=pressure_level,
         question_text=question_text,
         recent_exchange="\n".join(recent_exchange) if recent_exchange else "None",
+        world_state=_format_world_state(world_state),
         allowed_facts="- " + "\n- ".join(allowed_facts) if allowed_facts else "None",
         forbidden_facts="- " + "\n- ".join(forbidden_facts) if forbidden_facts else "None",
         deterministic_text=deterministic_text
@@ -207,6 +225,7 @@ def rewrite_challenge_response(
     allowed_facts: list[str],
     pressure_level: float,
     emotion: str = "neutral",
+    world_state: Optional[list[str]] = None,
 ) -> RewriteResult:
 
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
@@ -218,8 +237,10 @@ def rewrite_challenge_response(
         name=agent.full_name,
         occupation=agent.occupation,
         traits=", ".join(agent.traits),
+        voice_card=_voice_card(agent),
         emotion=emotion or "neutral",
         pressure_level=pressure_level,
+        world_state=_format_world_state(world_state),
         challenged_claim=challenged_claim,
         evidence_clues=evidence_clues,
         player_statement=player_statement or "None",
@@ -278,6 +299,7 @@ def generate_open_ended_response(
     question_text: str,
     pressure_level: float,
     recent_exchange: Optional[list[str]] = None,
+    world_state: Optional[list[str]] = None,
 ) -> RewriteResult:
     """Handles free-text questions that match none of the fixed interview
     intents (spec 06) — e.g. "tell me about your childhood". Rather than a
@@ -298,9 +320,11 @@ def generate_open_ended_response(
         name=agent.full_name,
         occupation=agent.occupation,
         traits=", ".join(agent.traits),
+        voice_card=_voice_card(agent),
         routine_summary=agent.routine_summary or "Unknown",
         pressure_level=pressure_level,
         recent_exchange="\n".join(recent_exchange) if recent_exchange else "None",
+        world_state=_format_world_state(world_state),
         forbidden_facts="- " + "\n- ".join(forbidden_facts) if forbidden_facts else "None",
         question_text=question_text,
     )

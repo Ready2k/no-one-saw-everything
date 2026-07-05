@@ -90,6 +90,7 @@ events elsewhere in the case, without any agent autonomy at all.
     coarse aggregate of pressure across *other* agents — never a specific
     number for someone else, since a suspect wouldn't know another
     suspect's private stress level)
+  - **Security Constraint:** The digest must be built purely from static authored templates and case flags. It must *never* incorporate raw player input (e.g., custom challenge text) to prevent cross-agent prompt injection.
 - Thread this digest into `rewrite_interview_answer` /
   `generate_open_ended_response` as a new `world_state` prompt field
   (new prompt lines in `interview_rewrite_user.txt`, `challenge_rewrite_user.txt`,
@@ -122,10 +123,11 @@ events elsewhere in the case, without any agent autonomy at all.
   prompt's PERSONA block. Purely descriptive, authored ahead of time — no
   new generation risk.
 - Replace the flat last-6-message `recent_exchange` window with a running,
-  cheap **extractive** summary (not another LLM call — just keep the
-  transcript's `deterministic_text` lines, which are already leak-safe by
-  construction) for anything beyond the last 6, so a long interrogation
-  doesn't "forget" its own opening.
+  cheap **extractive** summary (not another LLM call) for anything beyond
+  the last 6, so a long interrogation doesn't "forget" its own opening. This
+  summary retains the transcript's `deterministic_text` lines (which are leak-safe
+  by construction), plus the agent's *own* past `open_ended_response` outputs (to
+  ensure they don't forget their own improvised lies or alibis).
 
 ### Acceptance
 
@@ -148,17 +150,20 @@ This is the closest analog to "multi-agent," scoped to stay safe.
   `AgentBeliefState`: `{worry_level: float, current_suspicion_target:
   Optional[agent_id], talking_points: list[str]}`. This runs
   asynchronously between player actions (e.g. fire-and-forget after the
-  triggering endpoint returns, or lazily on the next interview request for
-  that agent if not yet computed), never inline in the request the player
-  is waiting on.
+  triggering endpoint returns). This must be strictly asynchronous; if the
+  player interviews the agent before the compute finishes, simply use the
+  agent's previous belief state to guarantee zero latency hit.
 - `talking_points` are still just flavour fed into future prompts the same
   way as Phase A's digest — never `allowed_facts`, never read by
   `judge.py`.
 - `current_suspicion_target` (if the agent now "suspects" a specific other
   suspect) is validated against solution-adjacent forbidden facts before
   being trusted — i.e. it goes through the same forbidden-fact check as
-  any rewrite output, and if it happens to match hidden truth, the whole
-  belief update is discarded and logged, not partially used.
+  any rewrite output. If it happens to match hidden truth, the target is
+  nullified (falling back to a generic "I don't know who to trust" state)
+  rather than discarding the entire belief update. We avoid discarding the
+  whole update to prevent a "meta-leak" where the absence of any suspicion
+  indirectly identifies the killer to the player.
 
 ### Acceptance
 

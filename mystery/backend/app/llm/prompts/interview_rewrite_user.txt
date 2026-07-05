@@ -6,12 +6,16 @@ PERSONA:
 Name: {name}
 Occupation: {occupation}
 Traits: {traits}
+Voice: {voice_card}
 Emotion: {emotion}
 Pressure Level: {pressure_level}
 
 CONTEXT:
 Recent exchange in this interview (already shown to the player; use it for continuity — e.g. acknowledge repeated questions — never for new facts):
 {recent_exchange}
+
+General mood in the village (for atmosphere only — you did not personally witness any of this; let it colour your tone, but do not repeat its names or specifics as if you know them firsthand):
+{world_state}
 
 Question: {question_text}
 

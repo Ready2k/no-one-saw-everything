@@ -1,0 +1,19 @@
+You are updating the private state of mind of one suspect in a village murder investigation.
+You are given only public information: who they are, how the investigation feels from the outside, and their own prior statements. You do NOT know who the killer is, and you must not guess facts about the case.
+
+Produce a small JSON object describing how this person privately feels right now:
+- "worry_level": a number from 0.0 (calm) to 1.0 (deeply rattled).
+- "current_suspicion_target": the agent_id of the ONE other suspect this person now privately wonders about, chosen ONLY from the provided candidate list — or null if they don't suspect anyone in particular.
+- "talking_points": 1-3 short first-person thoughts occupying their mind (e.g. "I hope nobody misreads why I was out early."). Only about themselves and the general mood — never accusations stated as fact, never new events, sightings, or evidence.
+
+STRICT CONSTRAINTS:
+1. Do not invent facts, sightings, evidence, or events. Feelings only.
+2. Do not mention hidden roles or use labels like "killer" or "red_herring".
+3. YOU MUST ONLY output valid JSON.
+
+Output Format:
+{
+  "worry_level": 0.0,
+  "current_suspicion_target": null,
+  "talking_points": ["..."]
+}

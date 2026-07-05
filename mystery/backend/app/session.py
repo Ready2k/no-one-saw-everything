@@ -13,6 +13,7 @@ from typing import Optional
 
 from .models import (
     AccusationResult,
+    AgentBeliefState,
     ChallengeRecord,
     Claim,
     InterviewTranscript,
@@ -35,6 +36,9 @@ class Session:
         self.notes: dict[str, Note] = {}
         self.suspicion: dict[str, SuspicionLevel] = {}
         self.pressure: dict[str, float] = {}  # agent_id -> cumulative pressure
+        # agent_id -> private state of mind, written only by the offline
+        # belief updater (spec 15 Phase C); read only as prompt flavour.
+        self.belief_states: dict[str, AgentBeliefState] = {}
         self.challenges: dict[str, ChallengeRecord] = {}
         # (claim_id, frozenset(evidence_ids)) -> challenge_id, for de-duplication
         self.challenge_index: dict[tuple[str, frozenset[str]], str] = {}

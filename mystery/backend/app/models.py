@@ -164,6 +164,9 @@ class Agent(BaseModel):
     home_location_id: Optional[str] = None
     work_location_id: Optional[str] = None
     routine_summary: str = ""
+    # Authored speech mannerisms fed into rewrite prompts (spec 15 Phase B),
+    # e.g. "clips his sentences when defensive". Purely descriptive flavour.
+    voice_card: Optional[str] = None
     relationships: list[Relationship] = []
     observation_skill: float = 0.5
     memory_reliability: float = 0.5
@@ -463,6 +466,16 @@ class InterviewMessage(BaseModel):
 class InterviewTranscript(BaseModel):
     agent_id: str
     messages: list[InterviewMessage] = []
+
+
+class AgentBeliefState(BaseModel):
+    """A suspect's private state of mind (spec 15 Phase C). Updated by an
+    offline batch LLM call between player actions; only ever read as prompt
+    flavour — never by challenge/judge logic, never as allowed facts."""
+
+    worry_level: float = 0.0
+    current_suspicion_target: Optional[str] = None
+    talking_points: list[str] = []
 
 
 # ---------------------------------------------------------------------------

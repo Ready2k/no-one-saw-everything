@@ -79,6 +79,7 @@ class LLMSettingsUpdate(BaseModel):
     api_key: Optional[str] = None
     model: Optional[str] = None
     dialogue_enabled: bool = False
+    beliefs_enabled: bool = False
 
 
 @app.get("/api/llm-settings")
@@ -99,6 +100,7 @@ def get_llm_settings():
             "fallback_reason": effective.fallback_reason,
             "detected_source": effective.detected_source,
             "dialogue_enabled": effective.dialogue_enabled,
+            "beliefs_enabled": effective.beliefs_enabled,
         },
     }
 
@@ -438,6 +440,13 @@ def discover_clue(req: DiscoverClueRequest):
     if clue.clue_id not in sess.discovered_clue_ids:
         sess.discovered_clue_ids.add(clue.clue_id)
         log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "magnifying_glass"})
+        # Spec 15 Phase C: fire-and-forget belief updates for the agents this
+        # evidence points at; no-op unless the beliefs flag is on.
+        from .llm.belief_updater import schedule_belief_updates
+        schedule_belief_updates(
+            case, sess, clue.linked_agent_ids,
+            "The detective has turned up new evidence in the case.",
+        )
     return project_clue(clue)
 
 

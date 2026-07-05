@@ -18,6 +18,9 @@ class SavedLLMSettings(BaseModel):
     api_key: str | None = None
     model: str | None = None
     dialogue_enabled: bool = False
+    # Spec 15 Phase C: offline belief-state updates between player actions.
+    # Off by default; only effective when dialogue rewriting is also on.
+    beliefs_enabled: bool = False
 
 
 def normalize_base_url(base_url: str) -> str:
@@ -63,6 +66,7 @@ class LLMConfig(BaseModel):
     configured: bool
     fallback_reason: str | None
     dialogue_enabled: bool
+    beliefs_enabled: bool = False
     detected_source: str | None = None  # how "auto" found this config, if it did
 
 def get_llm_config() -> LLMConfig:
@@ -75,6 +79,8 @@ def get_llm_config() -> LLMConfig:
     model = (saved.model if saved else None) or os.environ.get("MYSTERY_LLM_MODEL")
     timeout = int(os.environ.get("MYSTERY_LLM_TIMEOUT_SECONDS", "60"))
     dialogue_env = "true" if (saved and saved.dialogue_enabled) else os.environ.get("MYSTERY_LLM_DIALOGUE_ENABLED")
+    beliefs_env = "true" if (saved and saved.beliefs_enabled) else os.environ.get("MYSTERY_LLM_BELIEFS_ENABLED")
+    beliefs_enabled = (beliefs_env or "false").lower() == "true"
 
     if provider == "fake":
         return LLMConfig(
@@ -86,6 +92,7 @@ def get_llm_config() -> LLMConfig:
             configured=True,
             fallback_reason=None,
             dialogue_enabled=(dialogue_env or "false").lower() == "true",
+            beliefs_enabled=beliefs_enabled,
         )
 
     if provider == "auto":
@@ -108,6 +115,7 @@ def get_llm_config() -> LLMConfig:
                 configured=True,
                 fallback_reason=None,
                 dialogue_enabled=dialogue_enabled,
+                beliefs_enabled=beliefs_enabled,
                 detected_source=detected.source,
             )
 
@@ -121,6 +129,7 @@ def get_llm_config() -> LLMConfig:
             configured=False,
             fallback_reason="no_llm_host_reachable",
             dialogue_enabled=(dialogue_env or "false").lower() == "true",
+            beliefs_enabled=beliefs_enabled,
         )
 
     if provider == "openai_compatible":
@@ -135,6 +144,7 @@ def get_llm_config() -> LLMConfig:
                 configured=False,
                 fallback_reason="llm_not_configured",
                 dialogue_enabled=(dialogue_env or "false").lower() == "true",
+                beliefs_enabled=beliefs_enabled,
             )
         return LLMConfig(
             provider="openai_compatible",
@@ -145,6 +155,7 @@ def get_llm_config() -> LLMConfig:
             configured=True,
             fallback_reason=None,
             dialogue_enabled=(dialogue_env or "false").lower() == "true",
+            beliefs_enabled=beliefs_enabled,
         )
 
     logger.warning(f"Unknown LLM provider: {provider}")
@@ -157,4 +168,5 @@ def get_llm_config() -> LLMConfig:
         configured=False,
         fallback_reason="llm_not_configured",
         dialogue_enabled=(dialogue_env or "false").lower() == "true",
+        beliefs_enabled=beliefs_enabled,
     )

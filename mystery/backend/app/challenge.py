@@ -26,6 +26,7 @@ from .projections import project_claim, project_clue
 from .session import Session
 from .llm.config import get_llm_config
 from .llm.dialogue_rewriter import rewrite_challenge_response
+from .world_state import build_world_state_digest
 
 
 class ChallengeError(Exception):
@@ -144,6 +145,7 @@ def resolve_challenge(case: CaseData, session: Session, req: ChallengeRequest) -
             allowed_facts=allowed_facts,
             pressure_level=pressure,
             emotion=record.emotional_shift or "neutral",
+            world_state=build_world_state_digest(case, session, req.target_agent_id) or None,
         )
         record.display_response_text = rewrite_result.rewritten_text
         record.llm_rewrite_used = True
@@ -153,6 +155,24 @@ def resolve_challenge(case: CaseData, session: Session, req: ChallengeRequest) -
     session.challenges[record.challenge_id] = record
     session.challenge_index[dedup_key] = record.challenge_id
     _record_transcript(session, req, record)
+
+    # Spec 15 Phase C: a resolved challenge is a belief-update trigger for
+    # the challenged agent (and anyone tied to newly revealed clues).
+    # Fire-and-forget; no-op unless the beliefs flag is on.
+    from .llm.belief_updater import schedule_belief_updates
+
+    affected = [req.target_agent_id] + [
+        aid
+        for c in case.clues
+        if c.clue_id in record.revealed_clue_ids
+        for aid in c.linked_agent_ids
+    ]
+    schedule_belief_updates(
+        case,
+        session,
+        affected,
+        "The detective just challenged a suspect's account with evidence; word travels fast in the village.",
+    )
     return record
 
 

@@ -9,11 +9,12 @@
       "proud",
       "fair but unforgiving"
     ],
-    "portrait": "\u2615",
+    "portrait": "☕",
     "portrait_art": null,
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Up at six, reviews the books in his study, at the cafe by a quarter to seven to oversee opening.",
+    "voice_card": "Speaks in ledgers and verdicts; every sentence sounds like a final decision.",
     "relationships": [
       {
         "target_agent_id": "agent_elias",
@@ -56,11 +57,12 @@
       "proud",
       "guarded"
     ],
-    "portrait": "\ud83e\udde3",
+    "portrait": "🧣",
     "portrait_art": null,
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Lives above the cafe. Down by half six to prep, opens the doors at eight sharp.",
+    "voice_card": "Precise and clipped; clips sentences even shorter when defensive, and never volunteers more than was asked.",
     "relationships": [
       {
         "target_agent_id": "agent_marcus",
@@ -96,11 +98,12 @@
       "chatty",
       "bad at secrets"
     ],
-    "portrait": "\ud83d\udce6",
+    "portrait": "📦",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Morning delivery round through the square and rear alley; usually cadges a coffee when the cafe opens.",
+    "voice_card": "Rambles cheerfully, over-explains when nervous, and tends to answer a question you didn't ask.",
     "relationships": [
       {
         "target_agent_id": "agent_isabella",
@@ -136,11 +139,12 @@
       "wounded",
       "composed"
     ],
-    "portrait": "\ud83d\udcda",
+    "portrait": "📚",
     "portrait_art": null,
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
+    "voice_card": "Measured, almost rehearsed; pauses before answering and chooses polite words with visible care.",
     "relationships": [
       {
         "target_agent_id": "agent_marcus",
@@ -176,11 +180,12 @@
       "hot-tempered",
       "proud"
     ],
-    "portrait": "\ud83d\udd28",
+    "portrait": "🔨",
     "portrait_art": null,
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
+    "voice_card": "Blunt, short sentences, no hedging; gets louder rather than more careful when pressed.",
     "relationships": [
       {
         "target_agent_id": "agent_marcus",
@@ -209,11 +214,12 @@
       "kind",
       "conflict-averse"
     ],
-    "portrait": "\ud83c\udf38",
+    "portrait": "🌸",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
+    "voice_card": "Soft-spoken and apologetic; qualifies everything ('I think', 'maybe') and trails off under pressure.",
     "relationships": [
       {
         "target_agent_id": "agent_clara",
@@ -256,11 +262,12 @@
       "practical",
       "discreet"
     ],
-    "portrait": "\ud83e\ude7a",
+    "portrait": "🩺",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
+    "voice_card": "Calm, clinical phrasing; states observations like chart notes and avoids speculation.",
     "relationships": [
       {
         "target_agent_id": "agent_marcus",
@@ -289,11 +296,12 @@
       "certain of himself",
       "harmless"
     ],
-    "portrait": "\ud83c\udfa9",
+    "portrait": "🎩",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "First on the square bench every morning with a flask and opinions.",
+    "voice_card": "Talks like a teacher mid-lesson; fond of rhetorical questions and certain of every detail.",
     "relationships": [
       {
         "target_agent_id": "agent_marcus",

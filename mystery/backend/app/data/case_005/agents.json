@@ -13,6 +13,7 @@
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Down by half six to prep the cafe. Was due at the rear alley at 07:00 to take a linen delivery.",
+    "voice_card": "Precise and clipped; clips her sentences even shorter when defensive, and never volunteers more than was asked.",
     "relationships": [
       {
         "target_agent_id": "agent_owen",
@@ -56,6 +57,7 @@
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Yard from early. Claims he was receiving a supplier call at 07:00. His forged alibi will need to be dismantled.",
+    "voice_card": "Blunt, short sentences, no hedging; gets louder rather than more careful when pressed.",
     "relationships": [
       {
         "target_agent_id": "agent_clara",
@@ -99,6 +101,7 @@
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Morning delivery round. Discovers the fire at 07:31.",
+    "voice_card": "Rambles cheerfully, over-explains when nervous, and tends to answer a question you didn't ask.",
     "relationships": [
       {
         "target_agent_id": "agent_clara",
@@ -135,6 +138,7 @@
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift. Crosses the square between 06:50 and 07:00. Will have seen something crucial.",
+    "voice_card": "Calm, clinical phrasing; states observations like chart notes and avoids speculation.",
     "relationships": [
       {
         "target_agent_id": "agent_clara",
@@ -171,6 +175,7 @@
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "On the bench from 06:40. His view of the square and alley entrance will matter.",
+    "voice_card": "Talks like he's lecturing a classroom; fond of rhetorical questions and certain of every detail.",
     "relationships": [
       {
         "target_agent_id": "agent_clara",
@@ -207,6 +212,7 @@
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Owen's regular delivery driver. Owen asked him last night to say he was at the yard from 06:45 if anyone asked.",
+    "voice_card": "Plain, direct answers; starts repeating himself and looking for reassurance when pressed.",
     "relationships": [
       {
         "target_agent_id": "agent_owen",
