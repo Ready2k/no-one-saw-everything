@@ -84,18 +84,22 @@ export default function AccusationBreakdown({
         <p className="explanation">{result.explanation}</p>
       </div>
 
-      <div className="reveal-grid">
+      <div className="reveal-grid" style={!result.killer_correct ? { gridTemplateColumns: "1fr" } : undefined}>
         <div className="reveal-col panel">
-          <h3>The truth</h3>
-          <p>
-            <strong>Killer:</strong> {result.true_killer_name}
-          </p>
-          <p>
-            <strong>Motive:</strong> {result.true_motive}
-          </p>
-          <p>
-            <strong>Method:</strong> {result.true_method}
-          </p>
+          {result.killer_correct && (
+            <>
+              <h3>The truth</h3>
+              <p>
+                <strong>Killer:</strong> {result.true_killer_name}
+              </p>
+              <p>
+                <strong>Motive:</strong> {result.true_motive}
+              </p>
+              <p>
+                <strong>Method:</strong> {result.true_method}
+              </p>
+            </>
+          )}
 
           <h3>Evidence</h3>
           <p className="muted small">
@@ -143,35 +147,39 @@ export default function AccusationBreakdown({
           )}
         </div>
 
-        <div className="reveal-col panel">
-          <h3>What really happened</h3>
-          <div className="truth-timeline">
-            {result.true_timeline.map((e, i) => (
-              <div key={i} className="truth-event">
-                <span className="event-time">{e.time}</span>
-                <span>
-                  {e.description}
-                  <span className="muted small"> · {e.location_name}</span>
-                </span>
+        {result.killer_correct && (
+          <div className="reveal-col panel">
+            <h3>What really happened</h3>
+            <div className="truth-timeline">
+              {result.true_timeline.map((e, i) => (
+                <div key={i} className="truth-event">
+                  <span className="event-time">{e.time}</span>
+                  <span>
+                    {e.description}
+                    <span className="muted small"> · {e.location_name}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {result.killer_correct && (
+          <div className="reveal-col panel">
+            <h3>Why the others were innocent</h3>
+            {result.red_herring_explanations.map((h) => (
+              <div key={h.agent_id} className="herring-card">
+                <strong>{h.agent_name}</strong>
+                <p className="small">
+                  <em>Looked guilty:</em> {h.looked_suspicious_because}
+                </p>
+                <p className="small">
+                  <em>But:</em> {h.actually_innocent_because}
+                </p>
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="reveal-col panel">
-          <h3>Why the others were innocent</h3>
-          {result.red_herring_explanations.map((h) => (
-            <div key={h.agent_id} className="herring-card">
-              <strong>{h.agent_name}</strong>
-              <p className="small">
-                <em>Looked guilty:</em> {h.looked_suspicious_because}
-              </p>
-              <p className="small">
-                <em>But:</em> {h.actually_innocent_because}
-              </p>
-            </div>
-          ))}
-        </div>
+        )}
       </div>
 
       {config?.playtest_mode && !feedbackSubmitted && (

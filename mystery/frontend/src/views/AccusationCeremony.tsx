@@ -88,13 +88,11 @@ export default function AccusationCeremony({
     return () => clearInterval(id);
   }, [playing, speed, endMin, step]);
 
-  const steps: CeremonyStep[] = [
-    "suspense",
-    "killer",
-    "timeline",
-    "score",
-    "breakdown",
-  ];
+  const steps: CeremonyStep[] = ["suspense"];
+  if (result.killer_correct) {
+    steps.push("killer", "timeline");
+  }
+  steps.push("score", "breakdown");
   if (result.epilogues.length > 0) {
     steps.push("epilogues");
   }
@@ -247,16 +245,18 @@ export default function AccusationCeremony({
                   </>
                 )}
               </div>
-              <div className="reveal-col panel">
-                <h3>Red Herrings</h3>
-                {result.red_herring_explanations.map((h) => (
-                  <div key={h.agent_id} className="herring-card">
-                    <strong>{h.agent_name}</strong>
-                    <p className="small"><em>Looked guilty:</em> {h.looked_suspicious_because}</p>
-                    <p className="small"><em>But:</em> {h.actually_innocent_because}</p>
-                  </div>
-                ))}
-              </div>
+              {result.killer_correct && (
+                <div className="reveal-col panel">
+                  <h3>Red Herrings</h3>
+                  {result.red_herring_explanations.map((h) => (
+                    <div key={h.agent_id} className="herring-card">
+                      <strong>{h.agent_name}</strong>
+                      <p className="small"><em>Looked guilty:</em> {h.looked_suspicious_because}</p>
+                      <p className="small"><em>But:</em> {h.actually_innocent_because}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

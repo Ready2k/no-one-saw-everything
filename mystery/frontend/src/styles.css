@@ -1271,6 +1271,7 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   align-items: center;
   justify-content: center;
   z-index: 50;
+  max-width: none;
 }
 
 .ceremony-killer h1 {

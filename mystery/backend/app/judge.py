@@ -191,8 +191,8 @@ def judge_accusation(
         explanation = sol.explanation
     else:
         explanation = (
-            f"Incorrect. You accused {_name(case, req.accused_agent_id)}. "
-            f"The real killer was {_name(case, sol.killer_id)}. " + sol.explanation
+            f"Incorrect. You accused {_name(case, req.accused_agent_id)}, "
+            f"but the evidence points elsewhere. Your theories on motive, method, and opportunity have been evaluated."
         )
 
     result = AccusationResult(
@@ -210,15 +210,15 @@ def judge_accusation(
         false_assumptions=false_assumptions,
         explanation=explanation,
         verdict=_verdict_band(score),
-        true_killer_id=sol.killer_id,
-        true_killer_name=_name(case, sol.killer_id),
-        true_motive=sol.motive.canonical,
-        true_method=sol.method.canonical,
-        true_timeline=_true_timeline(case),
+        true_killer_id=sol.killer_id if killer_correct else "",
+        true_killer_name=_name(case, sol.killer_id) if killer_correct else "",
+        true_motive=sol.motive.canonical if killer_correct else "",
+        true_method=sol.method.canonical if killer_correct else "",
+        true_timeline=_true_timeline(case) if killer_correct else [],
         key_clues_found=key_clues_found,
         key_clues_missed=key_clues_missed,
-        red_herring_explanations=_red_herring_explanations(case),
-        epilogues=_epilogue_cards(case),
+        red_herring_explanations=_red_herring_explanations(case) if killer_correct else [],
+        epilogues=_epilogue_cards(case) if killer_correct else [],
         player_evidence_used=player_evidence_used,
         detective_rating=_detective_rating(score),
     )
