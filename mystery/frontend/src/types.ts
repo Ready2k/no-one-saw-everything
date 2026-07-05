@@ -385,6 +385,14 @@ export interface LlmProbeResult {
   source?: string;
 }
 
+export interface LlmTestResult {
+  ok: boolean;
+  reply?: string;
+  elapsed_ms?: number;
+  nonce?: string;
+  error?: string;
+}
+
 export interface PlaytestSummary {
   case_id: string;
   case_title: string;

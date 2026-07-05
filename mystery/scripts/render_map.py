@@ -23,6 +23,7 @@ from PIL import Image
 REPO = Path(__file__).resolve().parents[2]
 TMX = REPO / "environment/frontend_server/static_dirs/assets/the_ville/visuals/the_ville.tmx"
 OUT = REPO / "mystery/frontend/public/map/the_ville.png"
+VILLAGE_B = TMX.parent / "map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Village_B.png"
 
 VISUAL_LAYERS = [
     "Bottom Ground",
@@ -98,8 +99,43 @@ def main() -> None:
             canvas.paste(tile, (x, y), tile)
         print(f"composited {name}")
 
+    stamp_village_square(canvas)
+
     canvas.convert("RGB").save(OUT, optimize=True)
     print(f"wrote {OUT} ({canvas.width}x{canvas.height})")
+
+
+def stamp_village_square(canvas: Image.Image) -> None:
+    """Add the stone fountain and benches the game's village square describes.
+
+    loc_village_square / loc_fountain promise "a stone fountain, benches",
+    but that patch of the ville plaza is empty ground in the source tilemap,
+    so stamp the sprites from CuteRPG_Village_B onto the render. Positions
+    are map pixels; the arrangement is centred on loc_fountain's marker
+    ((370, 184) in the 719x513 reference space ~= (2305, 1145) here), and
+    loc_fountain's map_bounds in case data / map_layout.py hug it.
+    """
+    sheet = Image.open(VILLAGE_B).convert("RGBA")
+
+    def sprite(box: tuple[int, int, int, int]) -> Image.Image:
+        s = sheet.crop(box)
+        return s.crop(s.getbbox())
+
+    fountain = sprite((448, 160, 512, 224))  # octagonal stone basin, 2x2 tiles
+    bench_front = sprite((352, 192, 416, 224))  # slat-back bench, front view
+    bench_plain = sprite((352, 224, 416, 256))  # backless bench, front view
+    bench_side = sprite((320, 192, 352, 256))  # bench, side view
+
+    overlays = [
+        (fountain, (2273, 1113)),
+        (bench_front, (2277, 1075)),  # north
+        (bench_plain, (2275, 1191)),  # south
+        (bench_side, (2235, 1117)),  # west
+        (bench_side, (2351, 1117)),  # east
+    ]
+    for img, pos in overlays:
+        canvas.alpha_composite(img, pos)
+    print(f"stamped village square ({len(overlays)} sprites)")
 
 
 if __name__ == "__main__":

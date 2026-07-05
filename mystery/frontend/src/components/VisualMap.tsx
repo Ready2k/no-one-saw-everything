@@ -47,6 +47,9 @@ export default function VisualMap({
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ scale: 1, tx: 0, ty: 0 });
+  // Location bounds are only shown for the selected or label-hovered
+  // location, so the default view stays clean like the source game.
+  const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
   // Unscaled (pre-transform) viewport box, used to size agent sprites to a
   // real map tile's footprint instead of a fixed pixel size — otherwise
   // they render the same size regardless of how far the map is zoomed out.
@@ -261,12 +264,17 @@ export default function VisualMap({
             <div key={loc.location_id}>
               {loc.map_bounds && (
                 <div
-                  className={`map-loc-bounds ${selected ? "selected" : ""} layer-${loc.visual_layer ?? "exterior"}`}
+                  className={`map-loc-bounds ${selected ? "selected" : ""} ${
+                    selected || hoveredLocationId === loc.location_id ? "visible" : ""
+                  } layer-${loc.visual_layer ?? "exterior"}`}
                   style={{
                     left: pct(loc.map_bounds.x, width),
                     top: pct(loc.map_bounds.y, height),
                     width: pct(loc.map_bounds.width, width),
                     height: pct(loc.map_bounds.height, height),
+                    // The zoom transform scales border thickness too; divide it
+                    // out so the dashes stay hairline at any zoom level.
+                    borderWidth: `${Math.max(1.25 / view.scale, 0.4)}px`,
                   }}
                 />
               )}
@@ -278,6 +286,10 @@ export default function VisualMap({
                     top: pct(loc.map_position.y, height),
                   }}
                   onClick={() => onSelectLocation(loc.location_id)}
+                  onMouseEnter={() => setHoveredLocationId(loc.location_id)}
+                  onMouseLeave={() =>
+                    setHoveredLocationId((prev) => (prev === loc.location_id ? null : prev))
+                  }
                   title={loc.description}
                 >
                   {loc.name}

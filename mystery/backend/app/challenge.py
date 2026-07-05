@@ -142,7 +142,8 @@ def resolve_challenge(case: CaseData, session: Session, req: ChallengeRequest) -
             outcome=record.outcome,
             deterministic_text=record.deterministic_response_text,
             allowed_facts=allowed_facts,
-            pressure_level=pressure
+            pressure_level=pressure,
+            emotion=record.emotional_shift or "neutral",
         )
         record.display_response_text = rewrite_result.rewritten_text
         record.llm_rewrite_used = True

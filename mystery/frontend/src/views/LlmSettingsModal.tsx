@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
-import type { LlmSettingsResponse, LlmProbeResult } from "../types";
+import type { LlmSettingsResponse, LlmProbeResult, LlmTestResult } from "../types";
 
 interface LlmSettingsModalProps {
   onClose: () => void;
@@ -26,6 +26,9 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
   const [modelOptions, setModelOptions] = useState<string[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
   const [modelsError, setModelsError] = useState<string | null>(null);
+
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<LlmTestResult | null>(null);
 
   useEffect(() => {
     api
@@ -59,7 +62,7 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
       });
       setModelOptions(res.models);
       if (res.models.length === 0) {
-        setModelsError("No models found at this endpoint.");
+        setModelsError(res.error ?? "No models found at this endpoint.");
       } else {
         setModel((current) => (current && res.models.includes(current) ? current : res.models[0]));
       }
@@ -81,6 +84,23 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
       setError(String(err));
     } finally {
       setProbing(false);
+    }
+  };
+
+  const handleTest = async () => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const res = await api.testLlm({
+        base_url: baseUrl.trim(),
+        api_key: apiKey.trim() || undefined,
+        model: model.trim(),
+      });
+      setTestResult(res);
+    } catch (err: any) {
+      setTestResult({ ok: false, error: String(err) });
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -198,6 +218,30 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
                   </div>
                   {modelsError && (
                     <p style={{ fontSize: "0.85rem", color: "#e08a8a", marginTop: "0.25rem" }}>{modelsError}</p>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={handleTest}
+                    disabled={testing || !baseUrl.trim() || !model.trim()}
+                  >
+                    {testing ? "Testing..." : "Test"}
+                  </button>
+                  {testResult && (
+                    <p
+                      style={{
+                        fontSize: "0.85rem",
+                        marginTop: "0.5rem",
+                        color: testResult.ok ? "#7fc98f" : "#e08a8a",
+                      }}
+                    >
+                      {testResult.ok
+                        ? `LLM responded in ${testResult.elapsed_ms}ms: "${testResult.reply}"`
+                        : `Test failed: ${testResult.error}`}
+                    </p>
                   )}
                 </div>
               </>

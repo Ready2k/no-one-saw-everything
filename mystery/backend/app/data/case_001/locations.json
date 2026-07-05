@@ -253,13 +253,13 @@
     "visibility_type": "public",
     "map_position": {
       "x": 370,
-      "y": 188
+      "y": 184
     },
     "map_bounds": {
-      "x": 355,
-      "y": 173,
-      "width": 30,
-      "height": 30
+      "x": 357,
+      "y": 168,
+      "width": 26,
+      "height": 28
     },
     "visual_layer": "exterior"
   },

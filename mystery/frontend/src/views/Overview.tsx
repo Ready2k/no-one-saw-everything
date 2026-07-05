@@ -1,8 +1,10 @@
 import { useWorld } from "../App";
+import { timeOfDayLabel } from "../api";
 import Portrait from "../components/Portrait";
 
 export default function Overview({ onBegin }: { onBegin: () => void }) {
   const { caseOverview: c } = useWorld();
+  const period = timeOfDayLabel(c.sim_start_time);
   return (
     <div className="overview">
       <div className="discovery-card">
@@ -37,7 +39,7 @@ export default function Overview({ onBegin }: { onBegin: () => void }) {
           Begin investigation
         </button>
         <p className="hint-text">
-          Rewind the morning. Watch who went where. Inspect the places that
+          Rewind the {period}. Watch who went where. Inspect the places that
           matter. Question everyone. Pin what doesn't add up.
         </p>
       </div>

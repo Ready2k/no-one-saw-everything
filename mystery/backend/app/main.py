@@ -137,8 +137,57 @@ def discover_llm_models(payload: ModelDiscoveryRequest):
     if not payload.base_url.strip():
         raise HTTPException(status_code=400, detail="base_url is required")
 
-    models = list_models_for_base_url(payload.base_url.strip(), payload.api_key)
-    return {"models": models}
+    models, error = list_models_for_base_url(payload.base_url.strip(), payload.api_key)
+    return {"models": models, "error": error}
+
+
+class LlmTestRequest(BaseModel):
+    base_url: str
+    api_key: Optional[str] = None
+    model: str
+
+
+@app.post("/api/llm-settings/test")
+def test_llm_settings(payload: LlmTestRequest):
+    """Sends a real chat completion request to the given endpoint/model so the
+    Settings panel can prove the LLM is actually generating a response, rather
+    than just resolving a reachable model list."""
+    from .llm.config import normalize_base_url
+    from .llm.client import OpenAICompatibleLLMClient
+    import time
+    import uuid
+
+    if not payload.base_url.strip() or not payload.model.strip():
+        raise HTTPException(status_code=400, detail="base_url and model are required")
+
+    base_url = normalize_base_url(payload.base_url.strip())
+    nonce = uuid.uuid4().hex[:6]
+    client = OpenAICompatibleLLMClient(
+        base_url=base_url, api_key=payload.api_key, model=payload.model.strip()
+    )
+
+    started = time.monotonic()
+    try:
+        reply = client.generate_chat(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are confirming a live connection. Reply in one short sentence.",
+                },
+                {
+                    "role": "user",
+                    "content": f"Reply with the word 'pong' followed by this code: {nonce}",
+                },
+            ],
+            schema=None,
+            temperature=0.0,
+            timeout_seconds=20,
+            response_format_json=False,
+        )
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+    elapsed_ms = int((time.monotonic() - started) * 1000)
+    return {"ok": True, "reply": reply, "elapsed_ms": elapsed_ms, "nonce": nonce}
 
 
 @app.post("/api/llm-settings/probe")

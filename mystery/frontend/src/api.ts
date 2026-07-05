@@ -23,6 +23,7 @@ import type {
   Feedback,
   LlmSettingsResponse,
   LlmProbeResult,
+  LlmTestResult,
 } from "./types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -217,7 +218,12 @@ export const api = {
     }),
   probeLlm: () => request<LlmProbeResult>("/api/llm-settings/probe", { method: "POST" }),
   discoverLlmModels: (payload: { base_url: string; api_key?: string }) =>
-    request<{ models: string[] }>("/api/llm-settings/models", {
+    request<{ models: string[]; error: string | null }>("/api/llm-settings/models", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  testLlm: (payload: { base_url: string; api_key?: string; model: string }) =>
+    request<LlmTestResult>("/api/llm-settings/test", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
@@ -247,4 +253,15 @@ export function hhmm(mins: number): string {
   const h = Math.floor(mins / 60) % 24;
   const m = mins % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+/** Derive a human-readable time-of-day label from an HH:MM time string.
+ *  05:00–11:59 → "morning", 12:00–16:59 → "afternoon",
+ *  17:00–20:59 → "evening", 21:00–04:59 → "night". */
+export function timeOfDayLabel(hhmmStr: string): string {
+  const h = parseInt(hhmmStr.split(":")[0], 10);
+  if (h >= 5 && h < 12) return "morning";
+  if (h >= 12 && h < 17) return "afternoon";
+  if (h >= 17 && h < 21) return "evening";
+  return "night";
 }

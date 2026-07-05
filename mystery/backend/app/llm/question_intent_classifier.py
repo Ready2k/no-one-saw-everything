@@ -4,6 +4,15 @@ from app.models import QuestionIntent
 from app.llm.client import get_llm_client
 from app.reference_resolver import resolve_references
 
+# Below this, a structured classification is treated as too shaky to commit
+# to — the question is routed to the open-ended in-character responder
+# instead of forcing a possibly-wrong scripted answer. Self-reported LLM
+# confidence isn't perfectly calibrated (a small local model can be
+# confidently wrong), so this is a blunt backstop, not a precise filter —
+# the prompt wording below is the first line of defence.
+MIN_INTENT_CONFIDENCE = 0.7
+
+
 def classify_question_intent_llm(
     question: str,
     case: CaseData,
@@ -76,14 +85,18 @@ Intent rules:
 - alibi: Asking where they were during the murder.
 - timeline: Asking what they were doing at a specific time.
 - last_seen_victim: Asking when they last saw the victim.
-- relationship: Asking about their relationship with the victim or someone else.
+- relationship: Asking specifically about their relationship or history with the victim,
+  or with another named suspect already established in this case.
 - evidence: Asking about a specific clue.
 - location: Asking about a specific location.
 - motive: Asking why they might want the victim dead.
 - object: Asking about a physical item or evidence.
 - contradiction: Asking a vague question about a lie or contradictory statement ("Why did someone say X?").
 - explicit_challenge: Explicitly demanding to confront or challenge the suspect with evidence ("Challenge Clara with Ben's sighting").
-- fallback_unknown: If the question is nonsense, out of character, or asks about hidden things not resolved above.
+- fallback_unknown: Anything else — including personal background, childhood, feelings,
+  opinions, hobbies, or small talk that is not specifically about the victim, another named
+  suspect, a piece of evidence, or the murder. When the question could plausibly go either
+  way, prefer fallback_unknown and give it a lower confidence score rather than forcing a fit.
 """
     try:
         intent = client.generate_json(
@@ -92,7 +105,16 @@ Intent rules:
             schema=QuestionIntent,
         )
         # Ensure we only use the safely resolved IDs, whatever the LLM returned.
-        return intent.model_copy(update=refs)
+        intent = intent.model_copy(update=refs)
+        # A shaky structured guess is worse than admitting uncertainty: better
+        # to let the open-ended responder speak in character than force an
+        # answer to a question that was probably misclassified.
+        if intent.intent != "fallback_unknown" and intent.confidence < MIN_INTENT_CONFIDENCE:
+            intent = intent.model_copy(update={
+                "intent": "fallback_unknown",
+                "rewritten_structured_question": "Unknown question",
+            })
+        return intent
     except Exception:
         return QuestionIntent(
             intent="fallback_unknown",

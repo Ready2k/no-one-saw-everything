@@ -58,7 +58,11 @@ def test_dialogue_rewrite_provider_error_fallback(monkeypatch):
         pressure_level=0.5
     )
     
-    assert result.rewritten_text == "I was at the fountain."
+    # Fallback text is wrapped in an in-character deflection rather than
+    # silently repeating the deterministic line verbatim, but must still
+    # contain it exactly (nothing invented, nothing dropped).
+    assert result.rewritten_text.endswith("I was at the fountain.")
+    assert result.rewritten_text != "I was at the fountain."
     assert result.fallback_used is True
     assert result.fallback_reason == "provider_error"
 
@@ -98,4 +102,33 @@ def test_api_interview_uses_rewrite_when_enabled(monkeypatch):
     # Ensure deterministic properties were not dropped
     assert "new_claims" in data
     assert "revealed_clues" in data
+
+
+def test_api_interview_rewrites_default_answer_when_no_rule_matches(monkeypatch):
+    """When an agent has no authored rule for a question type, the old
+    behaviour recited pack.default_answers verbatim with no LLM involvement
+    at all. That should now go through the same rewrite path as a scripted
+    answer, so an agent with thin authored coverage still speaks in voice."""
+
+    monkeypatch.setenv("MYSTERY_LLM_DIALOGUE_ENABLED", "true")
+    monkeypatch.setenv("MYSTERY_LLM_PROVIDER", "fake")
+
+    import app.interview as interview_module
+    monkeypatch.setattr(interview_module, "_match_rule", lambda pack, case, session, req: None)
+
+    def mock_get_llm_client():
+        return FakeLLMClient(override_response={"rewritten_text": "Honestly? Nothing to add there."})
+    monkeypatch.setattr(rewriter_module, "get_llm_client", mock_get_llm_client)
+
+    client.post("/api/session/reset")
+    res = client.post("/api/interview/ask", json={
+        "agent_id": "agent_clara",
+        "question_type": "alibi"
+    })
+
+    assert res.status_code == 200
+    data = res.json()
+    assert data["llm_rewrite_used"] is True
+    assert data["llm_rewrite_fallback"] is False
+    assert data["answer_text"] == "Honestly? Nothing to add there."
     

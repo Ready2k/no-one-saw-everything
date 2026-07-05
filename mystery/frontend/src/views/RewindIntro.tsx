@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { api, minutes } from "../api";
+import { api, minutes, timeOfDayLabel } from "../api";
 import { useWorld } from "../App";
 import type { EventPublic, MapReplayData } from "../types";
 import { getMapInfo } from "../map/mapInfo";
@@ -35,7 +35,7 @@ type Beat =
 const TITLE_HOLD = 4200;
 const GLIMPSE_HOLD = 4600;
 
-/** Pick up to four real player-visible moments that tease the morning:
+/** Pick up to four real player-visible moments that tease the period:
  * how it began, something the village couldn't see clearly, the most
  * important visible moment inside the murder window, and the last thing
  * that happened before the body was found. */
@@ -72,6 +72,7 @@ function pickGlimpses(
 
 export default function RewindIntro({ onDone }: { onDone: () => void }) {
   const { caseOverview: c, agents, locationName } = useWorld();
+  const period = timeOfDayLabel(c.sim_start_time);
   const [beatIndex, setBeatIndex] = useState(0);
   const [glimpses, setGlimpses] = useState<EventPublic[]>([]);
   const [mapData, setMapData] = useState<MapReplayData | null>(null);
@@ -154,7 +155,7 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
             Evidence Reconstruction · Rewind
           </p>
           <h1 className="rw-in" style={{ animationDelay: "0.9s" }}>
-            The morning, reconstructed.
+            The {period}, reconstructed.
           </h1>
           <p className="rw-lede rw-in" style={{ animationDelay: "1.9s" }}>
             Every witness account, every open window, every rumor — stitched
@@ -184,7 +185,7 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
         <div className="rw-beat rw-cast" key="cast">
           <p className="rw-eyebrow rw-in">The Village</p>
           <h2 className="rw-in" style={{ animationDelay: "0.15s" }}>
-            Everyone who was there that morning.
+            Everyone who was there that {period}.
           </h2>
           <div className="rw-cast-grid">
             {victim && <CastCard agent={victim} index={0} isVictim />}
@@ -208,8 +209,8 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
             <li className="rw-in" style={{ animationDelay: "0.5s" }}>
               <span className="rw-step-icon">⏱</span>
               <div>
-                <strong>Scrub the morning.</strong> Drag the time window to
-                replay any span of the day.
+                <strong>Scrub the {period}.</strong> Drag the time window to
+                replay any span of the {period}.
               </div>
             </li>
             <li className="rw-in" style={{ animationDelay: "1.0s" }}>

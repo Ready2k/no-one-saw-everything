@@ -34,8 +34,10 @@ _LOCATION_LAYOUT: dict[str, tuple[MapPosition, MapBounds, str]] = {
         "exterior",
     ),
     "loc_fountain": (
-        MapPosition(x=370, y=188),
-        MapBounds(x=355, y=173, width=30, height=30),
+        # Matches the fountain + bench sprites stamped into the_ville.png
+        # (see the mystery map render script / village-square overlay).
+        MapPosition(x=370, y=184),
+        MapBounds(x=357, y=168, width=26, height=28),
         "exterior",
     ),
     "loc_hobbs_cafe": (

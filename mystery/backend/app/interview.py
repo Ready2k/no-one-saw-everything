@@ -113,56 +113,50 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
     question_text = build_question_text(case, req)
     rule = _match_rule(pack, case, session, req)
 
+    new_claims: list[Claim] = []
+    revealed = []
     if rule is None:
         deterministic_answer = pack.default_answers.get(
             req.question_type, "I don't have anything to say about that."
         )
-        response = AskResponse(
-            question_text=question_text,
-            deterministic_answer_text=deterministic_answer,
-            display_answer_text=deterministic_answer,
-            answer_type="uncertain",
-        )
-        _record(
-            session, req, question_text,
-            deterministic_answer_text=deterministic_answer,
-            display_answer_text=deterministic_answer,
-            claim_ids=[], clue_ids=[],
-            llm_rewrite_used=False,
-            llm_rewrite_fallback=False,
-            llm_rewrite_fallback_reason=None
-        )
-        return response
+        answer_type = "uncertain"
+        emotional_shift = None
+        suggested_followups: list[str] = []
+    else:
+        for ac in rule.claims:
+            claim = Claim(
+                claim_id=ac.claim_id,
+                speaker_agent_id=req.agent_id,
+                claim_text=ac.summary,
+                claim_type=ac.claim_type,
+                time_reference=ac.time_reference,
+                location_reference_id=ac.location_reference_id,
+                truthfulness=ac.truthfulness,
+            )
+            session.record_claim(claim)
+            new_claims.append(claim)
 
-    new_claims: list[Claim] = []
-    for ac in rule.claims:
-        claim = Claim(
-            claim_id=ac.claim_id,
-            speaker_agent_id=req.agent_id,
-            claim_text=ac.summary,
-            claim_type=ac.claim_type,
-            time_reference=ac.time_reference,
-            location_reference_id=ac.location_reference_id,
-            truthfulness=ac.truthfulness,
-        )
-        session.record_claim(claim)
-        new_claims.append(claim)
+        for clue_id in rule.reveals_clue_ids:
+            clue = next((c for c in case.clues if c.clue_id == clue_id), None)
+            if clue and clue_id not in session.discovered_clue_ids:
+                session.discovered_clue_ids.add(clue_id)
+                revealed.append(clue)
 
-    revealed = []
-    for clue_id in rule.reveals_clue_ids:
-        clue = next((c for c in case.clues if c.clue_id == clue_id), None)
-        if clue and clue_id not in session.discovered_clue_ids:
-            session.discovered_clue_ids.add(clue_id)
-            revealed.append(clue)
+        deterministic_answer = rule.answer_text
+        answer_type = rule.answer_type
+        emotional_shift = rule.emotional_shift
+        suggested_followups = rule.suggested_followups
 
-    # Rewrite logic
+    # Rewrite logic. Applies whether or not an authored rule matched — an
+    # agent with no scripted line for this topic should still speak in their
+    # own voice via the LLM rather than reciting pack.default_answers
+    # verbatim every time.
     config = get_llm_config()
-    deterministic_answer = rule.answer_text
     display_answer = deterministic_answer
     llm_rewrite_used = False
     llm_rewrite_fallback = False
     llm_rewrite_fallback_reason = None
-    
+
     if config.dialogue_enabled:
         allowed_facts = [c.claim_text for c in new_claims] + [c.title for c in revealed]
         agent = next(a for a in case.agents if a.agent_id == req.agent_id)
@@ -184,6 +178,7 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
             allowed_facts=allowed_facts,
             pressure_level=pressure,
             recent_exchange=recent_exchange or None,
+            emotion=emotional_shift or "neutral",
         )
         display_answer = rewrite_result.rewritten_text
         llm_rewrite_used = True
@@ -207,11 +202,11 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         question_text=question_text,
         deterministic_answer_text=deterministic_answer,
         display_answer_text=display_answer,
-        answer_type=rule.answer_type,
-        emotional_shift=rule.emotional_shift,
+        answer_type=answer_type,
+        emotional_shift=emotional_shift,
         new_claims=new_claims,
         revealed_clues=revealed,
-        suggested_followups=rule.suggested_followups,
+        suggested_followups=suggested_followups,
         llm_rewrite_used=llm_rewrite_used,
         llm_rewrite_fallback=llm_rewrite_fallback,
         llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,

@@ -29,8 +29,12 @@ def test_dialogue_rejects_role_labels(monkeypatch):
         pressure_level=0.5
     )
     
-    # Must fallback
-    assert result.rewritten_text == "I was at the fountain."
+    # Must fallback, wrapped in an in-character deflection rather than a bare
+    # repeat of the deterministic line, but the deterministic line itself
+    # must still be present verbatim and nothing rejected must leak through.
+    assert result.rewritten_text.endswith("I was at the fountain.")
+    assert result.rewritten_text != "I was at the fountain."
+    assert "killer" not in result.rewritten_text.lower()
     assert result.fallback_used is True
     assert result.fallback_reason == "validation_failed"
 
@@ -55,8 +59,12 @@ def test_dialogue_rejects_json_leak(monkeypatch):
         pressure_level=0.5
     )
     
-    # Must fallback
-    assert result.rewritten_text == "I was at the fountain."
+    # Must fallback, wrapped in an in-character deflection rather than a bare
+    # repeat of the deterministic line, but the deterministic line itself
+    # must still be present verbatim and nothing rejected must leak through.
+    assert result.rewritten_text.endswith("I was at the fountain.")
+    assert result.rewritten_text != "I was at the fountain."
+    assert "killer" not in result.rewritten_text.lower()
     assert result.fallback_used is True
     assert result.fallback_reason == "validation_failed"
 
@@ -82,7 +90,8 @@ def test_dialogue_rejects_unsupported_facts(monkeypatch):
     )
     
     # Must fallback because "Priya" is not in allowed facts and wasn't in deterministic text
-    assert result.rewritten_text == "I was at the fountain."
+    assert result.rewritten_text.endswith("I was at the fountain.")
+    assert "priya" not in result.rewritten_text.lower()
     assert result.fallback_used is True
     assert result.fallback_reason == "validation_failed"
 
@@ -149,7 +158,8 @@ def test_dialogue_rejects_forbidden_facts(monkeypatch):
         pressure_level=0.5
     )
     
-    assert result.rewritten_text == "I was at the fountain."
+    assert result.rewritten_text.endswith("I was at the fountain.")
+    assert "register" not in result.rewritten_text.lower()
     assert result.fallback_used is True
     assert result.fallback_reason == "validation_failed"
 

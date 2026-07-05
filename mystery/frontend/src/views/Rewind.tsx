@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, hhmm, minutes } from "../api";
+import { api, hhmm, minutes, timeOfDayLabel } from "../api";
 import { useWorld } from "../App";
 import type { CluePublic, EventPublic, LocationPublic } from "../types";
 import LocationTransition, {
@@ -14,6 +14,7 @@ import { audioManager } from "../audio";
 
 export default function Rewind() {
   const { caseOverview, agents, locations, locationName, agentName } = useWorld();
+  const period = timeOfDayLabel(caseOverview.sim_start_time);
   const start = minutes(caseOverview.sim_start_time);
   const end = minutes(caseOverview.discovery_time);
 
@@ -63,7 +64,7 @@ export default function Rewind() {
     setFrom(windowStart);
     setTo(windowEnd);
   };
-  const focusFullMorning = () => {
+  const focusFullPeriod = () => {
     setFrom(start);
     setTo(end);
   };
@@ -146,10 +147,10 @@ export default function Rewind() {
           </button>
           <button
             className={fullFocused ? "chip active" : "chip"}
-            onClick={focusFullMorning}
-            title="Replay the whole morning"
+            onClick={focusFullPeriod}
+            title={`Replay the whole ${period}`}
           >
-            Full morning
+            Full {period}
           </button>
           <select
             value={locationId}

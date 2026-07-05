@@ -114,6 +114,21 @@ def _sanitise(
     return None
 
 
+def _diegetic_fallback(deterministic_text: str, pressure_level: float) -> str:
+    """Frames a fallback-to-deterministic-text as the character deliberately
+    clamming up, rather than an invisible swap back to the exact same line
+    the player may have already seen — so a rejected/unavailable rewrite
+    reads as an interview beat, not a broken feature. Pressure-tiered so it
+    isn't the same single stock phrase every time."""
+    if pressure_level >= 0.6:
+        opener = "I'm not saying anything more than this:"
+    elif pressure_level >= 0.3:
+        opener = "That's all I'll say about that:"
+    else:
+        opener = "Look, here's what I've got:"
+    return f"{opener} {deterministic_text}"
+
+
 def rewrite_interview_answer(
     case: CaseData,
     agent: Agent,
@@ -122,6 +137,7 @@ def rewrite_interview_answer(
     allowed_facts: list[str],
     pressure_level: float,
     recent_exchange: Optional[list[str]] = None,
+    emotion: str = "neutral",
 ) -> RewriteResult:
 
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
@@ -133,7 +149,7 @@ def rewrite_interview_answer(
         name=agent.full_name,
         occupation=agent.occupation,
         traits=", ".join(agent.traits),
-        emotion="neutral",
+        emotion=emotion or "neutral",
         pressure_level=pressure_level,
         question_text=question_text,
         recent_exchange="\n".join(recent_exchange) if recent_exchange else "None",
@@ -161,7 +177,7 @@ def rewrite_interview_answer(
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
             return RewriteResult(
-                rewritten_text=deterministic_text,
+                rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
                 fallback_used=True,
                 fallback_reason="validation_failed"
             )
@@ -174,7 +190,7 @@ def rewrite_interview_answer(
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
         return RewriteResult(
-            rewritten_text=deterministic_text,
+            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
             fallback_used=True,
             fallback_reason="provider_error"
         )
@@ -189,19 +205,20 @@ def rewrite_challenge_response(
     outcome: str,
     deterministic_text: str,
     allowed_facts: list[str],
-    pressure_level: float
+    pressure_level: float,
+    emotion: str = "neutral",
 ) -> RewriteResult:
-    
+
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
     user_prompt_template = _load_prompt("challenge_rewrite_user.txt")
-    
+
     forbidden_facts = _build_forbidden_facts(case, agent)
-    
+
     user_prompt = user_prompt_template.format(
         name=agent.full_name,
         occupation=agent.occupation,
         traits=", ".join(agent.traits),
-        emotion="neutral",
+        emotion=emotion or "neutral",
         pressure_level=pressure_level,
         challenged_claim=challenged_claim,
         evidence_clues=evidence_clues,
@@ -233,7 +250,7 @@ def rewrite_challenge_response(
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
             return RewriteResult(
-                rewritten_text=deterministic_text,
+                rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
                 fallback_used=True,
                 fallback_reason="validation_failed"
             )
@@ -246,7 +263,74 @@ def rewrite_challenge_response(
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
         return RewriteResult(
-            rewritten_text=deterministic_text,
+            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
             fallback_used=True,
             fallback_reason="provider_error"
+        )
+
+
+_OPEN_ENDED_DEFLECTION = "I don't see what that's got to do with your investigation, detective."
+
+
+def generate_open_ended_response(
+    case: CaseData,
+    agent: Agent,
+    question_text: str,
+    pressure_level: float,
+    recent_exchange: Optional[list[str]] = None,
+) -> RewriteResult:
+    """Handles free-text questions that match none of the fixed interview
+    intents (spec 06) — e.g. "tell me about your childhood". Rather than a
+    static "I don't understand" message, lets the LLM improvise a genuinely
+    in-character reply: flavour when the topic is harmless, an in-character
+    refusal when it reaches for hidden case truth. There is no deterministic
+    ground truth to rewrite here, so the model is never given the case truth
+    as context — only the same forbidden-facts list and the same sanitiser
+    used for grounded rewrites, which is what still blocks a leak or an
+    invented relationship to another named suspect."""
+
+    system_prompt = _load_prompt("open_ended_system.txt")
+    user_prompt_template = _load_prompt("open_ended_user.txt")
+
+    forbidden_facts = _build_forbidden_facts(case, agent)
+
+    user_prompt = user_prompt_template.format(
+        name=agent.full_name,
+        occupation=agent.occupation,
+        traits=", ".join(agent.traits),
+        routine_summary=agent.routine_summary or "Unknown",
+        pressure_level=pressure_level,
+        recent_exchange="\n".join(recent_exchange) if recent_exchange else "None",
+        forbidden_facts="- " + "\n- ".join(forbidden_facts) if forbidden_facts else "None",
+        question_text=question_text,
+    )
+
+    client = get_llm_client()
+    try:
+        result = client.generate_json(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            schema=DialogueRewrite,
+        )
+
+        allowed_context = [question_text, agent.full_name]
+        if recent_exchange:
+            allowed_context.extend(recent_exchange)
+        rejection = _sanitise(result.rewritten_text, forbidden_facts, [], case, allowed_context)
+        if rejection:
+            logger.warning(f"Open-ended response rejected: {rejection}")
+            return RewriteResult(
+                rewritten_text=_OPEN_ENDED_DEFLECTION,
+                fallback_used=True,
+                fallback_reason="validation_failed",
+            )
+
+        return RewriteResult(rewritten_text=result.rewritten_text, fallback_used=False)
+
+    except Exception as e:
+        logger.warning(f"Open-ended response failed: {e}")
+        return RewriteResult(
+            rewritten_text=_OPEN_ENDED_DEFLECTION,
+            fallback_used=True,
+            fallback_reason="provider_error",
         )

@@ -1,7 +1,9 @@
 from fastapi import HTTPException
-from app.models import FreeTextAskRequest, FreeTextAskResponse, ChallengeSuggestion, AskRequest, ChallengeRequest
+from app.models import FreeTextAskRequest, FreeTextAskResponse, ChallengeSuggestion, AskRequest, ChallengeRequest, InterviewMessage
 from app.question_classifier import classify_question
 from app.llm.question_intent_classifier import classify_question_intent_llm
+from app.llm.config import get_llm_config
+from app.llm.dialogue_rewriter import generate_open_ended_response
 from app.interview import answer_question, public_ask_response
 from app import challenge as challenge_engine
 from app.challenge import ChallengeError
@@ -11,19 +13,65 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         raise HTTPException(400, "The victim is unavailable for comment.")
     if not any(a.agent_id == req.agent_id for a in case.agents):
         raise HTTPException(404, "No such agent")
-        
+
     intent = classify_question(req.question, case, sess)
     if not intent:
         intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
-        
+
     fallback_resp = FreeTextAskResponse(
         intent=intent,
         fallback_message="I'm not sure what you mean. Ask me where I was, what I saw, or about a specific person or object."
     )
-        
+
     # Mapping based on intent rules
     if intent.intent == "fallback_unknown":
-        return fallback_resp
+        config = get_llm_config()
+        if not config.dialogue_enabled:
+            return fallback_resp
+
+        agent = next(a for a in case.agents if a.agent_id == req.agent_id)
+        pressure = sess.pressure_for(req.agent_id)
+        transcript = sess.transcript_for(req.agent_id)
+        recent_exchange = [
+            f"{'Detective' if m.speaker == 'player' else agent.full_name}: {m.text}"
+            for m in transcript.messages[-6:]
+        ]
+
+        result = generate_open_ended_response(
+            case=case,
+            agent=agent,
+            question_text=req.question,
+            pressure_level=pressure,
+            recent_exchange=recent_exchange or None,
+        )
+
+        transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
+        transcript.messages.append(
+            InterviewMessage(
+                speaker="agent",
+                text=result.rewritten_text,
+                llm_rewrite_used=True,
+                llm_rewrite_fallback=result.fallback_used,
+                llm_rewrite_fallback_reason=result.fallback_reason,
+            )
+        )
+
+        return FreeTextAskResponse(
+            intent=intent,
+            answer={
+                "question_text": req.question,
+                "answer_text": result.rewritten_text,
+                "deterministic_answer_text": result.rewritten_text,
+                "answer_type": "open_ended",
+                "emotional_shift": None,
+                "new_claims": [],
+                "revealed_clues": [],
+                "suggested_followups": [],
+                "llm_rewrite_used": True,
+                "llm_rewrite_fallback": result.fallback_used,
+                "llm_rewrite_fallback_reason": result.fallback_reason,
+            },
+        )
         
     if intent.intent in ["contradiction", "explicit_challenge"]:
         if not intent.referenced_clue_id:
