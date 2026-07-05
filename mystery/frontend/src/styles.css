@@ -1845,7 +1845,8 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 }
 
 .deceased-portrait {
-  position: relative;
+  /* Always paired with .magnifying-crop, which must stay position:absolute
+     to fill the padding-bottom-sized container — don't set position here. */
   overflow: hidden;
   border-radius: 4px;
 }

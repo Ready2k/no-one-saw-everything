@@ -739,13 +739,13 @@ function AutopsyPanel({
       <div className="transcript" style={{ padding: "1rem" }}>
         <p>Use the magnifying glass to examine the body for clues.</p>
 
-        <div style={{ position: "relative", width: "100%", maxWidth: "600px", margin: "0 auto", marginTop: "1rem" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: "340px", margin: "0 auto", marginTop: "1rem", flexShrink: 0 }}>
           <MagnifyingSearch
             bounds={null}
             hiddenClues={hidden_clues}
             onDiscover={handleDiscover}
             imageUrl={agent.portrait_art?.calm || undefined}
-            spriteAsset={!agent.portrait_art?.calm && agent.sprite_asset ? agent.sprite_asset : undefined}
+            spriteAsset={agent.sprite_asset || undefined}
             isPortrait={true}
           />
         </div>
