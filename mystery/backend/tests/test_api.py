@@ -126,12 +126,75 @@ def test_cannot_ask_about_undiscovered_evidence():
     assert r.status_code == 400
 
 
-def test_victim_cannot_be_interviewed():
+def test_victim_cannot_be_interviewed_but_can_be_examined(reset_app_state):
+    # First examination reveals clues
     r = client.post(
         "/api/interview/ask",
         json={"agent_id": "agent_marcus", "question_type": "alibi"},
     )
-    assert r.status_code == 400
+    assert r.status_code == 200
+    data = r.json()
+    assert "Examine body" in data["question_text"]
+    assert "Cause of death appears to be" in data["answer_text"]
+    
+    # Check if there are clues revealed on the first examination
+    first_clues = data.get("revealed_clues", [])
+    
+    # Second examination
+    r2 = client.post(
+        "/api/interview/ask",
+        json={"agent_id": "agent_marcus", "question_type": "alibi"},
+    )
+    assert r2.status_code == 200
+    data2 = r2.json()
+    
+    # Should not duplicate clues and should say "nothing new found"
+    assert len(data2.get("revealed_clues", [])) == 0
+    assert "You do not find anything new on the body" in data2["answer_text"]
+
+def test_body_examination_metadata_override(reset_app_state):
+    from app.main import session, case_data
+    from app.models import Clue, Discoverability
+    
+    sess = session()
+    case = case_data()
+    
+    # Add a mock clue that targets Marcus and is in the discovery location
+    # But explicitly set reveal_on to something else.
+    clue = Clue(
+        clue_id="clue_mock_not_body",
+        title="Mock not body",
+        clue_type="physical",
+        description="A clue in the storage room on Marcus's body but metadata overrides it.",
+        discoverability=Discoverability(
+            method="inspect",
+            location_id=case.case.discovery_location_id,
+            reveal_on=["some_other_trigger"]
+        ),
+        linked_agent_ids=[case.case.victim_id]
+    )
+    case.clues.append(clue)
+    
+    # First examination should NOT reveal this clue
+    r = client.post(
+        "/api/interview/ask",
+        json={"agent_id": case.case.victim_id, "question_type": "alibi"},
+    )
+    assert r.status_code == 200
+    data = r.json()
+    revealed_ids = [c["clue_id"] for c in data.get("revealed_clues", [])]
+    assert "clue_mock_not_body" not in revealed_ids
+    
+    # Now set it to examine_body
+    clue.discoverability.reveal_on = ["examine_body"]
+    r2 = client.post(
+        "/api/interview/ask",
+        json={"agent_id": case.case.victim_id, "question_type": "alibi"},
+    )
+    assert r2.status_code == 200
+    data2 = r2.json()
+    revealed_ids2 = [c["clue_id"] for c in data2.get("revealed_clues", [])]
+    assert "clue_mock_not_body" in revealed_ids2
 
 
 def test_notes_crud_and_board():

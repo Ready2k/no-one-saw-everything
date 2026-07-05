@@ -263,6 +263,9 @@ class Discoverability(BaseModel):
     y: Optional[float] = None          # Percentage 0-100 down the room crop
     radius: Optional[float] = 8.0      # Radius percentage
     discovery_text: Optional[str] = None
+    
+    # Authoring guidance: use `["examine_body"]` for clues found via victim body examination.
+    reveal_on: list[str] = Field(default_factory=list)
 
 
 class Clue(BaseModel):
@@ -311,6 +314,11 @@ class CaseFile(BaseModel):
     # Optional flavour text for the body-discovery intro scene; empty means
     # the client falls back to overview_text.
     scene_description: str = ""
+    
+    # Authoring guidance: use `cause_of_death_observed` for player-facing 
+    # body examination text. Do not rely on `method` for narrative output unless 
+    # it contains only a generic category (e.g. poisoning, blunt_force).
+    cause_of_death_observed: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------

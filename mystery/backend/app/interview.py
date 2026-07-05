@@ -268,3 +268,78 @@ def public_ask_response(resp: AskResponse) -> dict:
         "llm_rewrite_used": resp.llm_rewrite_used,
         "llm_rewrite_fallback": resp.llm_rewrite_fallback,
     }
+
+def is_body_examination_clue(clue, victim_id: str, discovery_location_id: str) -> bool:
+    if clue.discoverability.method != "inspect":
+        return False
+        
+    if clue.discoverability.reveal_on:
+        return "examine_body" in clue.discoverability.reveal_on
+    
+    text = f"{clue.title} {clue.description}".lower()
+    body_terms = ["body", "pocket", "hand", "clothes", "coat", "jacket", "wound", "note"]
+    
+    return (
+        clue.discoverability.location_id == discovery_location_id
+        and (
+            victim_id in clue.linked_agent_ids
+            or any(term in text for term in body_terms)
+        )
+    )
+
+def examine_body(case: CaseData, session: Session, player_statement: str = "Examine body") -> AskResponse:
+    revealed = []
+    for clue in case.clues:
+        if is_body_examination_clue(clue, case.case.victim_id, case.case.discovery_location_id):
+            if clue.clue_id not in session.discovered_clue_ids:
+                session.discovered_clue_ids.add(clue.clue_id)
+                revealed.append(clue)
+    
+    cause_of_death = case.case.cause_of_death_observed or "Unknown"
+    if not case.case.cause_of_death_observed and case.case.method:
+        # Fallback to sanitized method if it doesn't look like a spoiler
+        if case.case.method in ["blunt_force", "stabbing", "poison", "strangulation", "gunshot"]:
+            cause_of_death = case.case.method.replace('_', ' ').capitalize()
+
+    
+    victim = next((a for a in case.agents if a.agent_id == case.case.victim_id), None)
+    victim_name = victim.full_name.split()[0] if victim else "the victim"
+    
+    scene_desc = case.case.scene_description or f"The body of {victim_name} lies here."
+    
+    if revealed:
+        clues_list = "\n".join(f"- {c.title}" for c in revealed)
+        answer = f"You examine {victim_name} carefully. {scene_desc}\n\nCause of death appears to be: {cause_of_death}.\n\nYou find:\n{clues_list}"
+    else:
+        answer = f"You examine {victim_name} carefully. {scene_desc}\n\nCause of death appears to be: {cause_of_death}.\n\nYou do not find anything new on the body."
+        
+    req = AskRequest(agent_id=case.case.victim_id, question_type="evidence")
+    _record(
+        session,
+        req,
+        question_text=player_statement,
+        deterministic_answer_text=answer,
+        display_answer_text=answer,
+        claim_ids=[],
+        clue_ids=[c.clue_id for c in revealed],
+        llm_rewrite_used=False,
+    )
+    
+    # Also log telemetry
+    from .telemetry import log_telemetry_event
+    log_telemetry_event(session, "body_examined", {"agent_id": case.case.victim_id, "clues_found": len(revealed)})
+    for clue in revealed:
+        log_telemetry_event(session, "clue_discovered", {"clue_id": clue.clue_id, "source": "body_examination"})
+
+    return AskResponse(
+        question_text=player_statement,
+        deterministic_answer_text=answer,
+        display_answer_text=answer,
+        answer_type="claim",
+        emotional_shift=None,
+        new_claims=[],
+        revealed_clues=revealed,
+        suggested_followups=[],
+        llm_rewrite_used=False,
+        llm_rewrite_fallback=False,
+    )

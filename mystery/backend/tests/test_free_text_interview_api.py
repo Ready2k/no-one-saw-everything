@@ -122,3 +122,22 @@ def test_api_explicit_challenge_mutates_state(reset_app_state):
     
     assert sess.pressure.get("agent_clara", 0) > initial_pressure
 
+def test_free_text_body_examination(reset_app_state, monkeypatch):
+    # Monkeypatch the classifier to raise an error if it gets called
+    # This proves the free text examination bypasses the LLM
+    def mock_classify(*args, **kwargs):
+        raise RuntimeError("LLM path should not be invoked for body examination")
+    
+    monkeypatch.setattr("app.free_text_api.classify_question", mock_classify)
+    
+    resp = client.post("/api/interview/free-text", json={
+        "agent_id": "agent_marcus",
+        "question": "search the pockets"
+    })
+    
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["intent"]["intent"] == "evidence"
+    assert data["intent"]["rewritten_structured_question"] == "Examine body"
+    assert "You examine" in data["answer"]["answer_text"]
+

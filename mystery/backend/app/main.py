@@ -466,7 +466,8 @@ def ask(req: AskRequest):
     case = case_data()
     sess = session()
     if req.agent_id == case.case.victim_id:
-        raise HTTPException(400, "The victim is unavailable for comment.")
+        resp = interview_engine.examine_body(case, sess)
+        return interview_engine.public_ask_response(resp)
     if not any(a.agent_id == req.agent_id for a in case.agents):
         raise HTTPException(404, "No such agent")
     if req.question_type == "timeline" and not req.time_reference:

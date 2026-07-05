@@ -8,7 +8,7 @@ import LocationTransition, {
 import VisualMap from "../components/VisualMap";
 import MapTimeline from "../components/MapTimeline";
 import { markerMeta } from "../components/EventMarker";
-import { agentPinsAt, buildTracks, markersAt } from "../map/mapProjection";
+import { agentPinsAt, buildTracks, markersAt, agentTracePath } from "../map/mapProjection";
 import { audioManager } from "../audio";
 
 const TICK_MS = 600; // real ms per replayed game-minute at 1x
@@ -38,6 +38,7 @@ export default function MapReplay({
   const [inspectResult, setInspectResult] = useState<string | null>(null);
   const [toast, setToast] = useState<CluePublic[] | null>(null);
   const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
+  const [showTrace, setShowTrace] = useState(false);
 
   // Full-range fetch; filtering is applied client-side on already-projected
   // (player-safe) data so agent position tracks stay complete.
@@ -112,6 +113,11 @@ export default function MapReplay({
     const all = agentPinsAt(data, tracks, t);
     return agentFilter ? all.filter((p) => p.agent.agent_id === agentFilter) : all;
   }, [data, tracks, t, agentFilter]);
+
+  const traceSegments = useMemo(() => {
+    if (!showTrace || !agentFilter || !data || !tracks) return [];
+    return agentTracePath(data, tracks, agentFilter, t, truthMode);
+  }, [showTrace, agentFilter, data, tracks, t, truthMode]);
 
   const markers = useMemo(() => markersAt(filteredEvents, t), [filteredEvents, t]);
 
@@ -194,9 +200,20 @@ export default function MapReplay({
               </option>
             ))}
           </select>
+          {agentFilter && (
+            <label className="truth-toggle">
+              <input
+                type="checkbox"
+                checked={showTrace}
+                onChange={(e) => setShowTrace(e.target.checked)}
+              />
+              Show movement trace
+            </label>
+          )}
           {agentFilter && !truthMode && (
             <span className="muted small">
               Only publicly identifiable moments are shown.
+              {showTrace && " Gaps mean the person was out of sight."}
             </span>
           )}
           {accused && (
@@ -221,6 +238,7 @@ export default function MapReplay({
           data={data}
           pins={pins}
           markers={markers}
+          traceSegments={traceSegments}
           selectedEventId={selectedEvent?.event_id ?? null}
           selectedLocationId={selectedLocationId}
           focusLocationId={locationFilter || null}

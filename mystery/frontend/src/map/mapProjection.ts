@@ -138,3 +138,119 @@ export function markersAt(events: MapEvent[], tMin: number): MapEvent[] {
     return et <= tMin && tMin - et <= MARKER_TRAIL_MIN;
   });
 }
+
+export const TRACE_STALE_GAP_MINUTES = 15; // gap in minutes after which trace breaks
+
+export interface TracePoint {
+  x: number;
+  y: number;
+  tMin: number;
+  locationId?: string;
+  observed: boolean;
+  isEvent?: boolean;
+}
+
+export interface TraceSegment {
+  points: TracePoint[];
+}
+
+/** 
+ * Returns trace segments for an agent up to a given time.
+ * Cuts the trace into a new segment if the agent goes out of sight or teleports.
+ */
+export function agentTracePath(
+  data: MapReplayData,
+  tracks: Map<string, TrackPoint[]>,
+  agentId: string,
+  tMin: number,
+  truthMode: boolean
+): TraceSegment[] {
+  const agentTracks = tracks.get(agentId) ?? [];
+  const segments: TraceSegment[] = [];
+  let currentSegment: TracePoint[] = [];
+
+  for (let i = 0; i < agentTracks.length; i++) {
+    const track = agentTracks[i];
+    if (track.timeMin > tMin) break;
+
+    // In player mode, data.events already only contains events the player knows.
+    // So all track points represent known sightings. Out-of-sight gaps are
+    // handled naturally by the time gap > 15 mins.
+    
+    // Split trace if the gap since the last sighting is too large.
+    if (currentSegment.length > 0) {
+      const lastPt = currentSegment[currentSegment.length - 1];
+      if (track.timeMin - lastPt.tMin > TRACE_STALE_GAP_MINUTES) {
+        if (currentSegment.length > 0) segments.push({ points: currentSegment });
+        currentSegment = [];
+      }
+    }
+
+    if (track.event.visual_event_type === "agent_move") {
+      const fromPos = locationCenter(data.locations, track.event.from_location_id);
+      const toPos = locationCenter(data.locations, track.locationId);
+      if (fromPos && toPos) {
+        const lastPt = currentSegment.length > 0 ? currentSegment[currentSegment.length - 1] : null;
+        if (!lastPt || lastPt.locationId !== track.event.from_location_id || lastPt.tMin !== track.timeMin) {
+           currentSegment.push({
+             x: fromPos.x,
+             y: fromPos.y,
+             tMin: track.timeMin,
+             locationId: track.event.from_location_id || undefined,
+             observed: true,
+             isEvent: true, // Movement started
+           });
+        }
+        
+        const endMoveTime = track.timeMin + MOVE_DURATION_MIN;
+        if (endMoveTime <= tMin) {
+          currentSegment.push({
+            x: toPos.x,
+            y: toPos.y,
+            tMin: endMoveTime,
+            locationId: track.locationId,
+            observed: true,
+            isEvent: true, // Movement finished
+          });
+        } else {
+           const progress = (tMin - track.timeMin) / MOVE_DURATION_MIN;
+           currentSegment.push({
+             x: fromPos.x + (toPos.x - fromPos.x) * progress,
+             y: fromPos.y + (toPos.y - fromPos.y) * progress,
+             tMin: tMin,
+             locationId: track.locationId,
+             observed: true,
+             isEvent: false, // Interpolated intermediate point
+           });
+        }
+      }
+    } else {
+      const pos = locationCenter(data.locations, track.locationId);
+      if (pos) {
+        currentSegment.push({
+          x: pos.x,
+          y: pos.y,
+          tMin: track.timeMin,
+          locationId: track.locationId,
+          observed: true,
+          isEvent: true, // Static event
+        });
+      }
+    }
+  }
+
+  // Handle cutting off if currently stale
+  const lastTrack = agentTracks.slice().reverse().find(t => t.timeMin <= tMin && (truthMode || t.event.visibility === "public"));
+  if (lastTrack && currentSegment.length > 0) {
+    if (tMin - lastTrack.timeMin > 10) { 
+      segments.push({ points: currentSegment });
+      currentSegment = [];
+    }
+  }
+
+  if (currentSegment.length > 0) {
+    segments.push({ points: currentSegment });
+  }
+
+  return segments;
+}

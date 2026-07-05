@@ -189,6 +189,7 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
                     onChange={(e) => setApiKey(e.target.value)}
                     onBlur={() => fetchModels()}
                     disabled={saving}
+                    autoComplete="off"
                   />
                 </div>
                 <div className="form-group">

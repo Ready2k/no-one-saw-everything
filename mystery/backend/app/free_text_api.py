@@ -1,23 +1,38 @@
 from fastapi import HTTPException
-from app.models import FreeTextAskRequest, FreeTextAskResponse, ChallengeSuggestion, AskRequest, ChallengeRequest, InterviewMessage
+from app.models import FreeTextAskRequest, FreeTextAskResponse, ChallengeSuggestion, AskRequest, ChallengeRequest, InterviewMessage, QuestionIntent
 from app.question_classifier import classify_question
 from app.llm.question_intent_classifier import classify_question_intent_llm
 from app.llm.config import get_llm_config
 from app.llm.dialogue_rewriter import generate_open_ended_response
-from app.interview import answer_question, public_ask_response
+from app.interview import answer_question, public_ask_response, examine_body
 from app.world_state import build_conversation_context, build_world_state_digest
 from app import challenge as challenge_engine
 from app.challenge import ChallengeError
 
 def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse:
     if req.agent_id == case.case.victim_id:
-        raise HTTPException(400, "The victim is unavailable for comment.")
+        resp = examine_body(case, sess, req.question)
+        return FreeTextAskResponse(
+            intent=QuestionIntent(
+                intent="evidence",
+                confidence=1.0,
+                rewritten_structured_question="Examine body"
+            ),
+            answer=public_ask_response(resp)
+        )
     if not any(a.agent_id == req.agent_id for a in case.agents):
         raise HTTPException(404, "No such agent")
 
     intent = classify_question(req.question, case, sess)
     if not intent:
         intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
+        
+    if not intent:
+        intent = QuestionIntent(
+            intent="fallback_unknown",
+            confidence=1.0,
+            rewritten_structured_question="Unknown"
+        )
 
     fallback_resp = FreeTextAskResponse(
         intent=intent,

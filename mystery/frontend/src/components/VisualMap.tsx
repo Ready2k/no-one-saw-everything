@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type WheelEvent as ReactWheelEvent } from "react";
 import type { MapEvent, MapReplayData } from "../types";
-import type { AgentPin } from "../map/mapProjection";
+import type { AgentPin, TraceSegment } from "../map/mapProjection";
 import { locationCenter } from "../map/mapProjection";
 import { AGENT_TILE_SCALE, MAP_GRID, mapImageUrl } from "../map/mapAssets";
 import AgentSprite from "./AgentSprite";
@@ -26,6 +26,7 @@ export default function VisualMap({
   data,
   pins,
   markers,
+  traceSegments = [],
   selectedEventId,
   selectedLocationId,
   focusLocationId = null,
@@ -36,6 +37,7 @@ export default function VisualMap({
   data: MapReplayData;
   pins: AgentPin[];
   markers: MapEvent[];
+  traceSegments?: TraceSegment[];
   selectedEventId: string | null;
   selectedLocationId: string | null;
   focusLocationId?: string | null;
@@ -256,6 +258,29 @@ export default function VisualMap({
           alt="Village map"
           draggable={false}
         />
+
+        {traceSegments.length > 0 && (
+          <svg className="map-trace-svg" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+            {traceSegments.map((seg, i) => (
+              <g key={i}>
+                <polyline
+                  className="map-trace-line"
+                  points={seg.points.map(p => `${p.x},${p.y}`).join(" ")}
+                  fill="none"
+                />
+                {seg.points.map((p, j) => p.isEvent && (
+                  <circle
+                    key={j}
+                    className="map-trace-dot"
+                    cx={p.x}
+                    cy={p.y}
+                    r={2.5}
+                  />
+                ))}
+              </g>
+            ))}
+          </svg>
+        )}
 
         {data.locations.map((loc) => {
           if (!loc.map_position) return null;

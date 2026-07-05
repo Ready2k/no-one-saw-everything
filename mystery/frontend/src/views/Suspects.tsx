@@ -159,7 +159,10 @@ function InterviewPanel({
 
   const firstName = agent.full_name.split(" ")[0];
   const victimName = caseOverview.victim.full_name.split(" ")[0];
-  const placeholder = `Ask ${firstName} about ${victimName}, the timeline, a place, or discovered evidence…`;
+  const isVictim = agent.is_victim;
+  const placeholder = isVictim 
+    ? `Examine body (e.g. search pockets, check wounds, cause of death…)`
+    : `Ask ${firstName} about ${victimName}, the timeline, a place, or discovered evidence…`;
 
   const contradicted =
     suggestions.length > 0 ||
@@ -504,15 +507,20 @@ function InterviewPanel({
               title={!freeText.trim() ? "Type a question first" : undefined}
               onClick={submitFreeText}
             >
-              Ask
+              {isVictim ? "Examine" : "Ask"}
             </button>
           </div>
           <p className="muted small input-help">
-            Ask about people, places, times, motives, or evidence.
+            {isVictim
+              ? "Examine the body for clues or ask about the cause of death."
+              : "Ask about people, places, times, motives, or evidence."}
           </p>
-          <div className="question-divider">
-            <span className="muted small">or use predefined topics</span>
-          </div>
+          
+          {!isVictim && (
+            <>
+              <div className="question-divider">
+                <span className="muted small">or use predefined topics</span>
+              </div>
           <div className="question-row">
             <button disabled={busy} onClick={() => ask("alibi")}>
               Ask alibi ({caseOverview.murder_window[0]}–{caseOverview.murder_window[1]})
@@ -536,8 +544,11 @@ function InterviewPanel({
               What were you doing at {timeRef}?
             </button>
           </div>
+          </>
+          )}
         </div>
 
+        {!isVictim && (
         <div className="structured-cards">
           <div className="structured-card panel">
             <h3 className="structured-title">Question about a place</h3>
@@ -616,6 +627,7 @@ function InterviewPanel({
             )}
           </div>
         </div>
+        )}
 
         {lastResult && lastResult.revealed_clues.length > 0 && (
           <div className="revealed">
