@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from . import case_store
 from .case_store import minutes
 from .models import CaseData
 
@@ -12,7 +13,20 @@ def validate_case(case: CaseData) -> dict[str, Any]:
     """
     Validates a case (static or generated) to ensure it is fully playable.
     Returns a dict with 'valid', 'score', 'errors', 'warnings', and 'info'.
+
+    Time comparisons must wrap around midnight relative to *this* case's
+    start time, not whichever case happens to be active — otherwise
+    validating a case while another is active mis-orders its timeline.
     """
+    saved_start_time = case_store._ACTIVE_START_TIME
+    case_store.set_active_start_time(case.case.sim_start_time)
+    try:
+        return _validate_case_inner(case)
+    finally:
+        case_store.set_active_start_time(saved_start_time)
+
+
+def _validate_case_inner(case: CaseData) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
     info: list[str] = []

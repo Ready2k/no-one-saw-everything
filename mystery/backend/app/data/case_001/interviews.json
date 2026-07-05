@@ -26,7 +26,10 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["Who saw you at the fountain?", "Why did you need air?"]
+        "suggested_followups": [
+          "Who saw you at the fountain?",
+          "Why did you need air?"
+        ]
       },
       {
         "question_type": "timeline",
@@ -46,7 +49,9 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["Did Elias actually see you there?"]
+        "suggested_followups": [
+          "Did Elias actually see you there?"
+        ]
       },
       {
         "question_type": "timeline",
@@ -82,7 +87,21 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["What did he need to sort in the back?"]
+        "suggested_followups": [
+          "What did he need to sort in the back?"
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "How we met? I answered a card in his window fifteen years ago — waitress, five mornings a week. He watched me cash up my first till and then recounted it in front of everyone. I stayed anyway. You don't forget who gave you your start — or who never let you forget it, either.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "wistful",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
@@ -97,6 +116,9 @@
             "claim_type": "relationship",
             "truthfulness": "mistaken"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
@@ -194,7 +216,10 @@
             "truthfulness": "mistaken"
           }
         ],
-        "suggested_followups": ["What were you really doing in the alley?", "What did you see from there?"]
+        "suggested_followups": [
+          "What were you really doing in the alley?",
+          "What did you see from there?"
+        ]
       },
       {
         "question_type": "timeline",
@@ -222,8 +247,14 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_ben_sighting", "clue_storage_sound"],
-        "suggested_followups": ["Why were you in the alley at that time?", "Did the figure see you?"]
+        "reveals_clue_ids": [
+          "clue_ben_sighting",
+          "clue_storage_sound"
+        ],
+        "suggested_followups": [
+          "Why were you in the alley at that time?",
+          "Did the figure see you?"
+        ]
       },
       {
         "question_type": "location",
@@ -245,6 +276,18 @@
       },
       {
         "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "First met him on my first delivery round, must be six years back now. He signed for the flour, then told me I'd stacked it wrong and showed me exactly how he wanted it. Every week since — same time, same nod. You get to know a man by his routines.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "warm",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
         "answer_text": "No quarrel with Marcus, none. He had his moods lately, mind — snapping at Clara, double-counting the till like it owed him money. Something was eating him.",
         "answer_type": "gossip",
         "truthfulness": "true",
@@ -255,6 +298,9 @@
             "claim_type": "statement",
             "truthfulness": "true"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
@@ -293,8 +339,13 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_isabella_clinic"],
-        "suggested_followups": ["What was the meeting about?", "Why were you so wound up?"]
+        "reveals_clue_ids": [
+          "clue_isabella_clinic"
+        ],
+        "suggested_followups": [
+          "What was the meeting about?",
+          "Why were you so wound up?"
+        ]
       },
       {
         "question_type": "last_seen_victim",
@@ -312,7 +363,21 @@
             "truthfulness": "true"
           }
         ],
-        "suggested_followups": ["What needed settling?"]
+        "suggested_followups": [
+          "What needed settling?"
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "We met at the bank, of all places — both of us waiting on the same loan officer. He leaned over and said he'd finance the shop himself, at a fairer rate. It felt like a kindness at the time. It took me years to understand it was a leash.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "bitter",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
@@ -327,6 +392,9 @@
             "claim_type": "relationship",
             "truthfulness": "true"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
@@ -344,7 +412,9 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_isabella_clinic"]
+        "reveals_clue_ids": [
+          "clue_isabella_clinic"
+        ]
       },
       {
         "question_type": "evidence",
@@ -402,8 +472,12 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_owen_delivery"],
-        "suggested_followups": ["What were you and Marcus arguing about at 07:05?"]
+        "reveals_clue_ids": [
+          "clue_owen_delivery"
+        ],
+        "suggested_followups": [
+          "What were you and Marcus arguing about at 07:05?"
+        ]
       },
       {
         "question_type": "last_seen_victim",
@@ -424,6 +498,18 @@
       },
       {
         "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "He hired me to fix the cafe roof the winter it came down. Paid fair, shook my hand, said he liked a man who finished things. That's how it started. The borrowing came later — and it soured everything the roof-money built.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "regretful",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
         "answer_text": "I'll say it before Elias does: I owed him. A lot. And no, I couldn't pay, and yes, he was going to make it public today. If that makes me a suspect, fine. But I settle things with my mouth, not... whatever happened in that room.",
         "answer_type": "claim",
         "truthfulness": "true",
@@ -435,6 +521,9 @@
             "claim_type": "statement",
             "truthfulness": "true"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
@@ -444,7 +533,9 @@
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "weary",
-        "reveals_clue_ids": ["clue_owen_delivery"]
+        "reveals_clue_ids": [
+          "clue_owen_delivery"
+        ]
       }
     ]
   },
@@ -493,8 +584,13 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_ben_priya_meeting"],
-        "suggested_followups": ["What exactly did you hear from the cafe?", "Did you see who came out of the rear door?"]
+        "reveals_clue_ids": [
+          "clue_ben_priya_meeting"
+        ],
+        "suggested_followups": [
+          "What exactly did you hear from the cafe?",
+          "Did you see who came out of the rear door?"
+        ]
       },
       {
         "question_type": "location",
@@ -502,6 +598,18 @@
         "answer_text": "I was in and out of the stockroom all morning. The back door sticks, so I mostly keep it shut.",
         "answer_type": "claim",
         "truthfulness": "mistaken"
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "I was sixteen, shelving books for pocket money, and he came in arguing about an invoice. He heard me correct the arithmetic and told Isabella to keep me on. The apprenticeship came out of that. I owed him the start of everything, really.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "fond",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
@@ -516,6 +624,9 @@
             "claim_type": "statement",
             "truthfulness": "true"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
@@ -563,7 +674,9 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_isabella_clinic"]
+        "reveals_clue_ids": [
+          "clue_isabella_clinic"
+        ]
       },
       {
         "question_type": "timeline",
@@ -583,8 +696,12 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_nadia_overheard"],
-        "suggested_followups": ["Who was in the cafe at 07:40?"]
+        "reveals_clue_ids": [
+          "clue_nadia_overheard"
+        ],
+        "suggested_followups": [
+          "Who was in the cafe at 07:40?"
+        ]
       },
       {
         "question_type": "timeline",
@@ -606,10 +723,25 @@
       },
       {
         "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "We met the week I moved here — he brought a cake to the clinic and a list of complaints about the parking. That was him all over: generous and impossible in the same breath. Twenty years of fences and favours since.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "amused",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
         "answer_text": "We were neighbours twenty years. If you're asking who'd want him dead — he held this village's debts and secrets, and lately he'd been tightening his grip on both. That's not gossip, that's arithmetic.",
         "answer_type": "claim",
         "truthfulness": "true",
-        "emotional_shift": "level"
+        "emotional_shift": "level",
+        "suggested_followups": [
+          "How did you two first meet?"
+        ]
       }
     ]
   },
@@ -626,6 +758,18 @@
     "rules": [
       {
         "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "Met him? I taught him. A class of forty and he was the one checking my sums off the board. Even then he kept a little book of who owed him marbles. Some men are born keeping ledgers.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "nostalgic",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
         "answer_text": "Forty years I knew him. And I'll tell you something for nothing: last week, in the cafe, I heard him say to somebody — quiet, but furious, the way he got — 'You have until tomorrow.' Never saw who. Kitchen doorway, my back was to it. But Marcus didn't threaten people for sport. Somebody in this village was living on borrowed time, and I'd say the loan came due.",
         "answer_type": "claim",
         "truthfulness": "true",
@@ -638,8 +782,13 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_overheard_threat"],
-        "suggested_followups": ["Could it have been a member of staff he was talking to?"]
+        "reveals_clue_ids": [
+          "clue_overheard_threat"
+        ],
+        "suggested_followups": [
+          "Could it have been a member of staff he was talking to?",
+          "How did you two first meet?"
+        ]
       },
       {
         "question_type": "alibi",
@@ -657,7 +806,10 @@
             "truthfulness": "true"
           }
         ],
-        "suggested_followups": ["Did you see Clara at the fountain?", "Which way did Clara go when she left?"]
+        "suggested_followups": [
+          "Did you see Clara at the fountain?",
+          "Which way did Clara go when she left?"
+        ]
       },
       {
         "question_type": "timeline",
@@ -683,8 +835,12 @@
             "truthfulness": "mistaken"
           }
         ],
-        "reveals_clue_ids": ["clue_elias_fountain"],
-        "suggested_followups": ["How sure are you that Clara wasn't at the fountain?"]
+        "reveals_clue_ids": [
+          "clue_elias_fountain"
+        ],
+        "suggested_followups": [
+          "How sure are you that Clara wasn't at the fountain?"
+        ]
       },
       {
         "question_type": "evidence",

@@ -12,7 +12,7 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I finished my round at three, walked home, did some gardening — the foxgloves need deadheading at this time of year — and was in by eight. I went to bed at nine. I heard about Marcus this morning and it was a shock.",
+        "answer_text": "I finished my round at three, walked home, did some gardening \u2014 the foxgloves need deadheading at this time of year \u2014 and was in by eight. I went to bed at nine. I heard about Marcus this morning and it was a shock.",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "composed_concern",
@@ -26,7 +26,22 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["Did anyone see you at home?", "When did you last visit Marcus's house?"]
+        "suggested_followups": [
+          "Did anyone see you at home?",
+          "When did you last visit Marcus's house?"
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "First time we met, it was pouring rain and I was soaked through on my round. They insisted I step inside for a cup of tea to warm up. You don't forget small kindnesses like that.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
@@ -42,12 +57,17 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_ruth_key"]
+        "reveals_clue_ids": [
+          "clue_ruth_key"
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
+        ]
       },
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_vial_in_ash",
-        "answer_text": "A vial in my fireplace? I use all sorts in the garden. I make plant waters — feverfew, lavender. The ash is from weeks of burning. You can't tell when that was put in there.",
+        "answer_text": "A vial in my fireplace? I use all sorts in the garden. I make plant waters \u2014 feverfew, lavender. The ash is from weeks of burning. You can't tell when that was put in there.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "controlled",
@@ -70,7 +90,7 @@
         "claims": [
           {
             "claim_id": "claim_ruth_certificate_shock",
-            "summary": "Ruth does not deny the birth certificate — her immediate response reveals she knew it existed and thought it was destroyed.",
+            "summary": "Ruth does not deny the birth certificate \u2014 her immediate response reveals she knew it existed and thought it was destroyed.",
             "claim_type": "statement",
             "truthfulness": "true"
           }
@@ -79,7 +99,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_foxglove_harvest",
-        "answer_text": "I grow foxgloves for the bees. The cut stems are just deadheading — maintenance. There's nothing unusual about that.",
+        "answer_text": "I grow foxgloves for the bees. The cut stems are just deadheading \u2014 maintenance. There's nothing unusual about that.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "flat",
@@ -95,7 +115,7 @@
       {
         "question_type": "relationship",
         "topic_clue_id": "clue_birth_certificate",
-        "answer_text": "He knew. He always knew. He never said a word to me — not in twenty years of delivering his post, not once. He left me a spare key and smiled. That was all he gave me.",
+        "answer_text": "He knew. He always knew. He never said a word to me \u2014 not in twenty years of delivering his post, not once. He left me a spare key and smiled. That was all he gave me.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "breaking",
@@ -107,7 +127,10 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_birth_certificate", "clue_elias_bell_girl"]
+        "reveals_clue_ids": [
+          "clue_birth_certificate",
+          "clue_elias_bell_girl"
+        ]
       }
     ]
   },
@@ -124,7 +147,7 @@
     "rules": [
       {
         "question_type": "last_seen_victim",
-        "answer_text": "I was at his house at seven last night. I'd seen the draft will — there was a copy on his desk. We argued. He was immovable. I left at eight in no fit state. I was home the rest of the evening. I did not kill him.",
+        "answer_text": "I was at his house at seven last night. I'd seen the draft will \u2014 there was a copy on his desk. We argued. He was immovable. I left at eight in no fit state. I was home the rest of the evening. I did not kill him.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "raw_anger",
@@ -138,14 +161,18 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_isabella_argument"]
+        "reveals_clue_ids": [
+          "clue_isabella_argument"
+        ]
       },
       {
         "question_type": "alibi",
-        "answer_text": "Home from eight. My neighbour on the right — she can hear through the wall when I put the music on. I was loud. I was furious. Music until past midnight.",
+        "answer_text": "Home from eight. My neighbour on the right \u2014 she can hear through the wall when I put the music on. I was loud. I was furious. Music until past midnight.",
         "answer_type": "claim",
         "truthfulness": "true",
-        "reveals_clue_ids": ["clue_isabella_alibi"]
+        "reveals_clue_ids": [
+          "clue_isabella_alibi"
+        ]
       }
     ]
   },
@@ -164,7 +191,7 @@
         "question_type": "timeline",
         "time_from": "18:00",
         "time_to": "20:00",
-        "answer_text": "Yesterday evening, around half six, I saw Ruth coming out of Marcus's front door. That struck me — she's usually done with deliveries by three. Then at seven or so, there were voices from Marcus's house — a woman's voice, I think, and Marcus. Sounded unhappy. A woman left at eight — Isabella Reed, I'd know that coat anywhere.",
+        "answer_text": "Yesterday evening, around half six, I saw Ruth coming out of Marcus's front door. That struck me \u2014 she's usually done with deliveries by three. Then at seven or so, there were voices from Marcus's house \u2014 a woman's voice, I think, and Marcus. Sounded unhappy. A woman left at eight \u2014 Isabella Reed, I'd know that coat anywhere.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "interested",
@@ -178,16 +205,33 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_ruth_visit_evening", "clue_isabella_argument"]
+        "reveals_clue_ids": [
+          "clue_ruth_visit_evening",
+          "clue_isabella_argument"
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "Oh, I've known them for decades. I remember them when they were younger, full of fire and vinegar. I've watched from my bench as they built their life here. You get to know a person well over thirty years.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
         "topic_clue_id": "clue_revised_will",
-        "answer_text": "Bell family? Now that you mention it — there was a rumour, decades back. Henry Bell — Marcus's father — fathered a girl on the south lane. A woman named Doris Calder. The baby was called Ruth, I think. The family paid them off and they moved away. I'd forgotten all about it until now.",
+        "answer_text": "Bell family? Now that you mention it \u2014 there was a rumour, decades back. Henry Bell \u2014 Marcus's father \u2014 fathered a girl on the south lane. A woman named Doris Calder. The baby was called Ruth, I think. The family paid them off and they moved away. I'd forgotten all about it until now.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "startled",
-        "reveals_clue_ids": ["clue_elias_bell_girl"],
+        "reveals_clue_ids": [
+          "clue_elias_bell_girl"
+        ],
         "claims": [
           {
             "claim_id": "claim_elias_bell_girl",
@@ -195,6 +239,9 @@
             "claim_type": "statement",
             "truthfulness": "true"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       }
     ]
@@ -205,7 +252,7 @@
       "alibi": "Home. I heard this morning.",
       "timeline": "Clinic until six, then home.",
       "last_seen_victim": "Marcus? Last week at a routine appointment. Stable but fragile.",
-      "relationship": "His primary care contact. I'm shocked — though he was at risk.",
+      "relationship": "His primary care contact. I'm shocked \u2014 though he was at risk.",
       "evidence": "Show me what you have.",
       "location": "Home from six."
     },
@@ -217,7 +264,9 @@
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "horrified",
-        "reveals_clue_ids": ["clue_nadia_cardiac_glycoside"],
+        "reveals_clue_ids": [
+          "clue_nadia_cardiac_glycoside"
+        ],
         "claims": [
           {
             "claim_id": "claim_nadia_glycoside",
@@ -230,10 +279,12 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_foxglove_harvest",
-        "answer_text": "Foxglove — digitalis purpurea. That's the primary natural source. If someone had been growing it deliberately and extracted the glycoside... it would take knowledge and time. But it's documented in pharmacy texts. It's not impossible to do at home.",
+        "answer_text": "Foxglove \u2014 digitalis purpurea. That's the primary natural source. If someone had been growing it deliberately and extracted the glycoside... it would take knowledge and time. But it's documented in pharmacy texts. It's not impossible to do at home.",
         "answer_type": "claim",
         "truthfulness": "true",
-        "reveals_clue_ids": ["clue_nadia_cardiac_glycoside"]
+        "reveals_clue_ids": [
+          "clue_nadia_cardiac_glycoside"
+        ]
       }
     ]
   },
@@ -251,11 +302,13 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_revised_will",
-        "answer_text": "Mr. Bell came in at five yesterday. He signed the draft of a revised will. I cannot give you the contents without a proper legal process — but I can confirm the will was in the process of being changed. He made a handwritten note at the bottom. He told me 'R.' referred to Ruth Calder, the local postwoman — 'an old family matter', he said. He did not elaborate.",
+        "answer_text": "Mr. Bell came in at five yesterday. He signed the draft of a revised will. I cannot give you the contents without a proper legal process \u2014 but I can confirm the will was in the process of being changed. He made a handwritten note at the bottom. He told me 'R.' referred to Ruth Calder, the local postwoman \u2014 'an old family matter', he said. He did not elaborate.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "precise",
-        "reveals_clue_ids": ["clue_whittle_Ruth_reference"],
+        "reveals_clue_ids": [
+          "clue_whittle_Ruth_reference"
+        ],
         "claims": [
           {
             "claim_id": "claim_whittle_R",

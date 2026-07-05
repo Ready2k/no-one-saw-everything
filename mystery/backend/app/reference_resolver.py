@@ -20,7 +20,7 @@ def resolve_references(question: str, case: CaseData, session: Session) -> dict[
         referenced_clue_id
     """
     q_norm = normalize_text(question)
-    
+
     agent_id = None
     # Prioritize longest names (e.g. "clara vane" before "clara")
     agents = sorted(case.agents, key=lambda a: len(a.full_name), reverse=True)
@@ -31,6 +31,15 @@ def resolve_references(question: str, case: CaseData, session: Session) -> dict[
         if name_norm in q_norm or (first_name and first_name in q_norm.split()):
             agent_id = a.agent_id
             break
+
+    # Common ways players refer to the victim without naming them. The victim's
+    # identity is public knowledge, so this resolves no hidden truth.
+    if agent_id is None:
+        VICTIM_SYNONYMS = ("deceased", "victim", "dead man", "dead woman", "the body")
+        if any(syn in q_norm for syn in VICTIM_SYNONYMS):
+            victim = next((a for a in case.agents if a.is_victim), None)
+            if victim:
+                agent_id = victim.agent_id
 
     location_id = None
     locations = sorted(case.locations, key=lambda loc: len(loc.name), reverse=True)

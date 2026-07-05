@@ -20,10 +20,12 @@ def fresh_session():
 def _discover(clue_ids):
     """Force-discover clues by driving the real discovery paths where cheap,
     else via the observation/inspection endpoints."""
+    from helpers import inspect_and_discover
+
     # Ledger page + rear-door + till weight via inspection/observation.
-    client.post("/api/inspect", json={"location_id": "loc_cafe_storage"})  # ledger, notes
-    client.post("/api/inspect", json={"location_id": "loc_hobbs_cafe"})  # till missing
-    client.post("/api/inspect", json={"location_id": "loc_cafe_kitchen"})  # damp coat, weight found
+    inspect_and_discover(client, "loc_cafe_storage")  # ledger, notes
+    inspect_and_discover(client, "loc_hobbs_cafe")  # till missing
+    inspect_and_discover(client, "loc_cafe_kitchen")  # damp coat, weight found
     client.post("/api/events/ev_0758_rear_door/pin")  # rear door observation
     client.post(
         "/api/interview/ask",

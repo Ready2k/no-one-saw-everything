@@ -10,6 +10,9 @@ Emotion: {emotion}
 Pressure Level: {pressure_level}
 
 CONTEXT:
+Recent exchange in this interview (already shown to the player; use it for continuity — e.g. acknowledge repeated questions — never for new facts):
+{recent_exchange}
+
 Question: {question_text}
 
 FACTS:

@@ -333,6 +333,10 @@ class AnswerRule(BaseModel):
     topic_clue_id: Optional[str] = None
     topic_object_id: Optional[str] = None
     topic_location_id: Optional[str] = None
+    # Depth gating: the rule only matches once the player has already asked
+    # this question type at least this many times (0 = always). Rules are
+    # first-match, so depth rules must precede the base rule in the pack.
+    min_ask_count: int = 0
     answer_text: str
     answer_type: Literal["claim", "denial", "uncertain", "refusal", "gossip"] = "claim"
     truthfulness: TruthStatus = "true"

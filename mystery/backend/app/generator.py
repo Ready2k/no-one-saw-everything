@@ -132,7 +132,15 @@ def generate_case(
     for a in agents:
         a.is_victim = (a.agent_id == case_file.victim_id)
 
-    locations = [Location(**l) for l in data["locations"]]
+    # Location remapping can fold the cafe trio onto existing locations
+    # (e.g. storage → owen_house), leaving duplicate entries; keep the first.
+    locations = []
+    seen_location_ids: set[str] = set()
+    for l in data["locations"]:
+        if l["location_id"] in seen_location_ids:
+            continue
+        seen_location_ids.add(l["location_id"])
+        locations.append(Location(**l))
     objects = [GameObject(**o) for o in data["objects"]]
     memories = [SeededMemory(**m) for m in data["memories"]]
     events = [Event(**e) for e in data["events"]]

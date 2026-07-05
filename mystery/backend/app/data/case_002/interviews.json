@@ -2,7 +2,7 @@
   {
     "agent_id": "agent_priya",
     "default_answers": {
-      "alibi": "I was in the stockroom all morning. It was a big delivery — boxes everywhere. I barely came out.",
+      "alibi": "I was in the stockroom all morning. It was a big delivery \u2014 boxes everywhere. I barely came out.",
       "timeline": "Stockroom from seven. Sorting, shelving. I didn't hear anything unusual.",
       "last_seen_victim": "Just before nine, briefly, when she arrived. She went straight to the back. I didn't disturb her.",
       "relationship": "Isabella gave me everything. This job, this life. I can't believe she's gone.",
@@ -12,7 +12,7 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I was in the stockroom from seven until Nadia came through. Sorting the week's delivery on my own — there was a mix-up with the invoice but I got it sorted. I heard Nadia come in and went through to see what was happening. That's when I understood.",
+        "answer_text": "I was in the stockroom from seven until Nadia came through. Sorting the week's delivery on my own \u2014 there was a mix-up with the invoice but I got it sorted. I heard Nadia come in and went through to see what was happening. That's when I understood.",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "quiet_grief",
@@ -26,13 +26,16 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["Did you hear anything from the back room?", "When exactly did you sign the delivery invoice?"]
+        "suggested_followups": [
+          "Did you hear anything from the back room?",
+          "When exactly did you sign the delivery invoice?"
+        ]
       },
       {
         "question_type": "timeline",
         "time_from": "12:30",
         "time_to": "13:00",
-        "answer_text": "That whole stretch I was in the stockroom. I put some music on quietly — through one earphone, so I could hear if Isabella needed me. She didn't call out. I didn't check on her. I should have.",
+        "answer_text": "That whole stretch I was in the stockroom. I put some music on quietly \u2014 through one earphone, so I could hear if Isabella needed me. She didn't call out. I didn't check on her. I should have.",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "regretful",
@@ -49,7 +52,7 @@
       },
       {
         "question_type": "last_seen_victim",
-        "answer_text": "She came in around half eight — earlier than usual. She said good morning and went through to the back. She sounded like herself. Normal. Nothing in her voice that would have told me...anything.",
+        "answer_text": "She came in around half eight \u2014 earlier than usual. She said good morning and went through to the back. She sounded like herself. Normal. Nothing in her voice that would have told me...anything.",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "careful_sadness",
@@ -63,7 +66,21 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["Was anything said about documents or the solicitor?"]
+        "suggested_followups": [
+          "Was anything said about documents or the solicitor?"
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "I remember the day we met. I was just looking for a chance, and they took a leap of faith on me. I owe them so much for giving me a start when no one else would.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
@@ -78,6 +95,9 @@
             "claim_type": "relationship",
             "truthfulness": "mistaken"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
@@ -99,7 +119,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_scarf_thread",
-        "answer_text": "My scarf? I wore it this morning, it catches on everything in that stockroom — shelves, corners. A thread on a door latch means nothing. I go through that back door all the time for deliveries.",
+        "answer_text": "My scarf? I wore it this morning, it catches on everything in that stockroom \u2014 shelves, corners. A thread on a door latch means nothing. I go through that back door all the time for deliveries.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "sharp",
@@ -115,7 +135,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_invoice_discrepancy",
-        "answer_text": "The driver left before I got the chance to sign. I went out to catch him and we did it at the van — he must have logged the time wrong on his copy. Happens all the time.",
+        "answer_text": "The driver left before I got the chance to sign. I went out to catch him and we did it at the van \u2014 he must have logged the time wrong on his copy. Happens all the time.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "defensive",
@@ -131,7 +151,7 @@
       {
         "question_type": "location",
         "topic_location_id": "loc_bookshop_back",
-        "answer_text": "I didn't go into the back room this morning — that was Isabella's private space and she hadn't called for me. I respected that boundary.",
+        "answer_text": "I didn't go into the back room this morning \u2014 that was Isabella's private space and she hadn't called for me. I respected that boundary.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "composed",
@@ -150,9 +170,9 @@
   {
     "agent_id": "agent_owen",
     "default_answers": {
-      "alibi": "My yard. All morning. Concrete to pour — doesn't wait for anyone.",
+      "alibi": "My yard. All morning. Concrete to pour \u2014 doesn't wait for anyone.",
       "timeline": "Yard from seven. Danny and Lee were with me until half past one.",
-      "last_seen_victim": "Couple of days ago. She sent me another letter — her solicitor, third reminder. Like I hadn't heard the first two.",
+      "last_seen_victim": "Couple of days ago. She sent me another letter \u2014 her solicitor, third reminder. Like I hadn't heard the first two.",
       "relationship": "She lent me money and enjoyed reminding me of it. I'm not going to pretend it was friendly.",
       "evidence": "You'd need to be more specific.",
       "location": "I've got no business at that bookshop."
@@ -160,7 +180,7 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I was pouring a concrete base in my yard from seven this morning. Danny Marsh and Lee Tuck were with me. Concrete sets when it sets — you can't leave it. We finished around half past one. Ask them both.",
+        "answer_text": "I was pouring a concrete base in my yard from seven this morning. Danny Marsh and Lee Tuck were with me. Concrete sets when it sets \u2014 you can't leave it. We finished around half past one. Ask them both.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "steady",
@@ -174,11 +194,25 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_owen_yard_alibi"]
+        "reveals_clue_ids": [
+          "clue_owen_yard_alibi"
+        ]
       },
       {
         "question_type": "relationship",
-        "answer_text": "She played the benefactor but she watched every penny. The loan wasn't a favour, it was leverage. I was behind on the repayment and she knew it. But I didn't kill her. I shouted at Marcus over money — that didn't end in murder either. Some of us solve things with words.",
+        "min_ask_count": 1,
+        "answer_text": "We first met over a job. The roof was leaking and I came to patch it. We shook hands on a fair price, and that was the start of a long working relationship. It's a shame how things turned out.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "She played the benefactor but she watched every penny. The loan wasn't a favour, it was leverage. I was behind on the repayment and she knew it. But I didn't kill her. I shouted at Marcus over money \u2014 that didn't end in murder either. Some of us solve things with words.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "defensive",
@@ -189,16 +223,21 @@
             "claim_type": "statement",
             "truthfulness": "true"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_owen_debt_folder",
-        "answer_text": "Yes, that's my file. She kept everything. Third reminder this week — she was going to hand it to Whittle & Cross today, she said. Nice timing for someone, isn't it. Just not me.",
+        "answer_text": "Yes, that's my file. She kept everything. Third reminder this week \u2014 she was going to hand it to Whittle & Cross today, she said. Nice timing for someone, isn't it. Just not me.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "grim",
-        "reveals_clue_ids": ["clue_owen_yard_alibi"]
+        "reveals_clue_ids": [
+          "clue_owen_yard_alibi"
+        ]
       }
     ]
   },
@@ -217,7 +256,7 @@
         "question_type": "timeline",
         "time_from": "12:20",
         "time_to": "13:00",
-        "answer_text": "Owen was prowling past the bookshop around twenty-five past eight, waving a bit of paper. He stood at the window for a good ten seconds — I thought he was going to go in. He didn't. Then Isabella arrived at half past, went straight in. Nothing unusual until the carrying-on inside.",
+        "answer_text": "Owen was prowling past the bookshop around twenty-five past eight, waving a bit of paper. He stood at the window for a good ten seconds \u2014 I thought he was going to go in. He didn't. Then Isabella arrived at half past, went straight in. Nothing unusual until the carrying-on inside.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "animated",
@@ -239,12 +278,17 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_owen_bookshop_pass", "clue_isabella_early_arrival"],
-        "suggested_followups": ["Did you see Priya leave or re-enter the bookshop?"]
+        "reveals_clue_ids": [
+          "clue_owen_bookshop_pass",
+          "clue_isabella_early_arrival"
+        ],
+        "suggested_followups": [
+          "Did you see Priya leave or re-enter the bookshop?"
+        ]
       },
       {
         "question_type": "alibi",
-        "answer_text": "Bench, six-forty. I saw Priya arrive at the bookshop at seven on the dot — she's like a clock, that one. Then the postwoman. Then Owen making a face at the window. Then Isabella. Then nothing until Nadia ran out.",
+        "answer_text": "Bench, six-forty. I saw Priya arrive at the bookshop at seven on the dot \u2014 she's like a clock, that one. Then the postwoman. Then Owen making a face at the window. Then Isabella. Then nothing until Nadia ran out.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "precise",
@@ -269,17 +313,19 @@
       "last_seen_victim": "Yesterday, briefly, at the clinic door. She looked distracted.",
       "relationship": "Neighbours for years. Professional respect.",
       "evidence": "I can tell you what I observed at the scene.",
-      "location": "I know the back room well — Isabella lets me use her anatomy texts."
+      "location": "I know the back room well \u2014 Isabella lets me use her anatomy texts."
     },
     "rules": [
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_staged_breakin",
-        "answer_text": "The glass. Yes. I noticed that immediately. When a window is broken from outside, the force carries the shards inward — you get the largest pieces inside. Here it was the reverse: the big fragments were inside. Someone broke that pane from in the room and then tried to make it look like a break-in. Basic physics.",
+        "answer_text": "The glass. Yes. I noticed that immediately. When a window is broken from outside, the force carries the shards inward \u2014 you get the largest pieces inside. Here it was the reverse: the big fragments were inside. Someone broke that pane from in the room and then tried to make it look like a break-in. Basic physics.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "measured",
-        "reveals_clue_ids": ["clue_staged_breakin"],
+        "reveals_clue_ids": [
+          "clue_staged_breakin"
+        ],
         "claims": [
           {
             "claim_id": "claim_nadia_glass_analysis",
@@ -292,7 +338,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_scarf_thread",
-        "answer_text": "The green thread on the door latch — yes, I noticed it before I touched anything. Emerald green. Fine wool. I can't tell you whose it is, but it didn't come from outside.",
+        "answer_text": "The green thread on the door latch \u2014 yes, I noticed it before I touched anything. Emerald green. Fine wool. I can't tell you whose it is, but it didn't come from outside.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "precise"
@@ -322,7 +368,7 @@
         "question_type": "timeline",
         "time_from": "11:00",
         "time_to": "12:00",
-        "answer_text": "I delivered to the bookshop at seven-ten. Sealed letter from Whittle & Cross — I remember because it's a solicitor's franking, you notice those. Pushed it through the slot and moved on. Nothing unusual.",
+        "answer_text": "I delivered to the bookshop at seven-ten. Sealed letter from Whittle & Cross \u2014 I remember because it's a solicitor's franking, you notice those. Pushed it through the slot and moved on. Nothing unusual.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "factual",
@@ -336,13 +382,15 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_ruth_post_sighting"]
+        "reveals_clue_ids": [
+          "clue_ruth_post_sighting"
+        ]
       },
       {
         "question_type": "timeline",
         "time_from": "12:35",
         "time_to": "13:00",
-        "answer_text": "I was back along the rear alley finishing up at about twenty to nine. I heard something from the back of the bookshop — a bang, like a chair going over. I thought nothing of it. Then at about ten-to, I noticed the back window was broken and there was a bit of thread on the door latch. Green. I only thought to mention it when the fuss started.",
+        "answer_text": "I was back along the rear alley finishing up at about twenty to nine. I heard something from the back of the bookshop \u2014 a bang, like a chair going over. I thought nothing of it. Then at about ten-to, I noticed the back window was broken and there was a bit of thread on the door latch. Green. I only thought to mention it when the fuss started.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "troubled",
@@ -356,8 +404,14 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_crash_sound", "clue_scarf_thread"],
-        "suggested_followups": ["What did the thread look like?", "Was the rear door open or shut?"]
+        "reveals_clue_ids": [
+          "clue_crash_sound",
+          "clue_scarf_thread"
+        ],
+        "suggested_followups": [
+          "What did the thread look like?",
+          "Was the rear door open or shut?"
+        ]
       }
     ]
   },
@@ -376,7 +430,7 @@
         "question_type": "timeline",
         "time_from": "12:40",
         "time_to": "13:00",
-        "answer_text": "I was loading up to leave around twenty-to. Went back down the alley to pick up an empty crate. Noticed the back window of the bookshop was broken — one pane, small. The glass was in the alley. Well, mostly. Thought it must have been a delivery gone wrong. Then I heard about Isabella.",
+        "answer_text": "I was loading up to leave around twenty-to. Went back down the alley to pick up an empty crate. Noticed the back window of the bookshop was broken \u2014 one pane, small. The glass was in the alley. Well, mostly. Thought it must have been a delivery gone wrong. Then I heard about Isabella.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "shocked",
@@ -390,16 +444,22 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_ben_broken_window"],
-        "suggested_followups": ["Which side did you see most of the glass on?"]
+        "reveals_clue_ids": [
+          "clue_ben_broken_window"
+        ],
+        "suggested_followups": [
+          "Which side did you see most of the glass on?"
+        ]
       },
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_staged_breakin",
-        "answer_text": "The glass? Yeah, now that you ask — most of it was in the alley, but there was a big chunk still inside on the sill. I remember thinking that was odd. Shouldn't it all be in the alley if someone came through from outside?",
+        "answer_text": "The glass? Yeah, now that you ask \u2014 most of it was in the alley, but there was a big chunk still inside on the sill. I remember thinking that was odd. Shouldn't it all be in the alley if someone came through from outside?",
         "answer_type": "claim",
         "truthfulness": "true",
-        "reveals_clue_ids": ["clue_staged_breakin"]
+        "reveals_clue_ids": [
+          "clue_staged_breakin"
+        ]
       }
     ]
   }

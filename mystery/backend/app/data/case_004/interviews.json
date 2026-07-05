@@ -26,7 +26,22 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["What was in the boxes?", "Why did you cancel with Priya?"]
+        "suggested_followups": [
+          "What was in the boxes?",
+          "Why did you cancel with Priya?"
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "I met them on my very first delivery round. They showed me exactly where to leave the parcels so they wouldn't get wet. Always precise, but fair. We had a good rhythm going.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
@@ -41,12 +56,15 @@
             "claim_type": "relationship",
             "truthfulness": "false"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_blackmail_letters",
-        "answer_text": "Where did you get those. Those are — those are my father's private things.",
+        "answer_text": "Where did you get those. Those are \u2014 those are my father's private things.",
         "answer_type": "claim",
         "truthfulness": "mistaken",
         "emotional_shift": "shocked",
@@ -62,7 +80,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_jacket_mud",
-        "answer_text": "My jacket gets muddy — I'm a delivery driver, I'm outside all day. That mud could be from anywhere.",
+        "answer_text": "My jacket gets muddy \u2014 I'm a delivery driver, I'm outside all day. That mud could be from anywhere.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "defensive",
@@ -100,7 +118,7 @@
         "question_type": "timeline",
         "time_from": "22:00",
         "time_to": "23:30",
-        "answer_text": "I was at my bedroom window around ten to eleven — I get up in the night, always have. I saw two figures by the fountain. Couldn't make out who, too dark. Then I heard voices — a younger one, raised, and an older one I'd swear was Owen's. The older voice laughed. Then it went quiet. Then, a few minutes later, one figure walked away fast toward the newsagent's end.",
+        "answer_text": "I was at my bedroom window around ten to eleven \u2014 I get up in the night, always have. I saw two figures by the fountain. Couldn't make out who, too dark. Then I heard voices \u2014 a younger one, raised, and an older one I'd swear was Owen's. The older voice laughed. Then it went quiet. Then, a few minutes later, one figure walked away fast toward the newsagent's end.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "disturbed",
@@ -114,8 +132,15 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_elias_two_figures", "clue_elias_voices", "clue_elias_fleeing_figure"],
-        "suggested_followups": ["Could you tell anything about the younger voice?", "Which direction did the figure go?"]
+        "reveals_clue_ids": [
+          "clue_elias_two_figures",
+          "clue_elias_voices",
+          "clue_elias_fleeing_figure"
+        ],
+        "suggested_followups": [
+          "Could you tell anything about the younger voice?",
+          "Which direction did the figure go?"
+        ]
       }
     ]
   },
@@ -134,7 +159,7 @@
         "question_type": "timeline",
         "time_from": "22:00",
         "time_to": "23:00",
-        "answer_text": "I was at home. I was drawing the curtains around half ten and I noticed Ben Carter crossing the square — heading toward the fountain end. I thought it was unusual. He's not normally out at that hour. I didn't think more about it until this morning.",
+        "answer_text": "I was at home. I was drawing the curtains around half ten and I noticed Ben Carter crossing the square \u2014 heading toward the fountain end. I thought it was unusual. He's not normally out at that hour. I didn't think more about it until this morning.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "careful",
@@ -148,7 +173,9 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_nadia_night_sighting"]
+        "reveals_clue_ids": [
+          "clue_nadia_night_sighting"
+        ]
       }
     ]
   },
@@ -156,7 +183,7 @@
     "agent_id": "agent_fred",
     "default_answers": {
       "alibi": "Behind the bar until close. Eleven on the dot.",
-      "timeline": "Usual evening — steady trade, nothing unusual.",
+      "timeline": "Usual evening \u2014 steady trade, nothing unusual.",
       "last_seen_victim": "Owen Price was in last night. Three pints. Left around ten to eleven.",
       "relationship": "Regular. Known him years.",
       "evidence": "I see most things that happen in my pub.",
@@ -165,7 +192,7 @@
     "rules": [
       {
         "question_type": "last_seen_victim",
-        "answer_text": "Owen was in from about half nine. Usual three pints, same seat. He seemed preoccupied — didn't chat much, which isn't like him. Left around ten-to-eleven. I watched him out the door. He was fine — walking straight.",
+        "answer_text": "Owen was in from about half nine. Usual three pints, same seat. He seemed preoccupied \u2014 didn't chat much, which isn't like him. Left around ten-to-eleven. I watched him out the door. He was fine \u2014 walking straight.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "serious",
@@ -179,14 +206,18 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_owen_left_pub"]
+        "reveals_clue_ids": [
+          "clue_owen_left_pub"
+        ]
       },
       {
         "question_type": "alibi",
-        "answer_text": "Ben Carter? No, he wasn't in last night. I'd remember — he's a face you notice, always talking to someone. Last night it was just Owen and the usual quiet Tuesday crowd.",
+        "answer_text": "Ben Carter? No, he wasn't in last night. I'd remember \u2014 he's a face you notice, always talking to someone. Last night it was just Owen and the usual quiet Tuesday crowd.",
         "answer_type": "claim",
         "truthfulness": "true",
-        "reveals_clue_ids": ["clue_fred_only_saw_owen"]
+        "reveals_clue_ids": [
+          "clue_fred_only_saw_owen"
+        ]
       }
     ]
   },
@@ -203,7 +234,7 @@
     "rules": [
       {
         "question_type": "timeline",
-        "answer_text": "Ben cancelled at ten o'clock — said he'd found something and would explain later. I texted back but he didn't reply until this morning. He seemed upset but I didn't want to push.",
+        "answer_text": "Ben cancelled at ten o'clock \u2014 said he'd found something and would explain later. I texted back but he didn't reply until this morning. He seemed upset but I didn't want to push.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "worried",
@@ -216,7 +247,9 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_ben_cancel_text"]
+        "reveals_clue_ids": [
+          "clue_ben_cancel_text"
+        ]
       }
     ]
   }

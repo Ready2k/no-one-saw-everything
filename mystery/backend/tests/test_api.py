@@ -47,16 +47,18 @@ def test_pin_event_discovers_observation_clue():
 
 
 def test_inspect_kitchen_gates_till_weight_behind_missing_clue():
+    from helpers import inspect_and_discover
+
     r = client.post("/api/inspect", json={"location_id": "loc_cafe_kitchen"}).json()
-    found = {c["clue_id"] for c in r["new_clues"]}
-    assert "clue_blue_coat_damp" in found
-    assert "clue_till_weight_found" not in found
+    hotspots = {c["clue_id"] for c in r["hidden_clues"]}
+    assert "clue_blue_coat_damp" in hotspots
+    assert "clue_till_weight_found" not in hotspots
     assert r["hint"] is not None
 
     # Discover the till weight is missing, then re-inspect.
-    client.post("/api/inspect", json={"location_id": "loc_hobbs_cafe"})
+    inspect_and_discover(client, "loc_hobbs_cafe")
     r2 = client.post("/api/inspect", json={"location_id": "loc_cafe_kitchen"}).json()
-    assert any(c["clue_id"] == "clue_till_weight_found" for c in r2["new_clues"])
+    assert any(c["clue_id"] == "clue_till_weight_found" for c in r2["hidden_clues"])
 
 
 def test_clara_alibi_is_a_lie_but_lie_flag_not_leaked():

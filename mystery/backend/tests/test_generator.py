@@ -16,7 +16,8 @@ def test_generate_case_no_activate():
     })
     assert r.status_code == 200
     data = r.json()
-    assert data["case_id"] == "gen_debt_42"
+    # Generated ids carry a uniqueness timestamp suffix: gen_debt_42_<ts>.
+    assert data["case_id"].startswith("gen_debt_42_")
     assert data["validation"]["valid"] is True
     assert data["active_session_id"] is None
     
@@ -33,9 +34,9 @@ def test_generate_case_with_activate():
     })
     assert r.status_code == 200
     data = r.json()
-    assert data["case_id"] == "gen_betrayal_99"
-    assert data["active_session_id"] == "gen_betrayal_99"
-    
-    # The active case is now gen_betrayal_99
+    assert data["case_id"].startswith("gen_betrayal_99_")
+    assert data["active_session_id"] == data["case_id"]
+
+    # The active case is now the generated one
     case_info = client.get("/api/case").json()
-    assert case_info["case_id"] == "gen_betrayal_99"
+    assert case_info["case_id"] == data["case_id"]

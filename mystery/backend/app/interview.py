@@ -69,8 +69,17 @@ def _prereqs_met(case: CaseData, session: Session, rule: AnswerRule) -> bool:
 def _match_rule(
     pack: AgentInterviewPack, case: CaseData, session: Session, req: AskRequest
 ) -> Optional[AnswerRule]:
+    # How many times the player has already asked this agent this question
+    # type (the current ask is not yet recorded), for depth-gated rules.
+    prior_asks = sum(
+        1
+        for m in session.transcript_for(req.agent_id).messages
+        if m.speaker == "player" and m.question_type == req.question_type
+    )
     for rule in pack.rules:
         if rule.question_type != req.question_type:
+            continue
+        if prior_asks < rule.min_ask_count:
             continue
         if req.question_type == "timeline":
             if not req.time_reference:
@@ -158,14 +167,23 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         allowed_facts = [c.claim_text for c in new_claims] + [c.title for c in revealed]
         agent = next(a for a in case.agents if a.agent_id == req.agent_id)
         pressure = session.pressure_for(req.agent_id)
-        
+
+        # Last few turns of this interview (display text only — already shown
+        # to the player) so the rewrite can keep conversational continuity.
+        transcript = session.transcript_for(req.agent_id)
+        recent_exchange = [
+            f"{'Detective' if m.speaker == 'player' else agent.full_name}: {m.text}"
+            for m in transcript.messages[-6:]
+        ]
+
         rewrite_result = rewrite_interview_answer(
             case=case,
             agent=agent,
             question_text=question_text,
             deterministic_text=deterministic_answer,
             allowed_facts=allowed_facts,
-            pressure_level=pressure
+            pressure_level=pressure,
+            recent_exchange=recent_exchange or None,
         )
         display_answer = rewrite_result.rewritten_text
         llm_rewrite_used = True

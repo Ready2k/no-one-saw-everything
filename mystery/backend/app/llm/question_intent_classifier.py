@@ -4,11 +4,31 @@ from app.models import QuestionIntent
 from app.llm.client import get_llm_client
 from app.reference_resolver import resolve_references
 
-def classify_question_intent_llm(question: str, case: CaseData, session: Session, fallback_allowed: bool = True) -> QuestionIntent:
+def classify_question_intent_llm(
+    question: str,
+    case: CaseData,
+    session: Session,
+    fallback_allowed: bool = True,
+    agent_id: str | None = None,
+) -> QuestionIntent:
     client = get_llm_client()
 
     # We must only expose discovered/public things to the LLM
     refs = resolve_references(question, case, session)
+
+    # Recent conversation with this suspect, so follow-ups ("tell me more",
+    # "let's go back to...") classify to the topic under discussion. Only the
+    # display text is used — it has already been shown to the player, so this
+    # adds no new leak surface.
+    recent_exchange = "None"
+    if agent_id:
+        transcript = session.transcript_for(agent_id)
+        if transcript.messages:
+            lines = []
+            for msg in transcript.messages[-6:]:
+                speaker = "Detective" if msg.speaker == "player" else "Suspect"
+                lines.append(f"{speaker}: {msg.text}")
+            recent_exchange = "\n".join(lines)
 
     # Provide the LLM with context about what these IDs mean so it can map accurately
     # e.g., if referenced_agent_id is present, tell LLM their name.
@@ -44,10 +64,15 @@ def classify_question_intent_llm(question: str, case: CaseData, session: Session
     user_prompt = f"""
 Question: "{question}"
 
+Recent exchange with this suspect (for resolving follow-ups; may be None):
+{recent_exchange}
+
 Resolved references in the question (Use ONLY these IDs if applicable, do not invent IDs):
 {context_str}
 
 Intent rules:
+- If the question is a follow-up ("tell me more", "go back to that", "and then?"),
+  infer the intent from the topic of the recent exchange above.
 - alibi: Asking where they were during the murder.
 - timeline: Asking what they were doing at a specific time.
 - last_seen_victim: Asking when they last saw the victim.

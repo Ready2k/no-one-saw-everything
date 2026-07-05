@@ -120,14 +120,15 @@ def rewrite_interview_answer(
     question_text: str,
     deterministic_text: str,
     allowed_facts: list[str],
-    pressure_level: float
+    pressure_level: float,
+    recent_exchange: Optional[list[str]] = None,
 ) -> RewriteResult:
-    
+
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
     user_prompt_template = _load_prompt("interview_rewrite_user.txt")
-    
+
     forbidden_facts = _build_forbidden_facts(case, agent)
-    
+
     user_prompt = user_prompt_template.format(
         name=agent.full_name,
         occupation=agent.occupation,
@@ -135,6 +136,7 @@ def rewrite_interview_answer(
         emotion="neutral",
         pressure_level=pressure_level,
         question_text=question_text,
+        recent_exchange="\n".join(recent_exchange) if recent_exchange else "None",
         allowed_facts="- " + "\n- ".join(allowed_facts) if allowed_facts else "None",
         forbidden_facts="- " + "\n- ".join(forbidden_facts) if forbidden_facts else "None",
         deterministic_text=deterministic_text
@@ -148,7 +150,11 @@ def rewrite_interview_answer(
             schema=DialogueRewrite
         )
 
+        # Prior displayed dialogue is already on the player's screen, so
+        # echoing it back is continuity, not a new leak.
         allowed_context = [question_text, deterministic_text, agent.full_name]
+        if recent_exchange:
+            allowed_context.extend(recent_exchange)
         rejection = _sanitise(
             result.rewritten_text, forbidden_facts, allowed_facts, case, allowed_context
         )

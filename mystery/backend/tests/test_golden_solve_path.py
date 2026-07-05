@@ -3,6 +3,7 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
+from helpers import inspect_and_discover
 
 client = TestClient(app)
 
@@ -11,24 +12,23 @@ def test_golden_solve_path():
     # 1. Reset
     client.post("/api/session/reset")
 
-    # 2. Inspect locations to find physical evidence
+    # 2. Inspect locations and work the hotspots to find physical evidence
     # Storage room for ledger page
-    r = client.post("/api/inspect", json={"location_id": "loc_cafe_storage"})
-    assert any(c["clue_id"] == "clue_ledger_page" for c in r.json()["new_clues"])
+    found = inspect_and_discover(client, "loc_cafe_storage")
+    assert "clue_ledger_page" in found
 
     # Marcus's house for audited ledger
-    r = client.post("/api/inspect", json={"location_id": "loc_marcus_house"})
-    assert any(c["clue_id"] == "clue_till_discrepancy" for c in r.json()["new_clues"])
+    found = inspect_and_discover(client, "loc_marcus_house")
+    assert "clue_till_discrepancy" in found
 
     # Cafe for missing till weight
-    r = client.post("/api/inspect", json={"location_id": "loc_hobbs_cafe"})
-    assert any(c["clue_id"] == "clue_till_weight_missing" for c in r.json()["new_clues"])
+    found = inspect_and_discover(client, "loc_hobbs_cafe")
+    assert "clue_till_weight_missing" in found
 
     # Kitchen for found till weight (requires missing weight as prereq)
-    r = client.post("/api/inspect", json={"location_id": "loc_cafe_kitchen"})
-    found_clues = [c["clue_id"] for c in r.json()["new_clues"]]
-    assert "clue_till_weight_found" in found_clues
-    assert "clue_blue_coat_damp" in found_clues
+    found = inspect_and_discover(client, "loc_cafe_kitchen")
+    assert "clue_till_weight_found" in found
+    assert "clue_blue_coat_damp" in found
 
     # 3. Interview Ben to place Clara near the rear alley
     r = client.post("/api/interview/ask", json={

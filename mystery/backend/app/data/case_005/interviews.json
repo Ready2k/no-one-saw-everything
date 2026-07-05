@@ -12,7 +12,7 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I was in my yard from quarter to seven. Col Hartley arrived not long after — we had timber to sort through. I was there all morning.",
+        "answer_text": "I was in my yard from quarter to seven. Col Hartley arrived not long after \u2014 we had timber to sort through. I was there all morning.",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "flat",
@@ -26,7 +26,22 @@
             "truthfulness": "false"
           }
         ],
-        "suggested_followups": ["What time did Col arrive?", "Was anyone else there?"]
+        "suggested_followups": [
+          "What time did Col arrive?",
+          "Was anyone else there?"
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "We first met over a job. The roof was leaking and I came to patch it. We shook hands on a fair price, and that was the start of a long working relationship. It's a shame how things turned out.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
       },
       {
         "question_type": "relationship",
@@ -41,6 +56,9 @@
             "claim_type": "relationship",
             "truthfulness": "mistaken"
           }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
         ]
       },
       {
@@ -86,7 +104,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_nadia_sees_owen_alley",
-        "answer_text": "Nadia saw someone in a grey jacket — that could be half the village. She's mistaken.",
+        "answer_text": "Nadia saw someone in a grey jacket \u2014 that could be half the village. She's mistaken.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "hard"
@@ -124,7 +142,7 @@
       {
         "question_type": "alibi",
         "topic_clue_id": "clue_col_false_alibi",
-        "answer_text": "...Look. Owen texted me last night. Said if anyone asked I should say I was there from quarter to seven. I showed up at half seven, more like. There was no timber job. I went along with it because he's my main client and I — I didn't ask why.",
+        "answer_text": "...Look. Owen texted me last night. Said if anyone asked I should say I was there from quarter to seven. I showed up at half seven, more like. There was no timber job. I went along with it because he's my main client and I \u2014 I didn't ask why.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "guilty_relief",
@@ -136,7 +154,9 @@
             "truthfulness": "true"
           }
         ],
-        "reveals_clue_ids": ["clue_col_false_alibi"]
+        "reveals_clue_ids": [
+          "clue_col_false_alibi"
+        ]
       }
     ]
   },
@@ -155,11 +175,13 @@
         "question_type": "timeline",
         "time_from": "07:00",
         "time_to": "07:10",
-        "answer_text": "At seven exactly I crossed the square on my way to the clinic. I glanced down the rear alley — I always do, habit. I saw a big man in a grey work jacket turning into the alley. I thought he had a delivery. Now I'm thinking differently.",
+        "answer_text": "At seven exactly I crossed the square on my way to the clinic. I glanced down the rear alley \u2014 I always do, habit. I saw a big man in a grey work jacket turning into the alley. I thought he had a delivery. Now I'm thinking differently.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "disturbed",
-        "reveals_clue_ids": ["clue_nadia_sees_owen_alley"],
+        "reveals_clue_ids": [
+          "clue_nadia_sees_owen_alley"
+        ],
         "claims": [
           {
             "claim_id": "claim_nadia_alley_sighting",
@@ -188,11 +210,13 @@
         "question_type": "timeline",
         "time_from": "07:15",
         "time_to": "07:30",
-        "answer_text": "Around twenty past I caught a smell — burning, faint, from the alley direction. Thought it was toast or something from the cafe kitchen. Then Ben came running out at half seven and everything changed.",
+        "answer_text": "Around twenty past I caught a smell \u2014 burning, faint, from the alley direction. Thought it was toast or something from the cafe kitchen. Then Ben came running out at half seven and everything changed.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "troubled",
-        "reveals_clue_ids": ["clue_elias_fire_smoke"]
+        "reveals_clue_ids": [
+          "clue_elias_fire_smoke"
+        ]
       }
     ]
   },
@@ -209,7 +233,7 @@
     "rules": [
       {
         "question_type": "last_seen_victim",
-        "answer_text": "I passed the cafe window at about five past seven. Clara was inside, by the counter. She looked stressed — hands busy, not her usual early calm. Then at half seven I came round the back and found her.",
+        "answer_text": "I passed the cafe window at about five past seven. Clara was inside, by the counter. She looked stressed \u2014 hands busy, not her usual early calm. Then at half seven I came round the back and found her.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "shaken",

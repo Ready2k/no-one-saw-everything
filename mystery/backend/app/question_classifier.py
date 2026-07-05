@@ -32,7 +32,7 @@ def classify_question(question: str, case: CaseData, session: Session) -> Option
     # 3. Last seen victim
     if any(phrase in q_norm for phrase in ["last see", "last saw", "when did you see"]):
         victim = next((a for a in case.agents if a.is_victim), None)
-        if victim and (normalize_text(victim.full_name.split()[0]) in q_norm or "him" in q_norm or "her" in q_norm or "them" in q_norm or "victim" in q_norm):
+        if victim and (normalize_text(victim.full_name.split()[0]) in q_norm or "him" in q_norm or "her" in q_norm or "them" in q_norm or "victim" in q_norm or "deceased" in q_norm):
             return QuestionIntent(
                 intent="last_seen_victim",
                 confidence=0.9,
@@ -41,9 +41,9 @@ def classify_question(question: str, case: CaseData, session: Session) -> Option
             )
             
     # 4. Relationship
-    if any(phrase in q_norm for phrase in ["know", "relationship", "how did you feel about"]):
+    if any(phrase in q_norm for phrase in ["know", "relationship", "how did you feel about", "first met", "how you met"]):
         victim = next((a for a in case.agents if a.is_victim), None)
-        if victim and (normalize_text(victim.full_name.split()[0]) in q_norm or "him" in q_norm or "her" in q_norm or "them" in q_norm or "victim" in q_norm):
+        if victim and (normalize_text(victim.full_name.split()[0]) in q_norm or "him" in q_norm or "her" in q_norm or "them" in q_norm or "victim" in q_norm or "deceased" in q_norm):
             return QuestionIntent(
                 intent="relationship",
                 confidence=0.85,

@@ -17,6 +17,7 @@ import CinematicsToggle from "./components/CinematicsToggle";
 import RankBadge from "./components/RankBadge";
 import { audioManager } from "./audio";
 import { clearCaseStarted, markCaseStarted } from "./progress";
+import { clearRewindBriefingSeen } from "./views/RewindIntro";
 
 export interface World {
   caseOverview: CaseOverview;
@@ -166,6 +167,7 @@ export default function App() {
                   if (confirm(`Switch to ${caseTitle}? Your current progress will be lost.`)) {
                     await api.activate(newCaseId);
                     localStorage.removeItem(introSeenKey(newCaseId));
+                    clearRewindBriefingSeen(newCaseId);
                     clearCaseStarted(newCaseId);
                     location.reload();
                   }
@@ -196,6 +198,7 @@ export default function App() {
                   if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
                     await api.reset();
                     localStorage.removeItem(introSeenKey(world.caseOverview.case_id));
+                    clearRewindBriefingSeen(world.caseOverview.case_id);
                     clearCaseStarted(world.caseOverview.case_id);
                     location.reload();
                   }

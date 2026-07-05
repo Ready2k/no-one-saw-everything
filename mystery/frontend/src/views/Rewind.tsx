@@ -5,6 +5,12 @@ import type { CluePublic, EventPublic, LocationPublic } from "../types";
 import LocationTransition, {
   shouldPlayLocationTransition,
 } from "../components/LocationTransition";
+import RewindIntro, {
+  markRewindBriefingSeen,
+  rewindBriefingSeen,
+} from "./RewindIntro";
+import { cinematicsEnabled } from "../settings";
+import { audioManager } from "../audio";
 
 export default function Rewind() {
   const { caseOverview, agents, locations, locationName, agentName } = useWorld();
@@ -18,6 +24,10 @@ export default function Rewind() {
   const [events, setEvents] = useState<EventPublic[]>([]);
   const [toast, setToast] = useState<CluePublic[] | null>(null);
   const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
+  // The cinematic briefing plays the first time this view opens per case.
+  const [showBriefing, setShowBriefing] = useState(
+    () => cinematicsEnabled() && !rewindBriefingSeen(caseOverview.case_id)
+  );
 
   const refresh = useCallback(() => {
     api
@@ -36,6 +46,7 @@ export default function Rewind() {
   const pin = async (eventId: string) => {
     const result = await api.pinEvent(eventId);
     if (result.new_clues.length) {
+      audioManager.playStinger("clue_discovered");
       setToast(result.new_clues);
       setTimeout(() => setToast(null), 6000);
     }
@@ -44,6 +55,31 @@ export default function Rewind() {
 
   const windowStart = minutes(caseOverview.murder_window[0]);
   const windowEnd = minutes(caseOverview.murder_window[1]);
+
+  // Position (%) of a minute value along the full rewind range.
+  const pct = (v: number) => ((v - start) / Math.max(1, end - start)) * 100;
+
+  const focusMurderWindow = () => {
+    setFrom(windowStart);
+    setTo(windowEnd);
+  };
+  const focusFullMorning = () => {
+    setFrom(start);
+    setTo(end);
+  };
+  const windowFocused = from === windowStart && to === windowEnd;
+  const fullFocused = from === start && to === end;
+
+  if (showBriefing) {
+    return (
+      <RewindIntro
+        onDone={() => {
+          markRewindBriefingSeen(caseOverview.case_id);
+          setShowBriefing(false);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="rewind">
@@ -54,6 +90,22 @@ export default function Rewind() {
         />
       )}
       <div className="rewind-controls panel">
+        <div className="time-strip" aria-hidden>
+          <div
+            className="time-strip-selection"
+            style={{ left: `${pct(from)}%`, width: `${pct(to) - pct(from)}%` }}
+          />
+          <div
+            className="time-strip-window"
+            style={{
+              left: `${pct(windowStart)}%`,
+              width: `${pct(windowEnd) - pct(windowStart)}%`,
+            }}
+            title={`Estimated murder window ${caseOverview.murder_window[0]} – ${caseOverview.murder_window[1]}`}
+          />
+          <span className="time-strip-label start">{caseOverview.sim_start_time}</span>
+          <span className="time-strip-label end">{caseOverview.discovery_time}</span>
+        </div>
         <div className="range-row">
           <label>
             From <strong>{hhmm(from)}</strong>
@@ -85,6 +137,20 @@ export default function Rewind() {
           </label>
         </div>
         <div className="filter-row">
+          <button
+            className={windowFocused ? "chip danger active" : "chip danger"}
+            onClick={focusMurderWindow}
+            title="Zoom the replay to the estimated murder window"
+          >
+            ◉ Murder window {caseOverview.murder_window[0]}–{caseOverview.murder_window[1]}
+          </button>
+          <button
+            className={fullFocused ? "chip active" : "chip"}
+            onClick={focusFullMorning}
+            title="Replay the whole morning"
+          >
+            Full morning
+          </button>
           <select
             value={locationId}
             onChange={(e) => {
@@ -120,9 +186,10 @@ export default function Rewind() {
 
       {toast && (
         <div className="clue-toast">
+          <div className="clue-toast-head">🔎 Evidence uncovered</div>
           {toast.map((c) => (
             <div key={c.clue_id}>
-              <strong>New clue:</strong> {c.title}
+              <strong>{c.title}</strong>
             </div>
           ))}
         </div>
@@ -132,12 +199,13 @@ export default function Rewind() {
         {events.length === 0 && (
           <p className="muted">Nothing visible in this window. Widen the filters.</p>
         )}
-        {events.map((e) => {
+        {events.map((e, i) => {
           const inWindow = minutes(e.time) >= windowStart && minutes(e.time) <= windowEnd;
           return (
             <div
               key={e.event_id}
-              className={`event ${e.visibility} ${inWindow ? "murder-window" : ""}`}
+              className={`event event-appear ${e.visibility} ${inWindow ? "murder-window" : ""}`}
+              style={{ animationDelay: `${Math.min(i, 12) * 45}ms` }}
             >
               <div className="event-time">{e.time}</div>
               <div className="event-body">

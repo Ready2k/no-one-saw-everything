@@ -122,8 +122,16 @@ def test_generate_with_activate_resets_session():
     r = client.post("/api/cases/generate", json=payload).json()
     assert r["active_session_id"] == r["case_id"]
 
-    # Make progress in the generated case.
-    client.post("/api/inspect", json={"location_id": "loc_cafe_storage"})
+    # Make progress in the generated case. The crime path is remapped per
+    # seed, so find whichever location exposes an ungated hotspot.
+    from helpers import inspect_and_discover
+
+    found = []
+    for loc in client.get("/api/locations").json():
+        found = inspect_and_discover(client, loc["location_id"])
+        if found:
+            break
+    assert found, "expected some location to expose at least one hotspot"
     assert client.get("/api/status").json()["discovered_clue_count"] > 0
 
     # Re-generate the identical case (same type+seed) and activate again.
@@ -184,7 +192,9 @@ def test_sanitise_allows_been_but_blocks_unsupported_names():
 # ---------------------------------------------------------------------------
 
 def test_telemetry_covers_inspection_and_discovery_sources():
-    client.post("/api/inspect", json={"location_id": "loc_cafe_storage"})
+    from helpers import inspect_and_discover
+
+    inspect_and_discover(client, "loc_cafe_storage")
     client.post("/api/events/ev_0756_sound/pin")
     client.post(
         "/api/interview/ask",
@@ -194,4 +204,5 @@ def test_telemetry_covers_inspection_and_discovery_sources():
     types = {e["type"] for e in log}
     assert "inspection_performed" in types
     sources = {e["data"].get("source") for e in log if e["type"] == "clue_discovered"}
-    assert {"inspect", "observation", "interview"} <= sources
+    # Inspection discoveries are claimed through the magnifying-glass search.
+    assert {"magnifying_glass", "observation", "interview"} <= sources

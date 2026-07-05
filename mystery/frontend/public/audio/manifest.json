@@ -3,7 +3,8 @@
     "investigation_1": "/audio/ambient/investigation.mp3",
     "investigation_2": "/audio/ambient/The_Desk_at_Three.mp3",
     "investigation_3": "/audio/ambient/The_Clock_Across_The_Room.mp3",
-    "accusation": "/audio/ambient/accusation.mp3"
+    "accusation": "/audio/ambient/accusation.mp3",
+    "testimony": "/audio/ambient/The_Last_Testimony.mp3"
   },
   "playlists": {
     "investigation": [

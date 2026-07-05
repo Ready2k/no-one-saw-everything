@@ -14,7 +14,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         
     intent = classify_question(req.question, case, sess)
     if not intent:
-        intent = classify_question_intent_llm(req.question, case, sess)
+        intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
         
     fallback_resp = FreeTextAskResponse(
         intent=intent,
