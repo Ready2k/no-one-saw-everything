@@ -5,12 +5,14 @@ export function MagnifyingSearch({
   bounds,
   hiddenClues,
   imageUrl = "/map/the_ville.png",
+  spriteAsset,
   isPortrait = false,
   onDiscover,
 }: {
   bounds: MapBounds | null;
   hiddenClues: ClueHotspot[];
   imageUrl?: string;
+  spriteAsset?: string;
   isPortrait?: boolean;
   onDiscover: (clueId: string) => void;
 }) {
@@ -148,20 +150,33 @@ export function MagnifyingSearch({
            top: 0,
            left: 0
         }}>
-          <img 
-            src={imageUrl} 
-            alt="Map area"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-              e.currentTarget.parentElement!.style.backgroundColor = "#2a2a2a";
-            }}
-            style={{
-               width: "100%",
-               height: "100%",
-               imageRendering: "pixelated",
-               ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
-            }} 
-          />
+          {spriteAsset ? (
+            <div style={{
+              width: "100%",
+              height: "100%",
+              backgroundImage: `url(/map/sprites/${spriteAsset})`,
+              backgroundSize: "300% 400%",
+              backgroundPosition: "50% 0%",
+              backgroundRepeat: "no-repeat",
+              imageRendering: "pixelated",
+              ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)" })
+            }} />
+          ) : (
+            <img 
+              src={imageUrl} 
+              alt="Map area"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+                e.currentTarget.parentElement!.style.backgroundColor = "#2a2a2a";
+              }}
+              style={{
+                 width: "100%",
+                 height: "100%",
+                 imageRendering: "pixelated",
+                 ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
+              }} 
+            />
+          )}
           {isPortrait && <div className="deceased-xs">X&nbsp;&nbsp;X</div>}
         </div>
       </div>

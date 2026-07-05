@@ -744,7 +744,8 @@ function AutopsyPanel({
             bounds={null}
             hiddenClues={hidden_clues}
             onDiscover={handleDiscover}
-            imageUrl={`/portraits/${agentId}.webp`}
+            imageUrl={agent.portrait_art?.calm || undefined}
+            spriteAsset={!agent.portrait_art?.calm && agent.sprite_asset ? agent.sprite_asset : undefined}
             isPortrait={true}
           />
         </div>
