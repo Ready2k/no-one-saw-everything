@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Body
@@ -448,6 +449,64 @@ def discover_clue(req: DiscoverClueRequest):
             "The detective has turned up new evidence in the case.",
         )
     return project_clue(clue)
+
+
+@app.get("/api/examine_body/{agent_id}")
+def examine_body_endpoint(agent_id: str):
+    case = case_data()
+    sess = session()
+    
+    if agent_id != case.case.victim_id:
+        raise HTTPException(400, "Only the victim can be examined this way")
+        
+    from .interview import is_body_examination_clue
+    from .projections import project_clue
+    
+    hidden_clues = []
+    already = []
+    
+    for clue in case.clues:
+        if is_body_examination_clue(clue, case.case.victim_id, case.case.discovery_location_id):
+            if clue.clue_id in sess.discovered_clue_ids:
+                already.append(project_clue(clue))
+            else:
+                # Deterministic fallback placement
+                d = clue.discoverability
+                x = d.x
+                y = d.y
+                if x is None or y is None:
+                    seed_str = f"{case.case.case_id}:{agent_id}:{clue.clue_id}"
+                    digest = hashlib.md5(seed_str.encode("utf-8")).hexdigest()
+                    # Distribute over the portrait logic: x in 30-70, y in 20-80
+                    x = 30 + ((int(digest[0:4], 16) / 65535.0) * 40)
+                    y = 20 + ((int(digest[4:8], 16) / 65535.0) * 60)
+                    
+                hidden_clues.append({
+                    "clue_id": clue.clue_id,
+                    "x": x,
+                    "y": y,
+                    "radius": d.radius if d.radius is not None else 8.0,
+                    "discovery_text": d.discovery_text,
+                    "title": clue.title,
+                })
+                
+    cause_of_death = case.case.cause_of_death_observed or "Unknown"
+    if not case.case.cause_of_death_observed and case.case.method:
+        if case.case.method in ["blunt_force", "stabbing", "poison", "strangulation", "gunshot"]:
+            cause_of_death = case.case.method.replace('_', ' ').capitalize()
+            
+    return {
+        "location": {
+            "location_id": f"body_{agent_id}",
+            "name": f"Victim's Body",
+            "description": f"Cause of death appears to be: {cause_of_death}.",
+            "map_bounds": { "x": 0, "y": 0, "width": 100, "height": 100 },
+            "visibility_type": "public"
+        },
+        "hidden_clues": hidden_clues,
+        "known_clues": already,
+        "hint": None
+    }
 
 
 @app.get("/api/clues")

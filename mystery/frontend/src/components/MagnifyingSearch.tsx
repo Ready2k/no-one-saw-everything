@@ -4,10 +4,14 @@ import type { MapBounds, ClueHotspot } from "../types";
 export function MagnifyingSearch({
   bounds,
   hiddenClues,
+  imageUrl = "/map/the_ville.png",
+  isPortrait = false,
   onDiscover,
 }: {
   bounds: MapBounds | null;
   hiddenClues: ClueHotspot[];
+  imageUrl?: string;
+  isPortrait?: boolean;
   onDiscover: (clueId: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,11 +20,7 @@ export function MagnifyingSearch({
   const [dim, setDim] = useState({ w: 0, h: 0 });
   const [zoomLevel, setZoomLevel] = useState(1); // 1x to 3x
 
-  // Use a fallback bounds if the location doesn't have one (though most should)
-  const safeBounds = bounds || { x: 300, y: 140, width: 150, height: 80 };
-
   const ZOOM = 2.5;
-  // Decrease lens size as we zoom in, to avoid the lens covering the whole screen
   const LENS_SIZE = 140 / zoomLevel;
 
   useEffect(() => {
@@ -35,12 +35,14 @@ export function MagnifyingSearch({
     return () => observer.disconnect();
   }, []);
 
-  const MAP_W = 719;
-  const MAP_H = 513;
+  const MAP_W = isPortrait ? 512 : 719;
+  const MAP_H = isPortrait ? 512 : 513;
+
+  const safeBounds = bounds || { x: 0, y: 0, width: MAP_W, height: MAP_H };
 
   // Reduce the view window to zoom in on the map
-  const VIEW_W = 240 / zoomLevel;
-  const VIEW_H = 160 / zoomLevel;
+  const VIEW_W = (isPortrait ? MAP_W : 240) / zoomLevel;
+  const VIEW_H = (isPortrait ? MAP_H : 160) / zoomLevel;
 
   const cx = safeBounds.x + safeBounds.width / 2;
   const cy = safeBounds.y + safeBounds.height / 2;
@@ -136,18 +138,32 @@ export function MagnifyingSearch({
         </button>
       </div>
 
-      <div className="magnifying-crop">
-        <img 
-          src="/map/the_ville.png" 
-          alt="Map area"
-          style={{
-             width: `${bgSizeX}%`,
-             height: `${bgSizeY}%`,
-             transform: `translate(-${bgTransX}%, -${bgTransY}%)`,
-             transformOrigin: "top left",
-             imageRendering: "pixelated",
-          }} 
-        />
+      <div className={`magnifying-crop ${isPortrait ? "deceased-portrait" : ""}`}>
+        <div style={{
+           width: `${bgSizeX}%`,
+           height: `${bgSizeY}%`,
+           transform: `translate(-${bgTransX}%, -${bgTransY}%)`,
+           transformOrigin: "top left",
+           position: "absolute",
+           top: 0,
+           left: 0
+        }}>
+          <img 
+            src={imageUrl} 
+            alt="Map area"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+              e.currentTarget.parentElement!.style.backgroundColor = "#2a2a2a";
+            }}
+            style={{
+               width: "100%",
+               height: "100%",
+               imageRendering: "pixelated",
+               ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
+            }} 
+          />
+          {isPortrait && <div className="deceased-xs">X&nbsp;&nbsp;X</div>}
+        </div>
       </div>
 
       {adjustedClues.map(c => {
@@ -190,18 +206,32 @@ export function MagnifyingSearch({
                       height: dim.h * ZOOM,
                     }}
                  >
-                    <div className="magnifying-crop">
-                      <img 
-                        src="/map/the_ville.png" 
-                        alt=""
-                        style={{
-                           width: `${bgSizeX}%`,
-                           height: `${bgSizeY}%`,
-                           transform: `translate(-${bgTransX}%, -${bgTransY}%)`,
-                           transformOrigin: "top left",
-                           imageRendering: "pixelated",
-                        }} 
-                      />
+                    <div className={`magnifying-crop ${isPortrait ? "deceased-portrait" : ""}`}>
+                      <div style={{
+                         width: `${bgSizeX}%`,
+                         height: `${bgSizeY}%`,
+                         transform: `translate(-${bgTransX}%, -${bgTransY}%)`,
+                         transformOrigin: "top left",
+                         position: "absolute",
+                         top: 0,
+                         left: 0
+                      }}>
+                        <img 
+                          src={imageUrl} 
+                          alt=""
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            e.currentTarget.parentElement!.style.backgroundColor = "#2a2a2a";
+                          }}
+                          style={{
+                             width: "100%",
+                             height: "100%",
+                             imageRendering: "pixelated",
+                             ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
+                          }} 
+                        />
+                        {isPortrait && <div className="deceased-xs">X&nbsp;&nbsp;X</div>}
+                      </div>
                     </div>
                  </div>
               </div>

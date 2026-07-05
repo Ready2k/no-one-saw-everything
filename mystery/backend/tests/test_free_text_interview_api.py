@@ -139,5 +139,4 @@ def test_free_text_body_examination(reset_app_state, monkeypatch):
     data = resp.json()
     assert data["intent"]["intent"] == "evidence"
     assert data["intent"]["rewritten_structured_question"] == "Examine body"
-    assert "You examine" in data["answer"]["answer_text"]
-
+    assert "You observe" in data["answer"]["answer_text"]

@@ -81,6 +81,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ location_id: locationId }),
     }),
+  examineBody: (agentId: string) =>
+    request<InspectResult>(`/api/examine_body/${agentId}`, {
+      method: "GET",
+    }),
   discoverClue: (clueId: string) =>
     request<CluePublic>("/api/discover_clue", {
       method: "POST",

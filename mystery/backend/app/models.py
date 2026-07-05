@@ -258,9 +258,12 @@ class Discoverability(BaseModel):
     object_id: Optional[str] = None
     required_prior_clue_ids: list[str] = []
     
-    # Hotspot fields for map inspection
-    x: Optional[float] = None          # Percentage 0-100 across the room crop
-    y: Optional[float] = None          # Percentage 0-100 down the room crop
+    # Hotspot fields for map inspection or body examination
+    # Note: For body examination ("reveal_on": ["examine_body"]), you can author 
+    # specific coordinates here. If omitted, the game falls back to deterministic 
+    # random placement over the victim's portrait.
+    x: Optional[float] = None          # Percentage 0-100 across the image
+    y: Optional[float] = None          # Percentage 0-100 down the image
     radius: Optional[float] = 8.0      # Radius percentage
     discovery_text: Optional[str] = None
     

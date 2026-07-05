@@ -288,13 +288,6 @@ def is_body_examination_clue(clue, victim_id: str, discovery_location_id: str) -
     )
 
 def examine_body(case: CaseData, session: Session, player_statement: str = "Examine body") -> AskResponse:
-    revealed = []
-    for clue in case.clues:
-        if is_body_examination_clue(clue, case.case.victim_id, case.case.discovery_location_id):
-            if clue.clue_id not in session.discovered_clue_ids:
-                session.discovered_clue_ids.add(clue.clue_id)
-                revealed.append(clue)
-    
     cause_of_death = case.case.cause_of_death_observed or "Unknown"
     if not case.case.cause_of_death_observed and case.case.method:
         # Fallback to sanitized method if it doesn't look like a spoiler
@@ -307,11 +300,7 @@ def examine_body(case: CaseData, session: Session, player_statement: str = "Exam
     
     scene_desc = case.case.scene_description or f"The body of {victim_name} lies here."
     
-    if revealed:
-        clues_list = "\n".join(f"- {c.title}" for c in revealed)
-        answer = f"You examine {victim_name} carefully. {scene_desc}\n\nCause of death appears to be: {cause_of_death}.\n\nYou find:\n{clues_list}"
-    else:
-        answer = f"You examine {victim_name} carefully. {scene_desc}\n\nCause of death appears to be: {cause_of_death}.\n\nYou do not find anything new on the body."
+    answer = f"You observe {victim_name}. {scene_desc}\n\nCause of death appears to be: {cause_of_death}.\n\nPlease use the dedicated visual autopsy view to search the body for clues."
         
     req = AskRequest(agent_id=case.case.victim_id, question_type="evidence")
     _record(
@@ -321,15 +310,13 @@ def examine_body(case: CaseData, session: Session, player_statement: str = "Exam
         deterministic_answer_text=answer,
         display_answer_text=answer,
         claim_ids=[],
-        clue_ids=[c.clue_id for c in revealed],
+        clue_ids=[],
         llm_rewrite_used=False,
     )
     
     # Also log telemetry
     from .telemetry import log_telemetry_event
-    log_telemetry_event(session, "body_examined", {"agent_id": case.case.victim_id, "clues_found": len(revealed)})
-    for clue in revealed:
-        log_telemetry_event(session, "clue_discovered", {"clue_id": clue.clue_id, "source": "body_examination"})
+    log_telemetry_event(session, "body_examined", {"agent_id": case.case.victim_id, "clues_found": 0})
 
     return AskResponse(
         question_text=player_statement,
@@ -338,7 +325,7 @@ def examine_body(case: CaseData, session: Session, player_statement: str = "Exam
         answer_type="claim",
         emotional_shift=None,
         new_claims=[],
-        revealed_clues=revealed,
+        revealed_clues=[],
         suggested_followups=[],
         llm_rewrite_used=False,
         llm_rewrite_fallback=False,

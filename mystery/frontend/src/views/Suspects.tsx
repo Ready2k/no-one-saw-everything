@@ -8,10 +8,12 @@ import type {
   ChallengeSuggestion,
   ClaimPublic,
   CluePublic,
+  InspectResult,
   QuestionType,
   SuspicionLevel,
   TranscriptMessage,
 } from "../types";
+import { MagnifyingSearch } from "../components/MagnifyingSearch";
 import { ClueCard } from "./shared";
 import Portrait, { DEFENSIVE_THRESHOLD, CRACKING_THRESHOLD } from "../components/Portrait";
 import ContradictionBeat from "../components/ContradictionBeat";
@@ -64,20 +66,19 @@ function interviewState(
 
 export default function Suspects({ focusAgentId }: { focusAgentId?: string | null }) {
   const { agents } = useWorld();
-  const living = agents.filter((a) => !a.is_victim);
   const [boardState, setBoardState] = useState<Record<string, SuspectBoardState>>({});
   const [selectedId, setSelectedId] = useState(
-    (focusAgentId && living.some((a) => a.agent_id === focusAgentId)
+    (focusAgentId && agents.some((a) => a.agent_id === focusAgentId)
       ? focusAgentId
-      : living[0]?.agent_id) ?? ""
+      : agents[0]?.agent_id) ?? ""
   );
   useEffect(() => {
-    if (focusAgentId && living.some((a) => a.agent_id === focusAgentId)) {
+    if (focusAgentId && agents.some((a) => a.agent_id === focusAgentId)) {
       setSelectedId(focusAgentId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusAgentId]);
-  const selected = living.find((a) => a.agent_id === selectedId);
+  const selected = agents.find((a) => a.agent_id === selectedId);
 
   const onBoardState = useCallback((suspects: BoardSuspect[]) => {
     setBoardState(
@@ -94,7 +95,7 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
     <div className="suspects">
       <aside className="suspect-list panel">
         <p className="roster-title">Suspects</p>
-        {living.map((a) => {
+        {agents.map((a) => {
           const info = boardState[a.agent_id];
           return (
             <button
@@ -117,12 +118,20 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
         })}
       </aside>
       {selected && (
-        <InterviewPanel
-          key={selected.agent_id}
-          agentId={selected.agent_id}
-          pressure={boardState[selected.agent_id]?.pressure ?? 0}
-          onBoardState={onBoardState}
-        />
+        selected.is_victim ? (
+          <AutopsyPanel
+            key={selected.agent_id}
+            agentId={selected.agent_id}
+            onBoardState={onBoardState}
+          />
+        ) : (
+          <InterviewPanel
+            key={selected.agent_id}
+            agentId={selected.agent_id}
+            pressure={boardState[selected.agent_id]?.pressure ?? 0}
+            onBoardState={onBoardState}
+          />
+        )
       )}
     </div>
   );
@@ -680,5 +689,81 @@ function InterviewPanel({
         </div>
       </aside>
     </>
+  );
+}
+
+function AutopsyPanel({
+  agentId,
+  onBoardState,
+}: {
+  agentId: string;
+  onBoardState: (suspects: BoardSuspect[]) => void;
+}) {
+  const { agents } = useWorld();
+  const agent = agents.find((a) => a.agent_id === agentId)!;
+  const [result, setResult] = useState<InspectResult | null>(null);
+
+  const refresh = useCallback(() => {
+    api.examineBody(agentId).then(setResult);
+    api.board().then((b) => {
+      onBoardState(b.suspects);
+    });
+  }, [agentId, onBoardState]);
+
+  useEffect(refresh, [refresh]);
+
+  const handleDiscover = async (clueId: string) => {
+    try {
+      await api.discoverClue(clueId);
+      audioManager.playStinger("clue_discovered");
+      refresh();
+    } catch (err: any) {
+      console.error(err);
+    }
+  };
+
+  if (!result) {
+    return <div className="interview-panel loading panel">Loading forensic details...</div>;
+  }
+
+  const { location, hidden_clues, known_clues } = result;
+
+  return (
+    <div className="interview-panel panel">
+      <div className="transcript-header">
+        <span className="small muted">Autopsy View</span>
+        <div>{agent.full_name}</div>
+        <span className="small muted">{location.description}</span>
+      </div>
+
+      <div className="transcript" style={{ padding: "1rem" }}>
+        <p>Use the magnifying glass to examine the body for clues.</p>
+
+        <div style={{ position: "relative", width: "100%", maxWidth: "600px", margin: "0 auto", marginTop: "1rem" }}>
+          <MagnifyingSearch
+            bounds={null}
+            hiddenClues={hidden_clues}
+            onDiscover={handleDiscover}
+            imageUrl={`/portraits/${agentId}.webp`}
+            isPortrait={true}
+          />
+        </div>
+
+        <div className="search-status" style={{ marginTop: "2rem", marginBottom: "1rem" }}>
+           <p style={{ margin: 0 }}><strong>Search status:</strong> {(known_clues?.length || 0)} / {((known_clues?.length || 0) + (hidden_clues?.length || 0))} clues found</p>
+        </div>
+
+        <h3>Found evidence</h3>
+        {known_clues && known_clues.length > 0 ? (
+           <div className="found-evidence-list">
+             {known_clues.map((c: any) => (
+               <ClueCard key={c.clue_id} clue={c} />
+             ))}
+           </div>
+        ) : (
+           <p className="muted">Nothing found yet.</p>
+        )}
+      </div>
+    </div>
   );
 }
