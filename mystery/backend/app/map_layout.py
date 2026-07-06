@@ -56,13 +56,13 @@ _LOCATION_LAYOUT: dict[str, tuple[MapPosition, MapBounds, str]] = {
         "interior",
     ),
     "loc_rear_alley": (
-        MapPosition(x=390, y=80),
-        MapBounds(x=330, y=74, width=130, height=12),
+        MapPosition(x=360, y=36),
+        MapBounds(x=270, y=32, width=160, height=8),
         "exterior",
     ),
     "loc_bookshop": (
         MapPosition(x=295, y=114),
-        MapBounds(x=267, y=92, width=56, height=41),
+        MapBounds(x=267, y=98, width=56, height=35),
         "exterior",
     ),
     "loc_clinic": (
@@ -81,8 +81,8 @@ _LOCATION_LAYOUT: dict[str, tuple[MapPosition, MapBounds, str]] = {
         "exterior",
     ),
     "loc_clara_flat": (
-        MapPosition(x=295, y=78),
-        MapBounds(x=267, y=67, width=56, height=31),
+        MapPosition(x=295, y=74),
+        MapBounds(x=267, y=67, width=56, height=26),
         "exterior",
     ),
 }

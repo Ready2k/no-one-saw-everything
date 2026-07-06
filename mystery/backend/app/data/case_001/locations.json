@@ -72,7 +72,7 @@
     "map_bounds": {
       "x": 366,
       "y": 88,
-      "width": 24,
+      "width": 40,
       "height": 20
     },
     "visual_layer": "interior"
@@ -122,14 +122,14 @@
       "loc_cafe_storage"
     ],
     "map_position": {
-      "x": 390,
-      "y": 80
+      "x": 360,
+      "y": 56
     },
     "map_bounds": {
-      "x": 330,
-      "y": 74,
-      "width": 130,
-      "height": 12
+      "x": 270,
+      "y": 52,
+      "width": 160,
+      "height": 8
     },
     "visual_layer": "exterior"
   },
@@ -148,9 +148,9 @@
     },
     "map_bounds": {
       "x": 267,
-      "y": 92,
+      "y": 98,
       "width": 56,
-      "height": 41
+      "height": 35
     },
     "visual_layer": "exterior"
   },
@@ -233,13 +233,13 @@
     "visibility_type": "private",
     "map_position": {
       "x": 295,
-      "y": 78
+      "y": 74
     },
     "map_bounds": {
       "x": 267,
       "y": 67,
       "width": 56,
-      "height": 31
+      "height": 26
     },
     "visual_layer": "exterior"
   },
@@ -275,14 +275,14 @@
     ],
     "visibility_type": "private",
     "map_position": {
-      "x": 200,
-      "y": 350
+      "x": 185,
+      "y": 315
     },
     "map_bounds": {
       "x": 170,
-      "y": 330,
-      "width": 60,
-      "height": 40
+      "y": 295,
+      "width": 30,
+      "height": 42
     },
     "visual_layer": "interior"
   },
@@ -298,14 +298,14 @@
     ],
     "visibility_type": "private",
     "map_position": {
-      "x": 240,
-      "y": 350
+      "x": 215,
+      "y": 315
     },
     "map_bounds": {
-      "x": 210,
-      "y": 330,
-      "width": 60,
-      "height": 40
+      "x": 200,
+      "y": 295,
+      "width": 30,
+      "height": 42
     },
     "visual_layer": "interior"
   },
