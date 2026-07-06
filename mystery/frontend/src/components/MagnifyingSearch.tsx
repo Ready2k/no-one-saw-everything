@@ -58,9 +58,9 @@ export function MagnifyingSearch({
   const ZOOM = 2.5;
   // Lens scales with the search area so it reads as a hand magnifier over the
   // subject rather than a fixed-size overlay.
-  const LENS_SIZE = isPortrait 
-    ? (Math.min(65, Math.max(45, dim.w * 0.15)) / Math.min(zoomLevel, 1.5))
-    : (Math.min(150, Math.max(80, dim.w * 0.3)) / Math.min(zoomLevel, 1.5));
+  const LENS_SIZE = isPortrait
+    ? (Math.min(52, Math.max(36, dim.w * 0.12)) / Math.min(zoomLevel, 1.5))
+    : (Math.min(120, Math.max(64, dim.w * 0.24)) / Math.min(zoomLevel, 1.5));
 
   useEffect(() => {
     if (!containerRef.current) return;
