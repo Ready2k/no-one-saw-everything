@@ -158,6 +158,7 @@ function InterviewPanel({
   const [beat, setBeat] = useState<BeatData | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
 
   const [timeRef, setTimeRef] = useState("07:50");
   const [clueTopic, setClueTopic] = useState("");
@@ -179,7 +180,10 @@ function InterviewPanel({
   const state = interviewState(transcript.length, suspicion, pressure, contradicted);
 
   const refresh = useCallback(() => {
-    api.transcript(agentId).then(setTranscript);
+    api.transcript(agentId).then((t) => {
+      setTranscript(t);
+      setPendingQuestion(null);
+    });
     api.clues().then(setClues);
     api.challengeSuggestions(agentId).then(setSuggestions);
     api.board().then((b) => {
@@ -220,10 +224,12 @@ function InterviewPanel({
 
   const ask = async (
     questionType: QuestionType,
-    extra: Record<string, string> = {}
+    extra: Record<string, string> = {},
+    questionText?: string
   ) => {
     setBusy(true);
     setError(null);
+    setPendingQuestion(questionText ?? null);
     try {
       const result = await api.ask({
         agent_id: agentId,
@@ -236,6 +242,7 @@ function InterviewPanel({
       refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
+      setPendingQuestion(null);
     } finally {
       setBusy(false);
     }
@@ -243,13 +250,15 @@ function InterviewPanel({
 
   const submitFreeText = async () => {
     if (!freeText.trim()) return;
+    const questionText = freeText.trim();
     setBusy(true);
     setError(null);
     setFallbackMsg(null);
+    setPendingQuestion(questionText);
     try {
       const result = await api.freeTextAsk({
         agent_id: agentId,
-        question: freeText.trim(),
+        question: questionText,
       });
       if (result.answer) {
         setLastResult(result.answer);
@@ -288,6 +297,7 @@ function InterviewPanel({
       refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
+      setPendingQuestion(null);
     } finally {
       setBusy(false);
     }
@@ -383,7 +393,7 @@ function InterviewPanel({
             </span>
           </div>
           <div className="transcript" ref={transcriptRef}>
-            {transcript.length === 0 && (
+            {transcript.length === 0 && !pendingQuestion && (
               <p className="muted transcript-empty">
                 You haven't questioned {firstName} yet. Open with a question below — start
                 with their alibi, or ask anything in your own words.
@@ -418,6 +428,12 @@ function InterviewPanel({
                 )}
               </div>
             ))}
+            {pendingQuestion && (
+              <div className="bubble player pending">
+                <span className="bubble-speaker">You</span>
+                <p>{pendingQuestion}</p>
+              </div>
+            )}
             {busy && (
               <p className="muted small emotional">{firstName} is considering their answer…</p>
             )}
@@ -531,13 +547,28 @@ function InterviewPanel({
                 <span className="muted small">or use predefined topics</span>
               </div>
           <div className="question-row">
-            <button disabled={busy} onClick={() => ask("alibi")}>
+            <button
+              disabled={busy}
+              onClick={() =>
+                ask(
+                  "alibi",
+                  {},
+                  `Ask alibi (${caseOverview.murder_window[0]}–${caseOverview.murder_window[1]})`
+                )
+              }
+            >
               Ask alibi ({caseOverview.murder_window[0]}–{caseOverview.murder_window[1]})
             </button>
-            <button disabled={busy} onClick={() => ask("last_seen_victim")}>
+            <button
+              disabled={busy}
+              onClick={() => ask("last_seen_victim", {}, `Last saw ${victimName}?`)}
+            >
               Last saw {victimName}?
             </button>
-            <button disabled={busy} onClick={() => ask("relationship")}>
+            <button
+              disabled={busy}
+              onClick={() => ask("relationship", {}, "Relationship with victim")}
+            >
               Relationship with victim
             </button>
           </div>
@@ -549,7 +580,16 @@ function InterviewPanel({
               max={caseOverview.discovery_time}
               onChange={(e) => setTimeRef(e.target.value)}
             />
-            <button disabled={busy} onClick={() => ask("timeline", { time_reference: timeRef })}>
+            <button
+              disabled={busy}
+              onClick={() =>
+                ask(
+                  "timeline",
+                  { time_reference: timeRef },
+                  `What were you doing at ${timeRef}?`
+                )
+              }
+            >
               What were you doing at {timeRef}?
             </button>
           </div>
@@ -580,7 +620,16 @@ function InterviewPanel({
               <button
                 disabled={busy || !locationTopic}
                 title={!locationTopic ? "Pick a place first" : undefined}
-                onClick={() => ask("location", { topic_location_id: locationTopic })}
+                onClick={() =>
+                  ask(
+                    "location",
+                    { topic_location_id: locationTopic },
+                    `Ask about ${
+                      locations.find((l) => l.location_id === locationTopic)?.name ??
+                      "this place"
+                    }`
+                  )
+                }
               >
                 Ask about this place
               </button>
@@ -618,7 +667,15 @@ function InterviewPanel({
                       ? "Pick evidence first"
                       : undefined
                 }
-                onClick={() => ask("evidence", { topic_clue_id: clueTopic })}
+                onClick={() =>
+                  ask(
+                    "evidence",
+                    { topic_clue_id: clueTopic },
+                    `Confront with ${
+                      clues.find((c) => c.clue_id === clueTopic)?.title ?? "this evidence"
+                    }`
+                  )
+                }
               >
                 Confront with evidence
               </button>
