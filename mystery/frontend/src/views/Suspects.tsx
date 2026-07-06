@@ -727,43 +727,77 @@ function AutopsyPanel({
   }
 
   const { location, hidden_clues, known_clues } = result;
+  const found = known_clues?.length || 0;
+  const total = found + (hidden_clues?.length || 0);
+  const pct = total > 0 ? Math.round((found / total) * 100) : 0;
 
   return (
-    <div className="interview-panel panel">
+    <div className="interview-panel panel autopsy-panel">
       <div className="transcript-header">
-        <span className="small muted">Autopsy View</span>
+        <span className="small muted">Homicide Division · Post-Mortem Examination</span>
         <div>{agent.full_name}</div>
-        <span className="small muted">{location.description}</span>
       </div>
 
-      <div className="transcript" style={{ padding: "1rem" }}>
-        <p>Use the magnifying glass to examine the body for clues.</p>
+      <div className="autopsy-room">
+        <aside className="autopsy-tray" aria-label="Instrument tray">
+          <span className="tray-label">Instruments</span>
+          <button type="button" className="tray-tool active" title="Field magnifier — sweep it over the body">🔍</button>
+          <button type="button" className="tray-tool" disabled title="Scalpel — coroner's use only">🔪</button>
+          <button type="button" className="tray-tool" disabled title="Shears — coroner's use only">✂️</button>
+          <button type="button" className="tray-tool" disabled title="Syringe — coroner's use only">💉</button>
+          <button type="button" className="tray-tool" disabled title="Sample jars — coroner's use only">🧪</button>
+          <span className="tray-note">Only your field magnifier is cleared for use.</span>
+        </aside>
 
-        <div style={{ position: "relative", width: "100%", maxWidth: "340px", margin: "0 auto", marginTop: "1rem", flexShrink: 0 }}>
-          <MagnifyingSearch
-            bounds={null}
-            hiddenClues={hidden_clues}
-            onDiscover={handleDiscover}
-            imageUrl={agent.portrait_art?.calm || undefined}
-            spriteAsset={agent.sprite_asset || undefined}
-            isPortrait={true}
-          />
+        <div className="autopsy-slab-area">
+          <div className="morgue-lamp" aria-hidden="true" />
+          <div className="autopsy-slab">
+            <MagnifyingSearch
+              bounds={null}
+              hiddenClues={hidden_clues}
+              onDiscover={handleDiscover}
+              imageUrl={agent.portrait_art?.calm || undefined}
+              spriteAsset={agent.sprite_asset || undefined}
+              isPortrait={true}
+            />
+            <div className="slab-foot">
+              <span className="toe-tag">{agent.full_name} · deceased</span>
+            </div>
+          </div>
+          <p className="small muted autopsy-hint">
+            Sweep the magnifier over the body — click when the lens glints.
+          </p>
         </div>
 
-        <div className="search-status" style={{ marginTop: "2rem", marginBottom: "1rem" }}>
-           <p style={{ margin: 0 }}><strong>Search status:</strong> {(known_clues?.length || 0)} / {((known_clues?.length || 0) + (hidden_clues?.length || 0))} clues found</p>
-        </div>
-
-        <h3>Found evidence</h3>
-        {known_clues && known_clues.length > 0 ? (
-           <div className="found-evidence-list">
-             {known_clues.map((c: any) => (
-               <ClueCard key={c.clue_id} clue={c} />
-             ))}
-           </div>
-        ) : (
-           <p className="muted">Nothing found yet.</p>
-        )}
+        <aside className="autopsy-report">
+          <div className="report-field">
+            <span className="report-label">Subject</span>
+            {agent.full_name} · {agent.occupation}
+          </div>
+          <div className="report-field">
+            <span className="report-label">Preliminary finding</span>
+            {location.description}
+          </div>
+          <div className="report-field">
+            <span className="report-label">External examination</span>
+            <div className="exam-progress">
+              <div className="exam-progress-fill" style={{ width: `${pct}%` }} />
+            </div>
+            <span className="small muted">{found} / {total} clues found</span>
+          </div>
+          <div className="report-field report-evidence">
+            <span className="report-label">Found evidence</span>
+            {known_clues && known_clues.length > 0 ? (
+              <div className="found-evidence-list">
+                {known_clues.map((c: any) => (
+                  <ClueCard key={c.clue_id} clue={c} />
+                ))}
+              </div>
+            ) : (
+              <p className="muted small" style={{ margin: 0 }}>Nothing found yet.</p>
+            )}
+          </div>
+        </aside>
       </div>
     </div>
   );

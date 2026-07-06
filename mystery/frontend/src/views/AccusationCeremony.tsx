@@ -168,6 +168,7 @@ export default function AccusationCeremony({
                   markers={markers}
                   selectedEventId={null}
                   selectedLocationId={null}
+                  currentMinutes={t}
                   onSelectEvent={() => {}}
                   onSelectLocation={() => {}}
                   onSelectAgent={() => {}}

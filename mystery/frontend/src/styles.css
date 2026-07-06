@@ -884,6 +884,16 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   pointer-events: none;
 }
 
+.map-lighting-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  transition: background-color 0.6s ease;
+}
+
 .map-trace-svg {
   position: absolute;
   inset: 0;
@@ -1197,10 +1207,10 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 
 .lens-handle {
   position: absolute;
-  bottom: -30px;
-  right: -30px;
-  width: 15px;
-  height: 50px;
+  top: 85%;
+  left: 85%;
+  width: 12%;
+  height: 50%;
   background: #222;
   border-radius: 4px;
   transform: rotate(-45deg);
@@ -1208,6 +1218,25 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   box-shadow: inset 2px 0 5px rgba(255,255,255,0.1), 2px 2px 5px rgba(0,0,0,0.5);
   pointer-events: none;
   z-index: 1;
+}
+
+@keyframes popIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.emoji-pop {
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .hotspot-active .lens-glass {
@@ -1853,15 +1882,232 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 
 .deceased-xs {
   position: absolute;
-  top: 35%;
-  left: 50%;
+  top: 40%;
+  left: 0;
+  width: 100%;
+  height: 0;
+  pointer-events: none;
+}
+
+.deceased-x {
+  position: absolute;
+  top: 0;
   transform: translate(-50%, -50%);
   font-family: monospace;
-  font-size: 2.5rem;
+  font-size: 1.1rem;
   color: #ff3333;
-  opacity: 0.8;
-  pointer-events: none;
+  opacity: 0.85;
   font-weight: bold;
-  letter-spacing: 0.5rem;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+  line-height: 1;
+}
+
+.deceased-x:first-child {
+  left: 41%;
+}
+
+.deceased-x:last-child {
+  left: 59%;
+}
+
+/* --- Autopsy room --- */
+.autopsy-room {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  margin-top: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background:
+    radial-gradient(90% 60% at 50% 0%, rgba(190, 210, 235, 0.07), transparent 70%),
+    linear-gradient(180deg, #171a21 0%, #101218 100%);
+}
+
+.autopsy-tray {
+  flex-shrink: 0;
+  width: 86px;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.5rem;
+  background: linear-gradient(180deg, #313845, #252a34);
+  border: 1px solid #3d4452;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+.tray-label {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.tray-tool {
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #3c4351, #2b303c);
+  border: 1px solid #4a5262;
+  border-radius: 8px;
+}
+.tray-tool.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(216, 162, 74, 0.35), inset 0 0 6px rgba(216, 162, 74, 0.15);
+  cursor: default;
+}
+.tray-tool:disabled { opacity: 0.35; filter: grayscale(0.7); }
+.tray-note {
+  font-size: 0.6rem;
+  line-height: 1.35;
+  text-align: center;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.autopsy-slab-area {
+  flex: 1;
+  min-width: 0;
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.morgue-lamp {
+  width: 130px;
+  height: 9px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, #2a303b, #1a1e26);
+  border: 1px solid #3d4452;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+.morgue-lamp::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -14px;
+  width: 2px;
+  height: 14px;
+  background: #3d4452;
+}
+.morgue-lamp::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  max-width: 60vw;
+  height: 230px;
+  background: linear-gradient(180deg, rgba(215, 230, 250, 0.13), transparent 80%);
+  clip-path: polygon(41% 0, 59% 0, 100% 100%, 0% 100%);
+  pointer-events: none;
+}
+
+.autopsy-slab {
+  width: min(340px, 100%);
+  margin-top: 10px;
+  padding: 14px 14px 10px;
+  position: relative;
+  background: linear-gradient(180deg, #6d7684 0%, #59616e 8%, #4a515d 60%, #3f4551 94%, #333944 100%);
+  border: 1px solid #262b34;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.18),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.35),
+    0 14px 28px rgba(0, 0, 0, 0.55);
+}
+.autopsy-slab .magnifying-container {
+  margin-bottom: 0;
+  background: linear-gradient(180deg, #444b57, #3a404b);
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.45);
+}
+.autopsy-slab .lens-content { background: #3f4550; }
+
+.slab-foot {
+  display: flex;
+  justify-content: center;
+  padding-top: 9px;
+}
+.toe-tag {
+  position: relative;
+  font-family: "Courier New", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: #3b3323;
+  background: linear-gradient(180deg, #e0d2ac, #cbbb90);
+  padding: 3px 10px 3px 17px;
+  border-radius: 2px;
+  transform: rotate(-2deg);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+.toe-tag::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2c2718;
+  box-shadow: 0 0 0 2px #b3a273;
+}
+.autopsy-hint { margin: 0.7rem 0 0; text-align: center; font-style: italic; }
+
+.autopsy-report {
+  flex-shrink: 0;
+  width: 240px;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.report-field {
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 0.55rem;
+  font-size: 0.85rem;
+}
+.report-field:last-child { border-bottom: none; }
+.report-label {
+  display: block;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 3px;
+}
+.exam-progress {
+  height: 6px;
+  margin: 4px 0;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.exam-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+.report-evidence .found-evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+@media (max-width: 1100px) {
+  .autopsy-room { flex-wrap: wrap; }
+  .autopsy-tray { width: 100%; flex-direction: row; justify-content: center; }
+  .tray-note { max-width: 200px; text-align: left; }
+  .autopsy-report { width: 100%; }
 }

@@ -242,6 +242,7 @@ export default function MapReplay({
           selectedEventId={selectedEvent?.event_id ?? null}
           selectedLocationId={selectedLocationId}
           focusLocationId={locationFilter || null}
+          currentMinutes={t}
           onSelectEvent={(e) => {
             setSelectedEvent(e);
             setSelectedLocationId(null);

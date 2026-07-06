@@ -477,10 +477,28 @@ def examine_body_endpoint(agent_id: str):
                 if x is None or y is None:
                     seed_str = f"{case.case.case_id}:{agent_id}:{clue.clue_id}"
                     digest = hashlib.md5(seed_str.encode("utf-8")).hexdigest()
-                    # Distribute over the portrait logic: x in 30-70, y in 20-80
-                    x = 30 + ((int(digest[0:4], 16) / 65535.0) * 40)
-                    y = 20 + ((int(digest[4:8], 16) / 65535.0) * 60)
                     
+                    desc = (clue.description or "").lower()
+                    title = (clue.title or "").lower()
+                    
+                    # Default x to center torso width (30 to 70)
+                    x = 30 + ((int(digest[0:4], 16) / 65535.0) * 40)
+                    
+                    if "pocket" in desc or "pocket" in title or "waist" in desc:
+                        y = 50 + ((int(digest[4:8], 16) / 65535.0) * 15) # Waist area
+                    elif "hand" in desc or "hand" in title or "finger" in desc:
+                        y = 50 + ((int(digest[4:8], 16) / 65535.0) * 20) # Hand area
+                        x = 20 if int(digest[8:12], 16) % 2 == 0 else 80 # Left or right hand
+                    elif "head" in desc or "face" in desc or "neck" in desc or "eye" in desc or "mouth" in desc:
+                        y = 15 + ((int(digest[4:8], 16) / 65535.0) * 15) # Head area
+                    elif "leg" in desc or "foot" in desc or "shoe" in desc or "trouser" in desc:
+                        y = 75 + ((int(digest[4:8], 16) / 65535.0) * 20) # Legs area
+                    elif clue.clue_type == "document":
+                        y = 50 + ((int(digest[4:8], 16) / 65535.0) * 20) # Documents usually in pockets (waist)
+                    else:
+                        # Fallback to general torso/body
+                        y = 35 + ((int(digest[4:8], 16) / 65535.0) * 40)
+
                 hidden_clues.append({
                     "clue_id": clue.clue_id,
                     "x": x,

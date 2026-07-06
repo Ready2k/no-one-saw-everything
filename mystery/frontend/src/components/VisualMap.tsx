@@ -3,6 +3,7 @@ import type { MapEvent, MapReplayData } from "../types";
 import type { AgentPin, TraceSegment } from "../map/mapProjection";
 import { locationCenter } from "../map/mapProjection";
 import { AGENT_TILE_SCALE, MAP_GRID, mapImageUrl } from "../map/mapAssets";
+import { lightingTint } from "../map/lighting";
 import AgentSprite from "./AgentSprite";
 import EventMarker from "./EventMarker";
 
@@ -30,6 +31,7 @@ export default function VisualMap({
   selectedEventId,
   selectedLocationId,
   focusLocationId = null,
+  currentMinutes = null,
   onSelectEvent,
   onSelectLocation,
   onSelectAgent,
@@ -41,6 +43,10 @@ export default function VisualMap({
   selectedEventId: string | null;
   selectedLocationId: string | null;
   focusLocationId?: string | null;
+  // Minutes-since-midnight for the scrub position, used to tint the map for
+  // time of day. Omitted (null) where no timeline is in play — the map then
+  // renders with no lighting overlay.
+  currentMinutes?: number | null;
   onSelectEvent: (event: MapEvent) => void;
   onSelectLocation: (locationId: string) => void;
   onSelectAgent: (agentId: string) => void;
@@ -258,6 +264,13 @@ export default function VisualMap({
           alt="Village map"
           draggable={false}
         />
+
+        {currentMinutes != null && (
+          <div
+            className="map-lighting-overlay"
+            style={{ backgroundColor: lightingTint(currentMinutes) }}
+          />
+        )}
 
         {traceSegments.length > 0 && (
           <svg className="map-trace-svg" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
