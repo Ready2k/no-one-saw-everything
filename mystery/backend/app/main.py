@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Body
@@ -477,21 +478,35 @@ def examine_body_endpoint(agent_id: str):
                 if x is None or y is None:
                     seed_str = f"{case.case.case_id}:{agent_id}:{clue.clue_id}"
                     digest = hashlib.md5(seed_str.encode("utf-8")).hexdigest()
-                    
-                    desc = (clue.description or "").lower()
+
                     title = (clue.title or "").lower()
-                    
+                    # Only the part of the description that actually states where the
+                    # clue was found is trustworthy for placement — later clauses are
+                    # backstory/motive and can contain misleading body words (e.g. "say
+                    # it to her face", "a note in his hand" meaning handwriting). Cases
+                    # consistently phrase the finding as "<lead-in> in/on X's <place>:
+                    # <details>", so cut at the first colon, else the first sentence.
+                    full_desc = (clue.description or "")
+                    if ":" in full_desc:
+                        location_phrase = full_desc.split(":", 1)[0]
+                    else:
+                        location_phrase = full_desc.split(". ", 1)[0]
+                    match_text = f"{title} {location_phrase}".lower()
+
+                    def has_term(term: str) -> bool:
+                        return re.search(rf"\b{re.escape(term)}\b", match_text) is not None
+
                     # Default x to center torso width (30 to 70)
                     x = 30 + ((int(digest[0:4], 16) / 65535.0) * 40)
-                    
-                    if "pocket" in desc or "pocket" in title or "waist" in desc:
-                        y = 50 + ((int(digest[4:8], 16) / 65535.0) * 15) # Waist area
-                    elif "hand" in desc or "hand" in title or "finger" in desc:
+
+                    if any(has_term(t) for t in ("pocket", "coat", "waist", "jacket")):
+                        y = 50 + ((int(digest[4:8], 16) / 65535.0) * 15) # Waist/pocket area
+                    elif any(has_term(t) for t in ("hand", "finger")):
                         y = 50 + ((int(digest[4:8], 16) / 65535.0) * 20) # Hand area
                         x = 20 if int(digest[8:12], 16) % 2 == 0 else 80 # Left or right hand
-                    elif "head" in desc or "face" in desc or "neck" in desc or "eye" in desc or "mouth" in desc:
+                    elif any(has_term(t) for t in ("head", "face", "neck", "eye", "mouth", "ear", "hair")):
                         y = 15 + ((int(digest[4:8], 16) / 65535.0) * 15) # Head area
-                    elif "leg" in desc or "foot" in desc or "shoe" in desc or "trouser" in desc:
+                    elif any(has_term(t) for t in ("leg", "foot", "feet", "shoe", "trouser", "ankle", "boot")):
                         y = 75 + ((int(digest[4:8], 16) / 65535.0) * 20) # Legs area
                     elif clue.clue_type == "document":
                         y = 50 + ((int(digest[4:8], 16) / 65535.0) * 20) # Documents usually in pockets (waist)
