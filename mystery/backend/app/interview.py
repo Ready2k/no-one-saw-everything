@@ -111,7 +111,10 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
     if pack is None:
         raise ValueError(f"No interview pack for {req.agent_id}")
 
-    question_text = build_question_text(case, req)
+    # Prefer the player's own wording (free-text asks) over the templated
+    # question text, so the transcript and the LLM rewrite react to what was
+    # actually asked rather than a generic paraphrase (spec 06 free-text path).
+    question_text = req.original_question_text or build_question_text(case, req)
     rule = _match_rule(pack, case, session, req)
 
     new_claims: list[Claim] = []

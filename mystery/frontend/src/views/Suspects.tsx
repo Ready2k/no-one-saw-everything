@@ -455,9 +455,14 @@ function InterviewPanel({
             {lastResult && lastResult.suggested_followups.length > 0 && (
               <div className="followups">
                 {lastResult.suggested_followups.map((f, i) => (
-                  <span key={i} className="followup-chip">
+                  <button
+                    key={i}
+                    type="button"
+                    className="followup-chip"
+                    onClick={() => setFreeText(f)}
+                  >
                     {f}
-                  </span>
+                  </button>
                 ))}
               </div>
             )}

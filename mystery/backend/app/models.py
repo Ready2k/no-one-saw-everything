@@ -509,6 +509,11 @@ class AskRequest(BaseModel):
     topic_clue_id: Optional[str] = None
     topic_object_id: Optional[str] = None
     topic_location_id: Optional[str] = None
+    # The player's actual free-text wording, when this request was derived
+    # from a classified free-text question rather than a preformatted button.
+    # Used in place of the templated question text so the transcript and the
+    # LLM rewrite react to what was really asked, not a generic paraphrase.
+    original_question_text: Optional[str] = None
 
 
 class AskResponse(BaseModel):

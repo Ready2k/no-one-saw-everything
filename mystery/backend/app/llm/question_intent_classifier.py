@@ -12,6 +12,14 @@ from app.reference_resolver import resolve_references
 # the prompt wording below is the first line of defence.
 MIN_INTENT_CONFIDENCE = 0.7
 
+# relationship/motive are broad narrative buckets with a single scripted
+# blurb behind them — a wrong-but-plausible-sounding match here is exactly
+# how a specific question (an alleged amount, date, or claim) ends up
+# answered with an unrelated canned summary. Held to a higher bar than the
+# other intents, which are narrower and less prone to a false-but-confident fit.
+MIN_INTENT_CONFIDENCE_NARRATIVE = 0.85
+_NARRATIVE_INTENTS = {"relationship", "motive"}
+
 
 def classify_question_intent_llm(
     question: str,
@@ -85,18 +93,27 @@ Intent rules:
 - alibi: Asking where they were during the murder.
 - timeline: Asking what they were doing at a specific time.
 - last_seen_victim: Asking when they last saw the victim.
-- relationship: Asking specifically about their relationship or history with the victim,
-  or with another named suspect already established in this case.
+- relationship: Asking broadly about the general nature or history of their relationship
+  with the victim or another named suspect (e.g. "how did you know him", "what was your
+  history with her"). Do NOT use this for a question that alleges or asks about a specific
+  fact you have no evidence the game has scripted for — e.g. a specific amount, debt, date,
+  or claim ("how much does he owe you", "did he threaten you last week"). Those specific
+  questions have no scripted answer to draw on, so they should be fallback_unknown instead
+  of forced into this bucket, which would otherwise reply with an unrelated canned summary.
 - evidence: Asking about a specific clue.
 - location: Asking about a specific location.
-- motive: Asking why they might want the victim dead.
+- motive: Asking broadly why they might want the victim dead in general terms. As with
+  relationship, a specific alleged fact ("was it about the €8,000 loan") is fallback_unknown,
+  not motive.
 - object: Asking about a physical item or evidence.
 - contradiction: Asking a vague question about a lie or contradictory statement ("Why did someone say X?").
 - explicit_challenge: Explicitly demanding to confront or challenge the suspect with evidence ("Challenge Clara with Ben's sighting").
 - fallback_unknown: Anything else — including personal background, childhood, feelings,
-  opinions, hobbies, or small talk that is not specifically about the victim, another named
-  suspect, a piece of evidence, or the murder. When the question could plausibly go either
-  way, prefer fallback_unknown and give it a lower confidence score rather than forcing a fit.
+  opinions, hobbies, small talk, or a specific alleged fact/detail not covered by the other
+  categories above, that is not specifically about the victim, another named suspect, a piece
+  of evidence, or the murder. When the question could plausibly go either way, or asks about
+  a specific detail rather than a general topic, prefer fallback_unknown and give it a lower
+  confidence score rather than forcing a fit.
 """
     try:
         intent = client.generate_json(
@@ -109,7 +126,12 @@ Intent rules:
         # A shaky structured guess is worse than admitting uncertainty: better
         # to let the open-ended responder speak in character than force an
         # answer to a question that was probably misclassified.
-        if intent.intent != "fallback_unknown" and intent.confidence < MIN_INTENT_CONFIDENCE:
+        threshold = (
+            MIN_INTENT_CONFIDENCE_NARRATIVE
+            if intent.intent in _NARRATIVE_INTENTS
+            else MIN_INTENT_CONFIDENCE
+        )
+        if intent.intent != "fallback_unknown" and intent.confidence < threshold:
             intent = intent.model_copy(update={
                 "intent": "fallback_unknown",
                 "rewritten_structured_question": "Unknown question",

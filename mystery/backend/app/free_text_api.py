@@ -9,6 +9,22 @@ from app.world_state import build_conversation_context, build_world_state_digest
 from app import challenge as challenge_engine
 from app.challenge import ChallengeError
 
+def _generic_followups(case) -> list[str]:
+    """Safe, always-available on-ramps back to the grounded structured
+    questions, offered after an open-ended reply so the player isn't left
+    guessing how to steer the conversation back on track. Deliberately
+    generic — not derived from the specific free-text question — so this
+    never introduces a new leak surface. Only called for non-victim agents;
+    the victim path returns earlier via examine_body."""
+    victim = next((a for a in case.agents if a.is_victim), None)
+    victim_name = victim.full_name if victim else "the victim"
+    return [
+        "Where were you during the murder window?",
+        f"What was your relationship with {victim_name}?",
+        f"When did you last see {victim_name}?",
+    ]
+
+
 def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse:
     if req.agent_id == case.case.victim_id:
         resp = examine_body(case, sess, req.question)
@@ -80,7 +96,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
                 "emotional_shift": None,
                 "new_claims": [],
                 "revealed_clues": [],
-                "suggested_followups": [],
+                "suggested_followups": _generic_followups(case),
                 "llm_rewrite_used": True,
                 "llm_rewrite_fallback": result.fallback_used,
                 "llm_rewrite_fallback_reason": result.fallback_reason,
@@ -149,7 +165,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
             fallback_message="That sounds like something to challenge directly. Use the Challenge button if you have evidence."
         )
 
-    ask_req = AskRequest(agent_id=req.agent_id, question_type="alibi")
+    ask_req = AskRequest(agent_id=req.agent_id, question_type="alibi", original_question_text=req.question)
     
     if intent.intent in ["alibi", "timeline", "last_seen_victim", "relationship", "location"]:
         ask_req.question_type = intent.intent

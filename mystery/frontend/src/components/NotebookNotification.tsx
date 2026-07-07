@@ -33,12 +33,12 @@ export default function NotebookNotification({
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(setTimeout(() => setPhase("open"), 400));
-    timers.push(setTimeout(() => setPhase("flip"), 1400));
-    timers.push(setTimeout(() => setPhase("write"), 3200));
-    timers.push(setTimeout(() => setPhase("done"), 5800));
-    timers.push(setTimeout(() => setPhase("exit"), 7200));
-    timers.push(setTimeout(() => onDone(), 8000));
+    timers.push(setTimeout(() => setPhase("open"), 600));
+    timers.push(setTimeout(() => setPhase("flip"), 2200));
+    timers.push(setTimeout(() => setPhase("write"), 4800));
+    timers.push(setTimeout(() => setPhase("done"), 8500));
+    timers.push(setTimeout(() => setPhase("exit"), 13500));
+    timers.push(setTimeout(() => onDone(), 14500));
     return () => timers.forEach(clearTimeout);
   }, [onDone]);
 
@@ -51,7 +51,7 @@ export default function NotebookNotification({
       path.style.strokeDashoffset = `${len}`;
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       path.getBoundingClientRect();
-      path.style.transition = "stroke-dashoffset 2.2s ease-in-out";
+      path.style.transition = "stroke-dashoffset 3.2s ease-in-out";
       path.style.strokeDashoffset = "0";
     }
   }, [phase]);
