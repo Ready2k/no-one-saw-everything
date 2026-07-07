@@ -30,6 +30,7 @@ def project_agent(agent: Agent) -> dict[str, Any]:
         "work_location_id": agent.work_location_id,
         "routine_summary": agent.routine_summary,
         "is_victim": agent.is_victim,
+        "is_background": agent.is_background,
     }
 
 

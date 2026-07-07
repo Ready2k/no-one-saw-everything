@@ -96,7 +96,7 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
     <div className="suspects">
       <aside className="suspect-list panel">
         <p className="roster-title">Suspects</p>
-        {agents.map((a) => {
+        {agents.filter((a) => !a.is_background).map((a) => {
           const info = boardState[a.agent_id];
           return (
             <button

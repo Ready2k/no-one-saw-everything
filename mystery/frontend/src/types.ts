@@ -17,6 +17,7 @@ export interface AgentPublic {
   work_location_id: string | null;
   routine_summary: string;
   is_victim: boolean;
+  is_background: boolean;
 }
 
 export interface LocationPublic {

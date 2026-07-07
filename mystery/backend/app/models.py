@@ -174,6 +174,9 @@ class Agent(BaseModel):
     gossip_tendency: float = 0.5
     conflict_avoidance: float = 0.5
     is_victim: bool = False
+    # Ambient character: appears and moves on the map for flavor, but is not
+    # interviewable, accusable, or listed as a suspect.
+    is_background: bool = False
     # Visual-only avatar metadata; the mystery character remains canonical.
     sprite_id: Optional[str] = None
     sprite_asset: Optional[str] = None

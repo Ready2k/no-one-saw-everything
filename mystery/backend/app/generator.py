@@ -91,8 +91,10 @@ def generate_case(
     with open(BASE_CASE_DIR / "locations.json") as f:
         canonical_locations = {l["location_id"]: l for l in json.load(f)}
 
-    # We need 8 agents for the 8 roles
-    agent_pool = [a for a in base_agents]
+    # We need 8 agents for the 8 roles. Background/ambient characters (e.g.
+    # case_001's wandering NPCs) aren't part of the mystery and must never be
+    # shuffled into a suspect/victim role.
+    agent_pool = [a for a in base_agents if not a.get("is_background")]
     rng.shuffle(agent_pool)
     
     roles = {

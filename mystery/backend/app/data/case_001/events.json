@@ -472,6 +472,117 @@
     "importance": 7
   },
   {
+    "event_id": "ev_0605_tam_round",
+    "time": "06:05",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam crosses the square with a satchel of post, whistling under his breath.",
+    "visibility": "public",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0610_rosa_fountain",
+    "time": "06:10",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Rosa kneels by the fountain flowerbeds, snipping back the night's dead heads.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_0625_tam_bookshop",
+    "time": "06:25",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Tam drops a bundle of letters through the bookshop's post slot.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_0640_tam_clinic",
+    "time": "06:40",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Tam leaves the clinic's post on the front step and heads back towards the square.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_0700_rosa_departs",
+    "time": "07:00",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "departure",
+    "truth_description": "Rosa gathers her clippings basket and heads back across the square.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0705_tam_square",
+    "time": "07:05",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam finishes his round at the square, satchel empty, and settles onto a bench for a break.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0720_rosa_bench",
+    "time": "07:20",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa wheels her barrow around the square, tidying the bench borders.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0750_rosa_fountain",
+    "time": "07:50",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa returns to the fountain beds to finish trimming the far side.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_fountain"
+  },
+  {
     "event_id": "ev_0812_discovery",
     "time": "08:12",
     "location_id": "loc_cafe_storage",

@@ -309,5 +309,39 @@
     "sprite_asset": "Adam_Smith.png",
     "sprite_id": "sprite_adam_smith",
     "pronoun": "he"
+  },
+  {
+    "agent_id": "agent_rosa",
+    "full_name": "Rosa Fenn",
+    "age": 54,
+    "occupation": "Groundskeeper",
+    "traits": [
+      "quiet",
+      "early riser"
+    ],
+    "portrait": "🌿",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_fountain",
+    "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear alley before the village wakes properly.",
+    "relationships": [],
+    "is_background": true,
+    "pronoun": "she"
+  },
+  {
+    "agent_id": "agent_tam",
+    "full_name": "Tam Doyle",
+    "age": 47,
+    "occupation": "Postal carrier",
+    "traits": [
+      "brisk",
+      "punctual"
+    ],
+    "portrait": "📨",
+    "home_location_id": "loc_rear_alley",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Does the morning post round through the square, the bookshop and the clinic before most doors have even opened.",
+    "relationships": [],
+    "is_background": true,
+    "pronoun": "he"
   }
 ]

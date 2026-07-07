@@ -318,13 +318,13 @@ def test_red_herrings_have_distinct_false_suspicion_paths():
     import json
     from pathlib import Path
     with open(Path(__file__).parent.parent / "app/data/case_001/agents.json") as f:
-        base_agents = json.load(f)
+        base_agents = [a for a in json.load(f) if not a.get("is_background")]
     rng = random.Random(42)
     rng.shuffle(base_agents)
     rh1_id = base_agents[2]["agent_id"]
     rh2_id = base_agents[3]["agent_id"]
     red_herrings = [rh1_id, rh2_id]
-    
+
     for rh in red_herrings:
         rh_conclusions = [c for c in case_data.conclusions if c.target_agent_id == rh]
         assert len(rh_conclusions) > 0, f"Red herring {rh} has no suspicion paths"
@@ -526,7 +526,7 @@ def test_quality_scoring_weak_red_herring():
     
     # Load original red herring ID
     with open(Path(__file__).parent.parent / "app/data/case_001/agents.json") as f:
-        base_agents = json.load(f)
+        base_agents = [a for a in json.load(f) if not a.get("is_background")]
     rng = random.Random(42)
     rng.shuffle(base_agents)
     rh1_id = base_agents[2]["agent_id"]

@@ -560,8 +560,11 @@ def ask(req: AskRequest):
     if req.agent_id == case.case.victim_id:
         resp = interview_engine.examine_body(case, sess)
         return interview_engine.public_ask_response(resp)
-    if not any(a.agent_id == req.agent_id for a in case.agents):
+    target_agent = next((a for a in case.agents if a.agent_id == req.agent_id), None)
+    if target_agent is None:
         raise HTTPException(404, "No such agent")
+    if target_agent.is_background:
+        raise HTTPException(400, "This person isn't part of the investigation.")
     if req.question_type == "timeline" and not req.time_reference:
         raise HTTPException(400, "timeline questions need time_reference")
     if req.question_type == "evidence":
@@ -820,7 +823,7 @@ def board():
     sess = session()
     suspects = []
     for agent in case.agents:
-        if agent.is_victim:
+        if agent.is_victim or agent.is_background:
             continue
         agent_claims = [
             project_claim(c) for c in sess.claims.values() if c.speaker_agent_id == agent.agent_id
@@ -863,7 +866,10 @@ def board():
 def accuse(req: AccusationRequest):
     case = case_data()
     sess = session()
-    if not any(a.agent_id == req.accused_agent_id and not a.is_victim for a in case.agents):
+    if not any(
+        a.agent_id == req.accused_agent_id and not a.is_victim and not a.is_background
+        for a in case.agents
+    ):
         raise HTTPException(400, "You must accuse a living member of the village.")
     result = judge_engine.judge_accusation(case, sess, req)
     log_telemetry_event(sess, "accusation_submitted", {"accused_agent_id": req.accused_agent_id, "score": result.score})

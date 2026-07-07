@@ -379,7 +379,9 @@ export default function VisualMap({
               // once they've actually been seen and it's been a while since.
               stale={Number.isFinite(pin.staleMinutes) && pin.staleMinutes > 10}
               lastSeen={pin.lastSeenTime}
-              onClick={() => onSelectAgent(pin.agent.agent_id)}
+              onClick={() => {
+                if (!pin.agent.is_background) onSelectAgent(pin.agent.agent_id);
+              }}
             />
           </div>
         ))}

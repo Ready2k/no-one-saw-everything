@@ -114,6 +114,23 @@ locations, events/timeline, clue graph, seeded memories, `challenges.json`, `sol
 `case_001` is the hand-authored reference case (*The Storage Room Murder*). `templates/` holds
 generation templates. `llm_settings.json` is gitignored.
 
+#### Background NPCs
+
+Ambient, non-suspect characters (`Agent.is_background = true`) wander the map for flavor via
+ordinary public `movement`/`arrival`/`departure` events in `events.json`. They're excluded from
+Suspects, the Board, accusation, and interview (`main.py`'s `board`/`accuse`/`ask` all gate on
+`is_background`). Two rules when authoring or generating their routes:
+
+1. **Never route a background NPC through the murder location, its private back-rooms, or any
+   location that stages a scripted clue event during the murder window.** They'd become an
+   unaccounted-for witness or a "why didn't they mention it" plot hole — keep their routine
+   confined to a safe zone of locations the real mystery events never touch during the relevant
+   time window.
+2. `generator.py`'s deterministic generator reads `case_001/agents.json` directly as its 8-role
+   character pool (`agent_pool = [a for a in base_agents if not a.get("is_background")]`) — any
+   background NPC added to that file must stay excluded from that pool, or it'll get shuffled
+   into a suspect/victim/killer role in every seeded/deterministic generation.
+
 ## Frontend architecture (`frontend/src/`)
 
 React 18 + TypeScript + Vite. `api.ts` is the single API client; `types.ts` mirrors backend

@@ -21,9 +21,11 @@ export default function AgentSprite({
   lastSeen: string | null;
   onClick?: () => void;
 }) {
-  const title = stale && lastSeen
-    ? `${agent.full_name} — last seen ${lastSeen}`
-    : agent.full_name;
+  const title = agent.is_background
+    ? `${agent.full_name} — ${agent.occupation}`
+    : stale && lastSeen
+      ? `${agent.full_name} — last seen ${lastSeen}`
+      : agent.full_name;
   return (
     <button
       className={`map-agent ${stale ? "stale" : ""} ${agent.is_victim ? "victim" : ""}`}
