@@ -13,11 +13,27 @@ from ..validator import validate_case
 logger = logging.getLogger(__name__)
 
 MAX_LLM_REPAIR_ATTEMPTS = 3
+MAX_LLM_CALL_RETRIES = 2  # extra attempts beyond the first, for transient truncated/malformed JSON
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 
 def load_prompt(name: str) -> str:
     return (PROMPTS_DIR / f"{name}.txt").read_text()
+
+def call_with_retry(client, *, messages, schema, temperature, phase: str):
+    """Local/small LLMs occasionally return truncated or schema-incomplete JSON
+    (observed: EOF mid-string, missing required fields on later array items).
+    A single retry with an identical request usually succeeds, so retry a few
+    times before letting the caller fall back to the deterministic template."""
+    last_error: Exception | None = None
+    for attempt in range(MAX_LLM_CALL_RETRIES + 1):
+        try:
+            return client.generate_chat(messages=messages, schema=schema, temperature=temperature)
+        except Exception as e:
+            last_error = e
+            if attempt < MAX_LLM_CALL_RETRIES:
+                logger.warning(f"LLM {phase} generation attempt {attempt + 1} failed, retrying: {e}")
+    raise last_error
 
 def generate_llm_case(
     base_case_data: CaseData,
@@ -136,7 +152,7 @@ Format the output strictly as a JSON object matching the required schema."""}
     ]
     
     try:
-        plot_plan = client.generate_chat(messages=messages, schema=PlotOutlinePlan, temperature=0.8)
+        plot_plan = call_with_retry(client, messages=messages, schema=PlotOutlinePlan, temperature=0.8, phase="plot")
         messages.append({"role": "assistant", "content": plot_plan.model_dump_json()})
     except Exception as e:
         logger.error(f"LLM plot generation failed: {e}")
@@ -156,7 +172,7 @@ Rules:
 Format the output strictly as a JSON object matching the required schema."""})
     
     try:
-        clues_plan = client.generate_chat(messages=messages, schema=CluesPlan, temperature=0.7)
+        clues_plan = call_with_retry(client, messages=messages, schema=CluesPlan, temperature=0.7, phase="clues")
         messages.append({"role": "assistant", "content": clues_plan.model_dump_json()})
     except Exception as e:
         logger.error(f"LLM clues generation failed: {e}")
@@ -180,7 +196,7 @@ Ensure only allowed roles ({allowed_roles_str}) are referenced.
 Format the output strictly as a JSON object matching the required schema."""})
 
     try:
-        memories_plan = client.generate_chat(messages=messages, schema=MemoriesPlan, temperature=0.7)
+        memories_plan = call_with_retry(client, messages=messages, schema=MemoriesPlan, temperature=0.7, phase="memories")
     except Exception as e:
         logger.error(f"LLM memories generation failed: {e}")
         return None, "provider_error", 0
@@ -202,7 +218,7 @@ Rules:
 Format the output strictly as a JSON object matching the required schema."""}
     ]
     try:
-        flavour_plan = client.generate_chat(messages=flavour_messages, schema=FlavourPlan, temperature=0.5)
+        flavour_plan = call_with_retry(client, messages=flavour_messages, schema=FlavourPlan, temperature=0.5, phase="flavour")
     except Exception as e:
         logger.error(f"LLM flavour generation failed: {e}")
         return None, "provider_error", 0
