@@ -24,7 +24,12 @@ def generate_llm_case(
     roles: dict[str, str],
     case_type: str,
     difficulty: str,
-    seed: int
+    seed: int,
+    custom_theme: str | None = None,
+    tone: str | None = None,
+    llm_notes: str | None = None,
+    num_suspects: int | None = None,
+    num_locations: int | None = None
 ) -> tuple[CaseData | None, str | None, int]:
     """
     1. Calls LLM to generate CasePlan
@@ -54,25 +59,78 @@ def generate_llm_case(
         "A petty rivalry that escalated too far",
         "A dark secret from their childhood",
     ]
-    theme = rng.choice(sub_themes)
+    if custom_theme and custom_theme.strip():
+        theme = custom_theme.strip()
+    else:
+        theme = rng.choice(sub_themes)
+        
+    tone_instruction = ""
+    if tone == "family_friendly":
+        tone_instruction = (
+            "Content Safety / Tone requirement: FAMILY FRIENDLY. The case must be cozy, light-hearted, "
+            "and suitable for all ages. Avoid any explicit or gory descriptions of the murder scene or body. "
+            "Motive and background secrets should be non-violent, non-graphic (e.g. business rivalry, simple secrets, "
+            "rather than gruesome crimes)."
+        )
+    elif tone == "dark_noir":
+        tone_instruction = (
+            "Content Safety / Tone requirement: DARK NOIR. The case should have a gritty, suspenseful, and mature "
+            "detective noir aesthetic. It can feature darker psychological themes, realistic alibi tension, complex "
+            "secrets, and a cynical alibi web. Embrace atmospheric tension. Avoid any explicit gore, graphic violence, or sexual content."
+        )
+    else:
+        tone_instruction = (
+            "Content Safety / Tone requirement: STANDARD murder mystery. Classic fair-play detective style."
+        )
+
+    loc_instruction = ""
+    if num_locations is not None:
+        loc_instruction = f"Constraint: The mystery must take place across exactly {num_locations} active locations. Avoid references to additional locations."
+
+    notes_instruction = ""
+    if llm_notes and llm_notes.strip():
+        notes_instruction = (
+            f"CRITICAL: The player has specified these custom guidelines and plot notes. "
+            f"You MUST strictly follow and integrate them into the mystery plot and details:\n{llm_notes.strip()}"
+        )
+
+    # Determine allowed roles based on num_suspects
+    allowed_roles = ["{VICTIM_ID}", "{KILLER_ID}", "{RH1_ID}", "{RH2_ID}"]
+    if num_suspects is not None:
+        witness_roles = ["{WITNESS1_ID}", "{WITNESS2_ID}", "{WITNESS3_ID}", "{WITNESS4_ID}"]
+        needed_witnesses = max(0, num_suspects - 3)
+        allowed_roles.extend(witness_roles[:needed_witnesses])
+    else:
+        allowed_roles.extend(["{WITNESS1_ID}", "{WITNESS2_ID}", "{WITNESS3_ID}", "{WITNESS4_ID}"])
+    
+    allowed_roles_str = ", ".join(allowed_roles)
     
     messages = [
         {"role": "system", "content": "You are a creative murder mystery architect writing a case for a detective game."},
         {"role": "user", "content": f"""Generate a murder mystery plot outline of type '{case_type}' and difficulty '{difficulty}'.
 The core motive and plot MUST revolve around this theme: '{theme}'.
-Allowed roles to reference: {{VICTIM_ID}}, {{KILLER_ID}}, {{RH1_ID}}, {{RH2_ID}}, {{WITNESS1_ID}}, {{WITNESS2_ID}}, {{WITNESS3_ID}}, {{WITNESS4_ID}}.
+
+{tone_instruction}
+
+{loc_instruction}
+
+{notes_instruction}
+
+Allowed roles to reference: {allowed_roles_str}.
+Do NOT reference or assign alibis/memories to roles outside this list.
 
 Define the following outline details in a JSON response:
 - title: A fitting title for the mystery.
 - motive_variant: A brief explanation of the motive.
 - victim_rationale: Why the victim was killed.
 - killer_rationale: Why the killer did it.
-- red_herring_rationales: A dictionary mapping '{{RH1_ID}}' and '{{RH2_ID}}' to their suspicious but innocent rationales.
+- red_herring_rationales: A dictionary mapping '{{RH1_ID}}' and '{{RH2_ID}}' to their suspicious but innocent rationales (if they are in the allowed roles list).
 - scene_description: A paragraph explaining the discovery of the body. You MUST use the following placeholders instead of hardcoding names, locations, or weapons:
   * '{{VICTIM_NAME}}' for the victim's name.
   * '{{WEAPON_NAME}}' for the weapon used.
   * '{{murder_location}}' for the room where the body was found.
   * '{{discovered_by_name}}' for the person who discovered the body.
+  '{{murder_location}}' will be substituted with this case's real location name (e.g. "Reed & Bell Bookshop" or "Priya's Flat") — it is NOT necessarily a manor, mansion, library, or study. Do NOT invent your own room type, building description, or synonym for the murder scene (no "grand old manor", "dimly lit library", "drawing room", etc.) — refer to the scene ONLY via the '{{murder_location}}' placeholder, exactly once, with no other descriptor of what kind of room or building it is. Likewise do not invent a synonym for the weapon; refer to it ONLY via '{{WEAPON_NAME}}'.
 
 Format the output strictly as a JSON object matching the required schema."""}
     ]
@@ -85,8 +143,8 @@ Format the output strictly as a JSON object matching the required schema."""}
         return None, "provider_error", 0
 
     # Phase 2: Clue Plans
-    messages.append({"role": "user", "content": """Based on the plot outline, generate 5 clue plans.
-Allowed roles to reference: {VICTIM_ID}, {KILLER_ID}, {RH1_ID}, {RH2_ID}, {WITNESS1_ID}, {WITNESS2_ID}, {WITNESS3_ID}, {WITNESS4_ID}
+    messages.append({"role": "user", "content": f"""Based on the plot outline, generate 5 clue plans.
+Allowed roles to reference: {allowed_roles_str}
 Allowed clue types: document, physical_evidence, observation, witness_statement, confession, object_trail
 Allowed discovery methods: inspect, observation, interview
 
@@ -105,17 +163,19 @@ Format the output strictly as a JSON object matching the required schema."""})
         return None, "provider_error", 0
 
     # Phase 3: Seeded Memories and Witness Fragments
-    messages.append({"role": "user", "content": """Based on the plot and clue plans, generate the seeded memories and witness fragments.
+    messages.append({"role": "user", "content": f"""Based on the plot and clue plans, generate the seeded memories and witness fragments.
 
 CRITICAL RULES FOR MEMORIES:
-1. The killer suspect ({KILLER_ID}) MUST have exactly three memories assigned with these case_function values:
+1. The killer suspect ({{KILLER_ID}}) MUST have exactly three memories assigned with these case_function values:
    - "killer_motive": The memory establishing the true motive.
    - "opportunity_setup": The memory establishing how/when they entered the scene or opportunity.
    - "false_alibi_reason": The memory establishing their false alibi or why they lied about their whereabouts.
-2. Other suspects/roles (e.g. {RH1_ID}, {RH2_ID}) can have memories with these case_function values:
+2. Other suspects/roles (e.g. {{RH1_ID}}, {{RH2_ID}}) can have memories with these case_function values:
    - "red_herring_motive", "innocence_anchor", "clue_support", "false_alibi_support", "victim_trigger", "killer_trigger".
 3. memory_type must be one of: "private_secret", "shared_secret", "rumour", "witness_fragment", "false_belief", "deliberate_lie", "innocent_secret", "observed", "cover_story".
 4. truth_status must be one of: "true", "false", "mistaken", "rumour", "unknown".
+
+Ensure only allowed roles ({allowed_roles_str}) are referenced.
 
 Format the output strictly as a JSON object matching the required schema."""})
 
@@ -132,7 +192,7 @@ Format the output strictly as a JSON object matching the required schema."""})
 {plot_plan.model_dump_json()}
 
 Generate the interview flavour and final reveal narration.
-Allowed roles: {{VICTIM_ID}}, {{KILLER_ID}}, {{RH1_ID}}, {{RH2_ID}}, {{WITNESS1_ID}}, {{WITNESS2_ID}}, {{WITNESS3_ID}}, {{WITNESS4_ID}}
+Allowed roles: {allowed_roles_str}
 
 Rules:
 1. interview_flavour maps suspect roles (e.g. {{KILLER_ID}}) to a dict containing a 'general' key with a string value describing their attitude/relationship.

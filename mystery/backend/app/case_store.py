@@ -35,27 +35,86 @@ def _load_json(case_dir: Path, name: str):
     return json.loads((case_dir / name).read_text())
 
 
+class CaseLoadError(Exception):
+    def __init__(self, load_status: str, message: str):
+        super().__init__(message)
+        self.load_status = load_status
+
+
+def normalize_case_metadata(raw_metadata: dict | None) -> dict:
+    if raw_metadata is None:
+        raw_metadata = {}
+    normalized = {
+        "metadata_version": raw_metadata.get("metadata_version", 1),
+        "mode": raw_metadata.get("mode", "deterministic"),
+        "seed": raw_metadata.get("seed", 12345),
+        "selected_seed": raw_metadata.get("selected_seed", raw_metadata.get("seed", 12345)),
+        "best_of_n_used": raw_metadata.get("best_of_n_used", False),
+        "num_suspects": raw_metadata.get("num_suspects"),
+        "num_locations": raw_metadata.get("num_locations"),
+        "theme_preset": raw_metadata.get("theme_preset", "blackmail"),
+        "custom_theme": raw_metadata.get("custom_theme"),
+        "tone": raw_metadata.get("tone", "standard"),
+        "fallback_used": raw_metadata.get("fallback_used", False),
+        "repair_attempts": raw_metadata.get("repair_attempts", 0),
+        "compaction_applied": raw_metadata.get("compaction_applied", False),
+        "created_at": raw_metadata.get("created_at"),
+        "activated_at": raw_metadata.get("activated_at"),
+        "quality_report": raw_metadata.get("quality_report"),
+    }
+    candidate_scores = raw_metadata.get("candidate_scores", [])
+    if candidate_scores:
+        normalized["candidate_count"] = len(candidate_scores)
+    else:
+        normalized["candidate_count"] = raw_metadata.get("candidate_count", 1)
+    return normalized
+
+
 @lru_cache(maxsize=8)
 def load_case_from_disk(case_id: str) -> CaseData:
-    """Loads a static, hand-authored case from the data directory."""
+    """Loads a static, hand-authored case or procedurally generated case from the data directory."""
     case_dir = DATA_DIR / case_id
+    if case_id.startswith("case_") and not case_dir.is_dir():
+        case_dir = Path(__file__).parent / "data" / case_id
     if not case_dir.is_dir():
-        raise FileNotFoundError(f"No case directory: {case_dir}")
+        raise CaseLoadError("missing_case_data", f"No case directory: {case_dir}")
 
-    clue_pack = _load_json(case_dir, "clues.json")
-    return CaseData(
-        case=CaseFile(**_load_json(case_dir, "case.json")),
-        agents=[Agent(**a) for a in _load_json(case_dir, "agents.json")],
-        locations=[Location(**l) for l in _load_json(case_dir, "locations.json")],
-        objects=[GameObject(**o) for o in _load_json(case_dir, "objects.json")],
-        memories=[SeededMemory(**m) for m in _load_json(case_dir, "memories.json")],
-        events=[Event(**e) for e in _load_json(case_dir, "events.json")],
-        clues=[Clue(**c) for c in clue_pack["clues"]],
-        conclusions=[Conclusion(**c) for c in clue_pack["conclusions"]],
-        interview_packs=[AgentInterviewPack(**p) for p in _load_json(case_dir, "interviews.json")],
-        challenge_rules=[ChallengeRule(**c) for c in _load_json(case_dir, "challenges.json")] if (case_dir / "challenges.json").exists() else [],
-        solution=Solution(**_load_json(case_dir, "solution.json")),
-    )
+    # Load metadata
+    metadata = None
+    load_status = "ok"
+    metadata_file = case_dir / "metadata.json"
+    if metadata_file.exists():
+        try:
+            metadata = json.loads(metadata_file.read_text())
+            metadata = normalize_case_metadata(metadata)
+        except json.JSONDecodeError:
+            load_status = "corrupted_metadata"
+            metadata = normalize_case_metadata(None)
+    else:
+        load_status = "missing_metadata"
+        metadata = normalize_case_metadata(None)
+
+    metadata["load_status"] = load_status
+
+    # Load case files
+    try:
+        clue_pack = _load_json(case_dir, "clues.json")
+        return CaseData(
+            case=CaseFile(**_load_json(case_dir, "case.json")),
+            agents=[Agent(**a) for a in _load_json(case_dir, "agents.json")],
+            locations=[Location(**l) for l in _load_json(case_dir, "locations.json")],
+            objects=[GameObject(**o) for o in _load_json(case_dir, "objects.json")],
+            memories=[SeededMemory(**m) for m in _load_json(case_dir, "memories.json")],
+            events=[Event(**e) for e in _load_json(case_dir, "events.json")],
+            clues=[Clue(**c) for c in clue_pack["clues"]],
+            conclusions=[Conclusion(**c) for c in clue_pack["conclusions"]],
+            interview_packs=[AgentInterviewPack(**p) for p in _load_json(case_dir, "interviews.json")],
+            challenge_rules=[ChallengeRule(**c) for c in _load_json(case_dir, "challenges.json")] if (case_dir / "challenges.json").exists() else [],
+            solution=Solution(**_load_json(case_dir, "solution.json")),
+            metadata=metadata
+        )
+    except Exception as e:
+        raise CaseLoadError("missing_case_data", f"Error loading case files: {e}")
 
 
 def get_case(case_id: str) -> CaseData:
@@ -94,6 +153,10 @@ def save_case_to_disk(case_data: CaseData) -> None:
         json.dump([json.loads(c.model_dump_json()) for c in case_data.challenge_rules], f, indent=2)
     with open(case_dir / "solution.json", "w") as f:
         json.dump(json.loads(case_data.solution.model_dump_json()), f, indent=2)
+
+    if case_data.metadata:
+        with open(case_dir / "metadata.json", "w") as f:
+            json.dump(case_data.metadata, f, indent=2)
 
     clue_pack = {
         "clues": [json.loads(c.model_dump_json()) for c in case_data.clues],
@@ -155,3 +218,15 @@ def minutes(hhmm: str) -> int:
             mins += 1440
             
     return mins
+
+
+def delete_case_from_disk(case_id: str) -> None:
+    """Removes the case from data directory and registry."""
+    if case_id in _GENERATED_CASES:
+        del _GENERATED_CASES[case_id]
+    load_case_from_disk.cache_clear()
+    
+    case_dir = DATA_DIR / case_id
+    if case_dir.is_dir():
+        import shutil
+        shutil.rmtree(case_dir)

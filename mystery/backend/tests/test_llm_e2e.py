@@ -39,9 +39,13 @@ def test_llm_e2e_golden_path():
     case_resp = client.get("/api/case")
     # Actually, the killer is hidden. Let's just accuse someone to see if it works.
     
-    # 4. Accuse (we might be wrong, but it should succeed and reveal the truth)
+    # 4. Accuse (we fetch the killer dynamically from store so the test is robust)
+    from app.case_store import get_case
+    from app.main import ACTIVE_CASE_ID
+    killer_id = get_case(ACTIVE_CASE_ID).case.killer_id
+    
     r = client.post("/api/accuse", json={
-        "accused_agent_id": "agent_clara", # Might be right or wrong
+        "accused_agent_id": killer_id,
         "motive_answer": "Stole money.",
         "method_answer": "Weapon.",
         "opportunity_answer": "Waited in alley.",

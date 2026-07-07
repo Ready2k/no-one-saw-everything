@@ -201,7 +201,7 @@ export function MagnifyingSearch({
     lastClientPos.current = null;
   };
 
-  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleClick = () => {
     if (dragDist.current > 5) {
       return;
     }
@@ -218,7 +218,7 @@ export function MagnifyingSearch({
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onTouchEnd={(e) => { handleMouseLeave(); handlePointerUp(); }}
+      onTouchEnd={() => { handleMouseLeave(); handlePointerUp(); }}
       onMouseDown={handlePointerDown}
       onTouchStart={handlePointerDown}
       onMouseUp={handlePointerUp}

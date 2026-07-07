@@ -108,7 +108,22 @@ def assemble_case(
         desc = desc.replace(placeholder, val)
         stripped = placeholder.strip("{}")
         desc = desc.replace(stripped, val)
-        
+
+    # Guard against a non-compliant LLM: sometimes it ignores the
+    # {murder_location}/{WEAPON_NAME} placeholders entirely and invents its own
+    # room/weapon flavour instead (observed: "...the air of the 'Vanderbilt
+    # Gallery'..." while the real location was "Cafe Storage Room" — the
+    # placeholder never appears, so the substitution above is a no-op and the
+    # invented name survives). Detect that by checking the real facts actually
+    # ended up in the text; if not, fall back to the deterministic, always
+    # grounded description already computed on the scaffold instead of shipping
+    # prose that contradicts the rest of the case.
+    weapon_name = roles.get("{WEAPON_NAME}", "")
+    location_ok = murder_loc_name.lower() in desc.lower()
+    weapon_ok = (not weapon_name) or (weapon_name.lower() in desc.lower())
+    if not (location_ok and weapon_ok) and base_case_data.case.overview_text:
+        desc = base_case_data.case.overview_text
+
     case_data.case.scene_description = desc
     case_data.case.overview_text = desc
     

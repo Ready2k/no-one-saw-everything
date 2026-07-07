@@ -182,6 +182,13 @@ export const api = {
     activate: boolean;
     mode: "deterministic" | "llm_assisted";
     fallback_allowed: boolean;
+    num_suspects?: number;
+    num_locations?: number;
+    theme_preset?: string;
+    custom_theme?: string;
+    tone?: string;
+    llm_notes?: string;
+    candidate_count?: number;
   }) =>
     request<{
       case_id: string;
@@ -198,6 +205,36 @@ export const api = {
         warnings: string[];
         errors: string[];
       };
+      generation_metadata?: {
+        mode: string;
+        seed: number;
+        num_suspects: number | null;
+        num_locations: number | null;
+        theme_preset: string;
+        tone: string;
+        fallback_used: boolean;
+        repair_attempts: number;
+        compaction_applied: boolean;
+        pruned_agents: string[];
+        remapped_locations: Record<string, string>;
+        selected_seed?: number;
+        best_of_n_used?: boolean;
+        candidate_scores?: Array<{ seed: number; overall_score: number; is_valid: boolean }> | null;
+        quality_report?: {
+          suspect_distinctiveness: number;
+          motive_clarity: number;
+          red_herring_strength: number;
+          clue_distribution: number;
+          location_usage_balance: number;
+          timeline_density: number;
+          solution_fairness: number;
+          theme_adherence: number;
+          tone_consistency: number;
+          overall_score: number;
+          warnings: string[];
+          suggested_improvements: string[];
+        } | null;
+      } | null;
     }>("/api/cases/generate", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -238,6 +275,23 @@ export const api = {
       body: JSON.stringify(payload),
     }),
   cases: () => request<{ case_id: string; title: string; case_type: string }[]>("/api/cases"),
+  generatedCases: {
+    list: (params?: { sort_by?: string; tone?: string; case_type?: string; best_of_n?: boolean; fallback_used?: boolean }) => {
+      const q = new URLSearchParams();
+      if (params) {
+        if (params.sort_by) q.set("sort_by", params.sort_by);
+        if (params.tone) q.set("tone", params.tone);
+        if (params.case_type) q.set("case_type", params.case_type);
+        if (params.best_of_n !== undefined) q.set("best_of_n", String(params.best_of_n));
+        if (params.fallback_used !== undefined) q.set("fallback_used", String(params.fallback_used));
+      }
+      return request<any[]>(`/api/generated_cases?${q.toString()}`);
+    },
+    get: (caseId: string) => request<any>(`/api/generated_cases/${caseId}`),
+    activate: (caseId: string) => request<{ status: string; active_session_id: string }>(`/api/generated_cases/${caseId}/activate`, { method: "POST" }),
+    regenerate: (caseId: string) => request<any>(`/api/generated_cases/${caseId}/regenerate`, { method: "POST" }),
+    delete: (caseId: string) => request<{ status: string }>(`/api/generated_cases/${caseId}`, { method: "DELETE" }),
+  },
 };
 
 export function minutes(hhmm: string): number {

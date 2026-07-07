@@ -10,6 +10,7 @@ import Suspects from "./views/Suspects";
 import BoardView from "./views/Board";
 import Accuse from "./views/Accuse";
 import GenerateCaseModal from "./views/GenerateCaseModal";
+import CaseLibraryModal from "./views/CaseLibraryModal";
 import LlmSettingsModal from "./views/LlmSettingsModal";
 import { PlaytestPanel } from "./views/PlaytestPanel";
 import AudioControls from "./components/AudioControls";
@@ -84,6 +85,8 @@ export default function App() {
   const [tab, setTab] = useState<TabId>("overview");
   const [showIntro, setShowIntro] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showLibraryModal, setShowLibraryModal] = useState(false);
+  const [duplicateRecipe, setDuplicateRecipe] = useState<any>(null);
   const [showLlmSettingsModal, setShowLlmSettingsModal] = useState(false);
   const [mapJump, setMapJump] = useState<MapJump | null>(null);
   const [suspectFocus, setSuspectFocus] = useState<string | null>(null);
@@ -211,9 +214,19 @@ export default function App() {
               <button
                 className="tool-btn seal"
                 title="Commission a brand-new case from the case writer"
-                onClick={() => setShowGenerateModal(true)}
+                onClick={() => {
+                  setDuplicateRecipe(null);
+                  setShowGenerateModal(true);
+                }}
               >
                 ✒ New Case
+              </button>
+              <button
+                className="tool-btn"
+                title="View and play previously generated cases"
+                onClick={() => setShowLibraryModal(true)}
+              >
+                📚 Case Library
               </button>
               <button
                 className="tool-btn icon-only"
@@ -266,6 +279,7 @@ export default function App() {
       </div>
       {showGenerateModal && (
         <GenerateCaseModal
+          initialRecipe={duplicateRecipe}
           onClose={() => setShowGenerateModal(false)}
           onSuccess={(fallbackUsed) => {
             setShowGenerateModal(false);
@@ -276,6 +290,17 @@ export default function App() {
             } else {
               location.reload();
             }
+          }}
+        />
+      )}
+      {showLibraryModal && (
+        <CaseLibraryModal
+          onClose={() => setShowLibraryModal(false)}
+          activeCaseId={world.caseOverview.case_id}
+          onDuplicate={(recipe) => {
+            setDuplicateRecipe(recipe);
+            setShowLibraryModal(false);
+            setShowGenerateModal(true);
           }}
         />
       )}

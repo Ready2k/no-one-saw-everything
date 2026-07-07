@@ -8,7 +8,7 @@ lives in session.py and is mutable.
 
 from __future__ import annotations
 
-from typing import Dict, List, Literal, Optional, Set, Tuple
+from typing import Any, Dict, List, Literal, Optional, Set, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -196,6 +196,7 @@ class Location(BaseModel):
     map_position: Optional[MapPosition] = None
     map_bounds: Optional[MapBounds] = None
     visual_layer: Optional[Literal["exterior", "interior"]] = None
+    location_type: Optional[Literal["public", "private", "home", "work", "crime_scene", "discovery", "neutral"]] = None
 
 
 class GameObject(BaseModel):
@@ -431,6 +432,7 @@ class CaseData(BaseModel):
     interview_packs: list[AgentInterviewPack]
     challenge_rules: list[ChallengeRule] = []
     solution: Solution
+    metadata: Optional[dict[str, Any]] = None
 
 
 # ---------------------------------------------------------------------------
@@ -500,6 +502,14 @@ class GenerateCaseRequest(BaseModel):
     activate: bool = False
     mode: Literal["deterministic", "llm_assisted"] = "deterministic"
     fallback_allowed: bool = True
+    num_suspects: Optional[int] = Field(None, ge=3, le=7)
+    num_locations: Optional[int] = Field(None, ge=3, le=8)
+    theme_preset: Optional[str] = None
+    custom_theme: Optional[str] = None
+    tone: Optional[str] = None
+    llm_notes: Optional[str] = None
+    candidate_count: int = Field(1, ge=1, le=5)
+
 
 
 class AskRequest(BaseModel):
@@ -726,3 +736,22 @@ class Feedback(BaseModel):
     worst_part: Optional[str] = None
     clues_that_felt_unfair: Optional[str] = None
     free_text: Optional[str] = None
+
+
+# ---------------------------------------------------------------------------
+# Case Quality Report
+# ---------------------------------------------------------------------------
+
+class CaseQualityReport(BaseModel):
+    suspect_distinctiveness: float
+    motive_clarity: float
+    red_herring_strength: float
+    clue_distribution: float
+    location_usage_balance: float
+    timeline_density: float
+    solution_fairness: float
+    theme_adherence: float
+    tone_consistency: float
+    overall_score: float
+    warnings: list[str] = []
+    suggested_improvements: list[str] = []

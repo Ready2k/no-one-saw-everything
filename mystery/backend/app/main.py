@@ -904,16 +904,78 @@ def generate(req: GenerateCaseRequest):
     from .case_store import register_case
     global ACTIVE_CASE_ID
 
-    # Generate the case deterministically or via LLM
-    new_case, fallback_used, fallback_reason, repair_attempts = generate_case(
-        req.case_type, req.difficulty, req.seed, req.mode, req.fallback_allowed
+    has_creative = (
+        (req.custom_theme and req.custom_theme.strip()) or 
+        (req.tone and req.tone != "standard" and req.tone is not None) or 
+        (req.llm_notes and req.llm_notes.strip())
     )
+    if req.mode == "deterministic" and has_creative:
+        raise HTTPException(
+            status_code=400, 
+            detail="Creative options (custom theme, non-standard tone, or LLM notes) require LLM-Assisted mode."
+        )
 
-    # Validate
+    # Generate candidates (Best-of-N logic)
+    candidate_count = req.candidate_count
+    candidate_count = max(1, min(5, candidate_count))
+    
+    candidates = []
+    candidate_scores = []
+    
+    for i in range(candidate_count):
+        # Vary the seed deterministically
+        cand_seed = req.seed + i
+        cand_case, fallback_used, fallback_reason, repair_attempts = generate_case(
+            req.case_type, req.difficulty, cand_seed, req.mode, req.fallback_allowed,
+            num_suspects=req.num_suspects, num_locations=req.num_locations,
+            custom_theme=req.custom_theme, tone=req.tone, llm_notes=req.llm_notes
+        )
+        
+        val_result = validate_case(cand_case)
+        is_valid = val_result["valid"]
+        
+        from .quality import score_case_quality
+        report = score_case_quality(cand_case)
+        
+        candidates.append({
+            "case": cand_case,
+            "is_valid": is_valid,
+            "report": report,
+            "fallback_used": fallback_used,
+            "fallback_reason": fallback_reason,
+            "repair_attempts": repair_attempts,
+            "seed": cand_seed
+        })
+        
+        candidate_scores.append({
+            "seed": cand_seed,
+            "overall_score": report.overall_score,
+            "is_valid": is_valid
+        })
+
+    # Pick the best valid candidate
+    valid_candidates = [c for c in candidates if c["is_valid"]]
+    if valid_candidates:
+        best_candidate = max(valid_candidates, key=lambda c: c["report"].overall_score)
+    else:
+        best_candidate = candidates[0]
+        
+    new_case = best_candidate["case"]
+    fallback_used = best_candidate["fallback_used"]
+    fallback_reason = best_candidate["fallback_reason"]
+    repair_attempts = best_candidate["repair_attempts"]
+    selected_seed = best_candidate["seed"]
+    report = best_candidate["report"]
+    
+    # Store candidate info in selected case metadata
+    if new_case.metadata:
+        new_case.metadata["quality_report"] = report.model_dump()
+        new_case.metadata["candidate_scores"] = candidate_scores
+        new_case.metadata["selected_seed"] = selected_seed
+        new_case.metadata["best_of_n_used"] = (candidate_count > 1)
+
+    # Re-validate selected case to confirm final validity check
     val_result = validate_case(new_case)
-
-    # Always register if generated, even if imperfect, but you might reject hard errors?
-    # Spec says: "reject invalid generated cases". Let's block play if errors exist.
     if val_result["valid"]:
         from .case_store import save_case_to_disk
         register_case(new_case)
@@ -956,7 +1018,8 @@ def generate(req: GenerateCaseRequest):
             "warnings": _redact(val_result["warnings"]),
             "errors": _redact(val_result["errors"]),
         },
-        "active_session_id": active_session_id
+        "active_session_id": active_session_id,
+        "generation_metadata": new_case.metadata
     }
 
 
@@ -980,3 +1043,200 @@ def activate_case(req: ActivateCaseRequest):
     reset_session(ACTIVE_CASE_ID)
     
     return {"active_session_id": ACTIVE_CASE_ID}
+
+
+@app.get("/api/generated_cases")
+def list_generated_cases(
+    sort_by: Optional[str] = None, # "quality_score", "created_at"
+    tone: Optional[str] = None,
+    case_type: Optional[str] = None,
+    best_of_n: Optional[bool] = None,
+    fallback_used: Optional[bool] = None
+):
+    from .case_store import DATA_DIR, normalize_case_metadata
+    import json
+    
+    entries = []
+    if not DATA_DIR.exists():
+        return entries
+        
+    for p in DATA_DIR.iterdir():
+        if p.is_dir() and p.name != "templates":
+            if p.name.startswith("gen_") or (p / "metadata.json").exists():
+                load_status = "ok"
+                metadata = normalize_case_metadata(None)
+                
+                # 1. Try loading metadata
+                metadata_path = p / "metadata.json"
+                if metadata_path.exists():
+                    try:
+                        with open(metadata_path) as f:
+                            raw_m = json.load(f)
+                        metadata = normalize_case_metadata(raw_m)
+                    except Exception:
+                        load_status = "corrupted_metadata"
+                else:
+                    load_status = "missing_metadata"
+                    
+                # 2. Try loading case.json
+                title = "Corrupted Case"
+                case_type_val = "unknown"
+                difficulty_val = "standard"
+                case_path = p / "case.json"
+                if case_path.exists():
+                    try:
+                        with open(case_path) as f:
+                            case_info = json.load(f)
+                        title = case_info.get("title", "Untitled Case")
+                        case_type_val = case_info.get("case_type", "unknown")
+                        difficulty_val = case_info.get("difficulty", "standard")
+                    except Exception:
+                        load_status = "missing_case_data"
+                else:
+                    load_status = "missing_case_data"
+                    
+                # Verify other vital files exist to confirm ok status
+                for vital in ["clues.json", "agents.json", "locations.json", "solution.json"]:
+                    if not (p / vital).exists():
+                        load_status = "missing_case_data"
+                        break
+
+                quality_report = metadata.get("quality_report", {})
+                q_score = quality_report.get("overall_score") if quality_report else None
+                candidate_scores = metadata.get("candidate_scores", [])
+                candidate_count = len(candidate_scores) if candidate_scores else 1
+                
+                entries.append({
+                    "case_id": p.name,
+                    "title": title,
+                    "case_type": case_type_val,
+                    "difficulty": difficulty_val,
+                    "mode": metadata.get("mode", "deterministic"),
+                    "seed": metadata.get("seed", 12345),
+                    "selected_seed": metadata.get("selected_seed"),
+                    "best_of_n_used": metadata.get("best_of_n_used", False),
+                    "candidate_count": candidate_count,
+                    "num_suspects": metadata.get("num_suspects"),
+                    "num_locations": metadata.get("num_locations"),
+                    "theme_preset": metadata.get("theme_preset"),
+                    "custom_theme": metadata.get("custom_theme"),
+                    "tone": metadata.get("tone", "standard"),
+                    "quality_score": q_score,
+                    "quality_report": quality_report,
+                    "fallback_used": metadata.get("fallback_used", False),
+                    "repair_attempts": metadata.get("repair_attempts", 0),
+                    "compaction_applied": metadata.get("compaction_applied", False),
+                    "created_at": metadata.get("created_at"),
+                    "activated_at": metadata.get("activated_at"),
+                    "load_status": load_status
+                })
+
+    # Filtering
+    if tone:
+        entries = [e for e in entries if e["tone"] == tone]
+    if case_type:
+        entries = [e for e in entries if e["case_type"] == case_type]
+    if best_of_n is not None:
+        entries = [e for e in entries if e["best_of_n_used"] == best_of_n]
+    if fallback_used is not None:
+        entries = [e for e in entries if e["fallback_used"] == fallback_used]
+
+    # Sorting
+    if sort_by == "quality_score":
+        entries.sort(key=lambda e: e["quality_score"] or 0.0, reverse=True)
+    elif sort_by == "created_at":
+        entries.sort(key=lambda e: e["created_at"] or "", reverse=True)
+    else:
+        entries.sort(key=lambda e: e["created_at"] or "", reverse=True)
+
+    return entries
+
+
+@app.get("/api/generated_cases/{case_id}")
+def get_generated_case(case_id: str):
+    from .case_store import CaseLoadError
+    try:
+        case_data = fetch_case(case_id)
+        return case_data
+    except CaseLoadError as cle:
+        if cle.load_status == "missing_case_data":
+            raise HTTPException(status_code=404, detail="Case not found")
+        raise HTTPException(status_code=400, detail=f"Case is corrupted: {cle.load_status}")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to load case: {e}")
+
+
+@app.post("/api/generated_cases/{case_id}/activate")
+def activate_generated_case(case_id: str):
+    from .case_store import save_case_to_disk, CaseLoadError
+    from datetime import datetime
+    global ACTIVE_CASE_ID
+    
+    try:
+        case_data = fetch_case(case_id)
+        if case_data.metadata and case_data.metadata.get("load_status") in ["corrupted_metadata", "missing_case_data"]:
+            raise HTTPException(status_code=400, detail="Cannot activate a corrupted case")
+    except CaseLoadError as cle:
+        if cle.load_status == "missing_case_data":
+            raise HTTPException(status_code=404, detail="Case not found")
+        raise HTTPException(status_code=400, detail=f"Cannot activate case: {cle.load_status}")
+    except Exception:
+        raise HTTPException(status_code=404, detail="Case not found")
+        
+    ACTIVE_CASE_ID = case_id
+    set_active_start_time(case_data.case.sim_start_time)
+    reset_session(ACTIVE_CASE_ID)
+    
+    if case_data.metadata:
+        case_data.metadata["activated_at"] = datetime.now().isoformat() + "Z"
+        save_case_to_disk(case_data)
+        
+    return {"status": "success", "active_session_id": ACTIVE_CASE_ID}
+
+
+@app.post("/api/generated_cases/{case_id}/regenerate")
+def regenerate_generated_case(case_id: str):
+    from datetime import datetime
+    from .case_store import CaseLoadError
+    
+    try:
+        case_data = fetch_case(case_id)
+    except CaseLoadError as cle:
+        if cle.load_status == "missing_case_data":
+            raise HTTPException(status_code=404, detail="Case not found")
+        raise HTTPException(status_code=400, detail=f"Cannot regenerate from corrupted case: {cle.load_status}")
+    except Exception:
+        raise HTTPException(status_code=404, detail="Case not found")
+        
+    metadata = case_data.metadata or {}
+    if metadata.get("load_status") == "missing_metadata" or not metadata.get("mode"):
+        raise HTTPException(status_code=400, detail="Recipe metadata is missing or invalid")
+        
+    # Reconstruct the recipe from metadata
+    recipe_req = GenerateCaseRequest(
+        case_type=case_data.case.case_type,
+        difficulty=metadata.get("difficulty", "standard"),
+        seed=int(datetime.now().timestamp()) % 100000, # New seed
+        activate=False,
+        mode=metadata.get("mode", "deterministic"),
+        fallback_allowed=metadata.get("fallback_allowed", True),
+        num_suspects=metadata.get("num_suspects"),
+        num_locations=metadata.get("num_locations"),
+        theme_preset=metadata.get("theme_preset"),
+        custom_theme=metadata.get("custom_theme"),
+        tone=metadata.get("tone"),
+        llm_notes=metadata.get("llm_notes"),
+        candidate_count=metadata.get("candidate_count", 1)
+    )
+    
+    return generate(recipe_req)
+
+
+@app.delete("/api/generated_cases/{case_id}")
+def delete_generated_case(case_id: str):
+    from .case_store import delete_case_from_disk
+    try:
+        delete_case_from_disk(case_id)
+        return {"status": "deleted"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
