@@ -2306,9 +2306,12 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   font-family: "Segoe Script", "Bradley Hand", "Comic Sans MS", cursive;
   font-size: 0.62rem;
   color: #3a3520;
-  line-height: 1.7;
-  white-space: pre-line;
-  margin: 0 0 10px 0;
+  line-height: 23px; /* Align with notebook lines! */
+  height: 23px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
   opacity: 0.65;
   padding-left: 22px;
 }
@@ -2316,6 +2319,12 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 /* --- Old notes on the base page --- */
 .nb-old-notes {
   animation: nbFadeIn 0.5s ease forwards;
+  position: absolute;
+  top: 18px;
+  left: 14px;
+  right: 14px;
+  z-index: 2;
+  margin: 0;
 }
 @keyframes nbFadeIn {
   from { opacity: 0; transform: translateY(4px); }
@@ -2336,7 +2345,7 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
     ),
     linear-gradient(170deg, #f0ebd8, #e8e1cc);
   border-radius: 4px;
-  padding: 18px 14px 18px 36px;
+  padding: 18px 14px 18px 14px; /* Fix padding to match base page */
   transform-origin: top center;
   backface-visibility: hidden;
 }
@@ -2360,13 +2369,20 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   position: relative;
   z-index: 4;
   padding-left: 22px;
+  transition: transform 0.3s ease;
+}
+.nb-writing.has-existing {
+  transform: translateY(92px); /* Shift down 4 lines */
 }
 .nb-written {
   font-family: "Segoe Script", "Bradley Hand", "Comic Sans MS", cursive;
   font-size: 0.65rem;
   color: #1a1a12;
-  line-height: 1.72;
-  white-space: pre-line;
+  line-height: 23px; /* Align with notebook lines! */
+  height: 23px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   margin: 0;
   animation: nbReveal 3.2s ease-in forwards;
 }
@@ -2385,6 +2401,10 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   z-index: 3;
   pointer-events: none;
   opacity: 0.4;
+  transition: transform 0.3s ease;
+}
+.nb-stroke-svg.has-existing {
+  transform: translateY(92px);
 }
 
 /* --- "Noted." stamp --- */
@@ -2422,6 +2442,10 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   transform: rotate(-30deg) translate(50px, -15px);
   animation: nbPencilIn 0.9s 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
+  transition: top 0.3s ease;
+}
+.nb-pencil.has-existing {
+  top: 58%;
 }
 .phase-done .nb-pencil {
   animation: nbPencilOut 0.8s ease forwards;

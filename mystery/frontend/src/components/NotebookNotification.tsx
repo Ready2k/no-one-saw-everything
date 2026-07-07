@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { api } from "../api";
 
 interface NotebookNotificationProps {
   /** The note text that was just saved */
@@ -25,11 +26,12 @@ export default function NotebookNotification({
   >("enter");
   const pencilPathRef = useRef<SVGPathElement | null>(null);
 
-  // Pre-baked "old notes" that flicker past during the flip phase
-  const oldNotes = [
-    "Check alibi — said kitchen\nbut found at stables 07:52?",
-    "Witness saw argument\n\"Voices raised\" — 07:40",
-  ];
+  // Pre-baked/dynamic notes grouped by page
+  const [existingNotes, setExistingNotes] = useState<string[][]>([
+    ["Check alibi — said kitchen\nbut found at stables 07:52?", "Broken glass near study — prints?"],
+    ["Witness saw argument\n\"Voices raised\" — 07:40", "Marcus's safe code: 4-8-1-5?"],
+    ["Clara Wells routine:\nOpens cafe at 08:00 sharp."]
+  ]);
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
@@ -41,6 +43,69 @@ export default function NotebookNotification({
     timers.push(setTimeout(() => onDone(), 14500));
     return () => timers.forEach(clearTimeout);
   }, [onDone]);
+
+
+
+  // Fetch and prepare notes
+  useEffect(() => {
+    api.notes()
+      .then((notes) => {
+        // Filter out event notes, and filter out the current note we are adding
+        const relevantNotes = notes.filter(n => {
+          if (n.note_type === "event") return false;
+
+          const cleanTitle = n.title.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+          const cleanCurrent = noteText.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+          
+          const isCurrent = cleanCurrent.includes(cleanTitle) || cleanTitle.includes(cleanCurrent);
+          return !isCurrent;
+        });
+
+        // Reverse to show the most recent notes first in the flip animation
+        relevantNotes.reverse();
+
+        // Clean up note titles
+        const cleaned = relevantNotes.map(n => {
+          let text = n.title;
+          text = text.replace(/^([A-Za-z]+)\s+[A-Za-z]+:/, "$1:"); // E.g., "Clara Wells:" -> "Clara:"
+          text = text.replace(/✨/g, "").trim();
+          
+          if (text.length > 50) {
+            text = text.slice(0, 47) + "…";
+          }
+          return text;
+        });
+
+        // Group into pages of up to 2 notes
+        const pages: string[][] = [];
+        for (let i = 0; i < cleaned.length; i += 2) {
+          pages.push(cleaned.slice(i, i + 2));
+        }
+
+        // Pre-baked notes to backfill
+        const defaults = [
+          ["Check alibi — said kitchen\nbut found at stables 07:52?", "Broken glass near study — prints?"],
+          ["Witness saw argument\n\"Voices raised\" — 07:40", "Marcus's safe code: 4-8-1-5?"],
+          ["Clara Wells routine:\nOpens cafe at 08:00 sharp."]
+        ];
+
+        // Ensure we have at least 3 pages of previous notes
+        while (pages.length < 3) {
+          const defPage = defaults[pages.length] || [];
+          pages.push(defPage);
+        }
+
+        // Limit the active page (index 2) to at most 1 note to guarantee room for writing
+        if (pages[2] && pages[2].length > 1) {
+          pages[2] = [pages[2][0]!];
+        }
+
+        setExistingNotes(pages);
+      })
+      .catch((err) => {
+        console.error("Error fetching notes for animation:", err);
+      });
+  }, [noteText]);
 
   // Animate the pencil SVG stroke during write phase
   useEffect(() => {
@@ -55,6 +120,8 @@ export default function NotebookNotification({
       path.style.strokeDashoffset = "0";
     }
   }, [phase]);
+
+  const hasExistingOnActivePage = existingNotes[2] && existingNotes[2].length > 0;
 
   return (
     <div
@@ -82,24 +149,30 @@ export default function NotebookNotification({
             {phase === "flip" && (
               <>
                 <div className="nb-flip nb-flip-1">
-                  <p className="nb-scribble">{oldNotes[0]}</p>
+                  {existingNotes[0]?.map((note, idx) => (
+                    <p key={idx} className="nb-scribble">{note}</p>
+                  ))}
                 </div>
                 <div className="nb-flip nb-flip-2">
-                  <p className="nb-scribble">{oldNotes[1]}</p>
+                  {existingNotes[1]?.map((note, idx) => (
+                    <p key={idx} className="nb-scribble">{note}</p>
+                  ))}
                 </div>
               </>
             )}
 
-            {/* Old scribble visible on the page underneath flips */}
-            {(phase === "flip") && (
+            {/* Old scribble visible on the page underneath flips (Page 3) */}
+            {(phase === "flip" || phase === "write" || phase === "done") && hasExistingOnActivePage && (
               <div className="nb-old-notes">
-                <p className="nb-scribble">Broken glass near study — prints?</p>
+                {existingNotes[2]?.map((note, idx) => (
+                  <p key={idx} className="nb-scribble">{note}</p>
+                ))}
               </div>
             )}
 
             {/* The actual note being "written" */}
             {(phase === "write" || phase === "done") && (
-              <div className="nb-writing">
+              <div className={`nb-writing ${hasExistingOnActivePage ? "has-existing" : ""}`}>
                 <p className="nb-written">{noteText.slice(0, 100)}{noteText.length > 100 ? "…" : ""}</p>
               </div>
             )}
@@ -124,7 +197,7 @@ export default function NotebookNotification({
 
         {/* Pencil */}
         {(phase === "write" || phase === "done") && (
-          <div className="nb-pencil">
+          <div className={`nb-pencil ${hasExistingOnActivePage ? "has-existing" : ""}`}>
             <svg viewBox="0 0 20 100" className="nb-pencil-svg" aria-hidden="true">
               <rect x="5" y="0" width="10" height="78" rx="1.5" fill="#d4a843" />
               <rect x="5" y="0" width="10" height="10" rx="1.5" fill="#c0392b" />
@@ -137,7 +210,7 @@ export default function NotebookNotification({
 
         {/* Writing stroke path */}
         {phase === "write" && (
-          <svg className="nb-stroke-svg" viewBox="0 0 160 140" aria-hidden="true">
+          <svg className={`nb-stroke-svg ${hasExistingOnActivePage ? "has-existing" : ""}`} viewBox="0 0 160 140" aria-hidden="true">
             <path
               ref={pencilPathRef}
               d="M10,20 C35,17 55,23 85,20 S120,17 150,21 M10,42 C40,39 70,45 100,42 S130,39 150,43 M10,64 C30,61 60,67 90,64 S120,61 150,65 M10,86 C40,83 75,89 110,86 S140,83 150,87"

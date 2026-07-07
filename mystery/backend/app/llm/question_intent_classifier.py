@@ -30,22 +30,34 @@ def classify_question_intent_llm(
 ) -> QuestionIntent:
     client = get_llm_client()
 
-    # We must only expose discovered/public things to the LLM
-    refs = resolve_references(question, case, session)
-
     # Recent conversation with this suspect, so follow-ups ("tell me more",
     # "let's go back to...") classify to the topic under discussion. Only the
     # display text is used — it has already been shown to the player, so this
     # adds no new leak surface.
     recent_exchange = "None"
+    recent_player_text = ""
     if agent_id:
         transcript = session.transcript_for(agent_id)
         if transcript.messages:
             lines = []
+            player_lines = []
             for msg in transcript.messages[-6:]:
                 speaker = "Detective" if msg.speaker == "player" else "Suspect"
                 lines.append(f"{speaker}: {msg.text}")
+                if msg.speaker == "player":
+                    player_lines.append(msg.text)
             recent_exchange = "\n".join(lines)
+            recent_player_text = " ".join(player_lines)
+
+    # We must only expose discovered/public things to the LLM. A pronoun-only
+    # follow-up ("What did you see from there?") names nothing itself, so the
+    # player's own recent wording is included as extra matching surface — it's
+    # already on the player's screen, so this resolves the topic they raised
+    # without exposing anything new. Deliberately excludes the suspect's own
+    # replies: an incidental noun in their answer (e.g. mentioning where crates
+    # are stored while describing the alley) is not the topic being followed
+    # up on, and including it would resolve "there" to the wrong place.
+    refs = resolve_references(question, case, session, extra_text=recent_player_text)
 
     # Provide the LLM with context about what these IDs mean so it can map accurately
     # e.g., if referenced_agent_id is present, tell LLM their name.

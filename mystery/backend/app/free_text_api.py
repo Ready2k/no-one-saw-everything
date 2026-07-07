@@ -174,6 +174,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
     elif intent.intent == "evidence":
         ask_req.question_type = "evidence"
         ask_req.topic_clue_id = intent.referenced_clue_id
+        ask_req.topic_location_id = intent.referenced_location_id
     elif intent.intent == "object":
         ask_req.question_type = "evidence"
         ask_req.topic_object_id = intent.referenced_object_id
@@ -188,7 +189,14 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         ask_req.question_type = "alibi"
     if ask_req.question_type == "evidence":
         if not ask_req.topic_clue_id and not ask_req.topic_object_id:
-            return fallback_resp
+            # "evidence" without a clue/object to anchor it is often really a
+            # question about a place ("what did you see from there?") that the
+            # classifier mislabelled — if a location did resolve, ask about
+            # that instead of bouncing to the generic fallback message.
+            if ask_req.topic_location_id:
+                ask_req.question_type = "location"
+            else:
+                return fallback_resp
     if ask_req.question_type == "location" and not ask_req.topic_location_id:
         return fallback_resp
         
