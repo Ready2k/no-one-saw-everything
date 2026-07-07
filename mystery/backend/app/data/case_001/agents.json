@@ -9,7 +9,7 @@
       "proud",
       "fair but unforgiving"
     ],
-    "portrait": "☕",
+    "portrait": "\u2615",
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Up at six, reviews the books in his study, at the cafe by a quarter to seven to oversee opening.",
@@ -42,7 +42,8 @@
     "honesty_baseline": 0.8,
     "is_victim": true,
     "sprite_asset": "Marcus_Chen.png",
-    "sprite_id": "sprite_marcus_chen"
+    "sprite_id": "sprite_marcus_chen",
+    "pronoun": "he"
   },
   {
     "agent_id": "agent_clara",
@@ -54,7 +55,7 @@
       "proud",
       "guarded"
     ],
-    "portrait": "🧣",
+    "portrait": "\ud83e\udde3",
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Lives above the cafe. Down by half six to prep, opens the doors at eight sharp.",
@@ -80,7 +81,8 @@
     "honesty_baseline": 0.45,
     "conflict_avoidance": 0.6,
     "sprite_asset": "Abigail_Chen.png",
-    "sprite_id": "sprite_abigail_chen"
+    "sprite_id": "sprite_abigail_chen",
+    "pronoun": "she"
   },
   {
     "agent_id": "agent_ben",
@@ -92,7 +94,7 @@
       "chatty",
       "bad at secrets"
     ],
-    "portrait": "📦",
+    "portrait": "\ud83d\udce6",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Morning delivery round through the square and rear alley; usually cadges a coffee when the cafe opens.",
@@ -118,7 +120,8 @@
     "honesty_baseline": 0.7,
     "gossip_tendency": 0.8,
     "sprite_asset": "Ryan_Park.png",
-    "sprite_id": "sprite_ryan_park"
+    "sprite_id": "sprite_ryan_park",
+    "pronoun": "he"
   },
   {
     "agent_id": "agent_isabella",
@@ -130,7 +133,7 @@
       "wounded",
       "composed"
     ],
-    "portrait": "📚",
+    "portrait": "\ud83d\udcda",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
@@ -155,7 +158,8 @@
     "memory_reliability": 0.85,
     "honesty_baseline": 0.6,
     "sprite_asset": "Isabella_Rodriguez.png",
-    "sprite_id": "sprite_isabella_rodriguez"
+    "sprite_id": "sprite_isabella_rodriguez",
+    "pronoun": "she"
   },
   {
     "agent_id": "agent_owen",
@@ -167,7 +171,7 @@
       "hot-tempered",
       "proud"
     ],
-    "portrait": "🔨",
+    "portrait": "\ud83d\udd28",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
@@ -186,7 +190,8 @@
     "honesty_baseline": 0.55,
     "conflict_avoidance": 0.2,
     "sprite_asset": "Carlos_Gomez.png",
-    "sprite_id": "sprite_carlos_gomez"
+    "sprite_id": "sprite_carlos_gomez",
+    "pronoun": "he"
   },
   {
     "agent_id": "agent_priya",
@@ -198,7 +203,7 @@
       "kind",
       "conflict-averse"
     ],
-    "portrait": "🌸",
+    "portrait": "\ud83c\udf38",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
@@ -231,7 +236,8 @@
     "honesty_baseline": 0.65,
     "conflict_avoidance": 0.85,
     "sprite_asset": "Priya_Kapoor.png",
-    "sprite_id": "sprite_priya_kapoor"
+    "sprite_id": "sprite_priya_kapoor",
+    "pronoun": "she"
   },
   {
     "agent_id": "agent_nadia",
@@ -243,7 +249,7 @@
       "practical",
       "discreet"
     ],
-    "portrait": "🩺",
+    "portrait": "\ud83e\ude7a",
     "home_location_id": "loc_nadia_flat",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
@@ -262,7 +268,8 @@
     "honesty_baseline": 0.85,
     "gossip_tendency": 0.2,
     "sprite_asset": "Ayesha_Khan.png",
-    "sprite_id": "sprite_ayesha_khan"
+    "sprite_id": "sprite_ayesha_khan",
+    "pronoun": "she"
   },
   {
     "agent_id": "agent_elias",
@@ -274,7 +281,7 @@
       "certain of himself",
       "harmless"
     ],
-    "portrait": "🎩",
+    "portrait": "\ud83c\udfa9",
     "home_location_id": "loc_elias_house",
     "work_location_id": "loc_village_square",
     "routine_summary": "First on the square bench every morning with a flask and opinions.",
@@ -300,6 +307,7 @@
     "honesty_baseline": 0.9,
     "gossip_tendency": 0.9,
     "sprite_asset": "Adam_Smith.png",
-    "sprite_id": "sprite_adam_smith"
+    "sprite_id": "sprite_adam_smith",
+    "pronoun": "he"
   }
 ]

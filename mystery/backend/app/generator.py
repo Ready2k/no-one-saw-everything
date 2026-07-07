@@ -3,6 +3,7 @@
 import json
 import random
 import os
+import re
 from pathlib import Path
 
 from .models import CaseData, CaseFile, Agent, Location, GameObject, SeededMemory, Event, Clue, Conclusion, AgentInterviewPack, ChallengeRule, Solution
@@ -10,6 +11,53 @@ from .models import CaseData, CaseFile, Agent, Location, GameObject, SeededMemor
 BASE_DIR = Path(__file__).parent / "data"
 TEMPLATES_DIR = BASE_DIR / "templates"
 BASE_CASE_DIR = BASE_DIR / "case_001"
+
+ROLE_NAMES = ["VICTIM", "KILLER", "RH1", "RH2", "WITNESS1", "WITNESS2", "WITNESS3", "WITNESS4"]
+
+# Grammatical forms for each pronoun set, keyed by the same slot names used
+# by the {ROLE_SLOT} placeholders baked into the templates (see
+# data/templates/*.json, tagged via a one-off script against each agent's
+# "pronoun" field in case_001/agents.json).
+PRONOUN_FORMS = {
+    "he": {"SUBJ": "he", "OBJ": "him", "DET": "his", "POSS": "his", "REFL": "himself"},
+    "she": {"SUBJ": "she", "OBJ": "her", "DET": "her", "POSS": "hers", "REFL": "herself"},
+    "they": {"SUBJ": "they", "OBJ": "them", "DET": "their", "POSS": "theirs", "REFL": "themselves"},
+}
+
+_BARE_PRONOUN_RE = re.compile(r'\b(he|him|his|himself|she|her|hers|herself)\b', re.IGNORECASE)
+
+
+def _classify_pronoun_slot(word: str, text: str, end_pos: int) -> str:
+    w = word.lower()
+    if w in ("he", "she"):
+        return "SUBJ"
+    if w == "him":
+        return "OBJ"
+    if w == "hers":
+        return "POSS"
+    if w in ("himself", "herself"):
+        return "REFL"
+    # "his"/"her": determiner ("his study") vs standalone object/possessive.
+    # Immediately followed by another word => treat as a determiner (the
+    # dominant pattern in this prose).
+    if re.match(r"\s+[A-Za-z']", text[end_pos:end_pos + 3]):
+        return "DET"
+    return "POSS" if w == "his" else "OBJ"
+
+
+def neutralize_leftover_pronouns(text: str) -> str:
+    """Safety net for prose the role-tagging pass couldn't attribute (no
+    role name mentioned in the same sentence to anchor it to, e.g. a first
+    person interview answer that just says "he was here first thing").
+    Swapping a stray gendered pronoun to they/them/their/theirs/themselves
+    is always safe; leaving it as-is risks shipping the wrong gender for
+    whichever agent got shuffled into that role."""
+    def repl(m):
+        word = m.group(1)
+        slot = _classify_pronoun_slot(word, text, m.end())
+        neutral = PRONOUN_FORMS["they"][slot]
+        return neutral.capitalize() if word[0].isupper() else neutral
+    return _BARE_PRONOUN_RE.sub(repl, text)
 
 def generate_case(
     case_type: str, 
@@ -65,7 +113,18 @@ def generate_case(
         "{WITNESS4_ID}": agent_pool[7]["agent_id"],
         "{WITNESS4_NAME}": agent_pool[7]["full_name"],
     }
-    
+
+    # Pronoun placeholders (e.g. {VICTIM_SUBJ}, {VICTIM_DET_CAP}) so the
+    # role-tagged prose in the templates resolves to whichever pronoun
+    # matches the agent actually shuffled into each role, instead of the
+    # template's original hardcoded gender.
+    for i, role in enumerate(ROLE_NAMES):
+        pronoun = agent_pool[i].get("pronoun", "they")
+        forms = PRONOUN_FORMS.get(pronoun, PRONOUN_FORMS["they"])
+        for slot, word in forms.items():
+            roles[f"{{{role}_{slot}}}"] = word
+            roles[f"{{{role}_{slot}_CAP}}"] = word.capitalize()
+
     # Pick a random weapon
     weapons = [o for o in base_objects if o.get("is_weapon")]
     if not weapons:
@@ -114,10 +173,19 @@ def generate_case(
 
     template_str = re.sub(r'\b\d{2}:\d{2}\b', shift_time, template_str)
 
+    # Safety net: any pronoun the template's role-tagging pass couldn't
+    # attribute to a role (no name mentioned in the same sentence) is still
+    # bare text at this point — tagged ones are safely wrapped in
+    # {ROLE_SLOT} placeholders, which don't match the bare-word regex, so
+    # this only touches genuinely unresolved pronouns. Must run *before*
+    # role substitution below, since afterwards a correctly resolved "her"
+    # (from {VICTIM_DET}) is indistinguishable from a stray untagged "her".
+    template_str = neutralize_leftover_pronouns(template_str)
+
     # Replace roles
     for placeholder, value in roles.items():
         template_str = template_str.replace(placeholder, value)
-        
+
     # Generate unique case ID
     import time
     case_id = f"gen_{case_type}_{seed}_{int(time.time())}"
@@ -463,20 +531,31 @@ def compact_case_data(
             return candidates[hash(agent_id or "") % len(candidates)]
         return default_loc_id
 
+    def remap_location(old_id, agent_id=None):
+        """Resolve a pruned location to its replacement, memoized by the
+        original id. get_best_location() picks a target by hashing the
+        *asking* agent, so without this cache the same pruned physical
+        location (e.g. "the cafe storage room") could get remapped to a
+        different surviving location for each agent/event/clue that
+        referenced it — scattering one scene across several location labels
+        in the timeline. Memoizing means the first reference decides, and
+        every later reference to the same original location reuses it."""
+        if not old_id:
+            return default_loc_id
+        if old_id in remapped_locations_metadata:
+            return remapped_locations_metadata[old_id]
+        new_id = get_best_location(agent_id, old_id)
+        remapped_locations_metadata[old_id] = new_id
+        return new_id
+
     # --- 3. FILTER AGENTS & REMAP THEIR HOME/WORK ---
     case_data.agents = [a for a in case_data.agents if a.agent_id in kept_agent_ids]
     for agent in case_data.agents:
         agent.relationships = [r for r in agent.relationships if r.target_agent_id in kept_agent_ids]
         if agent.home_location_id not in kept_location_ids:
-            old = agent.home_location_id
-            agent.home_location_id = get_best_location(agent.agent_id, old)
-            if old:
-                remapped_locations_metadata[old] = agent.home_location_id
+            agent.home_location_id = remap_location(agent.home_location_id, agent.agent_id)
         if agent.work_location_id not in kept_location_ids:
-            old = agent.work_location_id
-            agent.work_location_id = get_best_location(agent.agent_id, old)
-            if old:
-                remapped_locations_metadata[old] = agent.work_location_id
+            agent.work_location_id = remap_location(agent.work_location_id, agent.agent_id)
 
     # --- 4. FILTER LOCATIONS ---
     case_data.locations = [l for l in case_data.locations if l.location_id in kept_location_ids]
@@ -492,14 +571,12 @@ def compact_case_data(
         
         # Remap location if pruned
         if event.location_id not in kept_location_ids:
-            old = event.location_id
-            if event.agent_ids:
-                event.location_id = get_best_location(event.agent_ids[0], old)
-            else:
-                event.location_id = default_loc_id
-            if old:
-                remapped_locations_metadata[old] = event.location_id
-                
+            event.location_id = remap_location(
+                event.location_id,
+                event.agent_ids[0] if event.agent_ids else None
+            )
+
+
         if event.event_type == "murder" or len(event.agent_ids) > 0 or not had_agents:
             filtered_events.append(event)
             
@@ -518,18 +595,14 @@ def compact_case_data(
         clue.linked_event_ids = [eid for eid in clue.linked_event_ids if eid in kept_event_ids]
         
         if d.location_id and d.location_id not in kept_location_ids:
-            old = d.location_id
-            if clue.linked_agent_ids:
-                d.location_id = get_best_location(clue.linked_agent_ids[0], old)
-            else:
-                d.location_id = default_loc_id
-            if old:
-                remapped_locations_metadata[old] = d.location_id
-                
+            d.location_id = remap_location(
+                d.location_id,
+                clue.linked_agent_ids[0] if clue.linked_agent_ids else None
+            )
+
         if d.method == "interview" and d.agent_id not in kept_agent_ids:
             d.method = "inspect"
-            old = d.location_id
-            d.location_id = get_best_location(d.agent_id, old)
+            d.location_id = remap_location(d.location_id, d.agent_id)
             d.agent_id = None
             d.question_type = None
             
