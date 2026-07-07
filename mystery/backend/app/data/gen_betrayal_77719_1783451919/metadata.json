@@ -1,0 +1,58 @@
+{
+  "metadata_version": 1,
+  "mode": "llm_assisted",
+  "seed": 77719,
+  "theme_preset": "betrayal",
+  "tone": "standard",
+  "fallback_used": false,
+  "repair_attempts": 0,
+  "compaction_applied": true,
+  "pruned_agents": [
+    "agent_owen",
+    "agent_marcus"
+  ],
+  "remapped_locations": {
+    "loc_clinic": "loc_owen_house",
+    "loc_rear_alley": "loc_owen_house",
+    "loc_owen_house": "loc_owen_house"
+  },
+  "red_herrings": [
+    "agent_priya",
+    "agent_ben",
+    "agent_clara"
+  ],
+  "created_at": "2026-07-07T20:18:39.822748Z",
+  "quality_report": {
+    "suspect_distinctiveness": 2.0,
+    "motive_clarity": 4.0,
+    "red_herring_strength": 3.0,
+    "clue_distribution": 5.0,
+    "location_usage_balance": 5.0,
+    "timeline_density": 4.5,
+    "solution_fairness": 5.0,
+    "theme_adherence": 5.0,
+    "tone_consistency": 5.0,
+    "overall_score": 4.28,
+    "warnings": [
+      "Some red herrings lack motive conclusions",
+      "Red herring Priya Shah lacks a motive conclusion",
+      "Red herring Ben Carter lacks a motive conclusion",
+      "Red herring Clara Wells lacks a motive conclusion"
+    ],
+    "suggested_improvements": [
+      "Give all red herrings a plausible motive to increase complexity",
+      "Add a motive conclusion for red herring Priya Shah",
+      "Add a motive conclusion for red herring Ben Carter",
+      "Add a motive conclusion for red herring Clara Wells"
+    ]
+  },
+  "candidate_scores": [
+    {
+      "seed": 77719,
+      "overall_score": 4.28,
+      "is_valid": true
+    }
+  ],
+  "selected_seed": 77719,
+  "best_of_n_used": false
+}

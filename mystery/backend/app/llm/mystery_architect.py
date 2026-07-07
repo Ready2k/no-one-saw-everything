@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 
 from ..models import CaseData
-from .schemas import CasePlan, PlotOutlinePlan, CluesPlan, MemoriesPlan, RoleMemoriesPlan, WitnessFragmentsPlan, FlavourPlan
+from .schemas import CasePlan, PlotOutlinePlan, CluesPlan, MemoriesPlan, RoleMemoriesPlan, WitnessFragmentsPlan, FlavourPlan, CharacterIdentitiesPlan
 from .client import get_llm_client
 from .case_assembler import assemble_case
 from ..validator import validate_case
@@ -65,6 +65,49 @@ def call_with_retry(client, *, messages, schema, temperature, phase: str):
             if attempt < MAX_LLM_CALL_RETRIES:
                 logger.warning(f"LLM {phase} generation attempt {attempt + 1} failed, retrying: {e}")
     raise last_error
+
+IDENTITY_ROLE_NAMES = ["VICTIM", "KILLER", "RH1", "RH2", "WITNESS1", "WITNESS2", "WITNESS3", "WITNESS4"]
+
+
+def generate_character_identities(
+    case_type: str,
+    seed: int,
+    custom_theme: str | None = None,
+    tone: str | None = None,
+) -> dict[str, "CharacterIdentity"] | None:
+    """Best-effort cast generation, called before the deterministic template
+    is filled in so a fresh name/occupation per role threads through every
+    mention in the case (interviews, memories, events) rather than only the
+    handful of fields the later CasePlan phases rewrite. Returns None on any
+    failure — the caller falls back to the fixed case_001 cast, since a
+    generic cast is a cosmetic degradation, not worth failing generation over."""
+    from .config import get_llm_config
+    config = get_llm_config()
+    if not config.configured:
+        return None
+
+    client = get_llm_client()
+    theme = custom_theme.strip() if custom_theme and custom_theme.strip() else case_type
+    roles_str = ", ".join(IDENTITY_ROLE_NAMES)
+
+    messages = [
+        {"role": "system", "content": "You are a creative murder mystery architect writing a case for a detective game."},
+        {"role": "user", "content": f"""Invent a fresh cast of 8 distinct characters for a murder mystery of type '{case_type}' (theme: '{theme}').
+
+Roles: {roles_str}. VICTIM is the murder victim, KILLER is the murderer, RH1/RH2 are innocent red herring suspects, WITNESS1-4 are witnesses/bystanders.
+
+For each role, invent a full_name (first and last name, no two characters sharing a last name) and an occupation appropriate to a small-town murder mystery. Do not reuse names from any other well-known story.
+
+Format the output strictly as a JSON object matching the required schema, with an "identities" field mapping each role name (e.g. "VICTIM") to {{"full_name": ..., "occupation": ...}}."""}
+    ]
+
+    try:
+        plan = call_with_retry(client, messages=messages, schema=CharacterIdentitiesPlan, temperature=0.9, phase="identities")
+        return plan.identities
+    except Exception as e:
+        logger.warning(f"LLM character identity generation failed, using default cast: {e}")
+        return None
+
 
 def generate_llm_case(
     base_case_data: CaseData,

@@ -1,0 +1,94 @@
+{
+  "killer_id": "agent_elias",
+  "motive": {
+    "canonical": "The victim was blackmailing them with evidence that proved they had not only taken the antique but also that they were responsible for sabotaging the prank\u2014making them appear complicit and desperate. The killer acted preemptively to silence this threat before it could shatter their carefully constructed life.",
+    "concept_groups": [
+      [
+        "till",
+        "cash",
+        "money",
+        "takings",
+        "cafe funds"
+      ],
+      [
+        "steal",
+        "stole",
+        "stolen",
+        "theft",
+        "thief",
+        "skim",
+        "embezzl",
+        "took",
+        "taking"
+      ],
+      [
+        "blackmail",
+        "expose",
+        "confess",
+        "committee",
+        "threat",
+        "reveal",
+        "ledger"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with the Brass till weight, in the storage room.",
+    "concept_groups": [
+      [
+        "blunt",
+        "struck",
+        "strike",
+        "hit",
+        "bludgeon",
+        "blow",
+        "beat"
+      ],
+      [
+        "Brass till weight",
+        "weight",
+        "brass"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Elias Grant was at the cafe's rear door during the murder window and lied about being at the marcus bell's house.",
+    "concept_groups": [
+      [
+        "alley",
+        "storage",
+        "rear",
+        "back door",
+        "back way",
+        "cafe back"
+      ],
+      [
+        "fountain",
+        "alibi",
+        "lied",
+        "lie",
+        "false"
+      ],
+      [
+        "window",
+        "murder window",
+        "before open",
+        "07:5",
+        "07:4",
+        "quarter to eight"
+      ]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_ledger_page",
+    "clue_ben_sighting",
+    "clue_till_weight_found",
+    "clue_rear_door",
+    "clue_nadia_overheard"
+  ],
+  "explanation": "The true motive was never about the antique itself, but the exposure of your systemic fraud and illegal activities. The victim wasn't just going to ruin your career; they were going to dismantle your entire life by revealing your role in the black market ring. When you finally confess, it becomes clear that the supposed 'prank' provided the perfect cover\u2014the noise, the dust, the scattered remnants\u2014allowing you to use the heavy paperweight and silence them before their evidence could shatter your carefully constructed existence.",
+  "epilogues": {}
+}

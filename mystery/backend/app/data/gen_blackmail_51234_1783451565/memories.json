@@ -1,0 +1,156 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_clara",
+      "agent_owen",
+      "agent_priya"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "The victim, {VICTIM_ID}, had been compiling a highly detailed ledger showing years of questionable financial transactions involving several key figures in the industry, including {KILLER_ID}. This was not just professional rivalry; it was evidence that could lead to criminal charges.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_marcus"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "opportunity_setup",
+    "truth_status": "false",
+    "summary": "I remember that I left the {murder_location} immediately after speaking with {RH2_ID} about the departmental resource reallocation. I walked directly across the main hall and went straight home, arriving by 8:00 PM.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_priya"
+    ],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "I was actually waiting in the back service corridor near the reception area, claiming I needed to retrieve some old files before leaving. {WITNESS1_ID} saw me lingering there for a while.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_clara",
+      "agent_isabella",
+      "agent_priya"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I saw {RH2_ID} arguing loudly with the victim near the main reception desk earlier in the day. It seemed highly heated, focused on a departmental budget dispute that was unrelated to their current successful projects.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_clara"
+    ],
+    "memory_type": "rumour",
+    "case_function": "red_herring_motive",
+    "truth_status": "unknown",
+    "summary": "A few people noticed that {RH2_ID} and the victim had a highly volatile, if barely veiled, tension regarding workplace recognition. It was said they were competing for the same departmental promotion slot.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_5",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "observed",
+    "case_function": "red_herring_motive",
+    "truth_status": "mistaken",
+    "summary": "Witness 1 recalls seeing {RH2_ID} near the main entrance of the building around the time of the murder, but doesn't recall if they went inside or simply passed through an adjacent area.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_6",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_clara",
+      "agent_isabella",
+      "agent_marcus"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I noticed {KILLER_ID} seemed extremely agitated and kept checking their phone in the minutes before I saw them leave. They acted like they were expecting bad news, which was unusual for them.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_7",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_clara",
+      "agent_marcus"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I remember overhearing a heated discussion between {VICTIM_ID} and {RH2_ID} earlier that day, mostly about something trivial involving an upcoming shared event. They seemed genuinely upset.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

@@ -125,6 +125,40 @@ def generate_case(
             roles[f"{{{role}_{slot}}}"] = word
             roles[f"{{{role}_{slot}_CAP}}"] = word.capitalize()
 
+    # Character identities: by default every generated case draws its cast
+    # from the same fixed case_001 roster (just reshuffled into different
+    # roles), which reads as "case_001 with names swapped". In llm_assisted
+    # mode, ask the LLM for a fresh name/occupation per role *before* the
+    # template substitution below, so the new identity threads through every
+    # mention in the case (interviews, memories, events) rather than just
+    # the handful of fields later phases rewrite. Best-effort: any failure
+    # (or deterministic mode) silently keeps the case_001 defaults already
+    # in `roles`.
+    default_occupations = {
+        "VICTIM": "Owner of Hobbs Cafe",
+        "KILLER": "Cafe manager",
+        "RH1": "Builder",
+        "RH2": "Bookshop owner",
+        "WITNESS1": "Delivery driver",
+        "WITNESS2": "Clinic nurse",
+        "WITNESS3": "Retired schoolteacher",
+        "WITNESS4": "Bookshop assistant",
+    }
+    if mode == "llm_assisted":
+        from .llm.mystery_architect import generate_character_identities
+        identities = generate_character_identities(case_type, seed, custom_theme=custom_theme, tone=tone)
+        if identities:
+            for raw_role, identity in identities.items():
+                role = raw_role.strip("{}").removesuffix("_ID").removesuffix("_NAME")
+                if role not in ROLE_NAMES:
+                    continue
+                if not identity.full_name or not identity.occupation:
+                    continue
+                roles[f"{{{role}_NAME}}"] = identity.full_name
+                roles[f"{{{role}_OCCUPATION}}"] = identity.occupation
+    for role, occupation in default_occupations.items():
+        roles.setdefault(f"{{{role}_OCCUPATION}}", occupation)
+
     # Pick a random weapon
     weapons = [o for o in base_objects if o.get("is_weapon")]
     if not weapons:

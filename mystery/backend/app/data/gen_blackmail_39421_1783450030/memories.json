@@ -1,0 +1,135 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_isabella",
+      "agent_nadia"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "The killer remembers overhearing the victim discussing their desperate need for cash and mentioning that many of their assets, including the antique's true provenance records, were tied up in illegal transactions. This reinforced the killer\u2019s fear of exposure.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_isabella",
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "The killer recalls seeing the victim alone, stressed, shortly after the prank climax, arguing quietly near {murder_location} about financial deadlines. This provided the perfect window to confront them privately.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_isabella",
+      "agent_nadia"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "The killer claims they were spending the evening discussing estate logistics with {RH2_ID} at a local pub, leaving no witnesses to their exact movements after 8 PM. They established this lie to place themselves far away from {murder_location} during the critical time window.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_elias"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I saw {VICTIM_NAME} speaking intensely with one of the antique dealers near the village square shortly before the incident. It looked like a private transaction, not a casual meeting.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_elias"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I was helping {KILLER_ID} organize the props in the storage shed after we finished our gathering. We were talking about nothing important\u2014just sorting out things.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_5",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "observed",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I saw {VICTIM_NAME} arguing heatedly with a valet near the groundskeeper's shed late last night. They were pointing at something on the floor, but I couldn't make out what it was.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_6",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_elias"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I overheard {KILLER_ID} complaining about how much money they needed for a looming debt, specifically mentioning the antique's value and saying it would settle everything.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

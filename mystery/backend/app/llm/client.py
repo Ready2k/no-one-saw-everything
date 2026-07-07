@@ -114,6 +114,17 @@ VALID_FAKE_PLAN = {
     "reveal_narration": "And that is how the fake murder happened."
 }
 
+FAKE_IDENTITIES = {
+    "VICTIM": {"full_name": "Vera Sinclair", "occupation": "Antiques dealer"},
+    "KILLER": {"full_name": "Damon Cole", "occupation": "Shop assistant"},
+    "RH1": {"full_name": "Priya Nandan", "occupation": "Courier"},
+    "RH2": {"full_name": "Owen Blythe", "occupation": "Accountant"},
+    "WITNESS1": {"full_name": "Isla Ferro", "occupation": "Barista"},
+    "WITNESS2": {"full_name": "Nora Kade", "occupation": "Nurse"},
+    "WITNESS3": {"full_name": "Elton Marsh", "occupation": "Retired teacher"},
+    "WITNESS4": {"full_name": "Sana Reyes", "occupation": "Bookshop assistant"},
+}
+
 
 class FakeLLMClient:
     def __init__(self, override_response: dict[str, Any] | None = None, fail_count: int = 0):
@@ -214,6 +225,8 @@ class FakeLLMClient:
                 return schema.model_validate({"memories": []})
             if schema.__name__ == "WitnessFragmentsPlan":
                 return schema.model_validate({"witness_fragments": VALID_FAKE_PLAN["witness_fragments"]})
+            if schema.__name__ == "CharacterIdentitiesPlan":
+                return schema.model_validate({"identities": FAKE_IDENTITIES})
             if schema.__name__ == "FlavourPlan":
                 return schema.model_validate({
                     "interview_flavour": VALID_FAKE_PLAN["interview_flavour"],

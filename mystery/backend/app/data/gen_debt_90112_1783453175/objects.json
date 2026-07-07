@@ -1,0 +1,94 @@
+[
+  {
+    "object_id": "obj_till_weight",
+    "name": "Brass Brass till weight",
+    "description": "A heavy brass weight normally kept beside the till to pin down receipts.",
+    "normal_location_id": "loc_village_square",
+    "final_location_id": "loc_priya_flat",
+    "access_rules": [
+      "cafe_staff"
+    ],
+    "touched_by_agent_ids": [
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "last_seen_time": "10:32",
+    "hidden_state": "cleaned_and_damp_in_mop_bucket",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_ledger_page",
+    "name": "Torn ledger page",
+    "description": "A page torn from the cafe ledger, columns of till takings with discrepancies circled in red ink.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_priya_flat",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_ben"
+    ],
+    "last_seen_time": "10:48",
+    "hidden_state": null,
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_blue_coat",
+    "name": "Blue wool coat",
+    "description": "Beatrice Lowell's blue coat, well known around the village.",
+    "normal_location_id": "loc_priya_flat",
+    "final_location_id": "loc_priya_flat",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "last_seen_time": "10:56",
+    "hidden_state": "right_sleeve_damp_and_smudged",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_loan_ledger",
+    "name": "Silas Thorne's loan book",
+    "description": "A private notebook in Silas Thorne's study recording money they is owed.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_marcus_house",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_ben"
+    ],
+    "last_seen_time": "09:16",
+    "hidden_state": null,
+    "clue_relevance": "red_herring_motive"
+  },
+  {
+    "object_id": "obj_partnership_letter",
+    "name": "Partnership letter",
+    "description": "A signed letter in Silas Thorne's coat pocket naming Eleanor Vance \u2014 not Claudia Jensen \u2014 as partner in the bookshop expansion.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_priya_flat",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_ben"
+    ],
+    "last_seen_time": "10:48",
+    "hidden_state": null,
+    "clue_relevance": "red_herring_motive"
+  },
+  {
+    "object_id": "obj_isabella_note",
+    "name": "Claudia Jensen's handwritten note",
+    "description": "A folded note in Silas Thorne's pocket: 'We settle this at 8. Don't make me ask twice. \u2014 I.R.'",
+    "normal_location_id": "loc_bookshop",
+    "final_location_id": "loc_priya_flat",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_priya",
+      "agent_ben"
+    ],
+    "last_seen_time": "10:48",
+    "hidden_state": null,
+    "clue_relevance": "red_herring"
+  }
+]

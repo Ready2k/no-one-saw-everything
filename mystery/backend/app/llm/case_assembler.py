@@ -2,6 +2,7 @@
 
 import json
 import random
+import re
 from typing import Dict, List, Any
 from copy import deepcopy
 
@@ -96,13 +97,20 @@ def assemble_case(
             discoverer_name = agent.full_name
             break
             
-    # Substitute placeholders in scene_description
+    # Substitute placeholders in scene_description. Small local models don't
+    # always use the exact '{name}' syntax requested in the prompt (observed:
+    # '<discovered_by_name>' with angle brackets instead) so both forms are
+    # accepted here.
     desc = plan.scene_description
-    desc = desc.replace("{VICTIM_NAME}", roles.get("{VICTIM_NAME}", "the victim"))
-    desc = desc.replace("{WEAPON_NAME}", roles.get("{WEAPON_NAME}", "the weapon"))
-    desc = desc.replace("{murder_location}", murder_loc_name)
-    desc = desc.replace("{discovered_by_name}", discoverer_name)
-    
+    for victim_ph in ("{VICTIM_NAME}", "<VICTIM_NAME>", "<victim_name>"):
+        desc = desc.replace(victim_ph, roles.get("{VICTIM_NAME}", "the victim"))
+    for weapon_ph in ("{WEAPON_NAME}", "<WEAPON_NAME>", "<weapon_name>"):
+        desc = desc.replace(weapon_ph, roles.get("{WEAPON_NAME}", "the weapon"))
+    for loc_ph in ("{murder_location}", "<murder_location>"):
+        desc = desc.replace(loc_ph, murder_loc_name)
+    for disc_ph in ("{discovered_by_name}", "<discovered_by_name>"):
+        desc = desc.replace(disc_ph, discoverer_name)
+
     # Also replace any other roles that might be mentioned (e.g. {KILLER_NAME})
     for placeholder, val in roles.items():
         desc = desc.replace(placeholder, val)
@@ -114,14 +122,18 @@ def assemble_case(
     # room/weapon flavour instead (observed: "...the air of the 'Vanderbilt
     # Gallery'..." while the real location was "Cafe Storage Room" — the
     # placeholder never appears, so the substitution above is a no-op and the
-    # invented name survives). Detect that by checking the real facts actually
-    # ended up in the text; if not, fall back to the deterministic, always
-    # grounded description already computed on the scaffold instead of shipping
-    # prose that contradicts the rest of the case.
+    # invented name survives), or leaves an unrecognised placeholder token
+    # (any form the two loops above didn't already handle) verbatim in the
+    # text. Detect either case by checking the real facts actually ended up
+    # in the text and that no bracketed token remains; if not, fall back to
+    # the deterministic, always grounded description already computed on the
+    # scaffold instead of shipping prose that contradicts the rest of the
+    # case or leaks a raw placeholder to the player.
     weapon_name = roles.get("{WEAPON_NAME}", "")
     location_ok = murder_loc_name.lower() in desc.lower()
     weapon_ok = (not weapon_name) or (weapon_name.lower() in desc.lower())
-    if not (location_ok and weapon_ok) and base_case_data.case.overview_text:
+    no_leftover_placeholders = not re.search(r"[{<][A-Za-z_]+[}>]", desc)
+    if not (location_ok and weapon_ok and no_leftover_placeholders) and base_case_data.case.overview_text:
         desc = base_case_data.case.overview_text
 
     case_data.case.scene_description = desc

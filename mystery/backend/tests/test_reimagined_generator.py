@@ -364,6 +364,8 @@ def test_family_friendly_prompt_excludes_dark_noir_language():
                 return schema.model_validate({"memories": []})
             elif schema.__name__ == "WitnessFragmentsPlan":
                 return schema.model_validate({"witness_fragments": VALID_FAKE_PLAN["witness_fragments"]})
+            elif schema.__name__ == "CharacterIdentitiesPlan":
+                return schema.model_validate({"identities": {}})
             elif schema.__name__ == "FlavourPlan":
                 return schema.model_validate({
                     "interview_flavour": VALID_FAKE_PLAN["interview_flavour"],
@@ -428,6 +430,8 @@ def test_dark_noir_prompt_does_not_include_explicit_gore_or_sexual_content():
                 return schema.model_validate({"memories": []})
             elif schema.__name__ == "WitnessFragmentsPlan":
                 return schema.model_validate({"witness_fragments": VALID_FAKE_PLAN["witness_fragments"]})
+            elif schema.__name__ == "CharacterIdentitiesPlan":
+                return schema.model_validate({"identities": {}})
             elif schema.__name__ == "FlavourPlan":
                 return schema.model_validate({
                     "interview_flavour": VALID_FAKE_PLAN["interview_flavour"],

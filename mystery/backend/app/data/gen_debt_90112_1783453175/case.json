@@ -1,0 +1,24 @@
+{
+  "case_id": "gen_debt_90112_1783453175",
+  "case_type": "debt",
+  "title": "The Storage Room Murder",
+  "status": "locked",
+  "victim_id": "agent_ben",
+  "killer_id": "agent_marcus",
+  "motive_summary": "Beatrice Lowell owed Silas Thorne a massive debt and could not pay before the deadline.",
+  "method": "blunt_force",
+  "weapon_id": "obj_till_weight",
+  "murder_location_id": "loc_priya_flat",
+  "time_of_death": "10:52",
+  "discovery_time": "11:08",
+  "discovered_by": "agent_priya",
+  "discovery_location_id": "loc_priya_flat",
+  "sim_start_time": "08:56",
+  "murder_window": [
+    "10:41",
+    "10:56"
+  ],
+  "overview_text": "11:08 \u2014 Silas Thorne found dead in Priya's Flat by Claudia Jensen. Several villagers passed nearby around that time; no one claims to have seen what happened. The morning can be rewound from 08:56.",
+  "scene_description": "11:08 \u2014 Silas Thorne found dead in Priya's Flat by Claudia Jensen. Several villagers passed nearby around that time; no one claims to have seen what happened. The morning can be rewound from 08:56.",
+  "cause_of_death_observed": null
+}

@@ -1,0 +1,94 @@
+{
+  "killer_id": "agent_nadia",
+  "motive": {
+    "canonical": "The killer acted out of desperation mixed with a sense of entitlement. They felt entitled to the fortune due to years of assumed devotion/service (e.g., being the designated beneficiary) and killed the victim before they could revoke that expectation.",
+    "concept_groups": [
+      [
+        "till",
+        "cash",
+        "money",
+        "takings",
+        "cafe funds"
+      ],
+      [
+        "steal",
+        "stole",
+        "stolen",
+        "theft",
+        "thief",
+        "skim",
+        "embezzl",
+        "took",
+        "taking"
+      ],
+      [
+        "blackmail",
+        "expose",
+        "confess",
+        "committee",
+        "threat",
+        "reveal",
+        "ledger"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with the Brass till weight, in the storage room.",
+    "concept_groups": [
+      [
+        "blunt",
+        "struck",
+        "strike",
+        "hit",
+        "bludgeon",
+        "blow",
+        "beat"
+      ],
+      [
+        "Brass till weight",
+        "weight",
+        "brass"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Nadia Cole was at the cafe's rear door during the murder window and lied about being at the fountain.",
+    "concept_groups": [
+      [
+        "alley",
+        "storage",
+        "rear",
+        "back door",
+        "back way",
+        "cafe back"
+      ],
+      [
+        "fountain",
+        "alibi",
+        "lied",
+        "lie",
+        "false"
+      ],
+      [
+        "window",
+        "murder window",
+        "before open",
+        "07:5",
+        "07:4",
+        "quarter to eight"
+      ]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_ledger_page",
+    "clue_ben_sighting",
+    "clue_till_weight_found",
+    "clue_rear_door",
+    "clue_nadia_overheard"
+  ],
+  "explanation": "The true motive was not simply greed, but desperation rooted in perceived betrayal. The killer, believing they were owed the entire fortune due to years of service and assumed devotion, confronted the victim when they discovered evidence that the will was set to change drastically. When the victim refused to back down or compromise, leading to a heated argument about the ledger, the killer panicked. They struck the fatal blow with the weapon during the ensuing struggle, immediately attempting to stage the scene as an accident while maintaining their facade of distressed disagreement.",
+  "epilogues": {}
+}

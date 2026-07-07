@@ -1,0 +1,342 @@
+[
+  {
+    "memory_id": "mem_clara_theft",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "Beatrice Lowell has been skimming cash from the cafe till for over a year to cover his late mother's care debts.",
+    "emotional_weight": 9,
+    "confidence": 1.0,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ledger_page"
+    ],
+    "linked_agent_ids": [
+      "agent_ben"
+    ],
+    "linked_location_ids": [
+      "loc_village_square"
+    ]
+  },
+  {
+    "memory_id": "mem_clara_caught",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "Last week Silas Thorne showed Beatrice Lowell the torn ledger page proving the theft and said: 'You have until tomorrow.' The deadline was this morning.",
+    "emotional_weight": 10,
+    "confidence": 1.0,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ledger_page",
+      "clue_overheard_threat"
+    ],
+    "linked_agent_ids": [
+      "agent_ben"
+    ],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_clara_summons",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "At 10:36 Silas Thorne told Beatrice Lowell to meet him in the storage room before opening \u2014 'last chance to say it in your own words.'",
+    "emotional_weight": 9,
+    "confidence": 1.0,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_nadia_overheard"
+    ],
+    "linked_agent_ids": [
+      "agent_ben"
+    ],
+    "linked_location_ids": [
+      "loc_priya_flat"
+    ]
+  },
+  {
+    "memory_id": "mem_clara_cover_story",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "Beatrice Lowell's prepared story: he stepped out to the fountain for air from about 10:41 to just before 10:56, then opened the cafe.",
+    "emotional_weight": 8,
+    "confidence": 1.0,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ben_sighting"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": [
+      "loc_fountain"
+    ]
+  },
+  {
+    "memory_id": "mem_clara_weapon_fear",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "object_trail",
+    "truth_status": "true",
+    "summary": "Beatrice Lowell washed the Brass till weight and pushed it into the mop bucket at 10:58. He is terrified someone will look in the kitchen.",
+    "emotional_weight": 10,
+    "confidence": 1.0,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_till_weight_found",
+      "clue_till_weight_missing"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": [
+      "loc_priya_flat"
+    ]
+  },
+  {
+    "memory_id": "mem_marcus_discovery",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben",
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "victim_trigger",
+    "truth_status": "true",
+    "summary": "Silas Thorne found the till discrepancies while doing the quarterly books and tore out the page as proof.",
+    "emotional_weight": 8,
+    "confidence": 1.0,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ledger_page"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_marcus_plan",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "victim_trigger",
+    "truth_status": "true",
+    "summary": "Silas Thorne planned to confront Beatrice Lowell before opening and, if he refused to confess, take the ledger page to the village committee at nine.",
+    "emotional_weight": 8,
+    "confidence": 1.0,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ledger_page",
+      "clue_overheard_threat"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_marcus_partnership",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "shared_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Silas Thorne signed the bookshop expansion over to someone, breaking his promise to Claudia Jensen. He planned to tell Claudia Jensen at their 8 o'clock meeting.",
+    "emotional_weight": 7,
+    "confidence": 1.0,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_partnership_letter",
+      "clue_isabella_note"
+    ],
+    "linked_agent_ids": [
+      "agent_priya",
+      "agent_clara"
+    ],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_marcus_owen_debt",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben",
+      "agent_nadia"
+    ],
+    "memory_type": "shared_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Frederick Albright owes Silas Thorne \u00a38,000, due today. Silas Thorne told her last night he would raise it at the village committee if unpaid.",
+    "emotional_weight": 7,
+    "confidence": 1.0,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_loan_book",
+      "clue_owen_argument"
+    ],
+    "linked_agent_ids": [
+      "agent_nadia"
+    ],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_isabella_betrayal",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Claudia Jensen heard a rumour the partnership went to someone. She wrote Silas Thorne a furious note demanding they settle it at 8 this morning.",
+    "emotional_weight": 8,
+    "confidence": 1.0,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_isabella_note",
+      "clue_partnership_letter"
+    ],
+    "linked_agent_ids": [
+      "agent_ben",
+      "agent_clara"
+    ],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_isabella_discovery",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Claudia Jensen arrived at 11:01 for the meeting, waited, then found Silas Thorne dead in the storage room at 11:08 when Beatrice Lowell said he must be out the back.",
+    "emotional_weight": 10,
+    "confidence": 1.0,
+    "shareability": "will_share",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": [
+      "loc_priya_flat"
+    ]
+  },
+  {
+    "memory_id": "mem_isabella_anchor",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Claudia Jensen was at the clinic with someone from 10:36 to 10:56 having her blood pressure checked \u2014 she nearly cancelled the Silas Thorne meeting over the stress.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_isabella_clinic"
+    ],
+    "linked_agent_ids": [
+      "agent_isabella"
+    ],
+    "linked_location_ids": [
+      "loc_clinic"
+    ]
+  },
+  {
+    "memory_id": "mem_owen_debt",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_ben"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Frederick Albright owes Silas Thorne \u00a38,000 she cannot repay. Being named at the committee would finish her business.",
+    "emotional_weight": 8,
+    "confidence": 1.0,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_loan_book",
+      "clue_owen_argument"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_owen_argument",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_ben"
+    ],
+    "memory_type": "observed",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Frederick Albright confronted Silas Thorne outside the cafe at 10:01 and it turned into a shouting match about the money.",
+    "emotional_weight": 7,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_owen_argument"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_owen_anchor",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Frederick Albright was back in her yard from 10:11 signing for a timber delivery; the driver was with her until 11:01.",
+    "emotional_weight": 4,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_owen_delivery"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

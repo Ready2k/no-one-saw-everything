@@ -1,0 +1,172 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_clara"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "The killer knew that the victim had been secretly meeting with a financial advisor who planned to transfer most of the inheritance funds out of the family trust, leaving nothing for anyone directly related.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_elias"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "opportunity_setup",
+    "truth_status": "false",
+    "summary": "The killer claims they were in the gardens clearing out some overgrown bushes between 7:00 PM and 8:30 PM, but this time frame is impossible because a security log shows they left the main house at 6:45 PM.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_ben",
+      "agent_clara"
+    ],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "mistaken",
+    "summary": "The killer insists that they spent the entire evening assisting {RH2_ID} with sorting through old family photo albums, trying to establish an alibi far from the scene.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_nadia",
+      "agent_elias"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "RH1 was deeply indebted to the victim due to an investment decades ago. While this creates motive, RH1 actually paid off the debt months before the incident and kept records of payments with a distant lawyer friend (not present). This memory only reveals the history of financial interaction, not current desperation.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_ben",
+      "agent_clara"
+    ],
+    "memory_type": "observed",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "RH1 saw the killer near the service entrance around 3:00 PM, struggling to carry a large, heavy trunk that wasn't theirs. This observation is factual but points away from RH1 and helps establish the killer's movements at a critical time.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_5",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_priya"
+    ],
+    "memory_type": "observed",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Observed {VICTIM_ID} struggling to find a specific financial ledger in the study earlier that morning, suggesting they were actively hiding or searching for evidence related to the inheritance.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_6",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_isabella"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {VICTIM_NAME} arguing intensely with someone near the study entrance around 3 PM. They looked distressed and kept checking their pocket for something they couldn't find.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_7",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I remember seeing {KILLER_ID} leaving the area shortly after 3 PM, carrying a piece of fabric that looked suspiciously dark. I thought nothing of it at the time.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_8",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_clara"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {KILLER_ID} near the study entrance shortly after the argument between {VICTIM_ID} and {RH2_ID}. They seemed to be waiting for someone, or perhaps watching the room.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

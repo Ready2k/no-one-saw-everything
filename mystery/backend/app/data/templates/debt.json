@@ -26,7 +26,7 @@
       "agent_id": "{VICTIM_ID}",
       "full_name": "{VICTIM_NAME}",
       "age": 54,
-      "occupation": "Owner of Hobbs Cafe",
+      "occupation": "{VICTIM_OCCUPATION}",
       "traits": [
         "exacting",
         "proud",
@@ -69,7 +69,7 @@
       "agent_id": "{KILLER_ID}",
       "full_name": "{KILLER_NAME}",
       "age": 36,
-      "occupation": "Cafe manager",
+      "occupation": "{KILLER_OCCUPATION}",
       "traits": [
         "organised",
         "proud",
@@ -105,7 +105,7 @@
       "agent_id": "{WITNESS1_ID}",
       "full_name": "{WITNESS1_NAME}",
       "age": 29,
-      "occupation": "Delivery driver",
+      "occupation": "{WITNESS1_OCCUPATION}",
       "traits": [
         "easygoing",
         "chatty",
@@ -141,7 +141,7 @@
       "agent_id": "{RH2_ID}",
       "full_name": "{RH2_NAME}",
       "age": 41,
-      "occupation": "Bookshop owner",
+      "occupation": "{RH2_OCCUPATION}",
       "traits": [
         "ambitious",
         "wounded",
@@ -176,7 +176,7 @@
       "agent_id": "{RH1_ID}",
       "full_name": "{RH1_NAME}",
       "age": 47,
-      "occupation": "Builder",
+      "occupation": "{RH1_OCCUPATION}",
       "traits": [
         "blunt",
         "hot-tempered",
@@ -205,7 +205,7 @@
       "agent_id": "{WITNESS4_ID}",
       "full_name": "{WITNESS4_NAME}",
       "age": 33,
-      "occupation": "Bookshop assistant",
+      "occupation": "{WITNESS4_OCCUPATION}",
       "traits": [
         "careful",
         "kind",
@@ -246,9 +246,9 @@
     },
     {
       "agent_id": "{WITNESS2_ID}",
-      "full_name": "{WITNESS2_NAME} Cole",
+      "full_name": "{WITNESS2_NAME}",
       "age": 38,
-      "occupation": "Clinic nurse",
+      "occupation": "{WITNESS2_OCCUPATION}",
       "traits": [
         "observant",
         "practical",
@@ -275,9 +275,9 @@
     },
     {
       "agent_id": "{WITNESS3_ID}",
-      "full_name": "{WITNESS3_NAME} Grant",
+      "full_name": "{WITNESS3_NAME}",
       "age": 68,
-      "occupation": "Retired schoolteacher",
+      "occupation": "{WITNESS3_OCCUPATION}",
       "traits": [
         "nosy",
         "certain of {WITNESS3_REFL}",

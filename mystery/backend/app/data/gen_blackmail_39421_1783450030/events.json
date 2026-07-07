@@ -1,0 +1,542 @@
+[
+  {
+    "event_id": "ev_0600_marcus_wakes",
+    "time": "03:51",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "routine",
+    "truth_description": "Marcus Bell rises early and takes his coffee into the study.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 2,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0615_marcus_ledger",
+    "time": "04:06",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Marcus Bell works through the cafe ledger in his study and slips a torn page into his coat pocket.",
+    "player_description": "A light is on in Marcus Bell's study.",
+    "visibility": "private",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_ledger_page",
+      "obj_loan_ledger"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_ledger_page"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0630_clara_opens",
+    "time": "04:21",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias Grant comes down from his flat and starts prepping the cafe: chairs down, machine on, float counted.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 3,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0645_marcus_arrives",
+    "time": "04:36",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_elias"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Marcus Bell arrives at the cafe. He and Elias Grant exchange a few stiff words; the room goes quiet when he checks the till.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_priya"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 6,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0705_owen_argument",
+    "time": "04:56",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_marcus"
+    ],
+    "event_type": "argument",
+    "truth_description": "Isabella Reed confronts Marcus Bell outside the cafe. Voices rise fast \u2014 money, a deadline, the committee. Isabella Reed jabs a finger at Marcus Bell's chest before storming off.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_priya",
+      "agent_clara",
+      "agent_elias"
+    ],
+    "audible_to_agent_ids": [
+      "agent_priya",
+      "agent_clara"
+    ],
+    "object_ids": [],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_owen_argument"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0715_owen_yard",
+    "time": "05:06",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_isabella"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Isabella Reed returns to her yard, still fuming, and starts hauling timber about.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 4,
+    "linked_clue_ids": [
+      "clue_owen_delivery"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0720_isabella_note",
+    "time": "05:11",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia",
+      "agent_marcus"
+    ],
+    "event_type": "object_drop",
+    "truth_description": "Nadia Cole strides into the cafe, presses a folded note into Marcus Bell's hand without a word, and leaves.",
+    "player_description": "Nadia Cole enters the cafe briefly and hands Marcus Bell something small, then leaves without ordering.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_elias",
+      "agent_priya"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_isabella_note"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_isabella_note"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0736_till_weight",
+    "time": "05:27",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Elias Grant tidies the counter, moving the Brass till weight onto the receipt pile.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_marcus"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_till_weight_missing"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0740_marcus_summons",
+    "time": "05:31",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_elias"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Marcus Bell tells Elias Grant, quietly: 'Storage room, before we open. Last chance to say it in your own words.'",
+    "player_description": "Marcus Bell speaks to Elias Grant in a low voice near the kitchen door. A phrase drifts through the open window: '...storage room, before we open...'",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [
+      "agent_clara"
+    ],
+    "object_ids": [],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_nadia_overheard"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0740_isabella_clinic",
+    "time": "05:31",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Nadia Cole arrives at the clinic, tense and pale, and asks someone Wells to check her blood pressure before 'a difficult meeting'.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_isabella_clinic"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0744_clara_exits",
+    "time": "05:35",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "departure",
+    "truth_description": "Elias Grant takes his blue coat and slips out of the cafe's front door, turning towards the square.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_priya"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0747_blue_coat",
+    "time": "05:38",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "movement",
+    "truth_description": "Elias Grant, in his blue coat, cuts from the square into the marcus bell's house and stops by the cafe's rear door.",
+    "player_description": "A figure in a blue coat enters the marcus bell's house from the square and moves towards the cafe's rear door.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_owen"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_ben_sighting"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0752_marcus_storage",
+    "time": "05:43",
+    "location_id": "loc_nadia_flat",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Marcus Bell walks through the kitchen into the storage room carrying his coat, the ledger page in the pocket.",
+    "player_description": "Marcus Bell is no longer visible in the cafe front.",
+    "visibility": "private",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_ledger_page",
+      "obj_partnership_letter",
+      "obj_isabella_note"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0753_clara_rear_door",
+    "time": "05:44",
+    "location_id": "loc_nadia_flat",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "movement",
+    "truth_description": "Elias Grant enters the storage room through the rear door, the Brass till weight in his coat pocket.",
+    "player_description": null,
+    "visibility": "hidden",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0756_murder",
+    "time": "05:47",
+    "location_id": "loc_nadia_flat",
+    "agent_ids": [
+      "agent_elias",
+      "agent_marcus"
+    ],
+    "event_type": "murder",
+    "truth_description": "The confrontation turns. Marcus Bell says the committee will hear everything at nine. Elias Grant strikes him with the Brass till weight.",
+    "player_description": null,
+    "visibility": "hidden",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 10,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0756_sound",
+    "time": "05:47",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [],
+    "event_type": "sound",
+    "truth_description": "The blow is audible in the alley as a dull thud.",
+    "player_description": "A dull thud is heard from inside the cafe's back rooms.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [
+      "agent_owen",
+      "agent_ben"
+    ],
+    "object_ids": [],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_storage_sound"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0758_rear_door",
+    "time": "05:49",
+    "location_id": "loc_marcus_house",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "movement",
+    "truth_description": "Elias Grant slips out of the rear door, pulls it shut, and walks quickly up the alley towards the square, one hand pressed into his coat pocket.",
+    "player_description": "The cafe's rear door opens briefly. A figure leaves carrying something small and walks quickly towards the square.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_rear_door"
+    ],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0800_cafe_opens",
+    "time": "05:51",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias Grant re-enters through the front, hangs his coat in the kitchen, and unlocks the cafe doors two minutes late, visibly flushed.",
+    "player_description": "Elias Grant opens the cafe doors, slightly late, looking flustered.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_priya"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0802_weight_hidden",
+    "time": "05:53",
+    "location_id": "loc_nadia_flat",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "Elias Grant rinses the Brass till weight at the kitchen sink and pushes it down into the mop bucket.",
+    "player_description": null,
+    "visibility": "hidden",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0803_elias_coffee",
+    "time": "05:54",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "someone Shah comes in for her usual coffee. Elias Grant fumbles her change; she remarks that he looks like he's seen a ghost.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 5,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0805_isabella_arrives",
+    "time": "05:56",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Nadia Cole arrives for her 8 o'clock meeting with Marcus Bell and takes a table, drumming her fingers.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_elias",
+      "agent_priya"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 6,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0810_isabella_asks",
+    "time": "06:01",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia",
+      "agent_elias"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Nadia Cole demands to know where Marcus Bell is. Elias Grant, not meeting her eyes, says he's probably out the back.",
+    "player_description": null,
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_priya"
+    ],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 7,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  },
+  {
+    "event_id": "ev_0812_discovery",
+    "time": "06:03",
+    "location_id": "loc_nadia_flat",
+    "agent_ids": [
+      "agent_nadia",
+      "agent_marcus"
+    ],
+    "event_type": "body_discovery",
+    "truth_description": "Nadia Cole pushes through the kitchen into the storage room and finds Marcus Bell dead on the floor. Her scream empties the square.",
+    "player_description": "Nadia Cole finds Marcus Bell dead in the storage room. Her scream is heard across the square.",
+    "visibility": "public",
+    "visible_to_agent_ids": [],
+    "audible_to_agent_ids": [],
+    "object_ids": [],
+    "importance": 10,
+    "linked_clue_ids": [],
+    "visual_event_type": null,
+    "from_location_id": null,
+    "to_location_id": null
+  }
+]

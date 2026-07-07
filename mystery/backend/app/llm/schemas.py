@@ -76,3 +76,14 @@ class WitnessFragmentsPlan(BaseModel):
 class FlavourPlan(BaseModel):
     interview_flavour: Dict[str, Dict[str, Any]] = {}
     reveal_narration: str = ""
+
+class CharacterIdentity(BaseModel):
+    full_name: str
+    occupation: str
+
+class CharacterIdentitiesPlan(BaseModel):
+    """Per-role cast identities, generated once up front (before the
+    deterministic template is filled in) so every mention of a character
+    across the whole case — interviews, memories, events, clues — uses the
+    same LLM-authored name/occupation instead of the fixed case_001 cast."""
+    identities: Dict[str, CharacterIdentity] = {}

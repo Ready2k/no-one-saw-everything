@@ -1,0 +1,63 @@
+{
+  "metadata_version": 1,
+  "mode": "llm_assisted",
+  "seed": 90112,
+  "theme_preset": "debt",
+  "tone": "standard",
+  "fallback_used": true,
+  "repair_attempts": 0,
+  "compaction_applied": true,
+  "pruned_agents": [
+    "agent_isabella",
+    "agent_owen",
+    "agent_clara",
+    "agent_elias"
+  ],
+  "remapped_locations": {
+    "loc_clara_flat": "loc_marcus_house",
+    "loc_bookshop": "loc_marcus_house",
+    "loc_owen_house": "loc_marcus_house",
+    "loc_clinic": "loc_marcus_house",
+    "loc_rear_alley": "loc_marcus_house",
+    "loc_marcus_house": "loc_marcus_house"
+  },
+  "red_herrings": [
+    "agent_nadia",
+    "agent_priya"
+  ],
+  "created_at": "2026-07-07T20:39:35.984236Z",
+  "fallback_reason": "provider_error",
+  "num_suspects": 3,
+  "num_locations": 3,
+  "quality_report": {
+    "suspect_distinctiveness": 3.5,
+    "motive_clarity": 4.0,
+    "red_herring_strength": 3.0,
+    "clue_distribution": 5.0,
+    "location_usage_balance": 5.0,
+    "timeline_density": 4.5,
+    "solution_fairness": 5.0,
+    "theme_adherence": 5.0,
+    "tone_consistency": 5.0,
+    "overall_score": 4.44,
+    "warnings": [
+      "Some red herrings lack motive conclusions",
+      "Red herring Frederick Albright lacks a motive conclusion",
+      "Red herring Claudia Jensen lacks a motive conclusion"
+    ],
+    "suggested_improvements": [
+      "Give all red herrings a plausible motive to increase complexity",
+      "Add a motive conclusion for red herring Frederick Albright",
+      "Add a motive conclusion for red herring Claudia Jensen"
+    ]
+  },
+  "candidate_scores": [
+    {
+      "seed": 90112,
+      "overall_score": 4.44,
+      "is_valid": true
+    }
+  ],
+  "selected_seed": 90112,
+  "best_of_n_used": false
+}

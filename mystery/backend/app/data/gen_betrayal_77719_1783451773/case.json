@@ -1,0 +1,24 @@
+{
+  "case_id": "gen_betrayal_77719_1783451773",
+  "case_type": "betrayal",
+  "title": "The Estate's Last Will",
+  "status": "locked",
+  "victim_id": "agent_isabella",
+  "killer_id": "agent_nadia",
+  "motive_summary": "Elimination of competition for a substantial financial inheritance, disguised as an accident.",
+  "method": "blunt_force",
+  "weapon_id": "obj_till_weight",
+  "murder_location_id": "loc_bookshop",
+  "time_of_death": "08:08",
+  "discovery_time": "08:24",
+  "discovered_by": "agent_ben",
+  "discovery_location_id": "loc_bookshop",
+  "sim_start_time": "06:12",
+  "murder_window": [
+    "07:57",
+    "08:12"
+  ],
+  "overview_text": "The body of Isabella Reed was found collapsed on the floor of the Reed & Bell Bookshop. The scene appeared to be a struggle, and the immediate cause of death was apparent by the presence of Brass till weight nearby. The body was discovered by Ben Carter, who immediately called for help.",
+  "scene_description": "The body of Isabella Reed was found collapsed on the floor of the Reed & Bell Bookshop. The scene appeared to be a struggle, and the immediate cause of death was apparent by the presence of Brass till weight nearby. The body was discovered by Ben Carter, who immediately called for help.",
+  "cause_of_death_observed": null
+}
