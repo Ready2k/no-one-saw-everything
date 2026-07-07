@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api";
 import { PlaytestSummary, Config } from "../types";
+import { useToast } from "../components/Toast";
 
 export const PlaytestPanel: React.FC = () => {
   const [config, setConfig] = useState<Config | null>(null);
   const [summary, setSummary] = useState<PlaytestSummary | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     api.getConfig().then(setConfig).catch(console.error);
@@ -39,7 +41,7 @@ export const PlaytestPanel: React.FC = () => {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error("Export failed", e);
-      alert("Failed to download export. See console.");
+      showToast("Failed to download export. See console.", "error");
     }
   };
 

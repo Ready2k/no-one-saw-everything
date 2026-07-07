@@ -16,6 +16,7 @@ import AudioControls from "./components/AudioControls";
 import CinematicsToggle from "./components/CinematicsToggle";
 import RankBadge from "./components/RankBadge";
 import { audioManager } from "./audio";
+import { useToast } from "./components/Toast";
 import { clearCaseStarted, markCaseStarted } from "./progress";
 import { clearRewindBriefingSeen } from "./views/RewindIntro";
 
@@ -86,6 +87,7 @@ export default function App() {
   const [showLlmSettingsModal, setShowLlmSettingsModal] = useState(false);
   const [mapJump, setMapJump] = useState<MapJump | null>(null);
   const [suspectFocus, setSuspectFocus] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     Promise.all([api.caseOverview(), api.agents(), api.locations(), api.cases()])
@@ -267,11 +269,13 @@ export default function App() {
           onClose={() => setShowGenerateModal(false)}
           onSuccess={(fallbackUsed) => {
             setShowGenerateModal(false);
-            // alert blocks until dismissed, so it is visible before the reload.
             if (fallbackUsed) {
-              alert("Generated a validated case using safe deterministic fallback.");
+              showToast("Generated a validated case using safe deterministic fallback.", "info");
+              // Give toast a moment to render before reload
+              setTimeout(() => location.reload(), 1200);
+            } else {
+              location.reload();
             }
-            location.reload();
           }}
         />
       )}

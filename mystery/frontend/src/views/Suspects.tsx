@@ -17,6 +17,7 @@ import { MagnifyingSearch } from "../components/MagnifyingSearch";
 import { ClueCard } from "./shared";
 import Portrait, { DEFENSIVE_THRESHOLD, CRACKING_THRESHOLD } from "../components/Portrait";
 import ContradictionBeat from "../components/ContradictionBeat";
+import NotebookNotification from "../components/NotebookNotification";
 import { audioManager } from "../audio";
 import { cinematicsEnabled } from "../settings";
 
@@ -159,6 +160,7 @@ function InterviewPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
+  const [notebookNote, setNotebookNote] = useState<string | null>(null);
 
   const [timeRef, setTimeRef] = useState("07:50");
   const [clueTopic, setClueTopic] = useState("");
@@ -313,7 +315,9 @@ function InterviewPanel({
       linked_claim_ids: lastResult.new_claims.map((c) => c.claim_id),
       pinned_to_agent_id: agentId,
     });
-    alert("Noted.");
+    setNotebookNote(
+      `${agent.full_name}: ${lastResult.answer_text.slice(0, 100)}…`
+    );
   };
 
   const runChallenge = async (s: ChallengeSuggestion) => {
@@ -349,6 +353,12 @@ function InterviewPanel({
 
   return (
     <>
+      {notebookNote && (
+        <NotebookNotification
+          noteText={notebookNote}
+          onDone={() => setNotebookNote(null)}
+        />
+      )}
       {beat && (
         <ContradictionBeat
           claimText={beat.claimText}

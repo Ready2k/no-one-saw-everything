@@ -3,6 +3,7 @@ import { api } from "../api";
 import { useWorld } from "../App";
 import { shareText } from "../progress";
 import type { AccusationResult, Feedback, Config } from "../types";
+import { useToast } from "../components/Toast";
 
 export default function AccusationBreakdown({
   result,
@@ -18,6 +19,7 @@ export default function AccusationBreakdown({
   const [feedbackSaving, setFeedbackSaving] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareFallback, setShareFallback] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const copyShareCard = async () => {
     const text = shareText(result, caseOverview.title);
@@ -43,7 +45,7 @@ export default function AccusationBreakdown({
       setFeedbackSubmitted(true);
     } catch (e) {
       console.error(e);
-      alert("Failed to submit feedback");
+      showToast("Failed to submit feedback", "error");
     } finally {
       setFeedbackSaving(false);
     }
