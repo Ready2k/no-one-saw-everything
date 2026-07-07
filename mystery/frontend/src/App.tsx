@@ -10,16 +10,15 @@ import Suspects from "./views/Suspects";
 import BoardView from "./views/Board";
 import Accuse from "./views/Accuse";
 import GenerateCaseModal from "./views/GenerateCaseModal";
+import NewCaseModal from "./views/NewCaseModal";
 import CaseLibraryModal from "./views/CaseLibraryModal";
 import LlmSettingsModal from "./views/LlmSettingsModal";
 import { PlaytestPanel } from "./views/PlaytestPanel";
-import AudioControls from "./components/AudioControls";
-import CinematicsToggle from "./components/CinematicsToggle";
-import RankBadge from "./components/RankBadge";
-import { audioManager } from "./audio";
+import LandingPage from "./views/LandingPage";
+import TopBar from "./components/TopBar";
 import { useToast } from "./components/Toast";
-import { clearCaseStarted, markCaseStarted } from "./progress";
-import { clearRewindBriefingSeen } from "./views/RewindIntro";
+import { audioManager } from "./audio";
+import { markCaseStarted } from "./progress";
 
 export interface World {
   caseOverview: CaseOverview;
@@ -79,12 +78,15 @@ export interface CaseMeta {
 }
 
 export default function App() {
+
   const [world, setWorld] = useState<World | null>(null);
   const [cases, setCases] = useState<CaseMeta[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"hub" | "investigation">("hub");
   const [tab, setTab] = useState<TabId>("overview");
   const [showIntro, setShowIntro] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showNewCaseModal, setShowNewCaseModal] = useState(false);
   const [showLibraryModal, setShowLibraryModal] = useState(false);
   const [duplicateRecipe, setDuplicateRecipe] = useState<any>(null);
   const [showLlmSettingsModal, setShowLlmSettingsModal] = useState(false);
@@ -124,7 +126,74 @@ export default function App() {
         <p className="muted">{error}</p>
       </div>
     );
-  if (!world) return <div className="app-loading">Opening the case file…</div>;
+    
+  // While fetching initial world/cases state, show loading
+  if (!world && !error) return <div className="app-loading">Loading Detective Bureau…</div>;
+
+  const renderModals = () => (
+    <>
+      {showGenerateModal && (
+        <GenerateCaseModal
+          initialRecipe={duplicateRecipe}
+          onClose={() => setShowGenerateModal(false)}
+          onSuccess={(fallbackUsed) => {
+            setShowGenerateModal(false);
+            if (fallbackUsed) {
+              showToast("Generated a validated case using safe deterministic fallback.", "info");
+              setTimeout(() => location.reload(), 1200);
+            } else {
+              location.reload();
+            }
+          }}
+        />
+      )}
+      {showNewCaseModal && (
+        <NewCaseModal
+          cases={cases}
+          activeCaseId={world?.caseOverview.case_id}
+          onClose={() => setShowNewCaseModal(false)}
+        />
+      )}
+      {showLibraryModal && (
+        <CaseLibraryModal
+          onClose={() => setShowLibraryModal(false)}
+          activeCaseId={world?.caseOverview.case_id ?? ""}
+          onDuplicate={(recipe) => {
+            setDuplicateRecipe(recipe);
+            setShowLibraryModal(false);
+            setShowGenerateModal(true);
+          }}
+        />
+      )}
+      {showLlmSettingsModal && (
+        <LlmSettingsModal onClose={() => setShowLlmSettingsModal(false)} />
+      )}
+      <PlaytestPanel />
+    </>
+  );
+
+  if (mode === "hub") {
+    return (
+      <>
+        <LandingPage
+          world={world}
+          cases={cases}
+          onContinue={() => setMode("investigation")}
+          onOpenNewCase={() => setShowNewCaseModal(true)}
+          onOpenGenerateCase={() => {
+            setDuplicateRecipe(null);
+            setShowGenerateModal(true);
+          }}
+          onOpenLibrary={() => setShowLibraryModal(true)}
+          onOpenSettings={() => setShowLlmSettingsModal(true)}
+        />
+        {renderModals()}
+      </>
+    );
+  }
+
+  // The rest of the app requires world to be loaded
+  if (!world) return null;
 
   if (showIntro) {
     return (
@@ -151,113 +220,11 @@ export default function App() {
         }}
       >
       <div className="app">
-        <header className="topbar">
-          <div className="masthead">
-            <div className="brand">
-              <span className="brand-eyebrow">Detective Bureau · Homicide Division</span>
-              <span className="brand-title">No One Saw Everything</span>
-            </div>
-            <label className="case-docket" title="Open a different case file — current progress will be lost">
-              <span className="docket-label">Case Nº</span>
-              <select
-                className="docket-select"
-                value={world.caseOverview.case_id}
-                onChange={async (e) => {
-                  const newCaseId = e.target.value;
-                  if (newCaseId === world.caseOverview.case_id) return;
-
-                  const targetCase = cases.find((c) => c.case_id === newCaseId);
-                  const caseTitle = targetCase ? targetCase.title : newCaseId;
-
-                  if (confirm(`Switch to ${caseTitle}? Your current progress will be lost.`)) {
-                    await api.activate(newCaseId);
-                    localStorage.removeItem(introSeenKey(newCaseId));
-                    clearRewindBriefingSeen(newCaseId);
-                    clearCaseStarted(newCaseId);
-                    location.reload();
-                  }
-                }}
-              >
-                {cases.map((c, index) => {
-                  const prefix = c.case_id.startsWith("case_")
-                    ? String(index + 1).padStart(3, "0")
-                    : "Gen";
-                  return (
-                    <option key={c.case_id} value={c.case_id}>
-                      {prefix} · {c.title}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-            <div className="desk-tools">
-              <RankBadge />
-              <span className="tool-divider" />
-              <CinematicsToggle />
-              <AudioControls />
-              <span className="tool-divider" />
-              <button
-                className="tool-btn"
-                title="Wipe your notes and discoveries and work this case again from the start"
-                onClick={async () => {
-                  if (confirm("Start the investigation over? All notes and discoveries will be lost.")) {
-                    await api.reset();
-                    localStorage.removeItem(introSeenKey(world.caseOverview.case_id));
-                    clearRewindBriefingSeen(world.caseOverview.case_id);
-                    clearCaseStarted(world.caseOverview.case_id);
-                    location.reload();
-                  }
-                }}
-              >
-                Reopen Case
-              </button>
-              <button
-                className="tool-btn seal"
-                title="Commission a brand-new case from the case writer"
-                onClick={() => {
-                  setDuplicateRecipe(null);
-                  setShowGenerateModal(true);
-                }}
-              >
-                ✒ New Case
-              </button>
-              <button
-                className="tool-btn"
-                title="View and play previously generated cases"
-                onClick={() => setShowLibraryModal(true)}
-              >
-                📚 Case Library
-              </button>
-              <button
-                className="tool-btn icon-only"
-                title="LLM settings — configure the model behind case generation and dialogue"
-                aria-label="LLM settings"
-                onClick={() => setShowLlmSettingsModal(true)}
-              >
-                ⚙
-              </button>
-            </div>
-          </div>
-          <nav className="tabs">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                className={tab === t.id ? "tab active" : "tab"}
-                onClick={() => setTab(t.id)}
-              >
-                {t.label}
-              </button>
-            ))}
-            <span className="tabs-case-note">{world.caseOverview.title}</span>
-            <button
-              className={tab === "accuse" ? "tab accuse active" : "tab accuse"}
-              title="Name the killer — this closes the case"
-              onClick={() => setTab("accuse")}
-            >
-              ⚖ Accuse
-            </button>
-          </nav>
-        </header>
+        <TopBar 
+          currentTab={tab} 
+          onTabChange={setTab} 
+          onReturnToHub={() => setMode("hub")} 
+        />
         <main className="content">
           {tab === "overview" && <Overview onBegin={() => setTab("rewind")} />}
           {tab === "rewind" && <Rewind />}
@@ -277,37 +244,7 @@ export default function App() {
           {tab === "accuse" && <Accuse />}
         </main>
       </div>
-      {showGenerateModal && (
-        <GenerateCaseModal
-          initialRecipe={duplicateRecipe}
-          onClose={() => setShowGenerateModal(false)}
-          onSuccess={(fallbackUsed) => {
-            setShowGenerateModal(false);
-            if (fallbackUsed) {
-              showToast("Generated a validated case using safe deterministic fallback.", "info");
-              // Give toast a moment to render before reload
-              setTimeout(() => location.reload(), 1200);
-            } else {
-              location.reload();
-            }
-          }}
-        />
-      )}
-      {showLibraryModal && (
-        <CaseLibraryModal
-          onClose={() => setShowLibraryModal(false)}
-          activeCaseId={world.caseOverview.case_id}
-          onDuplicate={(recipe) => {
-            setDuplicateRecipe(recipe);
-            setShowLibraryModal(false);
-            setShowGenerateModal(true);
-          }}
-        />
-      )}
-      {showLlmSettingsModal && (
-        <LlmSettingsModal onClose={() => setShowLlmSettingsModal(false)} />
-      )}
-      <PlaytestPanel />
+      {renderModals()}
       </UiNavContext.Provider>
     </WorldContext.Provider>
   );

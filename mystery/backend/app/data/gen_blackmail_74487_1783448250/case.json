@@ -1,0 +1,24 @@
+{
+  "case_id": "gen_blackmail_74487_1783448250",
+  "case_type": "blackmail",
+  "title": "The Ante House Blues",
+  "status": "locked",
+  "victim_id": "agent_elias",
+  "killer_id": "agent_marcus",
+  "motive_summary": "An overwhelming debt stemming from a high-stakes, secret gambling game that threatened to ruin one's entire life.",
+  "method": "blunt_force",
+  "weapon_id": "obj_till_weight",
+  "murder_location_id": "loc_priya_flat",
+  "time_of_death": "09:58",
+  "discovery_time": "10:14",
+  "discovered_by": "agent_owen",
+  "discovery_location_id": "loc_priya_flat",
+  "sim_start_time": "08:02",
+  "murder_window": [
+    "09:47",
+    "10:02"
+  ],
+  "overview_text": "The body of Elias Grant was discovered in the back office of 'Priya's Flat' by Owen Price. The victim lay sprawled on a faded Persian rug, having succumbed to trauma inflicted by a heavy-bladed object identified as the 'Brass till weight'. There were no signs of forced entry, suggesting the victim knew the killer or was lured there under false pretenses. A scattered mess of chips and empty whiskey glasses suggested a recent, volatile encounter.",
+  "scene_description": "The body of Elias Grant was discovered in the back office of 'Priya's Flat' by Owen Price. The victim lay sprawled on a faded Persian rug, having succumbed to trauma inflicted by a heavy-bladed object identified as the 'Brass till weight'. There were no signs of forced entry, suggesting the victim knew the killer or was lured there under false pretenses. A scattered mess of chips and empty whiskey glasses suggested a recent, volatile encounter.",
+  "cause_of_death_observed": null
+}

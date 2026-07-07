@@ -1,0 +1,92 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "killer_motive",
+    "truth_status": "false",
+    "summary": "KILLER_ID claims they were checking the ventilation system in the main hall until 2 AM. They insist no one saw them leave that area.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "KILLER_ID admits that the debt owed to a mutual associate was astronomical, far exceeding what they initially disclosed. The pressure was extreme.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "observed",
+    "case_function": "false_alibi_reason",
+    "truth_status": "true",
+    "summary": "KILLER_ID recalls seeing VICTIM_ID alone in the dimly lit back corner of the {murder_location} late last night, looking stressed and agitated.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "rumour",
+    "case_function": "red_herring_motive",
+    "truth_status": "rumour",
+    "summary": "RH1_ID was overheard by a staff member arguing heatedly with VICTIM_ID about an old romantic entanglement that had soured years ago.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "RH2_ID remembers helping VICTIM_ID move some heavy boxes in the storage area hours before the incident, confirming their presence but establishing a clear timeline segment far from the scene.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

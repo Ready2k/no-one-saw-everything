@@ -63,6 +63,16 @@ class MemoriesPlan(BaseModel):
     seeded_memories: List[SeededMemoryPlan] = []
     witness_fragments: List[WitnessFragmentPlan] = []
 
+class RoleMemoriesPlan(BaseModel):
+    """One suspect role's seeded memories — memories are generated per-role
+    (see mystery_architect.py) rather than for all suspects in a single call,
+    since a combined call's required output size scales with num_suspects
+    and can exceed small local models' context/output budget."""
+    memories: List[SeededMemoryPlan] = []
+
+class WitnessFragmentsPlan(BaseModel):
+    witness_fragments: List[WitnessFragmentPlan] = []
+
 class FlavourPlan(BaseModel):
     interview_flavour: Dict[str, Dict[str, Any]] = {}
     reveal_narration: str = ""

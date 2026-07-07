@@ -1,0 +1,55 @@
+{
+  "metadata_version": 1,
+  "mode": "llm_assisted",
+  "seed": 95956,
+  "theme_preset": "betrayal",
+  "tone": "dark_noir",
+  "fallback_used": false,
+  "repair_attempts": 0,
+  "compaction_applied": true,
+  "pruned_agents": [],
+  "remapped_locations": {
+    "loc_rear_alley": "loc_bookshop",
+    "loc_cafe_kitchen": "loc_clara_flat",
+    "loc_fountain": "loc_village_square"
+  },
+  "red_herrings": [
+    "agent_owen",
+    "agent_isabella",
+    "agent_clara"
+  ],
+  "created_at": "2026-07-07T19:31:57.173679Z",
+  "quality_report": {
+    "suspect_distinctiveness": 1.0,
+    "motive_clarity": 4.0,
+    "red_herring_strength": 3.0,
+    "clue_distribution": 5.0,
+    "location_usage_balance": 5.0,
+    "timeline_density": 4.5,
+    "solution_fairness": 5.0,
+    "theme_adherence": 5.0,
+    "tone_consistency": 5.0,
+    "overall_score": 4.17,
+    "warnings": [
+      "Some red herrings lack motive conclusions",
+      "Red herring Owen Price lacks a motive conclusion",
+      "Red herring Isabella Reed lacks a motive conclusion",
+      "Red herring Clara Wells lacks a motive conclusion"
+    ],
+    "suggested_improvements": [
+      "Give all red herrings a plausible motive to increase complexity",
+      "Add a motive conclusion for red herring Owen Price",
+      "Add a motive conclusion for red herring Isabella Reed",
+      "Add a motive conclusion for red herring Clara Wells"
+    ]
+  },
+  "candidate_scores": [
+    {
+      "seed": 95956,
+      "overall_score": 4.17,
+      "is_valid": true
+    }
+  ],
+  "selected_seed": 95956,
+  "best_of_n_used": false
+}

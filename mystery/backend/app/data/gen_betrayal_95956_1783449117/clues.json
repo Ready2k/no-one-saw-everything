@@ -1,0 +1,872 @@
+{
+  "clues": [
+    {
+      "clue_id": "clue_ledger_page",
+      "title": "Torn ledger page on the body",
+      "clue_type": "document",
+      "description": "In Elias Grant's coat pocket: a page torn from the cafe ledger. Till takings for the past year, with shortfalls circled in red and a note in Elias Grant's hand \u2014 'C. \u2014 until tomorrow.'",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_cafe_storage",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_event_ids": [
+        "ev_0615_marcus_ledger"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_elias"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": [
+        "obj_ledger_page"
+      ]
+    },
+    {
+      "clue_id": "clue_overheard_threat",
+      "title": "\"You have until tomorrow\"",
+      "clue_type": "witness_statement",
+      "description": "Priya Shah heard Elias Grant, low and furious, tell someone in the flat above hobbs cafe doorway last week: 'You have until tomorrow.' She never saw who it was.",
+      "strength": "medium",
+      "reliability": 0.7,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_priya",
+        "question_type": "relationship",
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_priya",
+        "agent_elias"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_till_discrepancy",
+      "title": "Audited ledger with missing page",
+      "clue_type": "document",
+      "description": "The cafe ledger in Elias Grant's study is covered in fresh audit marks. One page has been torn out \u2014 the stub remains. Someone at the cafe was stealing, and Elias Grant knew.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_marcus_house",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_event_ids": [
+        "ev_0615_marcus_ledger"
+      ],
+      "linked_agent_ids": [
+        "agent_elias"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_ben_sighting",
+      "title": "Blue coat in the reed & bell bookshop",
+      "clue_type": "witness_statement",
+      "description": "Clara Wells saw someone in a blue coat slip into the reed & bell bookshop at about 10:33 and head for the cafe's rear door. She didn't see the face, but Nadia Cole always wears that blue coat.",
+      "strength": "medium",
+      "reliability": 0.72,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_clara",
+        "question_type": "timeline",
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_clara_false_alibi"
+      ],
+      "linked_event_ids": [
+        "ev_0747_blue_coat"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_nadia"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_storage_sound",
+      "title": "Dull thud at 10:42",
+      "clue_type": "observation",
+      "description": "A dull thud was heard from the cafe's back rooms at 10:42 \u2014 inside the murder window, in the room where the body was found.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_method"
+      ],
+      "linked_event_ids": [
+        "ev_0756_sound"
+      ],
+      "linked_agent_ids": [],
+      "linked_location_ids": [
+        "loc_cafe_storage"
+      ],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_rear_door",
+      "title": "Figure leaving by the rear door at 10:44",
+      "clue_type": "observation",
+      "description": "The cafe's rear door opened briefly at 10:44. A figure left carrying something small and walked quickly towards the square.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_clara_false_alibi"
+      ],
+      "linked_event_ids": [
+        "ev_0758_rear_door"
+      ],
+      "linked_agent_ids": [],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_till_weight_missing",
+      "title": "The Brass till weight is gone",
+      "clue_type": "object_trail",
+      "description": "The Brass till weight sat on the counter at 10:22 \u2014 Nadia Cole moved it herself. After the body was found, it is nowhere on the counter.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_hobbs_cafe",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_method"
+      ],
+      "linked_event_ids": [
+        "ev_0736_till_weight"
+      ],
+      "linked_agent_ids": [],
+      "linked_location_ids": [],
+      "linked_object_ids": [
+        "obj_till_weight"
+      ]
+    },
+    {
+      "clue_id": "clue_till_weight_found",
+      "title": "Till weight in the mop bucket",
+      "clue_type": "physical_evidence",
+      "description": "The Brass till weight, found pushed down inside the kitchen mop bucket. It has been rinsed but is still damp \u2014 and it doesn't belong anywhere near the sink.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_clara_flat",
+        "object_id": null,
+        "required_prior_clue_ids": [
+          "clue_till_weight_missing"
+        ],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_method"
+      ],
+      "linked_event_ids": [],
+      "linked_agent_ids": [],
+      "linked_location_ids": [],
+      "linked_object_ids": [
+        "obj_till_weight"
+      ]
+    },
+    {
+      "clue_id": "clue_blue_coat_damp",
+      "title": "Damp sleeve on Nadia Cole's coat",
+      "clue_type": "physical_evidence",
+      "description": "Nadia Cole's blue coat hangs in the kitchen. The right sleeve is damp at the cuff and faintly smudged, as if something wet was carried against it.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_clara_flat",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_clara_opportunity"
+      ],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": [
+        "obj_blue_coat"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_overheard",
+      "title": "\"Storage room, before we open\"",
+      "clue_type": "witness_statement",
+      "description": "Passing the cafe window at 10:26, Ben Carter heard Elias Grant say 'storage room, before we open'. He couldn't hear who he was speaking to \u2014 but whoever it was knew where Elias Grant would be.",
+      "strength": "medium",
+      "reliability": 0.75,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "question_type": "timeline",
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity"
+      ],
+      "linked_event_ids": [
+        "ev_0740_marcus_summons"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_elias"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_owen_argument",
+      "title": "Owen Price's shouting match with Elias Grant",
+      "clue_type": "observation",
+      "description": "At 09:51 Owen Price confronted Elias Grant outside the cafe \u2014 money, a deadline, the committee. He jabbed a finger in Elias Grant's chest and stormed off. Half the square heard it.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_red_herring"
+      ],
+      "linked_event_ids": [
+        "ev_0705_owen_argument"
+      ],
+      "linked_agent_ids": [
+        "agent_owen",
+        "agent_elias"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_loan_book",
+      "title": "Elias Grant's loan book",
+      "clue_type": "document",
+      "description": "A private notebook in Elias Grant's study: 'O. Price \u2014 \u00a38,000 \u2014 due 1st. Committee if unpaid.' Owen Price had everything to lose today.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_marcus_house",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_red_herring"
+      ],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": [
+        "obj_loan_ledger"
+      ]
+    },
+    {
+      "clue_id": "clue_owen_delivery",
+      "title": "Owen Price's timber delivery",
+      "clue_type": "witness_statement",
+      "description": "Owen Price was in his yard from 10:01 signing for a timber delivery. The driver was with him until after eight \u2014 right through the murder window.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_owen",
+        "question_type": "alibi",
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_innocent"
+      ],
+      "linked_event_ids": [
+        "ev_0715_owen_yard"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_isabella_note",
+      "title": "Isabella Reed's note on the body",
+      "clue_type": "document",
+      "description": "A folded note in Elias Grant's pocket: 'We settle this at 8. Don't make me ask twice. \u2014 I.R.' Isabella Reed wanted something from Elias Grant, badly, this morning.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_cafe_storage",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring"
+      ],
+      "linked_event_ids": [
+        "ev_0720_isabella_note"
+      ],
+      "linked_agent_ids": [
+        "agent_isabella"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": [
+        "obj_isabella_note"
+      ]
+    },
+    {
+      "clue_id": "clue_partnership_letter",
+      "title": "The partnership letter",
+      "clue_type": "document",
+      "description": "A signed letter in Elias Grant's coat: the bookshop expansion goes to Marcus Bell \u2014 not Isabella Reed. Elias Grant broke his promise, and today he was going to say so to Isabella Reed's face.",
+      "strength": "medium",
+      "reliability": 0.95,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_cafe_storage",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring"
+      ],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_isabella",
+        "agent_marcus"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": [
+        "obj_partnership_letter"
+      ]
+    },
+    {
+      "clue_id": "clue_isabella_clinic",
+      "title": "Isabella Reed's clinic visit",
+      "clue_type": "witness_statement",
+      "description": "Ben Carter took Isabella Reed's blood pressure at the clinic from about 10:26 to 10:46 \u2014 covering the whole murder window. Isabella Reed was agitated about 'a difficult meeting'.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "question_type": "alibi",
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_innocent"
+      ],
+      "linked_event_ids": [
+        "ev_0740_isabella_clinic"
+      ],
+      "linked_agent_ids": [
+        "agent_isabella",
+        "agent_ben"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_elias_fountain",
+      "title": "Nobody at the village square",
+      "clue_type": "witness_statement",
+      "description": "Priya Shah sat facing the village square from 09:26 onwards and does not recall seeing Nadia Cole there between 10:31 and 10:46 \u2014 though she admits she had her crossword.",
+      "strength": "weak",
+      "reliability": 0.55,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_priya",
+        "question_type": "timeline",
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_false_alibi"
+      ],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_priya",
+        "agent_nadia"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_ben_priya_meeting",
+      "title": "Clara Wells and Marcus Bell's secret meeting",
+      "clue_type": "confession",
+      "description": "Clara Wells was in the alley at 10:31 to meet Marcus Bell \u2014 they've been seeing each other in secret. That's why she was there, and why neither of them wanted to say so.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_marcus",
+        "question_type": "location",
+        "location_id": "loc_bookshop",
+        "object_id": null,
+        "required_prior_clue_ids": [
+          "clue_ben_sighting"
+        ],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_innocent"
+      ],
+      "linked_event_ids": [
+        "ev_0745_ben_priya_meet"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_marcus"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_llm_0",
+      "title": "A crumpled receipt from 'The N...",
+      "clue_type": "document",
+      "description": "A crumpled receipt from 'The Nightingale Bar' dated the morning of the incident. It shows a large bill that doesn't match {KILLER_ID}'s known spending habits, suggesting they were meeting someone else or participating in an activity they claimed not to be doing.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_owen_house",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_llm_1",
+      "title": "{WITNESS2_ID} mentions overhea...",
+      "clue_type": "witness_statement",
+      "description": "{WITNESS2_ID} mentions overhearing a heated, whispered exchange between {VICTIM_ID} and an unknown party the night before. The conversation seemed to revolve around 'exposure' and 'the truth coming out,' but they couldn't make out any specific words.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "question_type": "timeline",
+        "location_id": null,
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_ben"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_llm_2",
+      "title": "A small, distinctive silver cu...",
+      "clue_type": "object_trail",
+      "description": "A small, distinctive silver cufflink found near the supposed location of the prank. It does not belong to any of the main suspects but matches a style favored by {RH2_ID}'s late father, suggesting they may have been handling items related to the event.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_village_square",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_isabella"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_llm_3",
+      "title": "{WITNESS4_ID} recalls a specif...",
+      "clue_type": "observation",
+      "description": "{WITNESS4_ID} recalls a specific detail about the prank's setup: they noticed an unusually placed ornamental garden trowel, claiming it wasn't where anyone else remembered it being. They insist nobody paid attention to it at the time.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_village_square",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_marcus"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_llm_4",
+      "title": "Hidden beneath a loose floorbo...",
+      "clue_type": "physical_evidence",
+      "description": "Hidden beneath a loose floorboard in the common area is a small, faded photograph of {RH1_ID} and {VICTIM_ID} from years ago. It shows them together happily, contradicting rumors that they had always been rivals, potentially softening the perceived conflict.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "agent_id": null,
+        "question_type": null,
+        "location_id": "loc_bookshop",
+        "object_id": null,
+        "required_prior_clue_ids": [],
+        "x": null,
+        "y": null,
+        "radius": 8.0,
+        "discovery_text": null,
+        "reveal_on": []
+      },
+      "supports_conclusion_ids": [],
+      "linked_event_ids": [],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_location_ids": [],
+      "linked_object_ids": []
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "conc_clara_motive",
+      "type": "motive",
+      "summary": "Nadia Cole was stealing from the till; Elias Grant had proof and a deadline of this morning.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ledger_page",
+        "clue_overheard_threat",
+        "clue_till_discrepancy"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_opportunity",
+      "type": "opportunity",
+      "summary": "Nadia Cole was at the cafe's rear door during the murder window, despite claiming to be at the fountain.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ben_sighting",
+        "clue_rear_door",
+        "clue_storage_sound",
+        "clue_nadia_overheard",
+        "clue_blue_coat_damp"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_means",
+      "type": "means",
+      "summary": "Nadia Cole had the Brass till weight \u2014 she handled it at 10:22, it vanished in the murder window, and it was found rinsed in the kitchen she controls.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_till_weight_missing",
+        "clue_till_weight_found",
+        "clue_blue_coat_damp"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_false_alibi",
+      "type": "false_alibi",
+      "summary": "Nadia Cole's fountain alibi is false \u2014 she was seen entering the rear alley at 10:33, a figure left the rear door at 10:44, and nobody saw her at the fountain.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ben_sighting",
+        "clue_rear_door",
+        "clue_elias_fountain"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_red_herring",
+      "type": "red_herring",
+      "summary": "Owen Price had a desperate financial motive and argued publicly with Elias Grant an hour before the murder.",
+      "target_agent_id": "agent_owen",
+      "required_for_solution": false,
+      "supported_by_clue_ids": [
+        "clue_owen_argument",
+        "clue_loan_book"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_innocent",
+      "type": "innocence_anchor",
+      "summary": "Owen Price was with the timber delivery driver through the entire murder window.",
+      "target_agent_id": "agent_owen",
+      "required_for_solution": false,
+      "supported_by_clue_ids": [
+        "clue_owen_delivery"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_red_herring",
+      "type": "red_herring",
+      "summary": "Isabella Reed was betrayed over the partnership and demanded a showdown with Elias Grant this very morning.",
+      "target_agent_id": "agent_isabella",
+      "required_for_solution": false,
+      "supported_by_clue_ids": [
+        "clue_isabella_note",
+        "clue_partnership_letter"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_innocent",
+      "type": "innocence_anchor",
+      "summary": "Isabella Reed was at the clinic with Ben Carter from 10:26 to 10:46.",
+      "target_agent_id": "agent_isabella",
+      "required_for_solution": false,
+      "supported_by_clue_ids": [
+        "clue_isabella_clinic"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_red_herring",
+      "type": "red_herring",
+      "summary": "Clara Wells was lurking in the rear alley during the murder window and is evasive about why.",
+      "target_agent_id": "agent_clara",
+      "required_for_solution": false,
+      "supported_by_clue_ids": [
+        "clue_storage_sound"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_innocent",
+      "type": "innocence_anchor",
+      "summary": "Clara Wells was in the alley to meet Marcus Bell in secret \u2014 nothing to do with Elias Grant.",
+      "target_agent_id": "agent_clara",
+      "required_for_solution": false,
+      "supported_by_clue_ids": [
+        "clue_ben_priya_meeting"
+      ]
+    }
+  ]
+}

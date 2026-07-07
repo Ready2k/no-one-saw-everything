@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 
 from ..models import CaseData
-from .schemas import CasePlan, PlotOutlinePlan, CluesPlan, MemoriesPlan, FlavourPlan
+from .schemas import CasePlan, PlotOutlinePlan, CluesPlan, MemoriesPlan, RoleMemoriesPlan, WitnessFragmentsPlan, FlavourPlan
 from .client import get_llm_client
 from .case_assembler import assemble_case
 from ..validator import validate_case
@@ -19,6 +19,37 @@ PROMPTS_DIR = Path(__file__).parent / "prompts"
 
 def load_prompt(name: str) -> str:
     return (PROMPTS_DIR / f"{name}.txt").read_text()
+
+def _condensed_plot_summary(plot_plan: PlotOutlinePlan) -> dict:
+    """Trimmed recap of the plot phase to carry into later prompts.
+    Drops scene_description (long narrative prose not needed for
+    memory/clue consistency) to keep the growing conversation within the
+    context budget of small local models."""
+    return {
+        "title": plot_plan.title,
+        "motive_variant": plot_plan.motive_variant,
+        "victim_rationale": plot_plan.victim_rationale,
+        "killer_rationale": plot_plan.killer_rationale,
+        "red_herring_rationales": plot_plan.red_herring_rationales,
+    }
+
+
+def _condensed_clues_summary(clues_plan: CluesPlan) -> list[dict]:
+    """Trimmed recap of the clue phase to carry into later prompts.
+    Drops player_facing_description and ambiguity_level (prose fields not
+    needed for memory generation) so the memories phase — the largest and
+    most context-hungry call — has more room left in the model's context
+    window for its own output."""
+    return [
+        {
+            "linked_role": c.linked_role,
+            "clue_type": c.clue_type,
+            "supports_conclusion_type": c.supports_conclusion_type,
+            "discovery_method": c.discovery_method,
+        }
+        for c in clues_plan.clue_plans
+    ]
+
 
 def call_with_retry(client, *, messages, schema, temperature, phase: str):
     """Local/small LLMs occasionally return truncated or schema-incomplete JSON
@@ -153,7 +184,7 @@ Format the output strictly as a JSON object matching the required schema."""}
     
     try:
         plot_plan = call_with_retry(client, messages=messages, schema=PlotOutlinePlan, temperature=0.8, phase="plot")
-        messages.append({"role": "assistant", "content": plot_plan.model_dump_json()})
+        messages.append({"role": "assistant", "content": json.dumps(_condensed_plot_summary(plot_plan))})
     except Exception as e:
         logger.error(f"LLM plot generation failed: {e}")
         return None, "provider_error", 0
@@ -173,32 +204,66 @@ Format the output strictly as a JSON object matching the required schema."""})
     
     try:
         clues_plan = call_with_retry(client, messages=messages, schema=CluesPlan, temperature=0.7, phase="clues")
-        messages.append({"role": "assistant", "content": clues_plan.model_dump_json()})
+        messages.append({"role": "assistant", "content": json.dumps(_condensed_clues_summary(clues_plan))})
     except Exception as e:
         logger.error(f"LLM clues generation failed: {e}")
         return None, "provider_error", 0
 
-    # Phase 3: Seeded Memories and Witness Fragments
-    messages.append({"role": "user", "content": f"""Based on the plot and clue plans, generate the seeded memories and witness fragments.
+    # Phase 3: Seeded Memories — generated one suspect role at a time rather
+    # than all roles in a single call. A combined call's required output
+    # size scales with num_suspects (up to 7), which reliably overflows
+    # small local models' context/output budget for larger casts even after
+    # trimming the input history above; per-role calls keep each response
+    # small regardless of cast size.
+    memory_roles = [r for r in allowed_roles if r != "{VICTIM_ID}"]
+    seeded_memories: list = []
+    for role in memory_roles:
+        if role == "{KILLER_ID}":
+            role_rules = (
+                "This role is the KILLER. You MUST provide exactly three memories with these "
+                "case_function values:\n"
+                "   - \"killer_motive\": The memory establishing the true motive.\n"
+                "   - \"opportunity_setup\": The memory establishing how/when they entered the scene or opportunity.\n"
+                "   - \"false_alibi_reason\": The memory establishing their false alibi or why they lied about their whereabouts."
+            )
+        elif role in ("{RH1_ID}", "{RH2_ID}"):
+            role_rules = (
+                "This role is a RED HERRING suspect. Provide 1-2 memories using case_function values "
+                "such as \"red_herring_motive\", \"innocence_anchor\", \"clue_support\", \"false_alibi_support\"."
+            )
+        else:
+            role_rules = (
+                "This role is a WITNESS. Provide 1-2 memories using case_function values such as "
+                "\"clue_support\", \"victim_trigger\", \"killer_trigger\", or another applicable non-killer value."
+            )
 
-CRITICAL RULES FOR MEMORIES:
-1. The killer suspect ({{KILLER_ID}}) MUST have exactly three memories assigned with these case_function values:
-   - "killer_motive": The memory establishing the true motive.
-   - "opportunity_setup": The memory establishing how/when they entered the scene or opportunity.
-   - "false_alibi_reason": The memory establishing their false alibi or why they lied about their whereabouts.
-2. Other suspects/roles (e.g. {{RH1_ID}}, {{RH2_ID}}) can have memories with these case_function values:
-   - "red_herring_motive", "innocence_anchor", "clue_support", "false_alibi_support", "victim_trigger", "killer_trigger".
-3. memory_type must be one of: "private_secret", "shared_secret", "rumour", "witness_fragment", "false_belief", "deliberate_lie", "innocent_secret", "observed", "cover_story".
-4. truth_status must be one of: "true", "false", "mistaken", "rumour", "unknown".
+        role_messages = messages + [{"role": "user", "content": f"""Based on the plot and clue plans, generate the seeded memories for ONLY the role {role}.
 
-Ensure only allowed roles ({allowed_roles_str}) are referenced.
+{role_rules}
+
+memory_type must be one of: "private_secret", "shared_secret", "rumour", "witness_fragment", "false_belief", "deliberate_lie", "innocent_secret", "observed", "cover_story".
+truth_status must be one of: "true", "false", "mistaken", "rumour", "unknown".
+owner_role must be exactly "{role}". known_by_roles may only reference roles from: {allowed_roles_str}.
+
+Format the output strictly as a JSON object matching the required schema."""}]
+
+        try:
+            role_plan = call_with_retry(client, messages=role_messages, schema=RoleMemoriesPlan, temperature=0.7, phase=f"memories:{role}")
+            seeded_memories.extend(role_plan.memories)
+        except Exception as e:
+            logger.error(f"LLM memories generation failed for {role}: {e}")
+            return None, "provider_error", 0
+
+    # Witness fragments, still a single call — bounded by num witness roles
+    # (0-4) rather than the full suspect cast, so it stays small.
+    messages.append({"role": "user", "content": f"""Based on the plot and clue plans, generate witness fragments.
+Allowed roles to reference: {allowed_roles_str}
 
 Format the output strictly as a JSON object matching the required schema."""})
-
     try:
-        memories_plan = call_with_retry(client, messages=messages, schema=MemoriesPlan, temperature=0.7, phase="memories")
+        witness_plan = call_with_retry(client, messages=messages, schema=WitnessFragmentsPlan, temperature=0.7, phase="witness_fragments")
     except Exception as e:
-        logger.error(f"LLM memories generation failed: {e}")
+        logger.error(f"LLM witness fragments generation failed: {e}")
         return None, "provider_error", 0
 
     # Phase 4: Interview Flavour and Reveal Narration
@@ -233,8 +298,8 @@ Format the output strictly as a JSON object matching the required schema."""}
             "red_herring_rationales": plot_plan.red_herring_rationales,
             "scene_description": plot_plan.scene_description,
             "clue_plans": [c.model_dump() for c in clues_plan.clue_plans],
-            "seeded_memories": [m.model_dump() for m in memories_plan.seeded_memories],
-            "witness_fragments": [w.model_dump() for w in memories_plan.witness_fragments],
+            "seeded_memories": [m.model_dump() for m in seeded_memories],
+            "witness_fragments": [w.model_dump() for w in witness_plan.witness_fragments],
             "interview_flavour": flavour_plan.interview_flavour,
             "reveal_narration": flavour_plan.reveal_narration
         }

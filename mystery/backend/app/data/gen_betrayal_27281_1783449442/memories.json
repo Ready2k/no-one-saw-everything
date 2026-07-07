@@ -1,0 +1,272 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "I remember the details of that old bust\u2014the names, the ledger entries. {VICTIM_NAME} had copies of everything and was using it to leverage my current legitimate business interests.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "observed",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "I saw {WITNESS2_ID} leaving the back entrance just before midnight. I needed a clear path to get into the building undetected, and they were conveniently passing through.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_priya"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "I told {VICTIM_ID} I was meeting with a client across town all evening. It wasn't true; the only reason I mentioned it was to establish an airtight timeline that placed me far from the '{murder_location}' at the time of death.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_priya",
+      "agent_marcus"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "red_herring_motive",
+    "truth_status": "false",
+    "summary": "I told the police I was at the Opera House until midnight because it gave me a solid, unquestionable alibi for my time near {murder_location}. But truthfully, I left by 10:30 PM to meet someone else.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_nadia"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I actually saw {KILLER_ID} arguing with a bookbinder near the back alley entrance of {murder_location} around 10:30 PM. They seemed agitated and were urgently discussing money.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_5",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I found a small, unique silver cufflink near the main entrance of the building. It doesn't belong to any of the people I know here, and it has an engraving of a stylized raven on the inside.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_6",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_owen"
+    ],
+    "memory_type": "observed",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I saw {VICTIM_ID} meeting with a man in a dark coat near the docks around 10 PM. He seemed agitated and was exchanging some sort of small, rolled package with him.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_7",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_elias"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {VICTIM_NAME} leaving the {murder_location} looking agitated, talking urgently into a burner phone. They seemed to be meeting with someone who was waiting outside.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_8",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {KILLER_ID} leaving the vicinity of the murder location, moving quickly and without looking back. They were carrying a distinctive briefcase that was slightly scratched near the handle.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_9",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I vaguely remember {VICTIM_ID} mentioning a meeting with someone named 'The Collector' two days ago. I thought it was just idle gossip, but now... it feels significant.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_10",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {VICTIM_ID} meeting with a man who looked like an old associate of the killer, near the alley entrance. They spoke in hushed tones and seemed genuinely panicked about something they had forgotten to dispose of.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_11",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_priya"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I remember seeing {KILLER_ID} pacing near the main entrance earlier in the week. They seemed incredibly agitated, constantly checking their watch and looking over their shoulder at every passing car.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_12",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_owen"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {KILLER_ID} leaving the back entrance of the building after midnight, carrying a dark garment that looked suspiciously heavy. I thought nothing of it at the time, but it felt wrong.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_13",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I remember {VICTIM_ID} arguing with someone\u2014was it {KILLER_ID}? I couldn't make out the face in the dim light, but they were shouting about 'the ledger' and money.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

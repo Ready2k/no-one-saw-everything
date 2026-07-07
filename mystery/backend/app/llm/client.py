@@ -207,6 +207,13 @@ class FakeLLMClient:
                     "seeded_memories": VALID_FAKE_PLAN["seeded_memories"],
                     "witness_fragments": VALID_FAKE_PLAN["witness_fragments"]
                 })
+            if schema.__name__ == "RoleMemoriesPlan":
+                last_message = messages[-1]["content"] if messages else ""
+                if "{KILLER_ID}" in last_message:
+                    return schema.model_validate({"memories": VALID_FAKE_PLAN["seeded_memories"]})
+                return schema.model_validate({"memories": []})
+            if schema.__name__ == "WitnessFragmentsPlan":
+                return schema.model_validate({"witness_fragments": VALID_FAKE_PLAN["witness_fragments"]})
             if schema.__name__ == "FlavourPlan":
                 return schema.model_validate({
                     "interview_flavour": VALID_FAKE_PLAN["interview_flavour"],

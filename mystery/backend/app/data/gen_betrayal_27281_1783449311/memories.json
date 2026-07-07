@@ -1,0 +1,271 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_priya"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "killer_motive",
+    "truth_status": "false",
+    "summary": "I told everyone that I hadn't seen {VICTIM_ID} since the charity gala last month. It was a convenient lie; in truth, I had been monitoring their movements because of the ledger entries.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_ben",
+      "agent_isabella"
+    ],
+    "memory_type": "observed",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "I remember seeing the service entrance unlocked and unattended on the night of the incident. I used that way to gain access, making sure no one would see me enter.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_clara",
+      "agent_owen"
+    ],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "I claimed I was stuck reviewing documents in the adjacent office until midnight. It's a believable story because that area is rarely monitored, but I left much earlier.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "red_herring_motive",
+    "truth_status": "false",
+    "summary": "He claims he was meeting with the victim earlier that evening to discuss a large, overdue shared investment. This provides him an alibi for part of the timeline and suggests financial conflict.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_owen"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "red_herring_motive",
+    "truth_status": "false",
+    "summary": "I was only meeting with the victim to discuss my finances, nothing more. We were talking about a possible joint investment that would save both of us from our current debts.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_5",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "I had to leave the area shortly after midnight because I was meeting a friend who needed urgent help with an emergency; it wasn't related to the victim or any of our business.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_6",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_ben"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I distinctly remember hearing {VICTIM_ID} arguing with {KILLER_ID} near the conservatory entrance about some obscure ledger book. The argument seemed to escalate suddenly, but I only recall them both leaving in opposite directions shortly after.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_7",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_owen",
+      "agent_isabella"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "unknown",
+    "summary": "I noticed {VICTIM_ID} seemed unusually agitated yesterday, constantly checking their coat pocket as if they were expecting something\u2014or someone\u2014to arrive. It was a nervous habit I hadn't seen them display before.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_8",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {KILLER_ID} near the service entrance of the building late that night. They seemed agitated, checking their watch repeatedly and looking over their shoulder constantly.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_9",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_priya"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I remember {VICTIM_ID} talking to someone in the corner of the room\u2014it sounded like a heated exchange about money, but I couldn't make out who it was or exactly what they said.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_10",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_marcus",
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I saw {KILLER_ID} leaving the area near '{murder_location}' late last night. They were wearing a dark coat and seemed extremely agitated, glancing over their shoulder frequently as if expecting someone to follow them.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_11",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_nadia"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I remember overhearing {VICTIM_ID} loudly discussing plans with {RH2_ID} the day before. They seemed overly affectionate, which gave me the impression that their relationship was deeply intimate and potentially volatile.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_12",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_marcus",
+      "agent_priya"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I distinctly remember seeing {KILLER_ID} near the back entrance of the building, looking extremely flustered and wiping something off their coat sleeve. It was late that night.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_13",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_elias"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I thought I saw {VICTIM_ID} arguing passionately with {RH2_ID} earlier that week. There were loud voices, but I couldn't make out the exact words or who was initiating it.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]

@@ -1,0 +1,94 @@
+{
+  "killer_id": "agent_nadia",
+  "motive": {
+    "canonical": "The killer felt systematically undermined, manipulated, and emotionally betrayed by the victim's casual cruelty during a shared romantic entanglement. They used their intimate knowledge of the group and the superficial nature of the planned 'prank' to strike at the victim when they were most vulnerable\u2014when reputation was paramount.",
+    "concept_groups": [
+      [
+        "till",
+        "cash",
+        "money",
+        "takings",
+        "cafe funds"
+      ],
+      [
+        "steal",
+        "stole",
+        "stolen",
+        "theft",
+        "thief",
+        "skim",
+        "embezzl",
+        "took",
+        "taking"
+      ],
+      [
+        "blackmail",
+        "expose",
+        "confess",
+        "committee",
+        "threat",
+        "reveal",
+        "ledger"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with the Brass till weight, in the storage room.",
+    "concept_groups": [
+      [
+        "blunt",
+        "struck",
+        "strike",
+        "hit",
+        "bludgeon",
+        "blow",
+        "beat"
+      ],
+      [
+        "Brass till weight",
+        "weight",
+        "brass"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Nadia Cole was at the cafe's rear door during the murder window and lied about being at the village square.",
+    "concept_groups": [
+      [
+        "alley",
+        "storage",
+        "rear",
+        "back door",
+        "back way",
+        "cafe back"
+      ],
+      [
+        "fountain",
+        "alibi",
+        "lied",
+        "lie",
+        "false"
+      ],
+      [
+        "window",
+        "murder window",
+        "before open",
+        "07:5",
+        "07:4",
+        "quarter to eight"
+      ]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_ledger_page",
+    "clue_ben_sighting",
+    "clue_till_weight_found",
+    "clue_rear_door",
+    "clue_nadia_overheard"
+  ],
+  "explanation": "The investigation reveals that the 'prank' was not merely social theater but a calculated trap. The victim, in their paranoia about exposure and finances, inadvertently created the perfect scenario: a moment of vulnerability surrounded by discarded props and witnesses focused on superficial drama. The killer, fueled by the deep emotional injury of betrayal\u2014not just the potential scandal\u2014used their intimate knowledge of the group's weaknesses (their vanity, their debts, their performance) to strike when the victim was most distracted. The weapon, far from being a random object, was chosen because it required precision and timing, transforming what seemed like an accident or impulsive crime into a highly controlled act of silencing.",
+  "epilogues": {}
+}

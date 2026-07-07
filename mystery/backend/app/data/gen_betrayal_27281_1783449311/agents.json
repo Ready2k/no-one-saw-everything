@@ -1,0 +1,330 @@
+[
+  {
+    "agent_id": "agent_nadia",
+    "full_name": "Nadia Cole",
+    "age": 54,
+    "occupation": "Owner of Hobbs Cafe",
+    "traits": [
+      "exacting",
+      "proud",
+      "fair but unforgiving"
+    ],
+    "portrait": "\u2615",
+    "portrait_art": null,
+    "home_location_id": "loc_marcus_house",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Up at six, reviews the books in her study, at the cafe by a quarter to seven to oversee opening.",
+    "voice_card": "Speaks in ledgers and verdicts; every sentence sounds like a final decision.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_marcus",
+        "relationship_type": "employer",
+        "affinity": -0.2,
+        "trust": 0.1,
+        "tension": 0.9
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "business_partner",
+        "affinity": 0.3,
+        "trust": 0.4,
+        "tension": 0.7
+      },
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "creditor",
+        "affinity": -0.1,
+        "trust": 0.3,
+        "tension": 0.8
+      }
+    ],
+    "observation_skill": 0.8,
+    "memory_reliability": 0.9,
+    "honesty_baseline": 0.8,
+    "gossip_tendency": 0.5,
+    "conflict_avoidance": 0.5,
+    "is_victim": true,
+    "sprite_id": null,
+    "sprite_asset": null
+  },
+  {
+    "agent_id": "agent_marcus",
+    "full_name": "Marcus Bell",
+    "age": 36,
+    "occupation": "Cafe manager",
+    "traits": [
+      "organised",
+      "proud",
+      "guarded"
+    ],
+    "portrait": "\ud83e\udde3",
+    "portrait_art": null,
+    "home_location_id": "loc_clara_flat",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Lives above the cafe. Down by half six to prep, opens the doors at eight sharp.",
+    "voice_card": "Precise and clipped; clips sentences even shorter when defensive, and never volunteers more than was asked.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "employee",
+        "affinity": -0.3,
+        "trust": 0.2,
+        "tension": 0.9
+      },
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "acquaintance",
+        "affinity": 0.1,
+        "trust": 0.3,
+        "tension": 0.2
+      }
+    ],
+    "observation_skill": 0.7,
+    "memory_reliability": 0.8,
+    "honesty_baseline": 0.45,
+    "gossip_tendency": 0.5,
+    "conflict_avoidance": 0.6,
+    "is_victim": false,
+    "sprite_id": null,
+    "sprite_asset": null
+  },
+  {
+    "agent_id": "agent_priya",
+    "full_name": "Priya Shah",
+    "age": 29,
+    "occupation": "Delivery driver",
+    "traits": [
+      "easygoing",
+      "chatty",
+      "bad at secrets"
+    ],
+    "portrait": "\ud83d\udce6",
+    "portrait_art": null,
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Morning delivery round through the square and rear alley; usually cadges a coffee when the cafe opens.",
+    "voice_card": "Rambles cheerfully, over-explains when nervous, and tends to answer a question you didn't ask.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "secret_relationship",
+        "affinity": 0.9,
+        "trust": 0.8,
+        "tension": 0.4
+      },
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "acquaintance",
+        "affinity": 0.2,
+        "trust": 0.5,
+        "tension": 0.1
+      }
+    ],
+    "observation_skill": 0.6,
+    "memory_reliability": 0.65,
+    "honesty_baseline": 0.7,
+    "gossip_tendency": 0.8,
+    "conflict_avoidance": 0.5,
+    "is_victim": false,
+    "sprite_id": null,
+    "sprite_asset": null
+  },
+  {
+    "agent_id": "agent_elias",
+    "full_name": "Elias Grant",
+    "age": 41,
+    "occupation": "Bookshop owner",
+    "traits": [
+      "ambitious",
+      "wounded",
+      "composed"
+    ],
+    "portrait": "\ud83d\udcda",
+    "portrait_art": null,
+    "home_location_id": "loc_bookshop",
+    "work_location_id": "loc_bookshop",
+    "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
+    "voice_card": "Measured, almost rehearsed; pauses before answering and chooses polite words with visible care.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "business_partner",
+        "affinity": -0.4,
+        "trust": 0.2,
+        "tension": 0.9
+      },
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "employer",
+        "affinity": 0.2,
+        "trust": 0.5,
+        "tension": 0.6
+      }
+    ],
+    "observation_skill": 0.75,
+    "memory_reliability": 0.85,
+    "honesty_baseline": 0.6,
+    "gossip_tendency": 0.5,
+    "conflict_avoidance": 0.5,
+    "is_victim": false,
+    "sprite_id": null,
+    "sprite_asset": null
+  },
+  {
+    "agent_id": "agent_clara",
+    "full_name": "Clara Wells",
+    "age": 47,
+    "occupation": "Builder",
+    "traits": [
+      "blunt",
+      "hot-tempered",
+      "proud"
+    ],
+    "portrait": "\ud83d\udd28",
+    "portrait_art": null,
+    "home_location_id": "loc_owen_house",
+    "work_location_id": "loc_owen_house",
+    "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
+    "voice_card": "Blunt, short sentences, no hedging; gets louder rather than more careful when pressed.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "debtor",
+        "affinity": -0.6,
+        "trust": 0.2,
+        "tension": 0.95
+      }
+    ],
+    "observation_skill": 0.5,
+    "memory_reliability": 0.7,
+    "honesty_baseline": 0.55,
+    "gossip_tendency": 0.5,
+    "conflict_avoidance": 0.2,
+    "is_victim": false,
+    "sprite_id": null,
+    "sprite_asset": null
+  },
+  {
+    "agent_id": "agent_isabella",
+    "full_name": "Isabella Reed",
+    "age": 33,
+    "occupation": "Bookshop assistant",
+    "traits": [
+      "careful",
+      "kind",
+      "conflict-averse"
+    ],
+    "portrait": "\ud83c\udf38",
+    "portrait_art": null,
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_bookshop",
+    "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
+    "voice_card": "Soft-spoken and apologetic; qualifies everything ('I think', 'maybe') and trails off under pressure.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "secret_relationship",
+        "affinity": 0.9,
+        "trust": 0.8,
+        "tension": 0.4
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "employee",
+        "affinity": 0.3,
+        "trust": 0.4,
+        "tension": 0.6
+      },
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "sponsor",
+        "affinity": 0.5,
+        "trust": 0.6,
+        "tension": 0.3
+      }
+    ],
+    "observation_skill": 0.7,
+    "memory_reliability": 0.8,
+    "honesty_baseline": 0.65,
+    "gossip_tendency": 0.5,
+    "conflict_avoidance": 0.85,
+    "is_victim": false,
+    "sprite_id": null,
+    "sprite_asset": null
+  },
+  {
+    "agent_id": "agent_ben",
+    "full_name": "Ben Carter Cole",
+    "age": 38,
+    "occupation": "Clinic nurse",
+    "traits": [
+      "observant",
+      "practical",
+      "discreet"
+    ],
+    "portrait": "\ud83e\ude7a",
+    "portrait_art": null,
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_clinic",
+    "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
+    "voice_card": "Calm, clinical phrasing; states observations like chart notes and avoids speculation.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "neighbour",
+        "affinity": 0.4,
+        "trust": 0.6,
+        "tension": 0.1
+      }
+    ],
+    "observation_skill": 0.85,
+    "memory_reliability": 0.85,
+    "honesty_baseline": 0.85,
+    "gossip_tendency": 0.2,
+    "conflict_avoidance": 0.5,
+    "is_victim": false,
+    "sprite_id": null,
+    "sprite_asset": null
+  },
+  {
+    "agent_id": "agent_owen",
+    "full_name": "Owen Price Grant",
+    "age": 68,
+    "occupation": "Retired schoolteacher",
+    "traits": [
+      "nosy",
+      "certain of himself",
+      "harmless"
+    ],
+    "portrait": "\ud83c\udfa9",
+    "portrait_art": null,
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "First on the square bench every morning with a flask and opinions.",
+    "voice_card": "Talks like a teacher mid-lesson; fond of rhetorical questions and certain of every detail.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "old_friend",
+        "affinity": 0.5,
+        "trust": 0.7,
+        "tension": 0.2
+      },
+      {
+        "target_agent_id": "agent_marcus",
+        "relationship_type": "acquaintance",
+        "affinity": -0.2,
+        "trust": 0.3,
+        "tension": 0.3
+      }
+    ],
+    "observation_skill": 0.55,
+    "memory_reliability": 0.5,
+    "honesty_baseline": 0.9,
+    "gossip_tendency": 0.9,
+    "conflict_avoidance": 0.5,
+    "is_victim": false,
+    "sprite_id": null,
+    "sprite_asset": null
+  }
+]

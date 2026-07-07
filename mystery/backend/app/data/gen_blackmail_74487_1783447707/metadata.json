@@ -1,0 +1,63 @@
+{
+  "metadata_version": 1,
+  "mode": "llm_assisted",
+  "seed": 74487,
+  "theme_preset": "blackmail",
+  "tone": "dark_noir",
+  "fallback_used": true,
+  "repair_attempts": 0,
+  "compaction_applied": true,
+  "pruned_agents": [
+    "agent_isabella",
+    "agent_nadia",
+    "agent_ben",
+    "agent_clara"
+  ],
+  "remapped_locations": {
+    "loc_clara_flat": "loc_marcus_house",
+    "loc_bookshop": "loc_marcus_house",
+    "loc_owen_house": "loc_marcus_house",
+    "loc_clinic": "loc_marcus_house",
+    "loc_rear_alley": "loc_marcus_house",
+    "loc_marcus_house": "loc_marcus_house"
+  },
+  "red_herrings": [
+    "agent_priya",
+    "agent_owen"
+  ],
+  "created_at": "2026-07-07T19:08:27.680638Z",
+  "fallback_reason": "provider_error",
+  "num_suspects": 3,
+  "num_locations": 3,
+  "quality_report": {
+    "suspect_distinctiveness": 3.5,
+    "motive_clarity": 4.0,
+    "red_herring_strength": 3.0,
+    "clue_distribution": 5.0,
+    "location_usage_balance": 5.0,
+    "timeline_density": 4.5,
+    "solution_fairness": 5.0,
+    "theme_adherence": 5.0,
+    "tone_consistency": 5.0,
+    "overall_score": 4.44,
+    "warnings": [
+      "Some red herrings lack motive conclusions",
+      "Red herring Priya Shah lacks a motive conclusion",
+      "Red herring Owen Price lacks a motive conclusion"
+    ],
+    "suggested_improvements": [
+      "Give all red herrings a plausible motive to increase complexity",
+      "Add a motive conclusion for red herring Priya Shah",
+      "Add a motive conclusion for red herring Owen Price"
+    ]
+  },
+  "candidate_scores": [
+    {
+      "seed": 74487,
+      "overall_score": 4.44,
+      "is_valid": true
+    }
+  ],
+  "selected_seed": 74487,
+  "best_of_n_used": false
+}
