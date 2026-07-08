@@ -19,8 +19,8 @@ def score_case_quality(case_data: CaseData) -> CaseQualityReport:
                 return l.name
         return lid
 
-    # Living suspects excluding victim
-    living_suspects = [a.agent_id for a in case_data.agents if not a.is_victim]
+    # Living suspects excluding victim and ambient background NPCs
+    living_suspects = [a.agent_id for a in case_data.agents if not a.is_victim and not a.is_background]
     killer_id = case_data.case.killer_id
 
     # 1. Suspect Distinctiveness

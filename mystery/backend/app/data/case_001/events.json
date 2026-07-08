@@ -595,5 +595,283 @@
     "player_description": "Isabella finds Marcus Bell dead in the storage room. Her scream is heard across the square.",
     "visibility": "public",
     "importance": 10
+  },
+  {
+    "event_id": "ev_bg_min_0",
+    "time": "06:02",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Min is seen near Village Square, carrying a tray of loaves.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_min_1",
+    "time": "06:27",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min is seen near Hobbs Cafe, carrying a tray of loaves.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_min_2",
+    "time": "06:52",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min is seen near Reed & Bell Bookshop, carrying a tray of loaves.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_sal_0",
+    "time": "06:09",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Sal is seen near Hobbs Cafe, leaving bottles on the step.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_sal_1",
+    "time": "06:42",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "Sal is seen near Reed & Bell Bookshop, leaving bottles on the step.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_cole_0",
+    "time": "06:16",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Cole is seen near Reed & Bell Bookshop, wiping down the windows.",
+    "importance": 2,
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_cole_1",
+    "time": "06:41",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole is seen near Village Clinic, wiping down the windows.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_cole_2",
+    "time": "07:06",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole is seen near Owen Price's House & Yard, wiping down the windows.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_dez_0",
+    "time": "06:23",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Dez is seen near Village Clinic, setting up a stall.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_dez_1",
+    "time": "06:48",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "movement",
+    "truth_description": "Dez is seen near Owen Price's House & Yard, setting up a stall.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_dez_2",
+    "time": "07:13",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "movement",
+    "truth_description": "Dez is seen near Fountain, setting up a stall.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_effie_0",
+    "time": "06:30",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Effie is seen near Owen Price's House & Yard, walking the dog past.",
+    "importance": 2,
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_effie_1",
+    "time": "06:55",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Effie is seen near Fountain, walking the dog past.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_effie_2",
+    "time": "07:20",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Effie is seen near Village Square, walking the dog past.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_gus_0",
+    "time": "06:37",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Gus is seen near Fountain, setting out the morning papers.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_gus_1",
+    "time": "07:02",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus is seen near Village Square, setting out the morning papers.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_gus_2",
+    "time": "07:27",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus is seen near Hobbs Cafe, setting out the morning papers.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_wren_0",
+    "time": "06:44",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Wren is seen near Village Square, tuning up for a morning busk.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_wren_1",
+    "time": "07:17",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "movement",
+    "truth_description": "Wren is seen near Hobbs Cafe, tuning up for a morning busk.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_birdie_0",
+    "time": "06:51",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Birdie is seen near Hobbs Cafe, sweeping the front step.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_birdie_1",
+    "time": "07:16",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie is seen near Reed & Bell Bookshop, sweeping the front step.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_birdie_2",
+    "time": "07:41",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie is seen near Village Clinic, sweeping the front step.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_clinic"
   }
 ]

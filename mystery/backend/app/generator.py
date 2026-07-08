@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 from .models import CaseData, CaseFile, Agent, Location, GameObject, SeededMemory, Event, Clue, Conclusion, AgentInterviewPack, ChallengeRule, Solution
+from .background_npcs import add_background_npcs
 
 BASE_DIR = Path(__file__).parent / "data"
 TEMPLATES_DIR = BASE_DIR / "templates"
@@ -376,6 +377,10 @@ def generate_case(
             llm_case.metadata["created_at"] = created_at_str
             if num_suspects is not None or num_locations is not None:
                 llm_case = compact_case_data(llm_case, num_suspects, num_locations, seed, roles)
+            add_background_npcs(llm_case, rng)
+            living_suspects = [a.agent_id for a in llm_case.agents if not a.is_victim and not a.is_background]
+            llm_case.metadata["num_suspects"] = len(living_suspects)
+            llm_case.metadata["num_locations"] = len(llm_case.locations)
             return llm_case, False, "", repair_attempts
         
         if not fallback_allowed:
@@ -390,9 +395,11 @@ def generate_case(
     if num_suspects is not None or num_locations is not None:
         base_case = compact_case_data(base_case, num_suspects, num_locations, seed, roles)
 
+    add_background_npcs(base_case, rng)
+
     # Final metadata override / update
     if base_case.metadata:
-        living_suspects = [a.agent_id for a in base_case.agents if not a.is_victim]
+        living_suspects = [a.agent_id for a in base_case.agents if not a.is_victim and not a.is_background]
         base_case.metadata["num_suspects"] = len(living_suspects)
         base_case.metadata["num_locations"] = len(base_case.locations)
 

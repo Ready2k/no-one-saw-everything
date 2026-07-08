@@ -147,5 +147,320 @@
     "player_description": "Ben Carter enters the rear alley. He stops. Shouts.",
     "visibility": "public",
     "importance": 10
+  },
+  {
+    "event_id": "ev_bg_rosa_0",
+    "time": "06:02",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Rosa is seen near Hobbs Cafe, tending the flowerbeds.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_rosa_1",
+    "time": "06:15",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa is seen near Village Clinic, tending the flowerbeds.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_rosa_2",
+    "time": "06:28",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa is seen near Reed & Bell Bookshop, tending the flowerbeds.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_wren_0",
+    "time": "06:09",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Wren is seen near Village Clinic, tuning up for a morning busk.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_wren_1",
+    "time": "06:27",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "movement",
+    "truth_description": "Wren is seen near Reed & Bell Bookshop, tuning up for a morning busk.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_sal_0",
+    "time": "06:16",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Sal is seen near Reed & Bell Bookshop, leaving bottles on the step.",
+    "importance": 2,
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_sal_1",
+    "time": "06:29",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "Sal is seen near Fountain, leaving bottles on the step.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_sal_2",
+    "time": "06:42",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "Sal is seen near Hobbs Cafe, leaving bottles on the step.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_min_0",
+    "time": "06:23",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Min is seen near Fountain, carrying a tray of loaves.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_min_1",
+    "time": "06:41",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min is seen near Hobbs Cafe, carrying a tray of loaves.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_cole_0",
+    "time": "06:03",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Cole is seen near Hobbs Cafe, wiping down the windows.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_cole_1",
+    "time": "06:16",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole is seen near Village Clinic, wiping down the windows.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_cole_2",
+    "time": "06:29",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole is seen near Reed & Bell Bookshop, wiping down the windows.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_dez_0",
+    "time": "06:10",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Dez is seen near Village Clinic, setting up a stall.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_dez_1",
+    "time": "06:28",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "movement",
+    "truth_description": "Dez is seen near Reed & Bell Bookshop, setting up a stall.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_birdie_0",
+    "time": "06:17",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Birdie is seen near Reed & Bell Bookshop, sweeping the front step.",
+    "importance": 2,
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_birdie_1",
+    "time": "06:30",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie is seen near Fountain, sweeping the front step.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_birdie_2",
+    "time": "06:43",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie is seen near Hobbs Cafe, sweeping the front step.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_tam_0",
+    "time": "06:24",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Tam is seen near Fountain, finishing a post round.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_tam_1",
+    "time": "06:37",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam is seen near Hobbs Cafe, finishing a post round.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_tam_2",
+    "time": "06:50",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam is seen near Village Clinic, finishing a post round.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_gus_0",
+    "time": "06:04",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Gus is seen near Hobbs Cafe, setting out the morning papers.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_gus_1",
+    "time": "06:22",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus is seen near Village Clinic, setting out the morning papers.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_effie_0",
+    "time": "06:11",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Effie is seen near Village Clinic, walking the dog past.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_effie_1",
+    "time": "06:29",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Effie is seen near Reed & Bell Bookshop, walking the dog past.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
   }
 ]

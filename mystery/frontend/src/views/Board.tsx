@@ -251,7 +251,7 @@ export default function BoardView() {
           <select value={pinTo} onChange={(e) => setPinTo(e.target.value)}>
             <option value="">No pin</option>
             {agents
-              .filter((a) => !a.is_victim)
+              .filter((a) => !a.is_victim && !a.is_background)
               .map((a) => (
                 <option key={a.agent_id} value={a.agent_id}>
                   Pin to {a.full_name}

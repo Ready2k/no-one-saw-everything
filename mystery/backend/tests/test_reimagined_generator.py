@@ -55,14 +55,14 @@ def test_minimum_case_shape():
     
     # Fetch details of active case
     agents_resp = client.get("/api/agents").json()
-    # 3 suspects + 1 victim = 4 agents total
-    assert len(agents_resp) == 4
-    
+    # 3 suspects + 1 victim = 4 investigable agents, plus any ambient background NPCs
+    core_cast = [a for a in agents_resp if not a["is_background"]]
+    assert len(core_cast) == 4
+
     # Check killer and victim are present
     case_resp = client.get("/api/case").json()
     victim_id = case_resp["victim"]["agent_id"]
-    
-    # Confirm exactly 4 agents
+
     assert any(a["agent_id"] == victim_id for a in agents_resp)
     
     # Fetch locations
@@ -92,8 +92,9 @@ def test_maximum_case_shape():
     assert data["validation"]["valid"] is True
     
     agents_resp = client.get("/api/agents").json()
-    assert len(agents_resp) == 8 # 7 suspects + 1 victim = 8 agents
-    
+    core_cast = [a for a in agents_resp if not a["is_background"]]
+    assert len(core_cast) == 8 # 7 suspects + 1 victim = 8 investigable agents
+
     locations_resp = client.get("/api/locations").json()
     assert len(locations_resp) == 8
 
@@ -243,10 +244,10 @@ def test_each_living_suspect_has_interview_pack():
     assert r.status_code == 200
     data = r.json()
     case_data = get_case(data["case_id"])
-    
-    living_suspects = [a.agent_id for a in case_data.agents if not a.is_victim]
+
+    living_suspects = [a.agent_id for a in case_data.agents if not a.is_victim and not a.is_background]
     interview_agent_ids = [p.agent_id for p in case_data.interview_packs]
-    
+
     for agent_id in living_suspects:
         assert agent_id in interview_agent_ids, f"Agent {agent_id} has no interview pack"
 
