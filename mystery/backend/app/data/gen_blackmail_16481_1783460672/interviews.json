@@ -1,0 +1,417 @@
+[
+  {
+    "agent_id": "agent_elias",
+    "default_answers": {
+      "alibi": "I told you \u2014 I stepped out for some air before opening. It was a normal morning until Marcus Bell screamed.",
+      "timeline": "Prepping the cafe, mostly. Chairs, coffee machine, the float. The same as every morning.",
+      "last_seen_victim": "They was here first thing. After that I was busy with the counter.",
+      "relationship": "Exhibits an unsettling calm, bordering on detached amusement. They speak in carefully measured tones, often deflecting questions with intellectual superiority or by focusing on the perceived flaws of others' memory.",
+      "evidence": "I don't know anything about that.",
+      "location": "I don't spend much time thinking about that place, to be honest."
+    },
+    "rules": []
+  },
+  {
+    "agent_id": "agent_clara",
+    "default_answers": {
+      "alibi": "Doing my round, mate. Van by the square, crates in and out. Same as every day.",
+      "timeline": "On my round somewhere. It all blurs together a bit, honestly.",
+      "last_seen_victim": "Properly spoke to them? Day before yesterday, when I dropped the coffee order.",
+      "relationship": "A highly emotional witness who struggles to maintain a coherent timeline. They become overly focused on minute details of social interactions (who laughed at what, who left where) rather than the physical evidence.",
+      "evidence": "Couldn't tell you anything about that.",
+      "location": "I'm all over the village in a morning, take your pick."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "10:19",
+        "time_to": "10:39",
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "Right, so \u2014 I was down the alley end around then. Saw someone in a blue coat come in from the square about a quarter to... no, closer to ten-to. Went towards the cafe's back door. Didn't see the face but \u2014 that's Elias Grant's coat, everyone knows it. And later there was this thud from inside. Dull, like a sack of flour going over. I didn't think anything of it. You don't, do you.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "uneasy",
+        "claims": [
+          {
+            "claim_id": "claim_ben_blue_coat",
+            "summary": "Clara Wells says she saw someone in a blue coat \u2014 she assumes Elias Grant \u2014 enter the alley at about 10:26 and head for the cafe's rear door.",
+            "claim_type": "sighting",
+            "time_reference": "10:26",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "mistaken"
+          },
+          {
+            "claim_id": "claim_ben_thud",
+            "summary": "Clara Wells says she heard a dull thud from the cafe's back rooms while she was in the alley, around 10:35.",
+            "claim_type": "sighting",
+            "time_reference": "10:35",
+            "location_reference_id": "loc_priya_flat",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_ben_sighting",
+          "clue_storage_sound"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": [
+          "Why were you in the alley at that time?",
+          "Did the figure see you?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "During questioning about the prank, {WITNESS1_ID} recalls that the original prop\u2014a specific colored ribbon meant for decoration\u2014was replaced by a slightly different, almost identical piece of material. They noticed it while discussing how the prank was set up, but dismissed it as nothing.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": null,
+        "claims": [],
+        "reveals_clue_ids": [
+          "clue_llm_2"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_marcus",
+    "default_answers": {
+      "alibi": "I was at the clinic, then I came here for my meeting with Isabella Reed. You know the rest.",
+      "timeline": "Paperwork at the shop, then the clinic, then... the cafe.",
+      "last_seen_victim": "Alive? At twenty past seven. I gave them a note about our meeting.",
+      "relationship": "Is visibly agitated and defensive, maintaining a posture of victimhood. Their anger seems disproportionate to the circumstances, suggesting they are hiding guilt or complicity in something unrelated to the murder itself.",
+      "evidence": "I can't help you with that.",
+      "location": "I know the village as well as anyone. What of it?"
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "From about twenty to eight I was at the clinic \u2014 Nadia Cole was taking my blood pressure, of all things. I'd been wound up about the meeting. I left just before eight, waited here at a table, and at ten past I went looking for her myself. I found her.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "shaken",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_clinic",
+            "summary": "Marcus Bell says he was at the clinic with Nadia Cole from about 10:19 to 10:39, then waited in the cafe.",
+            "claim_type": "alibi",
+            "time_reference": "10:29",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_isabella_clinic"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": [
+          "What was the meeting about?",
+          "Why were you so wound up?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": "clue_partnership_letter",
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "So it's true. Owen Price. She promised me that expansion two years ago \u2014 I built my plans on it. If you're asking whether I was angry: yes. Angry enough to demand a meeting. Not angry enough for... whatever you're implying. I was with Nadia Cole when it happened, ask her.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "wounded",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_betrayal_admitted",
+            "summary": "Marcus Bell admits the partnership betrayal gave his a grievance, but points to his clinic alibi.",
+            "claim_type": "statement",
+            "time_reference": null,
+            "location_reference_id": null,
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_isabella_clinic"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_priya",
+    "default_answers": {
+      "alibi": "In my yard. Working. Like every morning.",
+      "timeline": "Yard, mostly. Timber doesn't stack itself.",
+      "last_seen_victim": "Outside the cafe, around seven. We had words. I'm not going to pretend we didn't.",
+      "relationship": "Tries too hard to appear helpful and concerned, but their explanations are riddled with convenient omissions. They constantly point fingers at others' poor judgment rather than focusing on the facts.",
+      "evidence": "No idea.",
+      "location": "What about it?"
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "From a quarter past seven I was in my yard. Timber delivery came \u2014 big one. Driver, Col Hartley, was with me signing sheets and unloading until gone eight. Check with them if you don't believe me. I've nothing to hide about where I was.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "bristling",
+        "claims": [
+          {
+            "claim_id": "claim_owen_yard",
+            "summary": "Priya Shah says she was in her yard with delivery driver Col Hartley from 09:54 until after 10:39.",
+            "claim_type": "alibi",
+            "time_reference": "10:24",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_delivery"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": [
+          "What were you and Isabella Reed arguing about at 09:44?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": "clue_loan_book",
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "Eight thousand. There, I've said the number. They'd have ruined me by lunchtime and called it principle. But I was in my yard with Col when it happened, and thank God for that delivery, because I know how this looks.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "weary",
+        "claims": [],
+        "reveals_clue_ids": [
+          "clue_owen_delivery"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_owen",
+    "default_answers": {
+      "alibi": "I was in the bookshop stockroom, sorting the delivery. I didn't see anything.",
+      "timeline": "The stockroom, mostly. It was a big delivery.",
+      "last_seen_victim": "Yesterday afternoon. They came by the shop.",
+      "relationship": "The observer. They appear quiet and reserved, often watching the other suspects more than they participate in the questioning. Their statements are brief but contain highly specific observations about objects or movements that others have overlooked.",
+      "evidence": "I'm sorry, I don't know.",
+      "location": "I mostly go between home and the shop."
+    },
+    "rules": [
+      {
+        "question_type": "location",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": "loc_rear_alley",
+        "min_ask_count": 0,
+        "answer_text": "...Alright. Please don't take this the wrong way. I was in the alley, for a few minutes, around a quarter to eight. With Clara Wells. We've been seeing each other \u2014 Marcus Bell doesn't approve of that kind of thing at the shop, so we keep it quiet. We stood by the back door and talked, that's all. We heard a sort of thud from the cafe side and then a door, and we got nervous someone would see us, so we left. Clara Wells went to her van. I went inside. That's everything, I promise.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "ashamed",
+        "claims": [
+          {
+            "claim_id": "claim_priya_confession",
+            "summary": "Owen Price admits he and Clara Wells were secretly meeting in the alley from about 10:24 to just before 10:39, and heard a thud and a door from the cafe side.",
+            "claim_type": "statement",
+            "time_reference": "10:26",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_ben_priya_meeting"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": [
+          "What exactly did you hear from the cafe?",
+          "Did you see who came out of the rear door?"
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "I was at the clinic from ten to seven. I had a patient with me over that window, as it happens.",
+      "timeline": "Clinic, mostly. I crossed the square a couple of times.",
+      "last_seen_victim": "Through the cafe window this morning, about twenty to eight.",
+      "relationship": "The pragmatic skeptic. They speak in clipped, factual statements, presenting themselves as the voice of reason. However, their detachment makes them seem uninterested in finding justice, only in restoring order.",
+      "evidence": "I only know what I saw and heard, and I'll keep to that.",
+      "location": "Ask me something specific and I'll tell you what I saw."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "Clinic, from ten to seven onwards. And before you ask \u2014 Marcus Bell was with me from about twenty to eight until eight. Blood pressure check. He was strung tight over some meeting, but he was in my chair the whole time.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "steady",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_isabella_alibi",
+            "summary": "Nadia Cole confirms Marcus Bell was at the clinic with her from about 10:19 to 10:39.",
+            "claim_type": "alibi",
+            "time_reference": "10:29",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_isabella_clinic"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "10:14",
+        "time_to": "10:24",
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "I crossed the square about twenty to eight, past the cafe window. Isabella Reed was talking to someone \u2014 low, but the window was cracked open. I caught '...storage room, before we open...'. Couldn't see or hear who she was talking to. It only means something now, doesn't it.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "sober",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_overheard",
+            "summary": "Nadia Cole heard Isabella Reed say 'storage room, before we open' to someone at about 10:19.",
+            "claim_type": "sighting",
+            "time_reference": "10:19",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_nadia_overheard"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": [
+          "Who was in the cafe at 10:19?"
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_ben",
+    "default_answers": {
+      "alibi": "My bench, six-forty until the scream. Best seat in the village.",
+      "timeline": "On the bench. I see everything from there \u2014 well. Nearly everything, it turns out.",
+      "last_seen_victim": "Going into their cafe this morning, quarter to seven, same as forty years of mornings.",
+      "relationship": "Nervous and easily flustered. They tend to agree with whoever speaks loudest or most confidently, making them unreliable narrators whose testimony shifts depending on who they are speaking to.",
+      "evidence": "Now that I couldn't say.",
+      "location": "From my bench you can see the cafe, the fountain, the bookshop and the clinic door. Ask away."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "time_from": null,
+        "time_to": null,
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "Forty years I knew them. And I'll tell you something for nothing: last week, in the cafe, I heard them say to somebody \u2014 quiet, but furious, the way they got \u2014 'You have until tomorrow.' Never saw who. Kitchen doorway, my back was to it. But Isabella Reed didn't threaten people for sport. Somebody in this village was living on borrowed time, and I'd say the loan came due.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "grave",
+        "claims": [
+          {
+            "claim_id": "claim_elias_threat",
+            "summary": "Ben Carter heard Isabella Reed tell someone 'You have until tomorrow' in the cafe last week, but didn't see who.",
+            "claim_type": "sighting",
+            "time_reference": null,
+            "location_reference_id": null,
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_overheard_threat"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": [
+          "Could it have been a member of staff they was talking to?",
+          "How did you two first meet?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "10:19",
+        "time_to": "10:39",
+        "topic_clue_id": null,
+        "topic_object_id": null,
+        "topic_location_id": null,
+        "min_ask_count": 0,
+        "answer_text": "Elias Grant went out the front just before the quarter hour and turned towards the square. Now here's the thing \u2014 he says fountain, I hear. I face that fountain, young detective. My eyes aren't what they were, and I did have my crossword. But I don't recall seeing his at it. Priya Shah, though \u2014 you should have heard her this morning. That's your man, I'd stake my pension.",
+        "answer_type": "gossip",
+        "truthfulness": "mistaken",
+        "emotional_shift": "conspiratorial",
+        "claims": [
+          {
+            "claim_id": "claim_elias_no_fountain",
+            "summary": "Ben Carter, who faces the fountain from his bench, does not recall seeing Elias Grant at the fountain between 10:24 and 10:39 \u2014 though he admits his attention was on his crossword.",
+            "claim_type": "sighting",
+            "time_reference": "10:29",
+            "location_reference_id": "loc_fountain",
+            "truthfulness": "true"
+          },
+          {
+            "claim_id": "claim_elias_owen_accusation",
+            "summary": "Ben Carter insists Priya Shah must be the killer because of the morning argument.",
+            "claim_type": "statement",
+            "time_reference": null,
+            "location_reference_id": null,
+            "truthfulness": "mistaken"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_elias_fountain"
+        ],
+        "reveals_memory_ids": [],
+        "suggested_followups": [
+          "How sure are you that Elias Grant wasn't at the fountain?"
+        ]
+      }
+    ]
+  }
+]

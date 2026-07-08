@@ -1,0 +1,94 @@
+{
+  "killer_id": "agent_elias",
+  "motive": {
+    "canonical": "The killer orchestrated the murder by understanding the group\u2019s collective resentment towards {VICTIM_NAME}. By sabotaging a seemingly trivial 'prank' involving public humiliation, they managed to create enough chaos and conflicting testimonies to distract everyone while eliminating the one person who could expose them completely. The motive is calculated revenge blended with self-preservation.",
+    "concept_groups": [
+      [
+        "till",
+        "cash",
+        "money",
+        "takings",
+        "cafe funds"
+      ],
+      [
+        "steal",
+        "stole",
+        "stolen",
+        "theft",
+        "thief",
+        "skim",
+        "embezzl",
+        "took",
+        "taking"
+      ],
+      [
+        "blackmail",
+        "expose",
+        "confess",
+        "committee",
+        "threat",
+        "reveal",
+        "ledger"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with the Brass till weight, in the storage room.",
+    "concept_groups": [
+      [
+        "blunt",
+        "struck",
+        "strike",
+        "hit",
+        "bludgeon",
+        "blow",
+        "beat"
+      ],
+      [
+        "Brass till weight",
+        "weight",
+        "brass"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Elias Grant was at the cafe's rear door during the murder window and lied about being at the fountain.",
+    "concept_groups": [
+      [
+        "alley",
+        "storage",
+        "rear",
+        "back door",
+        "back way",
+        "cafe back"
+      ],
+      [
+        "fountain",
+        "alibi",
+        "lied",
+        "lie",
+        "false"
+      ],
+      [
+        "window",
+        "murder window",
+        "before open",
+        "07:5",
+        "07:4",
+        "quarter to eight"
+      ]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_ledger_page",
+    "clue_ben_sighting",
+    "clue_till_weight_found",
+    "clue_rear_door",
+    "clue_nadia_overheard"
+  ],
+  "explanation": "The truth is not found in the chaos of the prank, but in the calculated silence surrounding it. The killer needed the mess\u2014the conflicting memories and shared guilt over the humiliation\u2014to mask their perfect crime. They knew the victim\u2019s impending exposure was inevitable; therefore, they eliminated the source while simultaneously weaponizing the group's collective carelessness. The murder was not an outburst of rage during the event, but a cold, precise act orchestrated in the aftermath, disguised by the messy tableau of shared embarrassment and self-preservation.",
+  "epilogues": {}
+}
