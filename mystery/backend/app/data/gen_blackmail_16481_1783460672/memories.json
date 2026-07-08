@@ -1,0 +1,271 @@
+[
+  {
+    "memory_id": "mem_llm_0",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "I overheard {VICTIM_ID} talking to someone about the evidence from years ago\u2014the kind of thing that could ruin everything I built. They were convinced they had it all figured out, which only made me more desperate.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_1",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "opportunity_setup",
+    "truth_status": "false",
+    "summary": "I told everyone I was at the caf\u00e9 across town until midnight. It was just a convenient story; I actually went to {RH2_ID}'s place earlier that day, which gave me enough time and cover to slip back into the village undetected.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_2",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_clara"
+    ],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "mistaken",
+    "summary": "I remember being preoccupied with the fallout from the prank, helping {WITNESS1_ID} sort through props. I told myself that focusing on the 'joke' was enough to keep me safe and out of suspicion.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_3",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_elias",
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Observed {RH1_ID} arguing heatedly with {VICTIM_ID} near the old millpond two days before the incident, discussing an old debt. This public confrontation was misinterpreted by others as a sign of ongoing resentment and motive.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_4",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_ben",
+      "agent_elias"
+    ],
+    "memory_type": "deliberate_lie",
+    "case_function": "red_herring_motive",
+    "truth_status": "false",
+    "summary": "The suspect claims they spent the entire afternoon of the prank setup at the old Clock Tower caf\u00e9, nowhere near the actual gathering spot. They insist that their testimony placing them miles away from both {VICTIM_ID} and any potential struggle is completely accurate.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_5",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_isabella",
+      "agent_clara"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "They recall a brief, heated disagreement with {VICTIM_ID} about a financial debt owed to the victim. The suspect remembers arguing loudly enough that several people nearby heard it, but they genuinely did not think this incident was significant or relevant to any current tensions.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_6",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_isabella",
+      "agent_nadia"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I remember seeing a specific, unusual prop\u2014a small, antique music box\u2014near the designated 'prank area' just before the event started. I thought it was decorative, but its placement seemed slightly out of place for the usual chaos.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_7",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_marcus"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I recall {KILLER_ID} seemed unusually calm and watchful during the planning stages. They were observing everyone else's reactions, almost like they were timing a performance, rather than just participating in a silly game.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_8",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_elias",
+      "agent_clara"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I remember seeing {KILLER_ID} near the supply closet right before the prank began. They seemed agitated, and I noticed a distinctive smudge of grease on their sleeve\u2014it looked out of place.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_9",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_elias",
+      "agent_ben",
+      "agent_owen"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "unknown",
+    "summary": "I overheard {VICTIM_ID} having a tense, hushed conversation with someone I didn't recognize near the docks. They seemed desperate to keep that conversation private.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_10",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I remember seeing {KILLER_ID} near the shed/storage area late that afternoon. They seemed unusually focused on a specific, seemingly innocuous prop\u2014a length of twine or rope\u2014and were fiddling with it when I passed by.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_11",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_isabella"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "{VICTIM_NAME} seemed agitated all day, not just about the prank. They kept glancing at {KILLER_ID} whenever we spoke near the old clock tower, like they were expecting confrontation or having a private reckoning.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_12",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_isabella",
+      "agent_clara"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "I recall seeing {KILLER_ID} near the supply shed late that evening, ostensibly checking props for the prank. They seemed overly meticulous and were observed wiping down a specific corner of the storage crates. I dismissed it at the time as just prep work.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_llm_13",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_marcus"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "mistaken",
+    "summary": "I remember {KILLER_ID} having an intense discussion with {RH2_ID} earlier in the day, whispering something that made both of them look cornered and agitated. They were arguing about a debt or some kind of arrangement.",
+    "emotional_weight": 5,
+    "confidence": 1.0,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]
