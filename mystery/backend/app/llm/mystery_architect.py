@@ -5,9 +5,10 @@ import logging
 from pathlib import Path
 
 from ..models import CaseData
-from .schemas import CasePlan, PlotOutlinePlan, CluesPlan, MemoriesPlan, RoleMemoriesPlan, WitnessFragmentsPlan, FlavourPlan, CharacterIdentitiesPlan
+from .schemas import CasePlan, PlotOutlinePlan, CluesPlan, MemoriesPlan, RoleMemoriesPlan, WitnessFragmentsPlan, FlavourPlan, CharacterIdentitiesPlan, TimelinePlan
 from .client import get_llm_client
 from .case_assembler import assemble_case
+from .reference_scenarios import REFERENCE_SCENARIOS, format_reference_scenarios
 from ..validator import validate_case
 
 logger = logging.getLogger(__name__)
@@ -194,11 +195,16 @@ def generate_llm_case(
         allowed_roles.extend(["{WITNESS1_ID}", "{WITNESS2_ID}", "{WITNESS3_ID}", "{WITNESS4_ID}"])
     
     allowed_roles_str = ", ".join(allowed_roles)
-    
+    reference_scenarios_block = format_reference_scenarios(case_type)
+
     messages = [
         {"role": "system", "content": "You are a creative murder mystery architect writing a case for a detective game."},
         {"role": "user", "content": f"""Generate a murder mystery plot outline of type '{case_type}' and difficulty '{difficulty}'.
 The core motive and plot MUST revolve around this theme: '{theme}'.
+
+Below are {len(REFERENCE_SCENARIOS.get(case_type, REFERENCE_SCENARIOS['blackmail']))} reference scenarios showing different shapes a '{case_type}' plot can take. They are INSPIRATION ONLY — do not copy their titles, names, or exact wording. Invent your own fresh scenario that fits the '{case_type}' spirit but differs from all of them in its specifics:
+
+{reference_scenarios_block}
 
 {tone_instruction}
 
@@ -331,6 +337,43 @@ Format the output strictly as a JSON object matching the required schema."""}
         logger.error(f"LLM flavour generation failed: {e}")
         return None, "provider_error", 0
 
+    # Phase 5: Timeline — a fresh morning (ambient beats + per-agent routines).
+    # Best-effort, like character identities: a timeline failure must NOT sink
+    # an otherwise-good case, so on any error we proceed with timeline=None and
+    # the assembler keeps the template events/routines (safe fallback). The
+    # murder and its discovery are deliberately NOT requested here — the
+    # deterministic compiler synthesises those from the fixed timing so they can
+    # never be mis-timed or leaked.
+    timeline_plan = None
+    try:
+        bc = base_case_data.case
+        cast_lines = "\n".join(
+            f"  {r} = {roles.get(r + '_NAME', roles.get('{' + r.strip('{}') + '_NAME}', ''))}"
+            for r in allowed_roles
+        )
+        timeline_messages = [
+            {"role": "system", "content": "You are a creative murder mystery architect writing a case for a detective game."},
+            {"role": "user", "content": f"""Author the MORNING TIMELINE for this mystery — the ordinary comings and goings the player watches when they rewind the day. Plot recap:
+{json.dumps(_condensed_plot_summary(plot_plan))}
+
+Cast (role = name):
+{cast_lines}
+
+Fixed timing (do not contradict): the day starts at {bc.sim_start_time}; the murder happens between {bc.murder_window[0]} and {bc.murder_window[1]}; the body is found at {bc.discovery_time}. DO NOT author the murder itself or the discovery of the body — those are handled for you. Author only the ordinary/suspicious activity BEFORE roughly {bc.murder_window[0]}.
+
+Produce:
+1. beats: a list of short story beats. Each beat: role (from the list above), location_role (one of: "public", "victim_home", "killer_home", "role_home", "witness_spot"), action_summary (what they do), public_summary (what a passer-by would see, or null if unobserved), visibility ("public", "public_partial", or "private"), beat_kind ("routine", "approach", "suspicious", "sighting", or "cover"), order_hint (integer ordering, low = earlier). Give every listed role at least one beat so the village feels alive. Do NOT reveal who the killer is or state that a murder occurred.
+2. routines: for EACH role, a one-sentence routine_summary describing that character's normal morning habits.
+
+Format the output strictly as a JSON object matching the required schema."""}
+        ]
+        timeline_plan = call_with_retry(client, messages=timeline_messages, schema=TimelinePlan, temperature=0.8, phase="timeline")
+        if not isinstance(timeline_plan, TimelinePlan):
+            timeline_plan = None
+    except Exception as e:
+        logger.warning(f"LLM timeline generation failed, keeping template timeline: {e}")
+        timeline_plan = None
+
     try:
         merged_dict = {
             "case_type": case_type,
@@ -344,7 +387,8 @@ Format the output strictly as a JSON object matching the required schema."""}
             "seeded_memories": [m.model_dump() for m in seeded_memories],
             "witness_fragments": [w.model_dump() for w in witness_plan.witness_fragments],
             "interview_flavour": flavour_plan.interview_flavour,
-            "reveal_narration": flavour_plan.reveal_narration
+            "reveal_narration": flavour_plan.reveal_narration,
+            "timeline": timeline_plan.model_dump() if timeline_plan is not None else None,
         }
         plan = CasePlan.model_validate(merged_dict)
     except Exception as e:
@@ -383,12 +427,18 @@ Format the output strictly as a JSON object matching the required schema."""}
         )
         
         try:
-            plan = client.generate_json(
+            repaired = client.generate_json(
                 system_prompt=repair_sys,
                 user_prompt=repair_user,
                 schema=CasePlan,
                 temperature=0.2
             )
+            # The repair prompt targets clue/memory validity and may drop the
+            # timeline; carry the original forward so we don't silently revert
+            # to the template morning on an otherwise-successful repair.
+            if repaired.timeline is None:
+                repaired.timeline = plan.timeline
+            plan = repaired
         except Exception as e:
             logger.error(f"LLM repair failed: {e}")
             return None, "provider_error", attempt

@@ -259,6 +259,14 @@ def assemble_case(
                 # Update fallback text or rules if we want to be fancy
                 if "general" in flavours:
                     pack.default_answers["relationship"] = flavours["general"]
-                    
+
+    # 7. Timeline — replace the template's events and per-agent routines with a
+    # freshly compiled morning when the LLM authored one. Absent/empty => the
+    # template events are kept (the no-regression fallback). Imported lazily to
+    # avoid a circular import (timeline_compiler reuses resolve_role here).
+    if plan.timeline and (plan.timeline.beats or plan.timeline.routines):
+        from .timeline_compiler import compile_timeline
+        compile_timeline(plan.timeline, case_data, roles, seed)
+
     # Return assembled case data
     return case_data

@@ -125,6 +125,33 @@ FAKE_IDENTITIES = {
     "WITNESS4": {"full_name": "Sana Reyes", "occupation": "Bookshop assistant"},
 }
 
+# A small but complete timeline the deterministic compiler can turn into a valid
+# morning — one ambient beat per suspect role plus a routine per role. Kept
+# minimal on purpose so offline generation and the timeline tests exercise the
+# compiler's spine/coverage guarantees rather than the LLM's richness.
+FAKE_TIMELINE = {
+    "beats": [
+        {"role": "{VICTIM_ID}", "location_role": "victim_home", "action_summary": "Goes over the books at home.", "public_summary": None, "visibility": "private", "beat_kind": "routine", "order_hint": 0},
+        {"role": "{KILLER_ID}", "location_role": "public", "action_summary": "Opens up and sets out chairs.", "public_summary": "Someone sets out chairs.", "visibility": "public", "beat_kind": "routine", "order_hint": 1},
+        {"role": "{RH1_ID}", "location_role": "public", "action_summary": "Crosses the square on the delivery round.", "public_summary": "A figure crosses the square.", "visibility": "public_partial", "beat_kind": "sighting", "order_hint": 2},
+        {"role": "{RH2_ID}", "location_role": "role_home", "action_summary": "Reads the morning post.", "public_summary": None, "visibility": "private", "beat_kind": "routine", "order_hint": 3},
+        {"role": "{WITNESS1_ID}", "location_role": "public", "action_summary": "Wipes down the counter.", "public_summary": "The counter is wiped down.", "visibility": "public", "beat_kind": "routine", "order_hint": 4},
+        {"role": "{WITNESS2_ID}", "location_role": "witness_spot", "action_summary": "Takes a shortcut past the shops.", "public_summary": "Someone hurries past the shops.", "visibility": "public_partial", "beat_kind": "sighting", "order_hint": 5},
+        {"role": "{WITNESS3_ID}", "location_role": "public", "action_summary": "Sits on the bench with a flask.", "public_summary": "An old regular sits with a flask.", "visibility": "public", "beat_kind": "routine", "order_hint": 6},
+        {"role": "{WITNESS4_ID}", "location_role": "role_home", "action_summary": "Gets ready for the day.", "public_summary": None, "visibility": "private", "beat_kind": "routine", "order_hint": 7},
+    ],
+    "routines": [
+        {"role": "{VICTIM_ID}", "routine_summary": "An early riser who reviews accounts before anyone else is about."},
+        {"role": "{KILLER_ID}", "routine_summary": "First to open up, methodical and unhurried."},
+        {"role": "{RH1_ID}", "routine_summary": "On the delivery round through the square from first light."},
+        {"role": "{RH2_ID}", "routine_summary": "A creature of habit who reads the post over breakfast."},
+        {"role": "{WITNESS1_ID}", "routine_summary": "Behind the counter well before the doors open."},
+        {"role": "{WITNESS2_ID}", "routine_summary": "Cuts through the shops on the way to a shift."},
+        {"role": "{WITNESS3_ID}", "routine_summary": "Takes the same bench in the square every morning."},
+        {"role": "{WITNESS4_ID}", "routine_summary": "Slow to start, always the last one out the door."},
+    ],
+}
+
 
 class FakeLLMClient:
     def __init__(self, override_response: dict[str, Any] | None = None, fail_count: int = 0):
@@ -232,6 +259,8 @@ class FakeLLMClient:
                     "interview_flavour": VALID_FAKE_PLAN["interview_flavour"],
                     "reveal_narration": VALID_FAKE_PLAN["reveal_narration"]
                 })
+            if schema.__name__ == "TimelinePlan":
+                return schema.model_validate(FAKE_TIMELINE)
         
         last_message = messages[-1]["content"] if messages else ""
         if "plot outline" in last_message.lower():

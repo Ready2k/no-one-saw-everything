@@ -31,6 +31,33 @@ class WitnessFragmentPlan(BaseModel):
     complicates_timeline_for_role: str | None = None
 
 
+class BeatPlan(BaseModel):
+    """One story beat in the generated morning. The LLM authors the *content*
+    (who/where-semantically/what/how-visible); the deterministic compiler
+    (timeline_compiler.py) assigns concrete times, real location ids, and
+    fresh event ids while enforcing the fairness invariants. The murder and
+    body-discovery beats are NOT authored here — the compiler synthesises them
+    from the case's fixed timing so they can never be leaked or mis-timed."""
+    role: str                        # {VICTIM_ID}/{KILLER_ID}/{RH1_ID}/{WITNESS1_ID}...
+    location_role: str               # "public"|"victim_home"|"killer_home"|"murder_scene"|"role_home"|"witness_spot"
+    action_summary: str              # truth_description prose (may reference {ROLE_NAME})
+    public_summary: str | None = None  # player_description if visible; null if private
+    visibility: str = "public"       # public | public_partial | private | hidden
+    beat_kind: str = "routine"       # routine|approach|opportunity|suspicious|sighting|cover
+    order_hint: int = 0              # relative order within the morning
+    supports_clue_purpose: str | None = None  # motive|means|opportunity|red_herring|innocence|null
+
+
+class RoutinePlan(BaseModel):
+    role: str
+    routine_summary: str
+
+
+class TimelinePlan(BaseModel):
+    beats: List["BeatPlan"] = []
+    routines: List["RoutinePlan"] = []
+
+
 class CasePlan(BaseModel):
     case_type: Literal["blackmail", "debt", "betrayal"]
     title: str
@@ -44,6 +71,10 @@ class CasePlan(BaseModel):
     witness_fragments: List[WitnessFragmentPlan]
     interview_flavour: Dict[str, Dict[str, Any]]
     reveal_narration: str
+    # Optional so the deterministic path and pre-existing plans stay valid; the
+    # timeline phase populates it in llm_assisted mode. Empty/None => the
+    # assembler keeps the template events/routines (fallback, no regression).
+    timeline: "TimelinePlan | None" = None
 
 class DialogueRewrite(BaseModel):
     rewritten_text: str

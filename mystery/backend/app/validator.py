@@ -174,6 +174,15 @@ def _validate_case_inner(case: CaseData) -> dict[str, Any]:
     if "false_alibi_reason" not in killer_functions:
         errors.append("Killer missing 'false_alibi_reason' memory seed")
 
+    # 12. Suspect timeline coverage — every interviewable suspect should appear
+    # in at least one event, or their rewind is empty. A soft warning (not an
+    # error): the timeline compiler already guarantees this for generated
+    # cases, so this is a diagnostic safety net rather than a gate.
+    agents_in_events = {aid for e in case.events for aid in e.agent_ids}
+    for pack in case.interview_packs:
+        if pack.agent_id not in agents_in_events and pack.agent_id != case.case.victim_id:
+            warnings.append(f"Suspect {pack.agent_id} appears in no events (empty rewind)")
+
     score = 1.0 - (len(warnings) * 0.1) - (len(errors) * 0.5)
     score = max(0.0, score)
 

@@ -107,6 +107,28 @@ OpenAI-compatible host), `openai_compatible`. Env vars: `MYSTERY_LLM_PROVIDER`,
 Case generation/assembly: `mystery_architect.py`, `case_assembler.py`, `discovery.py`,
 `schemas.py`, prompts in `llm/prompts/`.
 
+#### Generated-case timeline (why generated cases aren't case_001 reskins)
+
+The deterministic generator (`generator.py`) fills the *one* template
+(`data/templates/blackmail.json`, itself case_001's events with `{ROLE}` placeholders) by
+string substitution only. On its own that makes every generated case replay case_001's exact
+morning and routines — the events (Rewind) and each agent's `routine_summary` (Routine) were
+never regenerated. `llm_assisted` mode fixes this with **Phase 5: Timeline** in
+`mystery_architect.generate_llm_case` (schemas `BeatPlan`/`RoutinePlan`/`TimelinePlan`), whose
+output is compiled by `timeline_compiler.compile_timeline` (called from `assemble_case`).
+
+The compiler keeps a deliberate boundary: the **puzzle spine is kept, not regenerated** — the
+murder, the body discovery, and every clue-bearing event stay exactly as the template produced
+them, because their times are coherent with the clue text and the murder (e.g. a "thud heard at
+the time of death" must not drift). Only the **ambient flavour layer** (public routine/movement
+events carrying no clue) is dropped and replaced with the LLM's authored beats, and every
+`routine_summary` is refreshed. Invariants are enforced in the compiler, not trusted to the LLM
+(kept spine → validity inherited; new ambient beats reserve `(agent, minute)` slots so no agent
+is ever bilocated; `hidden` is reserved for the murder). The timeline phase is **best-effort**
+like `generate_character_identities`: any failure leaves `timeline=None` and the assembler keeps
+the template events/routines — never a regression. `client.py`'s `FAKE_TIMELINE` lets the
+default `fake` provider (and `tests/test_generated_timeline.py`) exercise the whole path offline.
+
 ### Case data (`backend/app/data/`)
 
 Each `case_00N/` (and generated `gen_*/`) is a self-contained locked bundle: agents,

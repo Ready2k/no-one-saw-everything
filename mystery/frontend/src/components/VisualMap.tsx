@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type WheelEvent as ReactWheelEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { MapEvent, MapReplayData } from "../types";
 import type { AgentPin, TraceSegment } from "../map/mapProjection";
 import { locationCenter } from "../map/mapProjection";
@@ -151,12 +151,26 @@ export default function VisualMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusLocationId, data.locations, width, height]);
 
-  const handleWheel = (e: ReactWheelEvent<HTMLDivElement>) => {
+  const handleWheel = (e: WheelEvent) => {
     e.preventDefault();
     smooth.current = false;
     const factor = Math.exp(-e.deltaY * 0.0015);
     zoomAt(e.clientX, e.clientY, factor);
   };
+  // React registers onWheel as a passive listener by default, so calling
+  // preventDefault() through the JSX prop is silently ignored (and logs
+  // "Unable to preventDefault inside passive event listener invocation") —
+  // the page scrolls under the map instead of the map zooming. A native,
+  // explicitly non-passive listener is required to actually block scroll.
+  const handleWheelRef = useRef(handleWheel);
+  handleWheelRef.current = handleWheel;
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const listener = (e: WheelEvent) => handleWheelRef.current(e);
+    el.addEventListener("wheel", listener, { passive: false });
+    return () => el.removeEventListener("wheel", listener);
+  }, []);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
@@ -223,7 +237,6 @@ export default function VisualMap({
         width: `min(100%, calc(64vh * ${(width / height).toFixed(4)}))`,
         alignSelf: "center",
       }}
-      onWheel={handleWheel}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
