@@ -9,7 +9,9 @@
   --accent-2: #8f6ad1;
   --danger: #c8503c;
   --confirm: #5b9e6f;
-  font-family: "Iowan Old Style", "Palatino", Georgia, serif;
+  --font-display: "Playfair Display", "Iowan Old Style", "Palatino", Georgia, serif;
+  --font-body: "Source Serif 4", "Iowan Old Style", "Palatino", Georgia, serif;
+  font-family: var(--font-body);
 }
 
 * { box-sizing: border-box; }
@@ -24,6 +26,28 @@ body {
   color: var(--text);
 }
 
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+::selection { background: rgba(216, 162, 74, 0.35); color: #f5efdc; }
+
+/* Quiet brass scrollbars instead of OS chrome */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3d4152 transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: #3d4152;
+  border-radius: 5px;
+  border: 2px solid var(--bg);
+}
+*::-webkit-scrollbar-thumb:hover { background: rgba(216, 162, 74, 0.55); }
+
 button {
   font: inherit;
   color: inherit;
@@ -32,10 +56,69 @@ button {
   border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease,
+              box-shadow 0.18s ease, transform 0.12s ease;
 }
 button:hover:not(:disabled) { border-color: var(--accent); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:focus-visible, .tab:focus-visible {
+  outline: 2px solid rgba(216, 162, 74, 0.7);
+  outline-offset: 2px;
+}
 button:disabled { opacity: 0.5; cursor: default; }
-button.primary { background: var(--accent); color: #1a150a; font-weight: 700; }
+button.primary {
+  background: linear-gradient(180deg, #e9b962 0%, var(--accent) 55%, #b98430 100%);
+  border-color: #a97c31;
+  color: #1a150a;
+  font-weight: 700;
+  box-shadow: 0 1px 0 rgba(255, 235, 190, 0.4) inset, 0 3px 10px rgba(216, 162, 74, 0.22);
+}
+button.primary:hover:not(:disabled) {
+  filter: brightness(1.07);
+  box-shadow: 0 1px 0 rgba(255, 235, 190, 0.4) inset, 0 4px 16px rgba(216, 162, 74, 0.38);
+}
+
+/* ---- Cinematic stage: film grain + lens vignette over everything ---- */
+.stage-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background:
+    radial-gradient(115% 90% at 50% 42%, transparent 58%, rgba(5, 6, 9, 0.38) 100%),
+    linear-gradient(180deg, rgba(5, 6, 9, 0.18) 0%, transparent 8%, transparent 92%, rgba(5, 6, 9, 0.28) 100%);
+}
+.stage-grain {
+  position: fixed;
+  inset: -60px;
+  z-index: 91;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+  animation: stage-grain-shift 0.9s steps(3) infinite;
+}
+@keyframes stage-grain-shift {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-18px, 26px); }
+  66% { transform: translate(24px, -14px); }
+  100% { transform: translate(0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-grain { animation: none; }
+}
+
+/* Every phase view enters like a scene, not a page swap.
+   Deliberately no transform here: an animated transform makes this wrapper
+   the containing block for position:fixed overlays inside the views
+   (RewindIntro, cinematics, toasts), collapsing them to the content box. */
+.view-stage { animation: view-enter 0.34s cubic-bezier(0.25, 0.6, 0.3, 1) both; }
+@keyframes view-enter {
+  from { opacity: 0; margin-top: 10px; }
+  to { opacity: 1; margin-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .view-stage { animation: none; }
+}
 
 input, select, textarea {
   font: inherit;
@@ -79,8 +162,8 @@ textarea { min-height: 70px; resize: vertical; }
   color: var(--muted);
 }
 .brand-title {
-  font-family: "Copperplate", "Iowan Old Style", "Palatino", Georgia, serif;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 900;
   font-size: 1.06rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -1531,8 +1614,8 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 
 /* ---- Case-file texture & typography ---- */
 :root {
-  --font-typewriter: "American Typewriter", "Courier Prime", "Courier New", Courier, monospace;
-  --font-hand: "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
+  --font-typewriter: "Special Elite", "American Typewriter", "Courier Prime", "Courier New", Courier, monospace;
+  --font-hand: "Caveat", "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
   /* Tileable photographic grain, baked at very low alpha so it reads as
      paper stock rather than noise. */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
@@ -1557,8 +1640,8 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 /* The detective's own case-board notes are handwritten */
 .note-card p {
   font-family: var(--font-hand);
-  font-size: 0.98em;
-  line-height: 1.45;
+  font-size: 1.22em;
+  line-height: 1.35;
 }
 
 /* Fresh evidence gets an ink-stamp badge */
@@ -1888,70 +1971,158 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   border-radius: 4px;
 }
 
-.deceased-xs {
+/* Morgue sheet pulled up to the chest — reads "deceased" on any sprite,
+   no per-sprite alignment needed (unlike the old X-over-the-eyes). */
+.morgue-sheet {
   position: absolute;
-  /* Eye row on the 32px sprite frame sits lower than mid-face (~46% of the
-     frame height across the sprite pool) — 40% landed on the hairline. */
-  top: 46%;
-  left: 0;
-  width: 100%;
-  height: 0;
+  left: -2%;
+  bottom: -1px;
+  width: 104%;
+  height: 44%;
   pointer-events: none;
-}
-
-.deceased-x {
-  position: absolute;
-  top: 0;
-  transform: translate(-50%, -50%);
-  font-family: monospace;
-  font-size: 1.1rem;
-  color: #ff3333;
-  opacity: 0.85;
-  font-weight: bold;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
-  line-height: 1;
-}
-
-.deceased-x:first-child {
-  left: 41%;
-}
-
-.deceased-x:last-child {
-  left: 59%;
-}
-
-/* --- Autopsy room --- */
-.autopsy-room {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  margin-top: 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 10px;
   background:
-    radial-gradient(90% 60% at 50% 0%, rgba(190, 210, 235, 0.07), transparent 70%),
-    linear-gradient(180deg, #171a21 0%, #101218 100%);
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 13%,
+      rgba(0, 0, 0, 0.07) 13% 16%,
+      transparent 16% 29%
+    ),
+    linear-gradient(180deg, #e9ecef 0%, #ced4d9 35%, #aeb6bd 100%);
+  border-radius: 46% 54% 0 0 / 20% 24% 0 0;
+  box-shadow:
+    inset 0 6px 8px -4px rgba(255, 255, 255, 0.85),
+    inset 0 -12px 18px rgba(0, 0, 0, 0.28),
+    0 -3px 8px rgba(0, 0, 0, 0.35);
+  transform-origin: bottom center;
+  transition: transform 0.55s cubic-bezier(0.33, 1, 0.5, 1);
+}
+/* Folded back for the examination: bunched at the foot of the slab */
+.morgue-sheet.folded {
+  transform: translateY(72%) scaleY(0.3);
+}
+@media (prefers-reduced-motion: reduce) {
+  .morgue-sheet { transition: none; }
+}
+/* The folded-over hem along the top edge */
+.morgue-sheet::before {
+  content: "";
+  position: absolute;
+  top: 7%;
+  left: 0;
+  right: 0;
+  height: 16%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(160, 170, 178, 0.35));
+  border-radius: inherit;
 }
 
+/* ==================================================================
+   THE MORGUE — the cold room in a warm game. Tiled mortuary wall,
+   buzzing cold lamp, steel slab and tray; the findings live on a
+   coroner's clipboard so paper stays the game's connective tissue.
+   ================================================================== */
+.autopsy-panel {
+  --morgue-cold: #a9cdd6;
+  /* Same paper/ink family as the corkboard (those vars are scoped to .board) */
+  --sheet-ink: #2e2717;
+  --sheet-ink-soft: #6b6046;
+  --sheet-ink-red: #a3341f;
+  --sheet-paper: linear-gradient(180deg, #efe7d0 0%, #e6dcc0 70%, #ddd2b1 100%);
+}
+
+/* Masthead: the case-file header for the post-mortem */
+.morgue-masthead {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--line);
+}
+.morgue-eyebrow {
+  margin: 0;
+  font-family: var(--font-typewriter);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--morgue-cold);
+  opacity: 0.75;
+}
+.morgue-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+.morgue-name {
+  margin: 0;
+  font-size: 1.35rem;
+}
+.morgue-chip {
+  font-family: var(--font-typewriter);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #d98a7c;
+  border: 1px solid rgba(200, 80, 60, 0.55);
+  border-radius: 2px;
+  padding: 2px 7px;
+  transform: translateY(-2px);
+}
+
+/* The examination room: tiled mortuary wall under a cold lamp */
+.autopsy-room {
+  position: relative;
+  display: flex;
+  gap: 1.1rem;
+  padding: 1.1rem;
+  margin-top: 0.9rem;
+  border: 1px solid #262e33;
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 44px, rgba(0, 0, 0, 0.3) 44px 46px),
+    repeating-linear-gradient(0deg, transparent 0 28px, rgba(0, 0, 0, 0.3) 28px 30px),
+    linear-gradient(180deg, #2b3836 0%, #243130 55%, #1c2626 100%);
+}
+/* Darkness pools in the corners; the lamp owns the centre */
+.autopsy-room::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(75% 85% at 50% 12%, rgba(196, 226, 236, 0.1), transparent 60%),
+    linear-gradient(180deg, rgba(5, 8, 9, 0.68) 0%, rgba(5, 8, 9, 0.18) 34%, rgba(5, 8, 9, 0.55) 100%),
+    radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(3, 5, 6, 0.55) 100%);
+}
+.autopsy-room > * {
+  position: relative;
+}
+
+/* Brushed-steel instrument stand; each tool sits in a recessed well */
 .autopsy-tray {
   flex-shrink: 0;
-  width: 86px;
+  width: 88px;
   align-self: flex-start;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.6rem 0.5rem;
-  background: linear-gradient(180deg, #313845, #252a34);
-  border: 1px solid #3d4452;
-  border-radius: 10px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 6px 14px rgba(0, 0, 0, 0.4);
+  padding: 0.65rem 0.5rem;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(255, 255, 255, 0.015) 2px 3px),
+    linear-gradient(180deg, #4a535f, #333a44);
+  border: 1px solid #59626f;
+  border-radius: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.3),
+    0 8px 18px rgba(0, 0, 0, 0.5);
 }
 .tray-label {
-  font-size: 0.58rem;
+  font-family: var(--font-typewriter);
+  font-size: 0.56rem;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--muted);
+  letter-spacing: 0.16em;
+  color: #a7b2be;
 }
 .tray-tool {
   width: 54px;
@@ -1961,41 +2132,57 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #3c4351, #2b303c);
-  border: 1px solid #4a5262;
-  border-radius: 8px;
+  background: radial-gradient(120% 120% at 50% 25%, #262c35, #191d24 80%);
+  border: 1px solid #10141a;
+  border-radius: 7px;
+  box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.65), inset 0 -1px 0 rgba(255, 255, 255, 0.08);
 }
 .tray-tool.active {
   border-color: var(--accent);
-  box-shadow: 0 0 10px rgba(216, 162, 74, 0.35), inset 0 0 6px rgba(216, 162, 74, 0.15);
+  box-shadow: 0 0 12px rgba(216, 162, 74, 0.4), inset 0 3px 7px rgba(0, 0, 0, 0.5);
   cursor: default;
 }
-.tray-tool:disabled { opacity: 0.35; filter: grayscale(0.7); }
+.tray-tool:disabled { opacity: 0.4; filter: grayscale(0.8); }
+/* The gloves: the one tool that handles the sheet. Cold glow until used. */
+.tray-tool.sheet-tool.attention {
+  border-color: var(--morgue-cold);
+  box-shadow: 0 0 12px rgba(169, 205, 214, 0.35), inset 0 3px 7px rgba(0, 0, 0, 0.5);
+  animation: sheet-tool-pulse 2.4s ease-in-out infinite;
+}
+@keyframes sheet-tool-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(169, 205, 214, 0.2), inset 0 3px 7px rgba(0, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 14px rgba(169, 205, 214, 0.5), inset 0 3px 7px rgba(0, 0, 0, 0.5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tray-tool.sheet-tool.attention { animation: none; }
+}
 .tray-note {
   font-size: 0.6rem;
   line-height: 1.35;
   text-align: center;
   font-style: italic;
-  color: var(--muted);
+  color: #8d97a3;
 }
 
 .autopsy-slab-area {
   flex: 1;
   min-width: 0;
-  padding-top: 14px;
+  padding-top: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .morgue-lamp {
-  width: 130px;
-  height: 9px;
+  width: 150px;
+  height: 12px;
   position: relative;
   z-index: 1;
-  background: linear-gradient(180deg, #2a303b, #1a1e26);
-  border: 1px solid #3d4452;
+  background: linear-gradient(180deg, #39414d, #1d222b);
+  border: 1px solid #4a5260;
   border-top: none;
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 8px 8px;
+  /* The tube glowing along the underside of the shade */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 3px rgba(206, 236, 246, 0.45);
 }
 .morgue-lamp::before {
   content: "";
@@ -2009,29 +2196,42 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 .morgue-lamp::after {
   content: "";
   position: absolute;
-  top: 9px;
+  top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  width: 340px;
-  max-width: 60vw;
-  height: 230px;
-  background: linear-gradient(180deg, rgba(215, 230, 250, 0.13), transparent 80%);
-  clip-path: polygon(41% 0, 59% 0, 100% 100%, 0% 100%);
+  width: 420px;
+  max-width: 62vw;
+  height: 270px;
+  background: linear-gradient(180deg, rgba(206, 234, 246, 0.17), rgba(206, 234, 246, 0.02) 78%, transparent);
+  clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
   pointer-events: none;
+  animation: morgue-buzz 9s steps(1, end) infinite;
+}
+/* The fluorescent tube stutters once in a while — barely, like a hum */
+@keyframes morgue-buzz {
+  0%, 88%, 90%, 94%, 100% { opacity: 1; }
+  89% { opacity: 0.55; }
+  93% { opacity: 0.8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .morgue-lamp::after { animation: none; }
 }
 
 .autopsy-slab {
   width: min(340px, 100%);
-  margin-top: 10px;
+  margin-top: 12px;
   padding: 14px 14px 10px;
   position: relative;
-  background: linear-gradient(180deg, #6d7684 0%, #59616e 8%, #4a515d 60%, #3f4551 94%, #333944 100%);
-  border: 1px solid #262b34;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 3px, rgba(255, 255, 255, 0.02) 3px 4px),
+    linear-gradient(180deg, #78828f 0%, #5d6673 10%, #4a515d 62%, #3e4450 94%, #313743 100%);
+  border: 1px solid #20242c;
   border-radius: 14px;
   box-shadow:
-    inset 0 2px 2px rgba(255, 255, 255, 0.18),
+    inset 0 2px 2px rgba(255, 255, 255, 0.22),
+    inset 0 0 0 5px rgba(0, 0, 0, 0.14),
     inset 0 -3px 6px rgba(0, 0, 0, 0.35),
-    0 14px 28px rgba(0, 0, 0, 0.55);
+    0 16px 30px rgba(0, 0, 0, 0.6);
 }
 .autopsy-slab .magnifying-container {
   margin-bottom: 0;
@@ -2048,7 +2248,7 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 }
 .toe-tag {
   position: relative;
-  font-family: "Courier New", monospace;
+  font-family: var(--font-typewriter);
   font-size: 0.68rem;
   letter-spacing: 0.06em;
   color: #3b3323;
@@ -2070,41 +2270,152 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   background: #2c2718;
   box-shadow: 0 0 0 2px #b3a273;
 }
-.autopsy-hint { margin: 0.7rem 0 0; text-align: center; font-style: italic; }
+/* The bit of string the tag hangs by */
+.toe-tag::after {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: -9px;
+  width: 22px;
+  height: 15px;
+  border-bottom: 1px solid rgba(214, 202, 164, 0.7);
+  border-radius: 0 0 65% 45%;
+  transform: rotate(16deg);
+  pointer-events: none;
+}
+.autopsy-hint {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-style: italic;
+  color: #93a7ad;
+}
 
+/* The coroner's clipboard: a paper form on a masonite board */
 .autopsy-report {
   flex-shrink: 0;
-  width: 240px;
+  width: 264px;
   align-self: flex-start;
+  position: relative;
+  padding: 16px 9px 12px;
+  background: linear-gradient(160deg, #6b4f33 0%, #59412a 55%, #4c3723 100%);
+  border: 1px solid #2e2113;
+  border-radius: 7px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 26px rgba(0, 0, 0, 0.55);
+}
+.clipboard-clip {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92px;
+  height: 20px;
+  background: linear-gradient(180deg, #c8ccd2, #8d939c 45%, #6d737d);
+  border: 1px solid #3f444c;
+  border-radius: 5px 5px 3px 3px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  z-index: 2;
+}
+.clipboard-clip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 9px;
+  background: linear-gradient(180deg, #e2e5e9, #9aa0a9);
+  border: 1px solid #3f444c;
+  border-radius: 4px;
+}
+.coroner-sheet {
+  position: relative;
+  padding: 0.9rem 0.85rem 1.9rem;
+  background: var(--grain), var(--sheet-paper);
+  border-radius: 2px;
+  color: var(--sheet-ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 5px 12px rgba(0, 0, 0, 0.35);
+}
+.coroner-head {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 1px;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
+  border-bottom: 2px solid rgba(46, 39, 23, 0.75);
+  text-align: center;
+}
+.coroner-office {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--sheet-ink);
+}
+.coroner-form-no {
+  font-family: var(--font-typewriter);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sheet-ink-soft);
+}
+.coroner-stamp {
+  position: absolute;
+  bottom: 7px;
+  right: 8px;
+  font-family: var(--font-typewriter);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--sheet-ink-red);
+  border: 2px solid var(--sheet-ink-red);
+  border-radius: 3px;
+  padding: 2px 6px;
+  transform: rotate(-8deg);
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: 1;
 }
 .report-field {
-  border-bottom: 1px dashed var(--line);
+  border-bottom: 1px dashed rgba(46, 39, 23, 0.35);
   padding-bottom: 0.55rem;
-  font-size: 0.85rem;
+  margin-bottom: 0.55rem;
+  font-family: var(--font-typewriter);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--sheet-ink);
 }
-.report-field:last-child { border-bottom: none; }
+.report-field:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
 .report-label {
   display: block;
-  font-size: 0.6rem;
+  font-size: 0.56rem;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--accent);
+  letter-spacing: 0.16em;
+  color: var(--sheet-ink-soft);
   margin-bottom: 3px;
 }
 .exam-progress {
-  height: 6px;
-  margin: 4px 0;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.08);
+  height: 7px;
+  margin: 5px 0 3px;
+  border-radius: 2px;
+  background: rgba(46, 39, 23, 0.14);
+  box-shadow: inset 0 1px 1px rgba(46, 39, 23, 0.2);
   overflow: hidden;
 }
 .exam-progress-fill {
   height: 100%;
-  background: var(--accent);
+  background: linear-gradient(90deg, #7a3a28, var(--sheet-ink-red));
   transition: width 0.4s ease;
+}
+.exam-count { color: var(--sheet-ink-soft); }
+.nothing-found {
+  margin: 0;
+  color: var(--sheet-ink-soft);
+  font-style: italic;
+  text-align: center;
 }
 .report-evidence .found-evidence-list {
   display: flex;
@@ -2113,6 +2424,52 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   margin-top: 4px;
   max-height: 280px;
   overflow-y: auto;
+}
+/* Findings printed in ink on the form, not dark cards on paper */
+.coroner-sheet .clue-card {
+  background: transparent;
+  border: 1px solid rgba(46, 39, 23, 0.3);
+  border-radius: 2px;
+  color: var(--sheet-ink);
+  box-shadow: none;
+}
+.coroner-sheet .clue-card p,
+.coroner-sheet .muted { color: var(--sheet-ink-soft); }
+.coroner-sheet strong { color: var(--sheet-ink); }
+.coroner-sheet .badge {
+  background: transparent;
+  border-color: rgba(46, 39, 23, 0.4);
+  color: var(--sheet-ink-soft);
+}
+.coroner-sheet .badge.new {
+  border-color: var(--sheet-ink-red);
+  color: var(--sheet-ink-red);
+}
+.coroner-sheet .clue-map-link,
+.board .clue-map-link {
+  background: transparent;
+  border: 1px solid rgba(46, 39, 23, 0.4);
+  color: #6b6046;
+  box-shadow: none;
+}
+.coroner-sheet .clue-map-link:hover,
+.board .clue-map-link:hover {
+  background: rgba(46, 39, 23, 0.08);
+  border-color: rgba(46, 39, 23, 0.6);
+}
+
+/* The victim in the roster: filed, not interviewable */
+.suspect.victim .portrait {
+  filter: grayscale(0.75) brightness(0.85);
+}
+.list-victim {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-typewriter);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #8fa5ad;
 }
 
 @media (max-width: 1100px) {
@@ -2246,7 +2603,7 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5));
 }
 .nb-cover-title {
-  font-family: "Iowan Old Style", "Palatino", Georgia, serif;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 700;
   color: #d8a24a;
@@ -2303,8 +2660,8 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 
 /* --- Scribbled text style --- */
 .nb-scribble {
-  font-family: "Segoe Script", "Bradley Hand", "Comic Sans MS", cursive;
-  font-size: 0.62rem;
+  font-family: var(--font-hand);
+  font-size: 0.78rem;
   color: #3a3520;
   line-height: 23px; /* Align with notebook lines! */
   height: 23px;
@@ -2375,8 +2732,8 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   transform: translateY(92px); /* Shift down 4 lines */
 }
 .nb-written {
-  font-family: "Segoe Script", "Bradley Hand", "Comic Sans MS", cursive;
-  font-size: 0.65rem;
+  font-family: var(--font-hand);
+  font-size: 0.82rem;
   color: #1a1a12;
   line-height: 23px; /* Align with notebook lines! */
   height: 23px;
@@ -2412,7 +2769,7 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   position: absolute;
   bottom: 20px;
   right: 14px;
-  font-family: "Iowan Old Style", "Palatino", Georgia, serif;
+  font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 900;
   color: rgba(180, 50, 30, 0.5);
@@ -2675,4 +3032,640 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 @media (max-width: 700px) {
   .manual-body { flex-direction: column; }
   .manual-toc { width: 100%; flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 1px solid var(--line); }
+}
+
+/* ==================================================================
+   TITLE SCREEN — the Bureau at night
+   ================================================================== */
+
+.hub {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(2rem, 6vh, 4.5rem) 2rem 3rem;
+  overflow: hidden;
+}
+
+/* A single desk lamp behind the masthead, breathing very slowly */
+.hub-lamplight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 40% at 50% 18%, rgba(216, 162, 74, 0.10), transparent 70%),
+    radial-gradient(rgba(216, 162, 74, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px;
+  animation: hub-lamp-breathe 9s ease-in-out infinite;
+}
+@keyframes hub-lamp-breathe {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.hub-tools {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 8px 14px;
+  background: rgba(20, 22, 29, 0.75);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  z-index: 2;
+}
+
+/* Masthead: broadsheet title treatment with gold-foil ink */
+.hub-masthead {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: clamp(1.6rem, 5vh, 3.2rem);
+}
+.hub-eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.52em;
+  padding-left: 0.52em; /* optically recenter tracked-out caps */
+  color: var(--muted);
+}
+.hub-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.6rem, 7.2vw, 5rem);
+  line-height: 1.02;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  background: linear-gradient(180deg, #f2d492 0%, var(--accent) 46%, #9c7228 78%, #d8a24a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 14px rgba(216, 162, 74, 0.18)) drop-shadow(0 1px 0 rgba(0, 0, 0, 0.85));
+}
+.hub-rule {
+  width: min(300px, 50vw);
+  margin: 1.3rem auto 1rem;
+  border-top: 1px solid rgba(216, 162, 74, 0.5);
+  border-bottom: 1px solid rgba(216, 162, 74, 0.22);
+  height: 3px;
+}
+.hub-tagline {
+  margin: 0;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* Body: desk on the left, archive drawer on the right */
+.hub-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
+  gap: 1.6rem;
+  width: min(980px, 100%);
+}
+.hub-desk { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+
+/* Active case as a manila folder under the lamp */
+.hub-folder {
+  position: relative;
+  margin-top: 14px; /* room for the folder tab */
+  padding: 1.8rem 2rem 1.7rem;
+  background:
+    var(--grain),
+    linear-gradient(150deg, #232633 0%, #1a1d27 70%, #171922 100%);
+  border: 1px solid rgba(216, 162, 74, 0.28);
+  border-radius: 3px 10px 10px 10px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+}
+.hub-folder-tab {
+  position: absolute;
+  top: -15px;
+  left: -1px;
+  padding: 2px 18px 1px;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  background: linear-gradient(180deg, #262a38, #1f2230);
+  border: 1px solid rgba(216, 162, 74, 0.28);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+.hub-stamp {
+  position: absolute;
+  top: 1.4rem;
+  right: -1.7rem;
+  transform: rotate(14deg);
+  font-family: var(--font-typewriter);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: rgba(200, 80, 60, 0.75);
+  border: 2px solid rgba(200, 80, 60, 0.65);
+  border-radius: 3px;
+  padding: 3px 14px 3px 16px;
+  pointer-events: none;
+}
+.hub-folder-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.8rem;
+}
+.hub-case-no { color: var(--danger); }
+.hub-case-sep { color: var(--muted); }
+.hub-case-status { color: var(--confirm); }
+.hub-case-title {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.15;
+}
+.hub-case-sub {
+  margin: 0 0 1.6rem;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.hub-continue {
+  padding: 0.8rem 2.2rem;
+  font-size: 1.02rem;
+  letter-spacing: 0.05em;
+}
+.hub-folder-empty {
+  text-align: center;
+  padding: 1.6rem 0;
+  color: var(--muted);
+}
+.hub-folder-empty p { margin: 0 0 1.4rem; font-style: italic; }
+
+/* Bureau menu */
+.hub-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+.hub-menu-item, .hub-howto {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+  text-align: left;
+  background: var(--panel);
+  background-image: var(--grain);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--line);
+  border-radius: 6px;
+}
+.hub-menu-item:hover:not(:disabled), .hub-howto:hover:not(:disabled) {
+  border-color: rgba(216, 162, 74, 0.45);
+  border-left-color: var(--accent);
+  background-color: var(--panel-2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+.hub-menu-icon { font-size: 1.35rem; flex-shrink: 0; }
+.hub-menu-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.hub-menu-text strong { color: var(--text); letter-spacing: 0.04em; }
+.hub-menu-text span { font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+.hub-menu-arrow {
+  margin-left: auto;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.hub-menu-item:hover .hub-menu-arrow { opacity: 1; transform: none; }
+
+/* Archive drawer */
+.hub-archive { display: flex; flex-direction: column; gap: 0.9rem; }
+.hub-archive-title {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+.hub-archive-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  background-image: var(--grain);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.hub-archive-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--line);
+}
+.hub-archive-row:last-child { border-bottom: none; }
+.hub-archive-row:hover:not(:disabled) {
+  background: rgba(216, 162, 74, 0.06);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.hub-archive-name { color: var(--text); font-size: 0.95rem; }
+.hub-archive-meta { font-size: 0.74rem; color: var(--muted); }
+.hub-archive-active { color: var(--confirm); }
+.hub-archive-empty {
+  margin: 0;
+  padding: 1.1rem 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+.hub-howto { border-style: dashed; background: transparent; }
+
+/* Staged entrance, same grammar as the intro beats */
+.hub-in { opacity: 0; animation: rw-fade 0.7s ease forwards; }
+.hub-eyebrow.hub-in { animation-delay: 0.15s; }
+.hub-title.hub-in { animation-delay: 0.35s; }
+.hub-rule.hub-in { animation-delay: 0.7s; }
+.hub-tagline.hub-in { animation-delay: 0.85s; }
+.hub-body.hub-in { animation-delay: 1.05s; }
+.hub-tools.hub-in { animation-delay: 1.3s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-in { animation: none; opacity: 1; }
+  .hub-lamplight { animation: none; }
+}
+
+@media (max-width: 860px) {
+  .hub-body { grid-template-columns: 1fr; }
+  .hub-menu { grid-template-columns: 1fr; }
+  .hub-tools { position: static; margin-bottom: 1.5rem; }
+  .hub-stamp { right: 0.6rem; }
+}
+
+/* ---- Topbar masthead case label ---- */
+.masthead-case { display: flex; align-items: baseline; gap: 0.7rem; min-width: 0; }
+.masthead-case-no {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--danger);
+  white-space: nowrap;
+}
+.masthead-case-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1.02rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Case-file cover (Overview) drama pass ---- */
+.discovery-time {
+  font-family: var(--font-typewriter);
+  letter-spacing: 0.04em;
+}
+.discovery-card h1 {
+  font-size: clamp(1.7rem, 3.4vw, 2.3rem);
+  line-height: 1.12;
+}
+
+/* ---- The Accuse tab should feel like a loaded weapon ---- */
+.tab.accuse {
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(200, 80, 60, 0.0);
+  transition: text-shadow 0.3s ease, color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+.tab.accuse:hover { text-shadow: 0 0 12px rgba(200, 80, 60, 0.55); }
+
+/* ==================================================================
+   THE CORKBOARD — light paper pinned to dark cork
+   ================================================================== */
+
+.board {
+  /* Cork surface in a walnut frame */
+  --cork-ink: #2e2717;
+  --cork-ink-soft: #6b6046;
+  --cork-ink-red: #a3341f;
+  --cork-ink-green: #3f6b41;
+  --cork-paper: linear-gradient(180deg, #efe7d0 0%, #e6dcc0 70%, #ddd2b1 100%);
+  padding: 1.6rem 1.5rem 2rem;
+  border: 10px solid #3b2b1a;
+  border-radius: 4px;
+  background:
+    var(--grain),
+    radial-gradient(120% 90% at 50% -10%, rgba(255, 220, 170, 0.10), transparent 55%),
+    radial-gradient(100% 80% at 50% 110%, rgba(0, 0, 0, 0.35), transparent 60%),
+    linear-gradient(180deg, #6d5138 0%, #62492f 55%, #573f28 100%);
+  box-shadow:
+    inset 0 2px 14px rgba(0, 0, 0, 0.45),
+    inset 0 0 60px rgba(30, 18, 8, 0.35),
+    0 0 0 1px #241a0e,
+    0 0 0 3px rgba(200, 160, 110, 0.16),
+    0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* Section headers as strips of label tape */
+.board .board-col > h2 {
+  display: inline-block;
+  margin: 0 0 0.9rem;
+  padding: 3px 16px 4px;
+  font-family: var(--font-typewriter);
+  font-size: 0.86rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--cork-ink);
+  background: linear-gradient(180deg, #f4eedd, #e4dcc2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  transform: rotate(-0.8deg);
+}
+.board .board-col > h2 .muted {
+  color: var(--cork-ink-soft);
+  font-size: 0.7em;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+/* Everything pinned to the cork is paper with ink on it */
+.board .suspect-card,
+.board .note-card,
+.board .clue-card,
+.board .note-form,
+.board .guidance-panel,
+.board .herring-card {
+  position: relative;
+  background: var(--cork-paper);
+  background-image: var(--grain), var(--cork-paper);
+  border: none;
+  border-radius: 2px;
+  color: var(--cork-ink);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 6px 14px rgba(0, 0, 0, 0.38);
+}
+
+/* Each sheet held by a red push-pin */
+.board .suspect-card::before,
+.board .note-card::before,
+.board .clue-card::before,
+.board .guidance-panel::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8836f, #a02c1c 65%, #6e1d11);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.55), inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* Scatter: paper never hangs perfectly straight */
+.board .suspect-card:nth-child(odd) { transform: rotate(-0.7deg); }
+.board .suspect-card:nth-child(even) { transform: rotate(0.5deg); }
+.board .clue-card:nth-child(odd) { transform: rotate(0.6deg); }
+.board .clue-card:nth-child(even) { transform: rotate(-0.5deg); }
+.board .note-card:nth-child(odd) { transform: rotate(-1.1deg); }
+.board .note-card:nth-child(even) { transform: rotate(0.9deg); }
+.board .suspect-card::before { left: calc(50% + 14px); }
+.board .clue-card::before { left: calc(50% - 18px); }
+
+/* Ink instead of theme colors, on every kind of paper */
+.board .muted,
+.board .clue-card p,
+.board .note-card p,
+.board .suspect-card summary,
+.board .small { color: var(--cork-ink-soft); }
+.board strong { color: var(--cork-ink); }
+
+.board .badge {
+  border-color: rgba(46, 39, 23, 0.45);
+  color: var(--cork-ink-soft);
+  background: transparent;
+}
+.board .badge.new { border-color: var(--cork-ink-red); color: var(--cork-ink-red); }
+.board .badge.suspicion.prime_suspect,
+.board .badge.status-disputed { border-color: var(--cork-ink-red); color: var(--cork-ink-red); }
+.board .badge.suspicion.cleared,
+.board .badge.suspicion.likely_innocent,
+.board .badge.status-confirmed,
+.board .badge.status-resolved { border-color: var(--cork-ink-green); color: var(--cork-ink-green); }
+.board .badge.status-claimed,
+.board .badge.ambiguous { border-color: #7a5a9b; color: #7a5a9b; }
+.board .badge.status-reframed { border-color: #8a6420; color: #8a6420; }
+
+/* Suspicion states redrawn in ink */
+.board .suspect-card.suspicion-prime_suspect {
+  box-shadow:
+    0 0 0 2px rgba(163, 52, 31, 0.55),
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 6px 14px rgba(0, 0, 0, 0.38);
+}
+.board .suspect-card.suspicion-cleared,
+.board .suspect-card.suspicion-likely_innocent { opacity: 0.82; }
+
+/* Marker toggles read as checkboxes on a form */
+.board .marker-toggles {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-top: 0.55rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(46, 39, 23, 0.3);
+  font-family: var(--font-typewriter);
+  font-size: 0.72rem;
+  color: var(--cork-ink-soft);
+}
+.board .marker-toggles label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.board .marker-toggles input { accent-color: var(--cork-ink-red); }
+
+.board details { margin-top: 0.5rem; }
+.board summary { cursor: pointer; font-size: 0.85rem; }
+.board summary:hover { color: var(--cork-ink); }
+
+/* Note colour coding becomes an ink stripe down the paper's edge */
+.board .note-card.type-contradiction { border-left: 4px solid var(--cork-ink-red); }
+.board .note-card.type-theory { border-left: 4px solid #7a5a9b; }
+.board .note-card.type-question { border-left: 4px solid #8a6420; }
+
+/* Handwritten notes: bigger, darker ink on paper */
+.board .note-card p {
+  font-family: var(--font-hand);
+  font-size: 1.3em;
+  line-height: 1.3;
+  color: #3a3220;
+}
+.board .note-head .delete { color: var(--cork-ink-soft); }
+.board .note-head .delete:hover { color: var(--cork-ink-red); }
+
+/* Guidance: a memo from the chief, typed */
+.board .guidance-panel {
+  padding: 0.9rem 1rem;
+  font-family: var(--font-typewriter);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.board .guidance-panel p { margin: 0 0 0.6rem; color: var(--cork-ink); }
+.board .guidance-panel p:last-child { margin-bottom: 0; }
+
+/* Fresh index card for new notes */
+.board .note-form { padding: 0.9rem 1rem 1rem; }
+.board .note-form select,
+.board .note-form input,
+.board .note-form textarea {
+  background: rgba(255, 252, 240, 0.65);
+  border: 1px solid rgba(46, 39, 23, 0.35);
+  color: var(--cork-ink);
+  border-radius: 3px;
+}
+.board .note-form select:focus,
+.board .note-form input:focus,
+.board .note-form textarea:focus {
+  outline: none;
+  border-color: #8a6420;
+  box-shadow: 0 0 0 2px rgba(138, 100, 32, 0.2);
+}
+.board .note-form ::placeholder { color: rgba(107, 96, 70, 0.75); }
+
+/* Loose text sitting directly on the cork needs to stay light */
+.board > .board-col > p.muted {
+  color: #d9c9a8;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Red string above the paper, under nothing */
+.board .board-strings { z-index: 3; }
+.board .string-thread { stroke: #b8291a; }
+
+@media (max-width: 900px) {
+  .board { padding: 1.1rem 0.9rem 1.4rem; }
+}
+
+/* ==================================================================
+   INTERROGATION MUGSHOT — line-up wall behind the suspect
+   ================================================================== */
+
+.dossier-portrait.mugshot {
+  position: relative;
+  width: 148px;
+  padding: 0 0 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  border: 1px solid #3d4152;
+  border-radius: 6px;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.35), 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Height-chart wall: institutional paint + measurement lines */
+.mugshot-wall {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 15px,
+      rgba(20, 24, 28, 0.28) 15px 16px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 3px,
+      transparent 3px 79px,
+      rgba(20, 24, 28, 0.38) 79px 80px
+    ),
+    radial-gradient(120% 90% at 50% 0%, rgba(235, 240, 235, 0.14), transparent 65%),
+    linear-gradient(180deg, #7c8578 0%, #6c7568 55%, #5d655a 100%);
+  transition: filter 0.6s ease;
+}
+
+/* Interrogation heat: the wall itself reacts to pressure */
+.mugshot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(110% 85% at 50% 30%, transparent 55%, rgba(160, 44, 28, 0));
+  transition: background 0.8s ease, box-shadow 0.8s ease;
+}
+.mugshot-defensive .mugshot-wall { filter: saturate(0.85) brightness(0.92) hue-rotate(-8deg); }
+.mugshot-defensive::after {
+  background: radial-gradient(110% 85% at 50% 30%, transparent 50%, rgba(150, 90, 30, 0.22));
+}
+.mugshot-cracking .mugshot-wall { filter: saturate(0.7) brightness(0.8) hue-rotate(-16deg); }
+.mugshot-cracking::after {
+  background: radial-gradient(110% 85% at 50% 30%, transparent 42%, rgba(160, 44, 28, 0.4));
+  animation: mugshot-heat 2.6s ease-in-out infinite;
+}
+@keyframes mugshot-heat {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mugshot-cracking::after { animation: none; }
+}
+
+/* The suspect, blown up from the sprite sheet, feet on the floor line */
+.mugshot .portrait-sprite.portrait-large,
+.mugshot .portrait-img.portrait-large {
+  position: relative;
+  z-index: 1;
+  width: 6.6rem;
+  height: 6.6rem;
+  margin-bottom: -4px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45));
+}
+.mugshot .portrait { position: relative; z-index: 1; font-size: 4rem; }
+
+/* Booking placard */
+.mugshot-placard {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 4px 6px 5px;
+  text-align: center;
+  font-family: var(--font-typewriter);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #d8d3c2;
+  background: linear-gradient(180deg, #2c2f3a, #22242e);
+  border-top: 1px solid #3d4152;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Roster: the selected suspect card reads as pulled from the stack */
+.suspect { transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease; }
+.suspect.active {
+  border-color: var(--accent);
+  background: var(--panel-2);
+  box-shadow: inset 3px 0 0 var(--accent), 0 4px 12px rgba(0, 0, 0, 0.35);
 }

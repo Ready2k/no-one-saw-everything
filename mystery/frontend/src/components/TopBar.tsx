@@ -1,6 +1,7 @@
 import { useWorld } from "../App";
 import RankBadge from "./RankBadge";
 import AudioControls from "./AudioControls";
+import { sfx } from "../sfx";
 
 const TABS = [
   { id: "overview", label: "Case File" },
@@ -22,17 +23,22 @@ interface TopBarProps {
 export default function TopBar({ currentTab, onTabChange, onReturnToHub }: TopBarProps) {
   const world = useWorld();
 
+  // Folder tabs slide a sheet of paper when a new one is opened
+  const switchTab = (tab: TabId) => {
+    if (tab !== currentTab) sfx.paperSlide();
+    onTabChange(tab);
+  };
+
   return (
     <header className="topbar">
       <div className="masthead" style={{ borderBottom: 'none', paddingBottom: '0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span className="brand-eyebrow" style={{ color: 'var(--danger)' }}>
-            {world.caseOverview.case_id.startsWith("case_") 
-              ? `Case Nº ${world.caseOverview.case_id.split('_')[1]}` 
+        <div className="masthead-case">
+          <span className="masthead-case-no">
+            {world.caseOverview.case_id.startsWith("case_")
+              ? `Case Nº ${world.caseOverview.case_id.split('_')[1]}`
               : "Gen Case"}
           </span>
-          <span style={{ color: 'var(--muted)' }}>-</span>
-          <span style={{ fontStyle: 'italic', fontWeight: 'bold' }}>{world.caseOverview.title}</span>
+          <span className="masthead-case-title">{world.caseOverview.title}</span>
         </div>
 
         <div className="desk-tools">
@@ -58,7 +64,7 @@ export default function TopBar({ currentTab, onTabChange, onReturnToHub }: TopBa
           <button
             key={t.id}
             className={currentTab === t.id ? "tab active" : "tab"}
-            onClick={() => onTabChange(t.id)}
+            onClick={() => switchTab(t.id)}
           >
             {t.label}
           </button>
@@ -66,7 +72,7 @@ export default function TopBar({ currentTab, onTabChange, onReturnToHub }: TopBa
         <span className="tabs-case-note"></span>
         <button 
           className={currentTab === "accuse" ? "tab accuse active" : "tab accuse"}
-          onClick={() => onTabChange("accuse")}
+          onClick={() => switchTab("accuse")}
         >
           ⚖ Accuse
         </button>

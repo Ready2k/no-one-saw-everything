@@ -4,6 +4,7 @@ import { useWorld } from "../App";
 import type { Board, CluePublic, Note, HintsResponse, MarkerType } from "../types";
 import { ClaimRow, ClueCard } from "./shared";
 import Portrait from "../components/Portrait";
+import { sfx } from "../sfx";
 
 // A red thread from a pinned note to its suspect card, with a pin at each end.
 interface BoardString {
@@ -85,6 +86,7 @@ export default function BoardView() {
 
   const addNote = async () => {
     if (!title.trim()) return;
+    sfx.pencilScratch();
     await api.createNote({
       note_type: noteType,
       title,
@@ -99,6 +101,7 @@ export default function BoardView() {
 
   const toggleMarker = async (agentId: string, marker: MarkerType) => {
     if (!board) return;
+    sfx.pinPush();
     const currentMarkers = board.case_board_markers?.[agentId] || [];
     const hasMarker = currentMarkers.includes(marker);
     await api.updateMarkers({
@@ -283,7 +286,13 @@ export default function BoardView() {
           >
             <div className="note-head">
               <span className="badge">{n.note_type}</span>
-              <button className="delete" onClick={() => api.deleteNote(n.note_id).then(refresh)}>
+              <button
+                className="delete"
+                onClick={() => {
+                  sfx.paperSlide();
+                  api.deleteNote(n.note_id).then(refresh);
+                }}
+              >
                 ×
               </button>
             </div>

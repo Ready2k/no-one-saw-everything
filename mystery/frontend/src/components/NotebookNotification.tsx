@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
+import { sfx } from "../sfx";
 
 interface NotebookNotificationProps {
   /** The note text that was just saved */
@@ -106,6 +107,23 @@ export default function NotebookNotification({
         console.error("Error fetching notes for animation:", err);
       });
   }, [noteText]);
+
+  // Foley: each phase of the notebook makes its own sound
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    if (phase === "open") sfx.pageTurn();
+    if (phase === "flip") {
+      sfx.pageTurn();
+      timers.push(setTimeout(() => sfx.pageTurn(), 900));
+    }
+    if (phase === "write") {
+      sfx.pencilScratch();
+      timers.push(setTimeout(() => sfx.pencilScratch(), 1100));
+      timers.push(setTimeout(() => sfx.pencilScratch(), 2200));
+    }
+    if (phase === "done") sfx.stampThunk();
+    return () => timers.forEach(clearTimeout);
+  }, [phase]);
 
   // Animate the pencil SVG stroke during write phase
   useEffect(() => {

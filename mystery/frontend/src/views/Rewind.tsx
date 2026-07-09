@@ -11,6 +11,7 @@ import RewindIntro, {
 } from "./RewindIntro";
 import { cinematicsEnabled } from "../settings";
 import { audioManager } from "../audio";
+import { sfx } from "../sfx";
 
 export default function Rewind() {
   const { caseOverview, agents, locations, locationName, agentName } = useWorld();
@@ -45,6 +46,7 @@ export default function Rewind() {
   useEffect(refresh, [refresh]);
 
   const pin = async (eventId: string) => {
+    sfx.pinPush();
     const result = await api.pinEvent(eventId);
     if (result.new_clues.length) {
       audioManager.playStinger("clue_discovered");

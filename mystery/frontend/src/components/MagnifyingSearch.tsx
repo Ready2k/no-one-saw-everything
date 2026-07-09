@@ -35,6 +35,7 @@ export function MagnifyingSearch({
   imageUrl = "/map/the_ville.png",
   spriteAsset,
   isPortrait = false,
+  sheetFolded = true,
   onDiscover,
 }: {
   bounds: MapBounds | null;
@@ -42,6 +43,8 @@ export function MagnifyingSearch({
   imageUrl?: string;
   spriteAsset?: string;
   isPortrait?: boolean;
+  /** Body exam only: while the morgue sheet covers the subject, nothing can be found. */
+  sheetFolded?: boolean;
   onDiscover: (clueId: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -180,6 +183,11 @@ export function MagnifyingSearch({
 
     const lensRadiusPct = ((LENS_SIZE / 2) / dim.w) * 100;
 
+    if (isPortrait && !sheetFolded) {
+      setActiveHotspot(null);
+      return;
+    }
+
     const found = adjustedClues.find((c) => {
       const dx = c.x - pctX;
       const dy = (c.y - pctY) / (dim.w / dim.h);
@@ -278,15 +286,12 @@ export function MagnifyingSearch({
             />
           )}
           {isPortrait && (
-            <div className="deceased-xs">
-              <span className="deceased-x">X</span>
-              <span className="deceased-x">X</span>
-            </div>
+            <div className={`morgue-sheet ${sheetFolded ? "folded" : ""}`} aria-hidden="true" />
           )}
         </div>
       </div>
 
-      {adjustedClues.map(c => {
+      {(!isPortrait || sheetFolded) && adjustedClues.map(c => {
          const isActive = activeHotspot?.clue_id === c.clue_id;
          return (
            <div 
@@ -364,10 +369,10 @@ export function MagnifyingSearch({
                           />
                         )}
                         {isPortrait && (
-                          <div className="deceased-xs">
-                            <span className="deceased-x">X</span>
-                            <span className="deceased-x">X</span>
-                          </div>
+                          <div
+                            className={`morgue-sheet ${sheetFolded ? "folded" : ""}`}
+                            aria-hidden="true"
+                          />
                         )}
                       </div>
                     </div>

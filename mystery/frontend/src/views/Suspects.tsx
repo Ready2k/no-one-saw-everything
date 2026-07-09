@@ -15,11 +15,16 @@ import type {
 } from "../types";
 import { MagnifyingSearch } from "../components/MagnifyingSearch";
 import { ClueCard } from "./shared";
-import Portrait, { DEFENSIVE_THRESHOLD, CRACKING_THRESHOLD } from "../components/Portrait";
+import Portrait, {
+  DEFENSIVE_THRESHOLD,
+  CRACKING_THRESHOLD,
+  expressionForPressure,
+} from "../components/Portrait";
 import ContradictionBeat from "../components/ContradictionBeat";
 import NotebookNotification from "../components/NotebookNotification";
 import { audioManager } from "../audio";
 import { cinematicsEnabled } from "../settings";
+import { sfx } from "../sfx";
 
 interface BeatData {
   claimText: string;
@@ -101,17 +106,27 @@ export default function Suspects({ focusAgentId }: { focusAgentId?: string | nul
           return (
             <button
               key={a.agent_id}
-              className={`suspect ${selectedId === a.agent_id ? "active" : ""}`}
-              onClick={() => setSelectedId(a.agent_id)}
+              className={`suspect ${selectedId === a.agent_id ? "active" : ""} ${
+                a.is_victim ? "victim" : ""
+              }`}
+              onClick={() => {
+                if (a.agent_id !== selectedId) sfx.paperSlide();
+                setSelectedId(a.agent_id);
+              }}
             >
               <Portrait agent={a} pressure={info?.pressure ?? 0} />
               <span>
                 <span className="suspect-name">{a.full_name}</span>
                 <span className="muted small">{a.occupation}</span>
-                {info && info.suspicion !== "unknown" && (
-                  <span className={`list-suspicion suspicion-${info.suspicion}`}>
-                    {SUSPICION_LABEL[info.suspicion]}
-                  </span>
+                {a.is_victim ? (
+                  <span className="list-victim">✝ Victim · deceased</span>
+                ) : (
+                  info &&
+                  info.suspicion !== "unknown" && (
+                    <span className={`list-suspicion suspicion-${info.suspicion}`}>
+                      {SUSPICION_LABEL[info.suspicion]}
+                    </span>
+                  )
                 )}
               </span>
             </button>
@@ -370,8 +385,14 @@ function InterviewPanel({
       )}
       <div className="interview interrogation-main">
         <div className="dossier panel">
-          <div className="dossier-portrait">
+          {/* Police line-up mugshot: height-chart wall, placard, and a
+              backdrop that heats up as interrogation pressure rises. */}
+          <div className={`dossier-portrait mugshot mugshot-${expressionForPressure(pressure)}`}>
+            <div className="mugshot-wall" aria-hidden="true" />
             <Portrait agent={agent} pressure={pressure} size="large" />
+            <span className="mugshot-placard">
+              {agent.full_name}
+            </span>
           </div>
           <div className="dossier-body">
             <div className="dossier-title">
@@ -774,6 +795,14 @@ function AutopsyPanel({
   const { agents } = useWorld();
   const agent = agents.find((a) => a.agent_id === agentId)!;
   const [result, setResult] = useState<InspectResult | null>(null);
+  // The subject arrives covered; the sheet must be folded back before the
+  // magnifier can find anything.
+  const [sheetFolded, setSheetFolded] = useState(false);
+
+  const toggleSheet = () => {
+    sfx.paperSlide();
+    setSheetFolded((f) => !f);
+  };
 
   const refresh = useCallback(() => {
     api.examineBody(agentId).then(setResult);
@@ -805,20 +834,45 @@ function AutopsyPanel({
 
   return (
     <div className="interview-panel panel autopsy-panel">
-      <div className="transcript-header">
-        <span className="small muted">Homicide Division · Post-Mortem Examination</span>
-        <div>{agent.full_name}</div>
-      </div>
+      <header className="morgue-masthead">
+        <p className="morgue-eyebrow">Homicide Division · Post-Mortem Examination</p>
+        <div className="morgue-name-row">
+          <h2 className="morgue-name">{agent.full_name}</h2>
+          <span className="morgue-chip">Deceased</span>
+        </div>
+      </header>
 
       <div className="autopsy-room">
         <aside className="autopsy-tray" aria-label="Instrument tray">
           <span className="tray-label">Instruments</span>
-          <button type="button" className="tray-tool active" title="Field magnifier — sweep it over the body">🔍</button>
+          <button
+            type="button"
+            className={`tray-tool sheet-tool ${sheetFolded ? "" : "attention"}`}
+            onClick={toggleSheet}
+            title={sheetFolded ? "Replace the sheet" : "Gloves — fold back the sheet"}
+          >
+            🧤
+          </button>
+          <button
+            type="button"
+            className={`tray-tool ${sheetFolded ? "active" : ""}`}
+            disabled={!sheetFolded}
+            title={
+              sheetFolded
+                ? "Field magnifier — sweep it over the body"
+                : "Fold back the sheet first"
+            }
+          >
+            🔍
+          </button>
           <button type="button" className="tray-tool" disabled title="Scalpel — coroner's use only">🔪</button>
           <button type="button" className="tray-tool" disabled title="Shears — coroner's use only">✂️</button>
           <button type="button" className="tray-tool" disabled title="Syringe — coroner's use only">💉</button>
-          <button type="button" className="tray-tool" disabled title="Sample jars — coroner's use only">🧪</button>
-          <span className="tray-note">Only your field magnifier is cleared for use.</span>
+          <span className="tray-note">
+            {sheetFolded
+              ? "Only your field magnifier is cleared for use."
+              : "The subject is covered. Fold back the sheet to begin."}
+          </span>
         </aside>
 
         <div className="autopsy-slab-area">
@@ -831,43 +885,58 @@ function AutopsyPanel({
               imageUrl={agent.portrait_art?.calm || undefined}
               spriteAsset={agent.sprite_asset || undefined}
               isPortrait={true}
+              sheetFolded={sheetFolded}
             />
             <div className="slab-foot">
               <span className="toe-tag">{agent.full_name} · deceased</span>
             </div>
           </div>
           <p className="small muted autopsy-hint">
-            Sweep the magnifier over the body — click when the lens glints.
+            {sheetFolded
+              ? "Sweep the magnifier over the body — click when the lens glints."
+              : "Take the gloves and fold back the sheet to examine the body."}
           </p>
         </div>
 
         <aside className="autopsy-report">
-          <div className="report-field">
-            <span className="report-label">Subject</span>
-            {agent.full_name} · {agent.occupation}
-          </div>
-          <div className="report-field">
-            <span className="report-label">Preliminary finding</span>
-            {location.description}
-          </div>
-          <div className="report-field">
-            <span className="report-label">External examination</span>
-            <div className="exam-progress">
-              <div className="exam-progress-fill" style={{ width: `${pct}%` }} />
+          <div className="clipboard-clip" aria-hidden="true" />
+          <div className="coroner-sheet">
+            <span className="coroner-stamp" aria-hidden="true">Preliminary</span>
+            <header className="coroner-head">
+              <span className="coroner-office">Office of the County Coroner</span>
+              <span className="coroner-form-no">Form 12-B · External Examination</span>
+            </header>
+            <div className="report-field">
+              <span className="report-label">Subject</span>
+              {agent.full_name} · {agent.occupation}
             </div>
-            <span className="small muted">{found} / {total} clues found</span>
-          </div>
-          <div className="report-field report-evidence">
-            <span className="report-label">Found evidence</span>
-            {known_clues && known_clues.length > 0 ? (
-              <div className="found-evidence-list">
-                {known_clues.map((c: any) => (
-                  <ClueCard key={c.clue_id} clue={c} />
-                ))}
+            <div className="report-field">
+              <span className="report-label">Preliminary finding</span>
+              {location.description}
+            </div>
+            <div className="report-field">
+              <span className="report-label">External examination</span>
+              <div className="exam-progress">
+                <div className="exam-progress-fill" style={{ width: `${pct}%` }} />
               </div>
-            ) : (
-              <p className="muted small" style={{ margin: 0 }}>Nothing found yet.</p>
-            )}
+              <span className="small exam-count">
+                {found} / {total} observations logged
+              </span>
+            </div>
+            <div className="report-field report-evidence">
+              <span className="report-label">Findings on record</span>
+              {known_clues && known_clues.length > 0 ? (
+                <div className="found-evidence-list">
+                  {known_clues.map((c: any) => (
+                    <ClueCard key={c.clue_id} clue={c} />
+                  ))}
+                </div>
+              ) : (
+                <p className="small nothing-found">
+                  — no findings entered —
+                </p>
+              )}
+            </div>
           </div>
         </aside>
       </div>

@@ -407,15 +407,23 @@ const SECTIONS: Section[] = [
           caption="Your private notebook — nobody in the village can read this over your shoulder."
         />
         <Opt name="Autopsy panel (victim only)">
-          Same magnifying-glass search as Places, run over the body instead of a room. The
-          instrument tray's other tools are all marked "coroner's use only" — you're a detective,
-          not a surgeon, and the Bureau would very much like to keep it that way.
+          The subject arrives on the slab under a sheet. Take the <strong>gloves</strong> from
+          the instrument tray to fold it back — only then does your magnifier find anything;
+          same sweep-and-glint search as Places, run over the body instead of a room. Click the
+          gloves again to re-cover the subject when you're done. The tray's other tools are all
+          marked "coroner's use only" — you're a detective, not a surgeon, and the Bureau would
+          very much like to keep it that way.
         </Opt>
         <Shot
           file="06f-autopsy-full.jpg"
-          alt="The autopsy panel for the victim, showing the instrument tray, examination slab, and report"
-          caption="The morgue. Only the magnifier is cleared for your use — don't ask about the scalpel."
+          alt="The morgue: the covered subject on the examination slab, instrument tray on the left, coroner's report clipboard on the right"
+          caption="The morgue. The subject is covered when you arrive — reach for the gloves."
           full
+        />
+        <Shot
+          file="06g-autopsy-sheet.png"
+          alt="The examination slab with the sheet folded back to the foot, body revealed for the magnifier"
+          caption="Sheet folded back — now the magnifier can do its work."
         />
         <Aside>
           A suspect going quiet or defensive is not a confession. Plenty of innocent people

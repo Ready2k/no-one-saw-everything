@@ -54,6 +54,16 @@ export function useUiNav(): UiNav {
   return useContext(UiNavContext);
 }
 
+// Full-screen film grain + lens vignette; sits above the UI, ignores input.
+function CinematicStage() {
+  return (
+    <>
+      <div className="stage-vignette" aria-hidden="true" />
+      <div className="stage-grain" aria-hidden="true" />
+    </>
+  );
+}
+
 const TABS = [
   { id: "overview", label: "Case File" },
   { id: "rewind", label: "Rewind" },
@@ -188,6 +198,7 @@ export default function App() {
           onOpenSettings={() => setShowLlmSettingsModal(true)}
         />
         {renderModals()}
+        <CinematicStage />
       </>
     );
   }
@@ -205,6 +216,7 @@ export default function App() {
             setTab("overview");
           }}
         />
+        <CinematicStage />
       </WorldContext.Provider>
     );
   }
@@ -226,24 +238,28 @@ export default function App() {
           onReturnToHub={() => setMode("hub")} 
         />
         <main className="content">
-          {tab === "overview" && <Overview onBegin={() => setTab("rewind")} />}
-          {tab === "rewind" && <Rewind />}
-          {tab === "map" && (
-            <MapReplay
-              jump={mapJump}
-              onConsumeJump={() => setMapJump(null)}
-              onOpenSuspect={(agentId) => {
-                setSuspectFocus(agentId);
-                setTab("suspects");
-              }}
-            />
-          )}
-          {tab === "places" && <Places />}
-          {tab === "suspects" && <Suspects focusAgentId={suspectFocus} />}
-          {tab === "board" && <BoardView />}
-          {tab === "accuse" && <Accuse />}
+          {/* Keyed on tab so each phase enters like a scene cut, not a swap */}
+          <div className="view-stage" key={tab}>
+            {tab === "overview" && <Overview onBegin={() => setTab("rewind")} />}
+            {tab === "rewind" && <Rewind />}
+            {tab === "map" && (
+              <MapReplay
+                jump={mapJump}
+                onConsumeJump={() => setMapJump(null)}
+                onOpenSuspect={(agentId) => {
+                  setSuspectFocus(agentId);
+                  setTab("suspects");
+                }}
+              />
+            )}
+            {tab === "places" && <Places />}
+            {tab === "suspects" && <Suspects focusAgentId={suspectFocus} />}
+            {tab === "board" && <BoardView />}
+            {tab === "accuse" && <Accuse />}
+          </div>
         </main>
       </div>
+      <CinematicStage />
       {renderModals()}
       </UiNavContext.Provider>
     </WorldContext.Provider>
