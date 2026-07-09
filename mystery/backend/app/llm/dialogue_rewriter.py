@@ -1,6 +1,7 @@
 """LLM dialogue rewriting module."""
 
 import json
+import random
 import re
 from typing import Optional, Dict, Any, List
 from pathlib import Path
@@ -134,14 +135,18 @@ def _diegetic_fallback(deterministic_text: str, pressure_level: float) -> str:
     clamming up, rather than an invisible swap back to the exact same line
     the player may have already seen — so a rejected/unavailable rewrite
     reads as an interview beat, not a broken feature. Pressure-tiered so it
-    isn't the same single stock phrase every time."""
+    isn't the same single stock phrase every time.
+    
+    At low pressure, we return the text unadorned so that if the LLM is
+    entirely disconnected, regular conversation doesn't become repetitive."""
     if pressure_level >= 0.6:
         opener = "I'm not saying anything more than this:"
+        return f"{opener} {deterministic_text}"
     elif pressure_level >= 0.3:
         opener = "That's all I'll say about that:"
-    else:
-        opener = "Look, here's what I've got:"
-    return f"{opener} {deterministic_text}"
+        return f"{opener} {deterministic_text}"
+    
+    return deterministic_text
 
 
 def rewrite_interview_answer(
@@ -290,7 +295,28 @@ def rewrite_challenge_response(
         )
 
 
-_OPEN_ENDED_DEFLECTION = "I don't see what that's got to do with your investigation, detective."
+def _get_open_ended_deflection(pressure_level: float) -> str:
+    if pressure_level >= 0.6:
+        return random.choice([
+            "I'm done playing these games. Stick to the point.",
+            "Are you trying to be funny? Because I'm not laughing.",
+            "I don't have to sit here and listen to this nonsense.",
+            "Stop wasting my time with these questions."
+        ])
+    elif pressure_level >= 0.3:
+        return random.choice([
+            "I don't see what that's got to do with your investigation, detective.",
+            "I'd rather stick to the matter at hand, if you don't mind.",
+            "Is that really relevant right now?",
+            "Let's stay focused on the case, shall we?"
+        ])
+    else:
+        return random.choice([
+            "I'm not sure how to answer that.",
+            "I don't think I follow.",
+            "I'm afraid I can't help you with that.",
+            "I don't really know what you're talking about."
+        ])
 
 
 def generate_open_ended_response(
@@ -344,7 +370,7 @@ def generate_open_ended_response(
         if rejection:
             logger.warning(f"Open-ended response rejected: {rejection}")
             return RewriteResult(
-                rewritten_text=_OPEN_ENDED_DEFLECTION,
+                rewritten_text=_get_open_ended_deflection(pressure_level),
                 fallback_used=True,
                 fallback_reason="validation_failed",
             )
@@ -354,7 +380,7 @@ def generate_open_ended_response(
     except Exception as e:
         logger.warning(f"Open-ended response failed: {e}")
         return RewriteResult(
-            rewritten_text=_OPEN_ENDED_DEFLECTION,
+            rewritten_text=_get_open_ended_deflection(pressure_level),
             fallback_used=True,
             fallback_reason="provider_error",
         )

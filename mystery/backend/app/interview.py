@@ -28,7 +28,7 @@ from .llm.dialogue_rewriter import rewrite_interview_answer
 from .world_state import build_conversation_context, build_world_state_digest
 
 QUESTION_TEXT = {
-    "alibi": "Where were you during the murder window, between 07:45 and 08:00?",
+    "alibi": "Where were you during the murder window, between {murder_start} and {murder_end}?",
     "last_seen_victim": "When did you last see {victim}?",
     "relationship": "What was your relationship with {victim}?",
 }
@@ -37,7 +37,11 @@ QUESTION_TEXT = {
 def build_question_text(case: CaseData, req: AskRequest) -> str:
     victim = next(a for a in case.agents if a.agent_id == case.case.victim_id).full_name
     if req.question_type in QUESTION_TEXT:
-        return QUESTION_TEXT[req.question_type].format(victim=victim)
+        return QUESTION_TEXT[req.question_type].format(
+            victim=victim,
+            murder_start=case.case.murder_window[0],
+            murder_end=case.case.murder_window[1]
+        )
     if req.question_type == "timeline":
         return f"What were you doing around {req.time_reference}?"
     if req.question_type == "evidence":
@@ -123,6 +127,20 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         deterministic_answer = pack.default_answers.get(
             req.question_type, "I don't have anything to say about that."
         )
+        if req.question_type == "location" and req.topic_location_id:
+            if req.topic_location_id != case.case.murder_location_id:
+                loc = next((l for l in case.locations if l.location_id == req.topic_location_id), None)
+                loc_name = loc.name if loc else "that place"
+                deterministic_answer = f"I don't have anything special to tell you about {loc_name}."
+        elif req.question_type == "evidence" and req.topic_clue_id:
+            clue = next((c for c in case.clues if c.clue_id == req.topic_clue_id), None)
+            clue_name = clue.title if clue else "this"
+            deterministic_answer = f"I don't know anything about '{clue_name}'."
+        elif req.question_type == "timeline" and req.time_reference:
+            # The default timeline answer is usually a generic statement about their morning.
+            # Prepending the time makes it feel like they are directly answering the specific question.
+            deterministic_answer = f"Around {req.time_reference}? {deterministic_answer}"
+        
         answer_type = "uncertain"
         emotional_shift = None
         suggested_followups: list[str] = []

@@ -217,6 +217,28 @@ export function MagnifyingSearch({
       onDiscover(activeHotspot.clue_id);
     }
   };
+
+  const pan = (dx: number, dy: number) => {
+    const step = 80 / zoomLevel;
+    setPanOffset(prev => {
+      let nx = prev.x + dx * step;
+      let ny = prev.y + dy * step;
+
+      const center_x = safeBounds.x + safeBounds.width / 2;
+      const center_y = safeBounds.y + safeBounds.height / 2;
+
+      const min_nx = VIEW_W / 2 - center_x;
+      const max_nx = MAP_W - VIEW_W / 2 - center_x;
+
+      const min_ny = VIEW_H / 2 - center_y;
+      const max_ny = MAP_H - VIEW_H / 2 - center_y;
+
+      nx = Math.max(min_nx, Math.min(max_nx, nx));
+      ny = Math.max(min_ny, Math.min(max_ny, ny));
+
+      return { x: nx, y: ny };
+    });
+  };
   
   return (
     <div
@@ -232,6 +254,22 @@ export function MagnifyingSearch({
       onMouseUp={handlePointerUp}
       onClick={handleClick}
     >
+      <div className="pan-controls" style={{
+        position: "absolute", top: 10, left: 10, zIndex: 20,
+        display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4,
+        background: "rgba(0,0,0,0.6)", padding: 4, borderRadius: 6, border: "1px solid rgba(255,255,255,0.2)"
+      }}>
+        <div />
+        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, -1); }}>↑</button>
+        <div />
+        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(-1, 0); }}>←</button>
+        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); setPanOffset({x:0, y:0}); }}>◎</button>
+        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(1, 0); }}>→</button>
+        <div />
+        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, 1); }}>↓</button>
+        <div />
+      </div>
+      
       <div className="zoom-controls">
         <button 
           onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.max(1, zoomLevel - 0.5)); }}

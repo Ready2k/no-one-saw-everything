@@ -40,6 +40,11 @@ _LOCATION_LAYOUT: dict[str, tuple[MapPosition, MapBounds, str]] = {
         MapBounds(x=357, y=168, width=26, height=28),
         "exterior",
     ),
+    "loc_elias_bench": (
+        MapPosition(x=390, y=184),
+        MapBounds(x=357, y=168, width=40, height=28),
+        "exterior",
+    ),
     "loc_hobbs_cafe": (
         MapPosition(x=390, y=115),
         MapBounds(x=365, y=87, width=67, height=46),
@@ -65,15 +70,30 @@ _LOCATION_LAYOUT: dict[str, tuple[MapPosition, MapBounds, str]] = {
         MapBounds(x=267, y=98, width=56, height=35),
         "exterior",
     ),
+    "loc_bookshop_back": (
+        MapPosition(x=280, y=114),
+        MapBounds(x=267, y=98, width=28, height=35),
+        "interior",
+    ),
     "loc_clinic": (
         MapPosition(x=432, y=244),
         MapBounds(x=380, y=215, width=103, height=56),
         "exterior",
     ),
+    "loc_clinic_dispensary": (
+        MapPosition(x=460, y=244),
+        MapBounds(x=380, y=215, width=103, height=56),
+        "interior",
+    ),
     "loc_marcus_house": (
         MapPosition(x=383, y=372),
         MapBounds(x=349, y=328, width=67, height=92),
         "exterior",
+    ),
+    "loc_marcus_study": (
+        MapPosition(x=370, y=372),
+        MapBounds(x=349, y=328, width=67, height=92),
+        "interior",
     ),
     "loc_owen_house": (
         MapPosition(x=475, y=372),
