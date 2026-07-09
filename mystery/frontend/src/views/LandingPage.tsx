@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import RankBadge from '../components/RankBadge';
 import AudioControls from '../components/AudioControls';
 import { CaseMeta, World } from '../App';
 import { clearCaseStarted } from '../progress';
 import { clearRewindBriefingSeen } from './RewindIntro';
 import { api } from '../api';
+import Detective101Modal from './Detective101Modal';
 
 interface LandingPageProps {
   world: World | null;
@@ -27,8 +29,9 @@ export default function LandingPage({
   onOpenSettings 
 }: LandingPageProps) {
 
+  const [showGuide, setShowGuide] = useState(false);
   const activeCase = world?.caseOverview;
-  
+
   // Format the active case number
   const activeCasePrefix = activeCase?.case_id.startsWith("case_")
     ? `CASE Nº ${activeCase.case_id.split('_')[1]}`
@@ -265,7 +268,7 @@ export default function LandingPage({
               gap: '1rem',
               textAlign: 'left'
             }}
-            onClick={() => alert("Detective Procedures manual coming soon.")}
+            onClick={() => setShowGuide(true)}
             >
               <span style={{ fontSize: '1.5rem', color: 'var(--accent)' }}>📖</span>
               <div>
@@ -278,6 +281,7 @@ export default function LandingPage({
         </div>
 
       </div>
+      {showGuide && <Detective101Modal onClose={() => setShowGuide(false)} />}
     </div>
   );
 }

@@ -2574,3 +2574,105 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   from { transform: translateX(0) scale(1);        opacity: 1; }
   to   { transform: translateX(100%) scale(0.95);  opacity: 0; }
 }
+
+/* ---- Detective 101 manual ---- */
+.detective-manual { border-color: var(--accent); }
+.manual-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(216, 162, 74, 0.06), transparent);
+}
+.manual-body { display: flex; flex: 1; min-height: 0; }
+.manual-toc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 220px;
+  flex-shrink: 0;
+  padding: 0.75rem;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.manual-toc-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: 1px solid transparent;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+.manual-toc-item:hover:not(.active) { color: var(--text); border-color: var(--line); }
+.manual-toc-item.active {
+  color: var(--accent);
+  background: rgba(216, 162, 74, 0.1);
+  border-color: rgba(216, 162, 74, 0.35);
+}
+.manual-toc-icon { font-size: 1rem; }
+.manual-content {
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem 1.75rem;
+  overflow-y: auto;
+  line-height: 1.55;
+}
+.manual-content h3 { margin-top: 0; color: var(--accent); }
+.manual-opt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--line);
+}
+.manual-opt:first-of-type { border-top: none; }
+.manual-opt strong { color: var(--text); }
+.manual-opt span { color: var(--muted); font-size: 0.92rem; }
+.manual-aside {
+  margin: 1rem 0;
+  padding: 0.7rem 0.9rem;
+  background: var(--panel-2);
+  border-left: 3px solid var(--accent-2);
+  border-radius: 4px;
+  font-style: italic;
+  color: var(--text);
+}
+.manual-list { color: var(--muted); padding-left: 1.2rem; }
+.manual-list li { margin-bottom: 0.5rem; }
+
+.manual-shot {
+  margin: 0.9rem 0 1.2rem;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.manual-shot img { display: block; width: 100%; height: auto; }
+.manual-shot figcaption {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+.manual-shot.full { border-color: rgba(216, 162, 74, 0.3); }
+.manual-shot.zoom { max-width: 420px; }
+.manual-shot-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 0.9rem 0 1.2rem;
+}
+.manual-shot-row .manual-shot { flex: 1 1 260px; margin: 0; }
+
+@media (max-width: 700px) {
+  .manual-body { flex-direction: column; }
+  .manual-toc { width: 100%; flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 1px solid var(--line); }
+}
