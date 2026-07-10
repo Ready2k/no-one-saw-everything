@@ -385,6 +385,8 @@ def map_replay(
         "map": {
             "asset": map_asset,
             "image": map_image,
+            "image_tiles": map_definition.get("image_tiles"),
+            "zoom_image_tiles": map_definition.get("zoom_image_tiles"),
             "width": map_width,
             "height": map_height,
             "definition_id": map_definition["definition_id"],

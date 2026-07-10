@@ -20,12 +20,14 @@ export default function EventMarker({
   event,
   x,
   y,
+  zoomCompensation = 1,
   selected,
   onClick,
 }: {
   event: MapEvent;
   x: number;
   y: number;
+  zoomCompensation?: number;
   selected: boolean;
   onClick: () => void;
 }) {
@@ -33,7 +35,7 @@ export default function EventMarker({
   return (
     <button
       className={`map-marker type-${event.visual_event_type} ${selected ? "selected" : ""}`}
-      style={{ left: x, top: y }}
+      style={{ left: x, top: y, transform: `translate(-50%, -50%) scale(${zoomCompensation})` }}
       title={`${event.time} — ${meta.label}`}
       onClick={onClick}
     >

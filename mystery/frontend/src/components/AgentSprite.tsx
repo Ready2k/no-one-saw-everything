@@ -9,6 +9,7 @@ export default function AgentSprite({
   x,
   y,
   size,
+  zoomCompensation = 1,
   stale,
   lastSeen,
   onClick,
@@ -17,6 +18,7 @@ export default function AgentSprite({
   x: number;
   y: number;
   size: { width: number; height: number };
+  zoomCompensation?: number;
   stale: boolean;
   lastSeen: string | null;
   onClick?: () => void;
@@ -29,7 +31,7 @@ export default function AgentSprite({
   return (
     <button
       className={`map-agent ${agent.is_background ? "background-agent" : ""} ${stale ? "stale" : ""} ${agent.is_victim ? "victim" : ""}`}
-      style={{ left: x, top: y }}
+      style={{ left: x, top: y, transform: `translate(-50%, -60%) scale(${zoomCompensation})` }}
       title={title}
       onClick={onClick}
       data-agent-id={agent.agent_id}

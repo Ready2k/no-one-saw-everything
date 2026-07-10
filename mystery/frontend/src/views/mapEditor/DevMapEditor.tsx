@@ -328,7 +328,7 @@ export default function DevMapEditor() {
   const [previewMode, setPreviewMode] = useState<PreviewMode>("debug");
   const [fineAdjustment, setFineAdjustment] = useState(false);
   const [showEvidenceAnchors, setShowEvidenceAnchors] = useState(true);
-  const [underlaySource, setUnderlaySource] = useState<UnderlaySourceId>("town_overworld");
+  const [underlaySource, setUnderlaySource] = useState<UnderlaySourceId>("town_tiles_hd");
   const [underlayOpacity, setUnderlayOpacity] = useState(0.5);
   const [solidRenderView, setSolidRenderView] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
@@ -610,10 +610,13 @@ export default function DevMapEditor() {
       rows: gRows,
       tileLayers: lay.tile_layers || {},
       visibleLayers: st.visibleLayers,
-      underlayImg: st.underlaySource === "none" ? null : underlayImgs.current[st.underlaySource] || null,
+      underlays:
+        st.underlaySource === "none"
+          ? []
+          : (UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource)?.tiles || [])
+              .map((t) => ({ img: underlayImgs.current[t.url], x: t.x, y: t.y, w: t.w, h: t.h }))
+              .filter((u) => !!u.img),
       underlayOpacity: st.underlayOpacity,
-      underlayPlacement:
-        UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource)?.placement === "full" ? "full" : "centre_third",
       solidRender: st.solidRenderView,
       showGrid: st.showGrid,
       showSafety: st.showSafety,
@@ -668,13 +671,16 @@ export default function DevMapEditor() {
     casesRef.current = cases;
   }, [cases]);
 
-  // --- Boot: preload underlays + fetch layout ---
+  // --- Boot: preload underlays (keyed by URL) + fetch layout ---
   useEffect(() => {
-    for (const u of UNDERLAY_SOURCES) {
-      const img = new Image();
-      img.src = u.url;
-      img.onload = () => requestRender();
-      underlayImgs.current[u.id] = img;
+    for (const src of UNDERLAY_SOURCES) {
+      for (const t of src.tiles) {
+        if (underlayImgs.current[t.url]) continue;
+        const img = new Image();
+        img.src = t.url;
+        img.onload = () => requestRender();
+        underlayImgs.current[t.url] = img;
+      }
     }
     api
       .getDevMapLayout()

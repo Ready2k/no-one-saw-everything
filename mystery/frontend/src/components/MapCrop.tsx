@@ -1,5 +1,5 @@
 import type { MapReplayData } from "../types";
-import { mapImageUrl } from "../map/mapAssets";
+import { mapImageTiles, mapImageUrl } from "../map/mapAssets";
 
 // The map is pixel art, so crops are scaled with image-rendering: pixelated
 // (see .intro-map-crop / .loc-transition-crop in styles.css).
@@ -38,6 +38,46 @@ export default function MapCrop({
     scale = 2;
   } else {
     return null;
+  }
+  const tiles = mapImageTiles(data.map, scale);
+  if (tiles) {
+    // Mosaic art: emulate the background-position crop with a positioned
+    // full-map layer inside an overflow-hidden frame.
+    return (
+      <div
+        className={className}
+        style={{ width, height, position: "relative", overflow: "hidden" }}
+        role="img"
+        aria-label={`Map view of ${loc.name}`}
+      >
+        <div
+          style={{
+            position: "absolute",
+            left: width / 2 - cx * scale,
+            top: height / 2 - cy * scale,
+            width: mapW * scale,
+            height: mapH * scale,
+          }}
+        >
+          {tiles.map((t) => (
+            <img
+              key={t.url}
+              src={t.url}
+              alt=""
+              draggable={false}
+              style={{
+                position: "absolute",
+                left: `${t.leftPct}%`,
+                top: `${t.topPct}%`,
+                width: `${t.widthPct}%`,
+                height: `${t.heightPct}%`,
+                display: "block",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    );
   }
   return (
     <div

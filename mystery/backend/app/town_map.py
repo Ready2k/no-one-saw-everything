@@ -408,7 +408,42 @@ def load_town_layout() -> dict[str, Any] | None:
 CANONICAL_MAP: dict[str, Any] = {
     "definition_id": "town_canonical_v1",
     "asset": "town_canonical_v1",
-    "image": "/art/town/town_canonical_v1_day.png",
+    "image": "/art/town/town_canonical_v2_overworld_day.png",
+    # HD overworld sliced into a 3x3 mosaic (rows A-C top->bottom, cols 1-3
+    # left->right; B2 is the town centre). Each cell is 2048x1536 = 64x48
+    # tiles. Clients that understand image_tiles should prefer it over the
+    # single `image` above, which is kept as a fallback.
+    "image_tiles": {
+        "cols": 3,
+        "rows": 3,
+        "urls": [
+            [
+                (
+                    "/art/town/tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png"
+                    if row == "B" and col == 2
+                    else f"/art/town/tiles_3x3_hd/town_overworld_{row}{col}_hd.png"
+                )
+                for col in (1, 2, 3)
+            ]
+            for row in ("A", "B", "C")
+        ],
+    },
+    # When the user zooms into the centre town tile, swap B2 from the
+    # exterior overview into the roofless investigation interior.
+    "zoom_image_tiles": {
+        "threshold": 3.2,
+        "urls": [
+            [
+                (
+                    "/art/town/tiles_3x3_hd/town_overworld_B2_interior_hd.png"
+                    if row == "B" and col == 2
+                    else f"/art/town/tiles_3x3_hd/town_overworld_{row}{col}_hd.png"
+                )
+                for col in (1, 2, 3)
+            ]
+            for row in ("A", "B", "C")
+        ],
+    },
     "width": 6144,
     "height": 4608,
     "tile_size": 32,
@@ -505,6 +540,48 @@ CANONICAL_ADJACENCY: dict[str, list[str]] = {
     "loc_meadow": ["loc_village_square"],
 }
 
+LOCATION_FUNCTION_TAGS: dict[str, dict[str, Any]] = {
+    "loc_village_square": {"display_name": "Village Square", "function_tag": "public_square", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external"},
+    "loc_fountain": {"display_name": "Village Fountain", "function_tag": "fountain", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external"},
+    "loc_elias_bench": {"display_name": "Elias's Bench", "function_tag": "bench", "building_role": "landmark", "case_ids": ["case_003"], "zoom_behavior": "external"},
+    "loc_hobbs_cafe": {"display_name": "Hobbs Cafe", "function_tag": "cafe", "building_role": "business", "case_ids": ["case_001", "case_002", "case_003", "case_005"], "zoom_behavior": "external_to_internal"},
+    "loc_cafe_kitchen": {"display_name": "Cafe Kitchen", "function_tag": "kitchen", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_cafe_storage": {"display_name": "Cafe Storage Room", "function_tag": "storage", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_clara_flat": {"display_name": "Clara's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_003", "case_005"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_bookshop": {"display_name": "Reed & Bell Bookshop", "function_tag": "bookshop", "building_role": "business", "case_ids": ["case_001", "case_002", "case_005", "case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_bookshop_back": {"display_name": "Bookshop Back Room", "function_tag": "back_office", "building_role": "service_room", "case_ids": ["case_002"], "parent_location_id": "loc_bookshop", "zoom_behavior": "internal"},
+    "loc_rear_alley": {"display_name": "Rear Alley", "function_tag": "service_alley", "building_role": "exterior_service", "case_ids": ["case_001", "case_002", "case_005"], "zoom_behavior": "external"},
+    "loc_clinic": {"display_name": "Village Clinic", "function_tag": "clinic", "building_role": "public_service", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_clinic_dispensary": {"display_name": "Clinic Dispensary", "function_tag": "dispensary", "building_role": "service_room", "case_ids": ["case_003"], "parent_location_id": "loc_clinic", "zoom_behavior": "internal"},
+    "loc_marcus_house": {"display_name": "Marcus Bell's House", "function_tag": "house", "building_role": "residence", "case_ids": ["case_001", "case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_marcus_study": {"display_name": "Marcus's Study", "function_tag": "study", "building_role": "private_room", "case_ids": ["case_006"], "parent_location_id": "loc_marcus_house", "zoom_behavior": "internal"},
+    "loc_owen_house": {"display_name": "Owen Price's House & Yard", "function_tag": "house_and_yard", "building_role": "residence_workyard", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external_to_internal"},
+    "loc_pub": {"display_name": "The Mallet & Crown", "function_tag": "pub", "building_role": "business", "case_ids": ["case_004"], "zoom_behavior": "external_to_internal"},
+    "loc_ben_flat": {"display_name": "Ben's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_004"], "zoom_behavior": "internal"},
+    "loc_priya_flat": {"display_name": "Priya's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_002", "case_004", "case_006"], "zoom_behavior": "internal"},
+    "loc_nadia_flat": {"display_name": "Nadia's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001"], "zoom_behavior": "internal"},
+    "loc_elias_house": {"display_name": "Elias's Cottage", "function_tag": "cottage", "building_role": "residence", "case_ids": ["case_001", "case_004"], "zoom_behavior": "external_to_internal"},
+    "loc_ruth_cottage": {"display_name": "Ruth's Cottage", "function_tag": "cottage", "building_role": "residence_garden", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_solicitors_office": {"display_name": "Whittle & Cross Solicitors", "function_tag": "solicitors_office", "building_role": "office", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_fishery": {"display_name": "Fishery", "function_tag": "fishery", "building_role": "exterior_worksite", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_lake": {"display_name": "Lover's Lake", "function_tag": "lake", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_woodland": {"display_name": "Whispering Woodland", "function_tag": "woodland", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_meadow": {"display_name": "Green Meadow", "function_tag": "meadow", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
+}
+
+
+def _tagged_location_payload(
+    location_id: str,
+    position: dict[str, int],
+    bounds: dict[str, int],
+    layer: str,
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {"bounds": bounds, "position": position, "layer": layer}
+    tag = LOCATION_FUNCTION_TAGS.get(location_id)
+    if tag:
+        payload.update(tag)
+    return payload
+
 
 # Semantic asset IDs are visual-only. Existing object IDs remain the state
 # keys. The renderer can start with glyph/CSS placeholders and later swap in
@@ -538,7 +615,7 @@ OBJECT_OVERLAYS: dict[str, list[str]] = {
 
 CASE_MAPS: dict[str, dict[str, Any]] = {
     "case_004": {
-        "mode": "canonical_pilot",
+        "mode": "canonical_overworld",
         "map": CANONICAL_MAP,
         "visible_location_ids": [
             "loc_village_square", "loc_fountain", "loc_pub", "loc_owen_house",
@@ -754,13 +831,15 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
     for loc_id in visible_location_ids_list:
         pos, bounds, layer = pilot_location_visuals(loc_id)
         if pos and bounds:
-            canonical_locations_dict[loc_id] = {
-                "bounds": bounds,
-                "position": pos,
-                "layer": layer
-            }
+            canonical_locations_dict[loc_id] = _tagged_location_payload(loc_id, pos, bounds, layer)
         elif loc_id in CANONICAL_LOCATIONS:
-            canonical_locations_dict[loc_id] = CANONICAL_LOCATIONS[loc_id]
+            location = CANONICAL_LOCATIONS[loc_id]
+            canonical_locations_dict[loc_id] = _tagged_location_payload(
+                loc_id,
+                location["position"],
+                location["bounds"],
+                location["layer"],
+            )
 
     return {
         "mode": config["mode"],

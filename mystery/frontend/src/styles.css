@@ -963,6 +963,13 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
      4480px map image. Without it the browser re-rasterizes at each zoom. */
 }
 .visual-map.zoomed { cursor: move; }
+.visual-map-artwork {
+  position: absolute;
+}
+.visual-map-image-frame {
+  position: absolute;
+  inset: 0;
+}
 .visual-map-image {
   position: absolute;
   inset: 0;
@@ -974,6 +981,13 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   filter: saturate(0.85) brightness(0.9);
   pointer-events: none;
 }
+/* Mosaic piece when the map art arrives as image_tiles (3x3 HD overworld).
+   Positioned by inline percentages inside a .visual-map-image container. */
+.visual-map-image-tile {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
 
 .map-lighting-overlay {
   position: absolute;
@@ -982,6 +996,26 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   height: 100%;
   pointer-events: none;
   mix-blend-mode: multiply;
+  transition: background-color 0.6s ease;
+}
+
+/* Decorative base-terrain fills for exterior environmental zones (lake,
+   fishery, woodland) that lie outside the centre-third artwork. Sit beneath
+   location bounds/labels/markers; carry no evidence. */
+.map-terrain-zone {
+  position: absolute;
+  z-index: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.92;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+.map-terrain-tint {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
   transition: background-color 0.6s ease;
 }
 

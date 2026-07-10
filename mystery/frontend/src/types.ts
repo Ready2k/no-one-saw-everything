@@ -98,6 +98,10 @@ export interface MapReplayData {
   map: {
     asset: string;
     image: string;
+    // Optional mosaic of the map art (rows top->bottom, cols left->right).
+    // When present, renderers prefer it over the single `image`.
+    image_tiles?: { cols: number; rows: number; urls: string[][] };
+    zoom_image_tiles?: { threshold: number; urls: string[][] };
     width: number;
     height: number;
     definition_id?: string;
@@ -132,7 +136,7 @@ export interface MapVisualObject {
 }
 
 export interface MapVisualContract {
-  mode: "canonical_pilot" | "legacy_fallback";
+  mode: "canonical_pilot" | "canonical_overworld" | "legacy_fallback";
   definition_id: string;
   visible_location_ids: string[] | null;
   overlays: string[];
@@ -140,7 +144,17 @@ export interface MapVisualContract {
   object_visuals?: MapVisualObject[];
   objects: MapVisualObject[];
   adjacency: Record<string, string[]>;
-  canonical_locations: Record<string, { bounds: MapBounds; position: MapPosition; layer: "exterior" | "interior" }>;
+  canonical_locations: Record<string, {
+    bounds: MapBounds;
+    position: MapPosition;
+    layer: "exterior" | "interior";
+    display_name?: string;
+    function_tag?: string;
+    building_role?: string;
+    case_ids?: string[];
+    parent_location_id?: string;
+    zoom_behavior?: "external" | "internal" | "external_to_internal";
+  }>;
 }
 
 export interface EventPublic {

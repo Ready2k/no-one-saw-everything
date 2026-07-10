@@ -4,10 +4,10 @@ from app.case_store import get_case
 from app.town_map import map_payload
 
 
-def test_case_004_uses_canonical_pilot_contract_without_revealing_objects():
+def test_case_004_uses_canonical_overworld_contract_without_revealing_objects():
     payload = map_payload(get_case("case_004"), set())
 
-    assert payload["mode"] == "canonical_pilot"
+    assert payload["mode"] == "canonical_overworld"
     assert payload["definition_id"] == "town_canonical_v1"
     assert payload["visible_location_ids"]
     assert payload["objects"]
@@ -21,6 +21,17 @@ def test_case_004_uses_canonical_pilot_contract_without_revealing_objects():
     assert fountain["marker_state"] == "active"
     assert fountain["safe_to_render"] is True
     assert fountain["overlay_ids"] == ["overlay_missing_coping"]
+
+
+def test_case_004_locations_include_function_tags_for_migration():
+    payload = map_payload(get_case("case_004"), set())
+    locations = payload["canonical_locations"]
+
+    assert locations["loc_pub"]["function_tag"] == "pub"
+    assert locations["loc_pub"]["building_role"] == "business"
+    assert locations["loc_clinic"]["function_tag"] == "clinic"
+    assert locations["loc_clinic"]["building_role"] == "public_service"
+    assert "case_004" in locations["loc_ben_flat"]["case_ids"]
 
 
 def test_unmigrated_cases_keep_legacy_visual_fallback_contract():

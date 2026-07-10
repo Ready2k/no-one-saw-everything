@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { MapEvent, MapReplayData } from "../types";
 import type { AgentPin, TraceSegment } from "../map/mapProjection";
 import { locationCenter } from "../map/mapProjection";
-import { AGENT_TILE_SCALE, MAP_GRID, mapImageUrl } from "../map/mapAssets";
+import { AGENT_TILE_SCALE, MAP_GRID, mapImageTiles, mapImageUrl } from "../map/mapAssets";
 import { lightingTint } from "../map/lighting";
 import AgentSprite from "./AgentSprite";
 import EventMarker from "./EventMarker";
@@ -19,10 +19,25 @@ const MAX_SCALE = 6;
 const DRAG_CLICK_THRESHOLD = 5; // px of movement before a drag suppresses the click
 const FOCUS_FILL = 0.6; // focused location bounds fill this fraction of the viewport
 const FOCUS_POINT_SCALE = 2.5; // fallback zoom for locations with only a point
+const CANONICAL_DEFAULT_SCALE = 3; // center square of the expanded 3x3 world
 // Floor so agents stay clickable at full zoom-out, where one tile can be
 // only a few px; irrelevant once zoomed in since the true tile size then
 // exceeds it (this must stay small or characters look oversized again).
 const MIN_AGENT_PX = 10;
+
+// Ambient base-terrain fills for exterior environmental zones the map editor
+// made visible but which sit OUTSIDE the hand-authored centre-third artwork
+// (lake/fishery/woodland). Purely decorative — these carry no evidence and are
+// discovery-safe. loc_meadow is intentionally omitted: its bounds overlap the
+// painted town art, so the base image already dresses it.
+const TERRAIN_ZONES: Record<string, string> = {
+  loc_lake:
+    "radial-gradient(120% 90% at 40% 32%, rgba(150,200,232,0.30), transparent 62%), linear-gradient(160deg, #35709f, #285a85)",
+  loc_fishery:
+    "linear-gradient(150deg, #6f5f45, #55452d)",
+  loc_woodland:
+    "radial-gradient(circle at 18% 40%, #3c6d3f 0 9px, transparent 10px), radial-gradient(circle at 62% 68%, #356239 0 11px, transparent 12px), radial-gradient(circle at 85% 30%, #3a6a3d 0 8px, transparent 9px), linear-gradient(#2f5a32, #29502f)",
+};
 
 export default function VisualMap({
   data,
@@ -53,10 +68,38 @@ export default function VisualMap({
   onSelectAgent: (agentId: string) => void;
 }) {
   const { width, height } = data.map;
-  const isCanonicalPilot = data.visual?.mode === "canonical_pilot";
+  const isCanonicalOverworld = data.visual?.mode === "canonical_overworld";
+  const isCanonicalPilot = data.visual?.mode === "canonical_pilot" || isCanonicalOverworld;
+  const artworkFrameStyle = data.visual?.mode === "canonical_pilot"
+    ? {
+        left: "33.333%",
+        top: "33.333%",
+        width: "33.333%",
+        height: "33.333%",
+      }
+    : {
+        left: "0%",
+        top: "0%",
+        width: "100%",
+        height: "100%",
+      };
+  const defaultViewForMode = (vw: number, vh: number) => {
+    if (!isCanonicalPilot) return { scale: 1, tx: 0, ty: 0 };
+    const scale = CANONICAL_DEFAULT_SCALE;
+    return {
+      scale,
+      tx: -(vw * ((scale - 1) / 2)),
+      ty: -(vh * ((scale - 1) / 2)),
+    };
+  };
 
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [view, setView] = useState({ scale: 1, tx: 0, ty: 0 });
+  const [view, setView] = useState(() => {
+    if (!isCanonicalPilot) return { scale: 1, tx: 0, ty: 0 };
+    // Before layout is measured, use proportional values; an effect below
+    // snaps these to the real viewport size on mount/resize.
+    return { scale: CANONICAL_DEFAULT_SCALE, tx: -1, ty: -1 };
+  });
   // Location bounds are only shown for the selected or label-hovered
   // location, so the default view stays clean like the source game.
   const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
@@ -73,6 +116,14 @@ export default function VisualMap({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    smooth.current = true;
+    const next = defaultViewForMode(el.clientWidth, el.clientHeight);
+    setView(clampView(next.scale, next.tx, next.ty));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCanonicalPilot]);
   // The floor is expressed in on-screen px, so divide it by the current
   // zoom before comparing against the true (pre-transform) tile size —
   // otherwise the floor would itself get multiplied by the zoom transform
@@ -119,6 +170,15 @@ export default function VisualMap({
       return clampView(nextScale, tx, ty);
     });
   };
+  const defaultScale = isCanonicalPilot ? CANONICAL_DEFAULT_SCALE : 1;
+  const defaultViewNow = (() => {
+    const el = viewportRef.current;
+    return el ? defaultViewForMode(el.clientWidth, el.clientHeight) : { scale: defaultScale, tx: 0, ty: 0 };
+  })();
+  const isAtDefaultView =
+    Math.abs(view.scale - defaultViewNow.scale) < 0.001 &&
+    Math.abs(view.tx - defaultViewNow.tx) < 0.5 &&
+    Math.abs(view.ty - defaultViewNow.ty) < 0.5;
 
   // Zoom to the focused location (dropdown selection); clear back to full view.
   useEffect(() => {
@@ -126,7 +186,8 @@ export default function VisualMap({
     if (!el) return;
     if (!focusLocationId) {
       smooth.current = true;
-      setView({ scale: 1, tx: 0, ty: 0 });
+      const next = defaultViewForMode(el.clientWidth, el.clientHeight);
+      setView(clampView(next.scale, next.tx, next.ty));
       return;
     }
     const loc = data.locations.find((l) => l.location_id === focusLocationId);
@@ -220,7 +281,13 @@ export default function VisualMap({
     }
   };
 
-  const resetView = () => setView({ scale: 1, tx: 0, ty: 0 });
+  const resetView = () => {
+    const el = viewportRef.current;
+    if (!el) return;
+    smooth.current = true;
+    const next = defaultViewForMode(el.clientWidth, el.clientHeight);
+    setView(clampView(next.scale, next.tx, next.ty));
+  };
   const zoomButton = (factor: number) => () => {
     const el = viewportRef.current;
     if (!el) return;
@@ -253,7 +320,7 @@ export default function VisualMap({
         <button type="button" onClick={zoomButton(1 / 1.4)} title="Zoom out">
           −
         </button>
-        <button type="button" onClick={resetView} title="Reset view" disabled={view.scale === 1}>
+        <button type="button" onClick={resetView} title="Reset view" disabled={isAtDefaultView}>
           ⟲
         </button>
         <button 
@@ -274,29 +341,84 @@ export default function VisualMap({
           backgroundColor: "#166534",
         } as React.CSSProperties}
       >
-        <img
-          className="visual-map-image"
-          src={mapImageUrl(data.map.image)}
-          alt="Village map"
-          draggable={false}
-          style={{
-            left: "33.333%",
-            top: "33.333%",
-            width: "33.333%",
-            height: "33.333%",
-            ...(isCanonicalPilot ? { filter: "saturate(0.96) brightness(1.08)" } : {})
-          }}
-        />
+        <div
+          className="visual-map-artwork"
+          style={artworkFrameStyle}
+        >
+          <div className="visual-map-image-frame">
+            {(() => {
+              const tiles = mapImageTiles(data.map, view.scale);
+              const artStyle = isCanonicalPilot ? { filter: "saturate(0.96) brightness(1.08)" } : undefined;
+              if (tiles) {
+                return (
+                  <div className="visual-map-image" style={artStyle} role="img" aria-label="Village map">
+                    {tiles.map((t) => (
+                      <img
+                        key={t.url}
+                        className="visual-map-image-tile"
+                        src={t.url}
+                        alt=""
+                        draggable={false}
+                        style={{
+                          left: `${t.leftPct}%`,
+                          top: `${t.topPct}%`,
+                          width: `${t.widthPct}%`,
+                          height: `${t.heightPct}%`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                );
+              }
+              return (
+                <img
+                  className="visual-map-image"
+                  src={mapImageUrl(data.map.image)}
+                  alt="Village map"
+                  draggable={false}
+                  style={artStyle}
+                />
+              );
+            })()}
 
-        {currentMinutes != null && (
-          <div
-            className="map-lighting-overlay"
-            style={{
-              backgroundColor: lightingTint(currentMinutes),
-              opacity: isCanonicalPilot ? 0.42 : 1,
-            }}
-          />
-        )}
+            {currentMinutes != null && (
+              <div
+                className="map-lighting-overlay"
+                style={{
+                  backgroundColor: lightingTint(currentMinutes),
+                  opacity: isCanonicalPilot ? 0.42 : 1,
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        {isCanonicalPilot && !isCanonicalOverworld &&
+          data.locations.map((loc) => {
+            const bg = TERRAIN_ZONES[loc.location_id];
+            if (!bg || !loc.map_bounds) return null;
+            const b = loc.map_bounds;
+            return (
+              <div
+                key={`terrain-${loc.location_id}`}
+                className="map-terrain-zone"
+                style={{
+                  left: pct(b.x, width),
+                  top: pct(b.y, height),
+                  width: pct(b.width, width),
+                  height: pct(b.height, height),
+                  backgroundImage: bg,
+                }}
+              >
+                {currentMinutes != null && (
+                  <div
+                    className="map-terrain-tint"
+                    style={{ backgroundColor: lightingTint(currentMinutes) }}
+                  />
+                )}
+              </div>
+            );
+          })}
 
         {(data.visual?.object_visuals ?? data.visual?.objects ?? [])
           .filter((object) => object.safe_to_render && object.marker_state === "active")
@@ -315,7 +437,7 @@ export default function VisualMap({
               <g key={i}>
                 <polyline
                   className="map-trace-line"
-                  points={seg.points.map(p => `${p.x},${p.y}`).join(" ")}
+                  points={seg.points.map((p) => `${p.x},${p.y}`).join(" ")}
                   fill="none"
                 />
                 {seg.points.map((p, j) => p.isEvent && (
@@ -347,8 +469,6 @@ export default function VisualMap({
                     top: pct(loc.map_bounds.y, height),
                     width: pct(loc.map_bounds.width, width),
                     height: pct(loc.map_bounds.height, height),
-                    // The zoom transform scales border thickness too; divide it
-                    // out so the dashes stay hairline at any zoom level.
                     borderWidth: `${Math.max(1.25 / view.scale, 0.4)}px`,
                   }}
                 />
@@ -359,6 +479,7 @@ export default function VisualMap({
                   style={{
                     left: pct(loc.map_position.x, width),
                     top: pct(loc.map_position.y, height),
+                    transform: `translate(-50%, -50%) scale(${1 / view.scale})`,
                   }}
                   onClick={() => onSelectLocation(loc.location_id)}
                   onMouseEnter={() => setHoveredLocationId(loc.location_id)}
@@ -392,6 +513,7 @@ export default function VisualMap({
                 event={e}
                 x={0}
                 y={0}
+                zoomCompensation={1 / view.scale}
                 selected={selectedEventId === e.event_id}
                 onClick={() => onSelectEvent(e)}
               />
@@ -403,17 +525,17 @@ export default function VisualMap({
           <div
             key={pin.agent.agent_id}
             className="map-agent-anchor"
-            style={{ left: pct(pin.x, width), top: pct(pin.y, height) }}
+            style={{
+              left: pct(pin.x, width),
+              top: pct(pin.y, height),
+            }}
           >
             <AgentSprite
               agent={pin.agent}
               x={0}
               y={0}
               size={agentSize}
-              // staleMinutes is Infinity before an agent's first event of the
-              // day — that's their assumed starting position, not aging
-              // information, so it shouldn't get the "stale" fade. Only fade
-              // once they've actually been seen and it's been a while since.
+              zoomCompensation={1 / view.scale}
               stale={Number.isFinite(pin.staleMinutes) && pin.staleMinutes > 10}
               lastSeen={pin.lastSeenTime}
               onClick={() => {

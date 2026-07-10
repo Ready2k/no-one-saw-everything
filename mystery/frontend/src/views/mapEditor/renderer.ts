@@ -42,6 +42,15 @@ export interface SceneProp {
   selected: boolean;
 }
 
+/** One underlay image placed at a world-tile rectangle. */
+export interface UnderlayDraw {
+  img: HTMLImageElement;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 export type ToolOverlay =
   | { kind: "brush"; cells: Array<{ x: number; y: number }>; erase: boolean }
   | { kind: "rect"; x: number; y: number; w: number; h: number; erase: boolean; tileId: string }
@@ -57,9 +66,8 @@ export interface Scene {
   rows: number;
   tileLayers: Record<string, TileLayer>;
   visibleLayers: Record<string, boolean>;
-  underlayImg: HTMLImageElement | null;
+  underlays: UnderlayDraw[];
   underlayOpacity: number;
-  underlayPlacement: "full" | "centre_third";
   solidRender: boolean;
   showGrid: boolean;
   showSafety: boolean;
@@ -119,16 +127,20 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
   ctx.fillStyle = scene.solidRender ? TILE_COLORS.tile_grass : "#141419";
   ctx.fillRect(wx0, wy0, worldW, worldH);
 
-  // Underlay art: full-world images cover the whole grid; v1-era images
-  // occupy the centre third of the world (per town manifest)
-  if (scene.underlayImg && scene.underlayImg.complete && scene.underlayImg.naturalWidth > 0) {
+  // Underlay art: each source is a set of images placed at world-tile rects
+  // (the HD overworld is a 3x3 mosaic; older art covers the centre third).
+  if (scene.underlays.length) {
     ctx.save();
     ctx.globalAlpha = scene.underlayOpacity;
     ctx.imageSmoothingEnabled = true;
-    if (scene.underlayPlacement === "full") {
-      ctx.drawImage(scene.underlayImg, wx0, wy0, worldW, worldH);
-    } else {
-      ctx.drawImage(scene.underlayImg, X(cols / 3), Y(rows / 3), (cols / 3) * s, (rows / 3) * s);
+    for (const u of scene.underlays) {
+      if (!u.img.complete || u.img.naturalWidth === 0) continue;
+      const px = X(u.x);
+      const py = Y(u.y);
+      const pw = u.w * s;
+      const ph = u.h * s;
+      if (px + pw < 0 || px > cssW || py + ph < 0 || py > cssH) continue;
+      ctx.drawImage(u.img, px, py, pw, ph);
     }
     ctx.restore();
   }
@@ -408,19 +420,12 @@ export function drawMinimap(canvas: HTMLCanvasElement, scene: Scene): void {
   ctx.fillStyle = scene.solidRender ? TILE_COLORS.tile_grass : "#1b1b21";
   ctx.fillRect(ox, oy, scene.cols * sc, scene.rows * sc);
 
-  if (scene.underlayImg && scene.underlayImg.complete && scene.underlayImg.naturalWidth > 0) {
+  if (scene.underlays.length) {
     ctx.save();
     ctx.globalAlpha = Math.min(scene.underlayOpacity + 0.25, 0.9);
-    if (scene.underlayPlacement === "full") {
-      ctx.drawImage(scene.underlayImg, ox, oy, scene.cols * sc, scene.rows * sc);
-    } else {
-      ctx.drawImage(
-        scene.underlayImg,
-        ox + (scene.cols / 3) * sc,
-        oy + (scene.rows / 3) * sc,
-        (scene.cols / 3) * sc,
-        (scene.rows / 3) * sc
-      );
+    for (const u of scene.underlays) {
+      if (!u.img.complete || u.img.naturalWidth === 0) continue;
+      ctx.drawImage(u.img, ox + u.x * sc, oy + u.y * sc, u.w * sc, u.h * sc);
     }
     ctx.restore();
   }

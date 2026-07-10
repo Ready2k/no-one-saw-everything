@@ -207,16 +207,66 @@ export function isNestingAllowed(idA: string, idB: string): boolean {
   );
 }
 
-export const UNDERLAY_SOURCES = [
-  { id: "town_overworld", label: "Town overworld v2 (day)", url: "/art/town/town_canonical_v2_overworld_day.png", placement: "full" },
-  { id: "town_day", label: "Town canonical v1 (day)", url: "/art/town/town_canonical_v1_day.png", placement: "centre_third" },
-  { id: "case4_day", label: "Case 004 fountain (day)", url: "/art/case_004/fountain_daylight_map.png", placement: "centre_third" },
-  { id: "case4_night", label: "Case 004 fountain (midnight)", url: "/art/case_004/fountain_midnight_map.png", placement: "centre_third" }
-] as const;
+// An underlay source is a set of images placed at world-tile rectangles.
+// The HD overworld ships as a 3x3 mosaic: rows A-C top->bottom, cols 1-3
+// left->right (B2 = town centre); each 2048x1536 cell covers 64x48 tiles.
+export interface UnderlayTilePlacement {
+  url: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
 
-export type UnderlayPlacement = "full" | "centre_third";
+export interface UnderlaySourceDef {
+  id: string;
+  label: string;
+  tiles: UnderlayTilePlacement[];
+}
 
-export type UnderlaySourceId = (typeof UNDERLAY_SOURCES)[number]["id"] | "none";
+const HD_3X3_TILES: UnderlayTilePlacement[] = (["A", "B", "C"] as const).flatMap((row, r) =>
+  ([1, 2, 3] as const).map((col, c) => ({
+    url: `/art/town/tiles_3x3_hd/town_overworld_${row}${col}_hd.png`,
+    x: c * 64,
+    y: r * 48,
+    w: 64,
+    h: 48
+  }))
+);
+
+const CENTRE_THIRD = { x: 64, y: 48, w: 64, h: 48 };
+
+export const UNDERLAY_SOURCES: UnderlaySourceDef[] = [
+  { id: "town_tiles_hd", label: "Town overworld HD (3×3 tiles)", tiles: HD_3X3_TILES },
+  {
+    id: "town_overworld",
+    label: "Town overworld v2 (single image)",
+    tiles: [{ url: "/art/town/town_canonical_v2_overworld_day.png", x: 0, y: 0, w: 192, h: 144 }]
+  },
+  {
+    id: "town_day",
+    label: "Town canonical v1 (day, centre)",
+    tiles: [{ url: "/art/town/town_canonical_v1_day.png", ...CENTRE_THIRD }]
+  },
+  {
+    id: "case4_day",
+    label: "Case 004 fountain (day, centre)",
+    tiles: [{ url: "/art/case_004/fountain_daylight_map.png", ...CENTRE_THIRD }]
+  },
+  {
+    id: "case4_night",
+    label: "Case 004 fountain (midnight, centre)",
+    tiles: [{ url: "/art/case_004/fountain_midnight_map.png", ...CENTRE_THIRD }]
+  }
+];
+
+export type UnderlaySourceId =
+  | "town_tiles_hd"
+  | "town_overworld"
+  | "town_day"
+  | "case4_day"
+  | "case4_night"
+  | "none";
 
 export const MIN_SCALE = 1.5;
 export const MAX_SCALE = 64;

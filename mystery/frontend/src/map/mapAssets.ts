@@ -6,6 +6,43 @@ export function mapImageUrl(image: string): string {
   return image; // backend already returns a public path, e.g. /map/the_ville.png
 }
 
+// A map's art may arrive as a mosaic (map.image_tiles) instead of one image.
+// Resolve it to percent-positioned pieces that tile the full map rectangle;
+// null means "no mosaic — render map.image as a single image".
+export interface MapImageTile {
+  url: string;
+  leftPct: number;
+  topPct: number;
+  widthPct: number;
+  heightPct: number;
+}
+
+export function mapImageTiles(map: {
+  image: string;
+  image_tiles?: { cols: number; rows: number; urls: string[][] };
+  zoom_image_tiles?: { threshold: number; urls: string[][] };
+}, scale?: number): MapImageTile[] | null {
+  const t = map.image_tiles;
+  if (!t || !t.cols || !t.rows || !t.urls?.length) return null;
+  const urls =
+    scale != null && map.zoom_image_tiles && scale >= map.zoom_image_tiles.threshold
+      ? map.zoom_image_tiles.urls
+      : t.urls;
+  const tiles: MapImageTile[] = [];
+  urls.forEach((rowUrls, r) =>
+    rowUrls.forEach((url, c) =>
+      tiles.push({
+        url: mapImageUrl(url),
+        leftPct: (c / t.cols) * 100,
+        topPct: (r / t.rows) * 100,
+        widthPct: 100 / t.cols,
+        heightPct: 100 / t.rows,
+      })
+    )
+  );
+  return tiles;
+}
+
 export function spriteUrl(spriteAsset: string): string {
   return `/map/sprites/${spriteAsset}`;
 }
