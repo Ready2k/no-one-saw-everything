@@ -1,11 +1,12 @@
 {
   "killer_id": "agent_clara",
   "motive": {
-    "canonical": "Marcus discovered Clara had been stealing from the cafe till and gave her until this morning to confess before he took the proof to the village committee.",
+    "canonical": "Marcus discovered Clara had been stealing from the cafe till — money taken to cover her mother's care-home debts — and gave her until this morning to confess before he took the proof to the village committee.",
     "concept_groups": [
       ["till", "cash", "money", "takings", "cafe funds"],
       ["steal", "stole", "stolen", "theft", "thief", "skim", "embezzl", "took", "taking"],
-      ["blackmail", "expose", "confess", "committee", "threat", "reveal", "ledger"]
+      ["blackmail", "expose", "confess", "committee", "threat", "reveal", "ledger"],
+      ["mother", "care home", "care fees", "care debts", "fernlea", "debt"]
     ],
     "min_groups": 2
   },
@@ -21,10 +22,10 @@
     "canonical": "Clara was at the cafe's rear door during the murder window and lied about being at the fountain.",
     "concept_groups": [
       ["alley", "storage", "rear", "back door", "back way", "cafe back"],
-      ["fountain", "alibi", "lied", "lie", "false"],
+      ["lied", "lie", "lying", "false", "fake", "made up", "wasn't at the fountain", "never at the fountain", "not at the fountain", "no alibi", "false alibi"],
       ["window", "murder window", "before open", "07:5", "07:4", "quarter to eight"]
     ],
-    "min_groups": 1
+    "min_groups": 2
   },
   "key_clue_ids": [
     "clue_ledger_page",
@@ -33,5 +34,13 @@
     "clue_rear_door",
     "clue_nadia_overheard"
   ],
-  "explanation": "Correct. Clara Wells killed Marcus Bell. Marcus had found the torn ledger page proving Clara was skimming the till, and gave her until this morning to confess before taking it to the committee. He summoned her to the storage room before opening. Clara slipped out the front, doubled back through the rear alley — the blue coat Ben saw at 07:47 — and let herself in the back door. When Marcus refused to back down she struck him with the brass till weight at 07:56 (the thud Ben and Priya heard), rinsed it in the kitchen and hid it in the mop bucket, then opened the cafe two minutes late. Her fountain alibi was never real, and no one could place her there."
+  "explanation": "Correct. Clara Wells killed Marcus Bell. Marcus had found the torn ledger page proving Clara was skimming the till — money that went, coin by coin, to the Fernlea care home where her mother spent her last two years. He gave her until this morning to confess before taking the page to the committee, and summoned her to the storage room before opening. Clara slipped out the front, doubled back through the rear alley — the blue coat Ben saw at 07:47 — and let herself in the back door. When Marcus refused to back down she struck him with the brass till weight at 07:56 (the thud Ben and Priya heard), rinsed it in the kitchen and hid it in the mop bucket, then opened the cafe two minutes late. Her fountain alibi was never real, and no one could place her there.",
+  "epilogues": {
+    "agent_clara": "She confessed the rest by evening, in the same clipped sentences she kept the till in. The ledger came up eight pounds over that month — she had been paying it back, a coin at a time, since spring.",
+    "agent_isabella": "Isabella opened the bookshop at nine the next morning, because somebody had to open something. The partnership letter stayed in a drawer. A month later she offered Priya the expansion herself — on her own terms, in her own hand.",
+    "agent_priya": "Priya and Ben stopped meeting in the alley. They take the corner table at the cafe now, by the window, where the whole village can see them not being a secret.",
+    "agent_owen": "Owen paid the eight thousand to the estate on the first, like he always said he would. Nobody at the committee said a word about it, which he found he minded more than the debt.",
+    "agent_elias": "Elias tells the story from his bench to anyone who sits down long enough. In his telling, he suspected Clara from the very first morning. Nobody corrects him. It's his bench.",
+    "agent_nadia": "Nadia visits Clara once a month. They don't talk about Marcus; they talk about her mother. Some debts, Nadia says, were never the committee's business."
+  }
 }

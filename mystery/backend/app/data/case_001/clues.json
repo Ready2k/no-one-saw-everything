@@ -197,7 +197,7 @@
             "clue_id": "clue_blue_coat_damp",
             "title": "Damp sleeve on Clara's coat",
             "clue_type": "physical_evidence",
-            "description": "Clara's blue coat hangs in the kitchen. The right sleeve is damp at the cuff and faintly smudged, as if something wet was carried against it.",
+            "description": "Clara's blue coat hangs on the hook beside the kitchen sink. The right cuff is splashed damp and a faint dark smudge is worked into the weave — and the sink was used, hard, not long ago.",
             "strength": "medium",
             "reliability": 0.8,
             "ambiguity": "medium",
@@ -214,6 +214,28 @@
             ],
             "linked_agent_ids": [
                 "agent_clara"
+            ]
+        },
+        {
+            "clue_id": "clue_care_debts",
+            "title": "Final notices from Fernlea",
+            "clue_type": "document",
+            "description": "Two years of invoices from the Fernlea care home in Clara's name, the last few stamped FINAL NOTICE, and an order of service from a funeral this spring. The sums are brutal — more per month than a cafe manager earns. Money trouble isn't guilt. But it is money trouble.",
+            "strength": "medium",
+            "reliability": 0.9,
+            "ambiguity": "medium",
+            "discoverability": {
+                "method": "inspect",
+                "location_id": "loc_clara_flat"
+            },
+            "supports_conclusion_ids": [
+                "conc_clara_motive"
+            ],
+            "linked_agent_ids": [
+                "agent_clara"
+            ],
+            "linked_location_ids": [
+                "loc_clara_flat"
             ]
         },
         {
@@ -448,7 +470,8 @@
             "supported_by_clue_ids": [
                 "clue_ledger_page",
                 "clue_overheard_threat",
-                "clue_till_discrepancy"
+                "clue_till_discrepancy",
+                "clue_care_debts"
             ]
         },
         {

@@ -213,7 +213,7 @@
     "known_by_agent_ids": ["agent_ben"],
     "memory_type": "witness_fragment",
     "case_function": "clue_support",
-    "truth_status": "mistaken",
+    "truth_status": "true",
     "summary": "Ben saw someone in a blue coat slip into the rear alley at about 07:47. He didn't see the face but assumes it was Clara — she always wears that coat.",
     "emotional_weight": 5,
     "confidence": 0.72,
@@ -279,6 +279,21 @@
     "discoverable_by_player": true,
     "linked_clue_ids": ["clue_ben_priya_meeting"],
     "linked_agent_ids": ["agent_ben"]
+  },
+  {
+    "memory_id": "mem_nadia_clara_mother",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": ["agent_nadia", "agent_clara"],
+    "memory_type": "private_secret",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Nadia nursed Clara's mother through her last two years at the Fernlea care home. The fees were ruinous — Clara once broke down in the clinic over a final-notice letter, and made Nadia promise never to speak of it. Nadia has kept that promise like a chart note: filed, not forgotten.",
+    "emotional_weight": 7,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": ["clue_care_debts"],
+    "linked_agent_ids": ["agent_clara"],
+    "linked_location_ids": ["loc_clinic"]
   },
   {
     "memory_id": "mem_nadia_overheard",

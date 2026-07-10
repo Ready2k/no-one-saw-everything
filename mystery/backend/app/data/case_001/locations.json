@@ -223,7 +223,7 @@
   {
     "location_id": "loc_clara_flat",
     "name": "Flat above Hobbs Cafe",
-    "description": "Clara Wells's small flat above the cafe, reached by a side stair.",
+    "description": "Clara Wells's small flat above the cafe, reached by a side stair. Neat to the point of silence; the paperwork lives in a shoebox under the bed.",
     "connected_location_ids": [
       "loc_hobbs_cafe"
     ],
@@ -246,7 +246,7 @@
   {
     "location_id": "loc_fountain",
     "name": "Fountain",
-    "description": "The stone fountain in the middle of the village square.",
+    "description": "The stone fountain at the square's heart, its rim worn smooth by generations of sitters. Where villagers go to be alone in public — the polite fiction is that nobody watches who.",
     "connected_location_ids": [
       "loc_village_square"
     ],
@@ -266,7 +266,7 @@
   {
     "location_id": "loc_priya_flat",
     "name": "Priya's Flat",
-    "description": "A small flat where Priya Shah lives.",
+    "description": "A small rented flat with more books than furniture, most of them borrowed from the shop and faithfully returned.",
     "connected_location_ids": [
       "loc_village_square"
     ],

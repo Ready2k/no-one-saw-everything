@@ -659,6 +659,32 @@
     },
     "rules": [
       {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ledger_page",
+        "answer_text": "That page... Sit down a moment. There's something I promised to keep, and I'm going to break the promise because a man is dead. Clara's mother was my patient — her last two years were at the Fernlea home, and Fernlea does not come cheap. Clara sat in my clinic one winter evening and wept over a final-notice letter, and made me swear it stayed between us. So if money went missing from that till, I can tell you what it was for. What you do with that is your work, not mine.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reluctant",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_care_debts",
+            "summary": "Nadia reveals that Clara's mother's care-home fees had left Clara in ruinous debt, a confidence Clara begged her to keep.",
+            "claim_type": "statement",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_care_debts"
+        ],
+        "reveals_memory_ids": [
+          "mem_nadia_clara_mother"
+        ],
+        "suggested_followups": [
+          "Did Marcus know about Clara's debts?"
+        ]
+      },
+      {
         "question_type": "alibi",
         "answer_text": "Clinic, from ten to seven onwards. And before you ask — Isabella Reed was with me from about twenty to eight until eight. Blood pressure check. She was strung tight over some meeting, but she was in my chair the whole time.",
         "answer_type": "claim",
