@@ -4,7 +4,7 @@
     "challenged_claim_id": "claim_nadia_routine",
     "evidence_clue_ids": ["clue_extra_capsules"],
     "outcome": "deflect",
-    "response_text": "Those capsules are not mine. Someone put them there — the organiser was left on the clinic counter overnight. This building is not Fort Knox. Ask who else had access.",
+    "response_text": "Those capsules are not mine. Someone put them there. Ben Carter was in the clinic frontage with a delivery pouch before opening, and Elias was threatening his job. Ask who had a reason to panic.",
     "emotional_shift": "controlled_alarm",
     "pressure_delta": 0.2,
     "sets_claim_status": "disputed"

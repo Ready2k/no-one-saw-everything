@@ -1,7 +1,7 @@
 {
   "killer_id": "agent_nadia",
   "motive": {
-    "canonical": "Nadia killed Elias to prevent him changing his will away from the clinic bequest she had built her plans around.",
+    "canonical": "Nadia killed Elias to prevent him changing his will at 18:30 away from the clinic bequest she had built her plans around.",
     "concept_groups": [
       ["will", "estate", "bequest", "inheritance", "solicitor", "legacy"],
       ["clinic", "fund", "budget", "equipment", "renovation"],
@@ -34,5 +34,5 @@
     "clue_nadia_pill_handoff",
     "clue_nadia_budget_notes"
   ],
-  "explanation": "Correct. Nadia Cole killed Elias Grant. Elias had promised his cottage estate to the clinic two years ago — an arrangement Nadia had shepherded and planned around in detail. When Elias told her on Monday he was removing the clinic from his will, Nadia spent the night making her decision. At 16:30 she added two 0.25mg digoxin capsules to his Tuesday pill compartment — four times his safe dose — and altered the dispensary log to mask the draw. At 17:05 she delivered the organiser in person, as she always did, and watched him take the pills. He was dead within sixteen minutes. The altered log, the extra capsules, Ruth's eyewitness testimony of the handoff, and Nadia's private budget projections together build the case. The death initially appeared natural — it took a close look at the pill organiser and the dispensary records to reveal the truth."
+  "explanation": "Correct. Nadia Cole killed Elias Grant. Elias had promised his cottage estate to the clinic two years ago — an arrangement Nadia had shepherded and planned around in detail. When Elias told her on Monday he was removing the clinic from his will at an 18:30 solicitor appointment, Nadia spent the night making her decision. At 16:30 she added two 0.25mg digoxin capsules to his Tuesday pill compartment — four times his safe dose — and altered the dispensary log to mask the draw. At 17:05 she delivered the organiser in person, as she always did, and watched him take the pills. Given Elias's arrhythmia and reduced renal function, the overdose could plausibly collapse him within twenty minutes; he was dead by 17:21. Ben had a real conflict with Elias and a suspicious clinic-frontage delivery, but the clinic manifest and dispensary sign-in clear him from the locked medication area. The altered log, the extra capsules, Ruth's eyewitness testimony of the handoff, and Nadia's private budget projections together build the case. The death initially appeared natural, but the spilled flask, open organiser, and dispensary records reveal the truth."
 }

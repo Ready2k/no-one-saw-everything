@@ -69,4 +69,23 @@ def analyze_session(session: Session, case: CaseData) -> list[str]:
     elif unexplained_count > 1:
         hints.append(f"Multiple ({unexplained_count}) red herrings remain unexplained.")
 
+    # 5. Accusation readiness: every solution-critical conclusion has at least
+    # one discovered supporting clue and no red herring is left unexplained.
+    # This is the in-fiction "you now hold enough" signal — it reads the shape
+    # of the case file, never the truth itself.
+    required = [c for c in case.conclusions if c.required_for_solution]
+    if (
+        required
+        and unexplained_count == 0
+        and all(
+            any(cid in session.discovered_clue_ids for cid in conc.supported_by_clue_ids)
+            for conc in required
+        )
+    ):
+        hints.append(
+            "Your case file now covers motive, means, and opportunity, and every "
+            "suspicious lead has an explanation. When you believe your own notes, "
+            "make the accusation."
+        )
+
     return hints

@@ -16,7 +16,7 @@
     "location_id": "loc_clinic_dispensary",
     "agent_ids": ["agent_nadia"],
     "event_type": "hidden_action",
-    "truth_description": "Nadia prepares Elias's Tuesday pill compartment, adding two digoxin 0.25mg capsules — double his prescribed dose, enough to trigger fatal arrhythmia given his existing condition. She amends the dispensary log to mask the extra draw.",
+    "truth_description": "Nadia prepares Elias's Tuesday pill compartment, adding two digoxin 0.25mg capsules — four times his prescribed 0.125mg dose, enough to trigger fatal arrhythmia given his existing condition. She amends the dispensary log to mask the extra draw.",
     "visibility": "hidden",
     "object_ids": ["obj_pill_bottle", "obj_dispensary_log"],
     "importance": 10,
@@ -34,12 +34,59 @@
     "importance": 4
   },
   {
+    "event_id": "ev_0644_ben_argument",
+    "time": "16:44",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_ben",
+      "agent_elias"
+    ],
+    "event_type": "argument",
+    "truth_description": "Ben stops at Elias's bench and asks him not to send a complaint to the courier depot. Elias refuses. He says forged delivery signatures are not a harmless mistake and that Ben will be lucky to keep his job. Ben leaves angry and embarrassed.",
+    "player_description": "Ben Carter stops by Elias's bench. Their conversation is low and tense; Ben walks away red-faced.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_clara"
+    ],
+    "object_ids": [
+      "obj_ben_complaint_letter"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_ben_complaint_letter",
+      "clue_clara_ben_argument"
+    ]
+  },
+  {
+    "event_id": "ev_0648_ben_clinic_delivery",
+    "time": "16:48",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "movement",
+    "truth_description": "Ben drops a sealed delivery pouch through the clinic reception hatch while the waiting room is still dark. He does not enter the locked dispensary, but the delivery log later proves he was briefly inside the clinic frontage before Nadia officially opened.",
+    "player_description": "Ben cuts into the clinic doorway with a delivery pouch, then leaves almost immediately.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_clara"
+    ],
+    "object_ids": [
+      "obj_clinic_delivery_manifest"
+    ],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_ben_clinic_delivery",
+      "clue_clinic_delivery_manifest"
+    ]
+  },
+  {
     "event_id": "ev_0650_nadia_shift",
     "time": "16:50",
     "location_id": "loc_clinic",
     "agent_ids": ["agent_nadia"],
     "event_type": "routine",
-    "truth_description": "Nadia opens the clinic for the early shift, appearing normal. She unlocks the waiting room and turns on the lights.",
+    "truth_description": "Nadia opens the clinic for the early shift, appearing normal. She unlocks the waiting room, brings Elias's organiser out from the locked dispensary, and turns on the lights.",
     "visibility": "public",
     "importance": 2
   },
@@ -85,10 +132,10 @@
     "location_id": "loc_village_square",
     "agent_ids": ["agent_ben"],
     "event_type": "movement",
-    "truth_description": "Ben cuts across the square on his round. He glances at Elias on the bench — Elias is still upright, flask in hand, but his free hand is now pressed to his chest.",
-    "player_description": "Ben passes the square bench. The old man is still sitting, but something about his posture looks off.",
+    "truth_description": "Ben cuts across the square on his round. He glances at Elias on the bench — Elias is still upright, flask in hand, but his free hand is now pressed to his chest. Ben slows, then keeps walking, not wanting another confrontation.",
+    "player_description": "Ben passes the square bench. The old man is still sitting, but something about his posture looks off. Ben hesitates, then keeps going.",
     "visibility": "public",
-    "important": 7,
+    "importance": 7,
     "linked_clue_ids": ["clue_ben_posture"]
   },
   {
@@ -97,8 +144,8 @@
     "location_id": "loc_elias_bench",
     "agent_ids": ["agent_elias"],
     "event_type": "medical_event",
-    "truth_description": "Elias sets down his flask. His heartbeat is wildly irregular. He tries to call out but cannot. He slumps sideways against the bench.",
-    "player_description": "The man on the bench sags sideways. His flask falls. No one is nearby.",
+    "truth_description": "Elias sets down his flask. His heartbeat is wildly irregular. He tries to call out but cannot. His hand knocks the pill organiser from the bench before he slumps sideways.",
+    "player_description": "The man on the bench sags sideways. His flask spills, and a small plastic pill organiser drops beneath the bench. No one is nearby.",
     "visibility": "public_partial",
     "importance": 9
   },
@@ -131,8 +178,8 @@
     "location_id": "loc_elias_bench",
     "agent_ids": ["agent_owen", "agent_elias"],
     "event_type": "body_discovery",
-    "truth_description": "Owen crosses the square on his usual afternoon route and claps Elias on the shoulder. Elias falls. Owen shouts for help — the square empties and fills again in seconds.",
-    "player_description": "Owen Price reaches the bench and shakes Elias's shoulder. The old man falls sideways. Owen's shout brings people running.",
+    "truth_description": "Owen crosses the square on his usual afternoon route and claps Elias on the shoulder. Elias falls. Owen sees the spilled tea and the open pill organiser under the bench before he shouts for help — the square empties and fills again in seconds.",
+    "player_description": "Owen Price reaches the bench and shakes Elias's shoulder. The old man falls sideways. Tea has spilled across the stone, and a pill organiser lies open under the bench. Owen's shout brings people running.",
     "visibility": "public",
     "importance": 10
   },

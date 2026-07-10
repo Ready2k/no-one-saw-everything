@@ -2,7 +2,7 @@
   {
     "object_id": "obj_pill_bottle",
     "name": "Elias's afternoon pill organiser",
-    "description": "A weekly pill organiser Nadia prepares for Elias at the start of each week. The Tuesday afternoon compartment contains two extra pale capsules among his usual white tablets — they are not his prescribed medication.",
+    "description": "A weekly pill organiser Nadia prepares for Elias at the start of each week. The Tuesday afternoon compartment contains two extra pale yellow capsules among his usual white tablets. The colour difference is obvious once the lid is opened, and the pale capsules are not his prescribed medication.",
     "is_weapon": true,
     "normal_location_id": "loc_elias_bench",
     "final_location_id": "loc_clinic_dispensary",
@@ -27,7 +27,7 @@
   {
     "object_id": "obj_solicitor_appointment",
     "name": "Solicitor appointment card",
-    "description": "A card in Elias's coat pocket: 'Whittle & Cross, 10:00 — re: will amendment, final signature.' Elias had an appointment this afternoon to finalise a change to his will.",
+    "description": "A card in Elias's coat pocket: 'Whittle & Cross, 18:30 — re: will amendment, final signature.' Elias had an appointment this evening to finalise a change to his will.",
     "normal_location_id": "loc_elias_bench",
     "final_location_id": "loc_elias_bench",
     "access_rules": [],
@@ -49,7 +49,7 @@
   {
     "object_id": "obj_elias_notebook",
     "name": "Elias's personal notebook",
-    "description": "A small notebook Elias always carries. An entry from yesterday evening reads: 'Called W&C — appointment confirmed. Nadia will not be pleased, but it is my estate and not the clinic's to decide.'",
+    "description": "A small notebook Elias always carries. An entry from yesterday evening reads: 'Called W&C — 18:30 appointment confirmed. Nadia will not be pleased, but it is my estate and not the clinic's to decide.'",
     "normal_location_id": "loc_elias_bench",
     "final_location_id": "loc_elias_bench",
     "access_rules": [],
@@ -58,15 +58,26 @@
     "clue_relevance": "motive"
   },
   {
-    "object_id": "obj_ben_debt_notice",
-    "name": "County court debt notice",
-    "description": "A county court debt notice in Elias's coat: Ben Carter's father owes Elias's estate £1,200 from a decades-old loan. Ben mentioned recently he wished it would 'go away'. This is a red herring — the debt was small and long-forgotten.",
+    "object_id": "obj_ben_complaint_letter",
+    "name": "Draft complaint about Ben Carter",
+    "description": "A folded draft letter in Elias's coat, addressed to Ben's courier depot manager. Elias accuses Ben of forging delivery signatures and leaving clinic supplies unattended, and says he will hand the letter over after his solicitor appointment unless Ben apologises in writing.",
     "normal_location_id": "loc_elias_bench",
     "final_location_id": "loc_elias_bench",
     "access_rules": [],
     "touched_by_agent_ids": ["agent_elias"],
     "last_seen_time": "17:00",
     "clue_relevance": "red_herring_motive"
+  },
+  {
+    "object_id": "obj_clinic_delivery_manifest",
+    "name": "Clinic delivery manifest",
+    "description": "A signed courier manifest for the clinic pouch Ben delivered at 16:48. The reception hatch signature is Ben's, but the controlled-medication dispensary sign-in sheet beside it has no entry for him.",
+    "normal_location_id": "loc_clinic",
+    "final_location_id": "loc_clinic",
+    "access_rules": ["clinic_staff"],
+    "touched_by_agent_ids": ["agent_ben", "agent_nadia"],
+    "last_seen_time": "16:50",
+    "clue_relevance": "red_herring_access"
   },
   {
     "object_id": "obj_nadia_notebook",

@@ -4,7 +4,7 @@
       "clue_id": "clue_solicitor_appointment",
       "title": "Solicitor appointment card in Elias's pocket",
       "clue_type": "document",
-      "description": "Found in Elias's coat pocket: a card from Whittle & Cross confirming a 10:00 appointment 're: will amendment, final signature.' Elias had made arrangements to change his will this afternoon.",
+      "description": "Found in Elias's coat pocket: a card from Whittle & Cross confirming an 18:30 appointment 're: will amendment, final signature.' Elias had made arrangements to change his will this evening.",
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
@@ -17,7 +17,7 @@
       "clue_id": "clue_elias_notebook",
       "title": "'Nadia will not be pleased'",
       "clue_type": "document",
-      "description": "Elias's notebook, yesterday's entry: 'Called W&C — appointment confirmed. Nadia will not be pleased, but it is my estate and not the clinic's to decide.' He was removing the clinic from his will — and he knew Nadia would object.",
+      "description": "Elias's notebook, yesterday's entry: 'Called W&C — 18:30 appointment confirmed. Nadia will not be pleased, but it is my estate and not the clinic's to decide.' He was removing the clinic from his will — and he knew Nadia would object.",
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
@@ -56,7 +56,7 @@
       "clue_id": "clue_extra_capsules",
       "title": "Two unknown capsules in the pill organiser",
       "clue_type": "physical_evidence",
-      "description": "The pill organiser recovered from the bench: the Tuesday afternoon compartment contains two pale yellow capsules that are not Elias's prescribed tablets. His prescription is for white digoxin 0.125mg tablets. The pale capsules appear to be a higher-dose formulation.",
+      "description": "The pill organiser recovered from under the bench: the Tuesday afternoon compartment contains two pale yellow capsules among Elias's usual white tablets. His prescription is for white digoxin 0.125mg tablets. The colour mismatch is obvious, and the pale capsules appear to be a higher-dose formulation.",
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
@@ -156,23 +156,62 @@
       "linked_event_ids": ["ev_0730_clara_opens"]
     },
     {
-      "clue_id": "clue_ben_debt_notice",
-      "title": "Ben's debt notice in Elias's coat",
+      "clue_id": "clue_ben_complaint_letter",
+      "title": "Elias's complaint letter about Ben",
       "clue_type": "document",
-      "description": "A county court notice in Elias's coat: Ben Carter's father owed Elias £1,200. Ben had recently complained to Clara that he 'wished that old debt would just disappear'. On the surface a motive — in practice, trivial.",
-      "strength": "weak",
-      "reliability": 0.5,
-      "ambiguity": "high",
+      "description": "A draft complaint in Elias's coat says Ben forged delivery signatures and left clinic supplies unattended. Elias planned to give it to Ben's depot manager after the solicitor appointment unless Ben apologised in writing. Losing the route would cost Ben his job.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
       "discoverability": {"method": "inspect", "location_id": "loc_elias_bench"},
       "supports_conclusion_ids": ["conc_ben_red_herring"],
       "linked_agent_ids": ["agent_ben", "agent_elias"],
-      "linked_object_ids": ["obj_ben_debt_notice"]
+      "linked_object_ids": ["obj_ben_complaint_letter"]
+    },
+    {
+      "clue_id": "clue_clara_ben_argument",
+      "title": "Clara saw Ben argue with Elias",
+      "clue_type": "witness_statement",
+      "description": "Clara saw Ben stop at Elias's bench at 16:44. She could not hear every word, but Ben looked upset and Elias tapped a folded letter against his knee before Ben walked away.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {"method": "interview", "agent_id": "agent_clara", "question_type": "timeline"},
+      "supports_conclusion_ids": ["conc_ben_red_herring"],
+      "linked_agent_ids": ["agent_clara", "agent_ben", "agent_elias"],
+      "linked_event_ids": ["ev_0644_ben_argument"]
+    },
+    {
+      "clue_id": "clue_ben_clinic_delivery",
+      "title": "Ben entered the clinic frontage before Nadia opened",
+      "clue_type": "witness_statement",
+      "description": "Clara saw Ben slip into the clinic doorway with a delivery pouch at 16:48, just before Nadia opened the waiting room. This gives Ben a suspicious-looking connection to the clinic, though not to the locked dispensary.",
+      "strength": "medium",
+      "reliability": 0.75,
+      "ambiguity": "high",
+      "discoverability": {"method": "interview", "agent_id": "agent_clara", "question_type": "timeline"},
+      "supports_conclusion_ids": ["conc_ben_red_herring"],
+      "linked_agent_ids": ["agent_clara", "agent_ben"],
+      "linked_event_ids": ["ev_0648_ben_clinic_delivery"]
+    },
+    {
+      "clue_id": "clue_clinic_delivery_manifest",
+      "title": "Ben never signed into the dispensary",
+      "clue_type": "document",
+      "description": "The clinic delivery manifest confirms Ben dropped a sealed pouch at reception at 16:48. The locked dispensary sign-in sheet has no entry for him, and the dispensary door log shows only Nadia's access before 17:05.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_clinic", "required_prior_clue_ids": ["clue_ben_clinic_delivery"]},
+      "supports_conclusion_ids": ["conc_ben_innocent"],
+      "linked_agent_ids": ["agent_ben", "agent_nadia"],
+      "linked_object_ids": ["obj_clinic_delivery_manifest"]
     },
     {
       "clue_id": "clue_ben_alibi",
       "title": "Ben's round is corroborated",
       "clue_type": "witness_statement",
-      "description": "Ben's delivery receipts, timestamped by three separate shopkeepers, place him at the square only briefly at 17:15 — too late to have tampered with the pills before Nadia delivered them.",
+      "description": "Ben's delivery receipts, timestamped by three separate shopkeepers, place him away from the clinic after 16:50 and at the square only briefly at 17:15 — too late to have tampered with the pills after Nadia brought the organiser out from the locked dispensary.",
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "low",
@@ -216,16 +255,16 @@
     {
       "conclusion_id": "conc_ben_red_herring",
       "type": "red_herring",
-      "summary": "Ben had a family debt to Elias and had expressed a wish it would 'go away'. A superficial motive.",
+      "summary": "Ben had an immediate job-threatening conflict with Elias over forged delivery signatures, and he briefly entered the clinic frontage before Nadia opened. Suspicious on the surface.",
       "target_agent_id": "agent_ben",
-      "supported_by_clue_ids": ["clue_ben_debt_notice"]
+      "supported_by_clue_ids": ["clue_ben_complaint_letter", "clue_clara_ben_argument", "clue_ben_clinic_delivery"]
     },
     {
       "conclusion_id": "conc_ben_innocent",
       "type": "innocence_anchor",
-      "summary": "Ben's timestamped delivery receipts account for his movements; he had no access to Elias's pills.",
+      "summary": "Ben had motive and a brief clinic-frontage visit, but the manifest and dispensary sign-in clear him: he never entered the locked dispensary, and his receipts account for him after Nadia brought out the organiser.",
       "target_agent_id": "agent_ben",
-      "supported_by_clue_ids": ["clue_ben_alibi"]
+      "supported_by_clue_ids": ["clue_ben_alibi", "clue_clinic_delivery_manifest"]
     }
   ]
 }

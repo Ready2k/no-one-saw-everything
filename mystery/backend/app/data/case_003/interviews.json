@@ -2,9 +2,9 @@
   {
     "agent_id": "agent_nadia",
     "default_answers": {
-      "alibi": "Clinic from before seven. I checked on Elias at five past, as I always do. Returned to the clinic. Heard Owen shout at eight.",
+      "alibi": "Clinic from before five. I checked on Elias at five past five, as I always do. Returned to the clinic. Heard Owen shout at six.",
       "timeline": "My routine, as every afternoon. Nothing unusual.",
-      "last_seen_victim": "At five past seven. He was fine. He seemed \u2014 pleased about something.",
+      "last_seen_victim": "At five past five. He was fine. He seemed \u2014 pleased about something.",
       "relationship": "I've looked after Elias for six years. This is devastating.",
       "evidence": "You'll need to be specific.",
       "location": "The clinic, the square, back to the clinic. That's all."
@@ -12,7 +12,7 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I opened the clinic at ten to seven. I prepared the afternoon medications \u2014 routine. At five past I walked over to give Elias his pill organiser, as I do every Tuesday when he can't collect it himself. He was well. Cheerful, actually. I went back to the clinic. At eight I heard Owen.",
+        "answer_text": "I opened the clinic at ten to five. I prepared the afternoon medications \u2014 routine. At five past five I walked over to give Elias his pill organiser, as I do every Tuesday when he can't collect it himself. He was well. Cheerful, actually. I went back to the clinic. At six I heard Owen.",
         "answer_type": "claim",
         "truthfulness": "mistaken",
         "emotional_shift": "composed",
@@ -34,7 +34,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_extra_capsules",
-        "answer_text": "Those capsules \u2014 I cannot explain that. Someone must have interfered with the organiser between when I prepared it and when I gave it to him. I prepare it the night before \u2014 it was on the clinic counter. Anyone could have \u2014",
+        "answer_text": "Those capsules \u2014 I cannot explain that. Someone must have interfered with the organiser between when I prepared it and when I gave it to him. Ben was in and out with a clinic pouch before opening, wasn't he? This building is not Fort Knox.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "rattled",
@@ -122,9 +122,9 @@
   {
     "agent_id": "agent_ruth",
     "default_answers": {
-      "alibi": "My round. I always start at seven sharp.",
+      "alibi": "My round. I always start at five sharp.",
       "timeline": "I can give you every house and the time I reached it.",
-      "last_seen_victim": "Elias? At seven exactly. He waved at me. He was fine.",
+      "last_seen_victim": "Elias? At five exactly. He waved at me. He was fine.",
       "relationship": "Just the postwoman. We say good afternoon most days.",
       "evidence": "I keep my eyes open on a round.",
       "location": "The square bench is one of my landmarks."
@@ -134,7 +134,7 @@
         "question_type": "timeline",
         "time_from": "17:00",
         "time_to": "17:15",
-        "answer_text": "At seven exactly I passed Elias \u2014 he waved his flask, same as always. Then at five past, Nadia came out of the clinic and went to him. She gave him something \u2014 small, like a little box \u2014 and he took some pills with his tea. I watched for a moment because it was sweet, really, her caring for him like that. Then I moved on.",
+        "answer_text": "At five exactly I passed Elias \u2014 he waved his flask, same as always. Then at five past, Nadia came out of the clinic and went to him. She gave him something \u2014 small, like a little box \u2014 and he took some pills with his tea. I watched for a moment because it was sweet, really, her caring for him like that. Then I moved on.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "troubled_now",
@@ -198,12 +198,13 @@
       },
       {
         "question_type": "evidence",
-        "topic_clue_id": "clue_ben_debt_notice",
-        "answer_text": "The old court notice? Yeah, that was my dad's debt \u2014 he borrowed off Elias back in the day and never fully paid it back. It's practically ancient history. If you think I'd hurt Elias over a grand, you've got me all wrong. I liked the man.",
+        "topic_clue_id": "clue_ben_complaint_letter",
+        "answer_text": "The complaint letter. Right. Elias caught me signing for parcels I hadn't put straight into people's hands. Stupid, not criminal. The clinic pouch was sealed and I dropped it at reception before Nadia opened. Check the manifest. Check the shops after that. I did not touch his medication.",
         "answer_type": "claim",
         "truthfulness": "true",
         "reveals_clue_ids": [
-          "clue_ben_alibi"
+          "clue_ben_alibi",
+          "clue_clinic_delivery_manifest"
         ]
       }
     ]
@@ -211,12 +212,12 @@
   {
     "agent_id": "agent_owen",
     "default_answers": {
-      "alibi": "Yard in the afternoon. I always stop to see Elias at eight.",
-      "timeline": "Yard, then square at eight. I'm the one who found him.",
+      "alibi": "Yard in the afternoon. I always stop to see Elias at six.",
+      "timeline": "Yard, then square at six. I'm the one who found him.",
       "last_seen_victim": "Yesterday evening. We had a pint. He seemed happy enough.",
       "relationship": "Old friends. Twenty-odd years.",
       "evidence": "Ask me straight.",
-      "location": "Square, just at eight."
+      "location": "Square, just at six."
     },
     "rules": [
       {
@@ -261,9 +262,9 @@
   {
     "agent_id": "agent_clara",
     "default_answers": {
-      "alibi": "Cafe from half six. Opened at eight as usual.",
+      "alibi": "Cafe from half five. Opened at six as usual.",
       "timeline": "Prep, then open. I saw Elias from the window.",
-      "last_seen_victim": "From the window at half seven or so.",
+      "last_seen_victim": "From the window at half five or so.",
       "relationship": "Regular customer. Sweet old man.",
       "evidence": "I can tell you what I saw from the cafe window.",
       "location": "The bench is visible from the till."
@@ -271,12 +272,42 @@
     "rules": [
       {
         "question_type": "last_seen_victim",
-        "answer_text": "Half seven, maybe a bit before. He was on his bench, slumped to one side. I thought he was asleep \u2014 he does that sometimes in the warm months. I should have gone to check. I keep thinking I should have gone to check.",
+        "answer_text": "Half five, maybe a bit before. He was on his bench, slumped to one side. I thought he was asleep \u2014 he does that sometimes in the warm months. I should have gone to check. I keep thinking I should have gone to check.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "guilty",
         "reveals_clue_ids": [
           "clue_clara_slumped_observation"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "16:40",
+        "time_to": "16:55",
+        "answer_text": "Before Nadia opened, Ben stopped at Elias's bench. It was not friendly. Elias had a folded letter in his hand and Ben looked as if he wanted to snatch it. A few minutes later Ben slipped into the clinic doorway with a pouch and came straight back out. I should have mentioned it, but Ben's a friend and Elias could be... severe.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reluctant",
+        "claims": [
+          {
+            "claim_id": "claim_clara_ben_argument",
+            "summary": "Clara saw Ben argue with Elias at 16:44 and briefly enter the clinic frontage at 16:48.",
+            "claim_type": "sighting",
+            "time_reference": "16:44",
+            "location_reference_id": "loc_elias_bench",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_clara_ben_argument",
+          "clue_ben_clinic_delivery"
+        ],
+        "reveals_memory_ids": [
+          "mem_clara_ben_secret"
+        ],
+        "suggested_followups": [
+          "What was in Elias's letter?",
+          "How long was Ben inside the clinic?"
         ]
       }
     ]
@@ -284,18 +315,18 @@
   {
     "agent_id": "agent_dr_haig",
     "default_answers": {
-      "alibi": "I arrive at nine on clinic days. I was not here this afternoon.",
+      "alibi": "I arrive at 19:00 on clinic days. I was not here this afternoon.",
       "timeline": "I can speak only to Elias's medical record.",
       "last_seen_victim": "Monday, for his usual check. His heart was irregular but stable.",
       "relationship": "Patient of twelve years. His condition required careful management.",
       "evidence": "Show me what you have and I'll tell you what it means.",
-      "location": "I have no reason to be at the square before nine."
+      "location": "I have no reason to be at the square before 19:00."
     },
     "rules": [
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_extra_capsules",
-        "answer_text": "Two 0.25mg capsules? His prescription is 0.125mg once daily. Two of those would be four times his therapeutic dose. Given his arrhythmia and reduced renal function... yes, that would kill him. Rapidly. Within thirty minutes of ingestion.",
+        "answer_text": "Two 0.25mg capsules? His prescription is 0.125mg once daily. Two of those would be four times his therapeutic dose. Given his arrhythmia, reduced renal function, and the fact he took them with hot tea on an empty stomach... yes, that could kill him unusually fast. A collapse inside twenty minutes is medically credible.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "horrified",
@@ -305,7 +336,7 @@
         "claims": [
           {
             "claim_id": "claim_dr_haig_lethal",
-            "summary": "Dr. Haig confirms two 0.25mg digoxin capsules would be a fatal dose for Elias within thirty minutes.",
+            "summary": "Dr. Haig confirms two 0.25mg digoxin capsules could cause Elias to collapse within twenty minutes and would be fatal without immediate intervention.",
             "claim_type": "statement",
             "truthfulness": "true"
           }
