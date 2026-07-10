@@ -1,10 +1,10 @@
 # Canonical Town Layout
 
-Status: proposed visual layout; existing runtime coordinates remain unchanged until a later implementation pass.
+Status: canonical visual layout, partially implemented for the Case 004 map pilot.
 
-Implementation note: Case 004 is the first migrated consumer. Its runtime map response uses `town_canonical_v1` dimensions and an explicitly documented temporary source-image transform so the pilot bounds match the current daylight reference artwork. The canonical tile coordinates remain the target layout; unmigrated cases retain the legacy `the_ville` definition and fallback placement.
+Implementation note: Case 004 is the first migrated consumer. Its runtime map response uses `town_canonical_v1` dimensions with a 6144x4608, 192x144-grid overworld assembled from nine 2048x1536 HD tiles. The centre B2 tile is paired: zoomed-out views use the all-cases external/roofed tile, and zoomed-in views swap to the all-cases roofless interior tile at the frontend/backend `zoom_image_tiles.threshold` (`3.2`). Unmigrated cases retain the legacy `the_ville` definition and fallback placement.
 
-The Case 004 visual contract includes `visual.object_visuals`. Object anchors are image-space points derived from the pilot bounds, while their semantic IDs remain independent of the temporary raster image. Fog/location visibility can produce `hidden` or `visible` object states, but only `discovered` objects have `safe_to_render: true` and an active evidence marker.
+The Case 004 visual contract includes `visual.object_visuals`. Object anchors are image-space points from `backend/app/data/town/town_layout.json`, while their semantic IDs remain independent of the raster image. Fog/location visibility can produce `hidden` or `visible` object states, but only `discovered` objects have `safe_to_render: true` and an active evidence marker.
 
 ## Grid contract
 
@@ -14,6 +14,17 @@ The Case 004 visual contract includes `visual.object_visuals`. Object anchors ar
 - The fountain square is the navigation anchor at approximately `(32,22)`.
 - The populated town occupies roughly x=6..58 and y=3..43. The outer four-tile perimeter is reserved for trees, roads, fog, and future expansion.
 - Buildings are roofless/opened for investigation views. Exterior walls, doors, and windows remain visible in a cutaway footprint.
+
+## Runtime asset contract
+
+- Backend source: `backend/app/town_map.py` (`CANONICAL_MAP`, `LOCATION_FUNCTION_TAGS`, `CASE_MAPS`).
+- Manifest: `frontend/public/art/town/town_canonical_v1_manifest.json`.
+- Tile source: `frontend/public/art/town/tiles_3x3_hd/`.
+- B2 overview: `town_overworld_B2_all_cases_external_hd.png`.
+- B2 close view: `town_overworld_B2_interior_hd.png`.
+- Scale-aware resolver: `frontend/src/map/mapAssets.ts`; callers pass scale from `VisualMap.tsx` and `MapCrop.tsx`.
+
+Location labels/functions are data, not painted text. `LOCATION_FUNCTION_TAGS` maps each existing `loc_*` ID to a `function_tag`, `building_role`, case coverage, optional parent location, and `zoom_behavior`. These tags help migration locate houses, businesses, rooms, and exterior landmarks without changing case truth or clue logic.
 
 ## Layout sketch
 
