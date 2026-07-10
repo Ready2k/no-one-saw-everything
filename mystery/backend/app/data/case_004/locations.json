@@ -85,5 +85,45 @@
     "map_position": {"x": 1210, "y": 870},
     "map_bounds": {"x": 1090, "y": 790, "width": 358, "height": 296},
     "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_fishery",
+    "name": "Fishery",
+    "description": "The riverside fishery, where local fishermen clean their daily catch.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public",
+    "map_position": {"x": 1400, "y": 200},
+    "map_bounds": {"x": 1300, "y": 100, "width": 200, "height": 200},
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_lake",
+    "name": "Lover's Lake",
+    "description": "A serene, deep water lake on the northern edge of town surrounded by reeds.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public",
+    "map_position": {"x": 200, "y": 200},
+    "map_bounds": {"x": 50, "y": 50, "width": 300, "height": 300},
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_woodland",
+    "name": "Whispering Woodland",
+    "description": "Dense woods bordering the town, filled with winding paths and tall oak trees.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public",
+    "map_position": {"x": 200, "y": 900},
+    "map_bounds": {"x": 50, "y": 800, "width": 300, "height": 250},
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_meadow",
+    "name": "Green Meadow",
+    "description": "A sprawling field of wildflowers and soft grass, ideal for afternoon strolls.",
+    "connected_location_ids": ["loc_village_square"],
+    "visibility_type": "public",
+    "map_position": {"x": 900, "y": 950},
+    "map_bounds": {"x": 800, "y": 900, "width": 200, "height": 180},
+    "visual_layer": "exterior"
   }
 ]

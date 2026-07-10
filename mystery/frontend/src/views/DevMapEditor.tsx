@@ -162,7 +162,8 @@ const ALLOWED_NESTING = [
   ["loc_hobbs_cafe", "loc_cafe_storage"],
   ["loc_bookshop", "loc_bookshop_back"],
   ["loc_clinic", "loc_clinic_dispensary"],
-  ["loc_marcus_house", "loc_marcus_study"]
+  ["loc_marcus_house", "loc_marcus_study"],
+  ["loc_village_square", "loc_elias_bench"]
 ];
 
 function isNestingAllowed(idA: string, idB: string): boolean {

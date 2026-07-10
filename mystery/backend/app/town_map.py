@@ -45,7 +45,8 @@ ALLOWED_NESTING = {
     ("loc_hobbs_cafe", "loc_cafe_storage"),
     ("loc_bookshop", "loc_bookshop_back"),
     ("loc_clinic", "loc_clinic_dispensary"),
-    ("loc_marcus_house", "loc_marcus_study")
+    ("loc_marcus_house", "loc_marcus_study"),
+    ("loc_village_square", "loc_elias_bench")
 }
 
 def validate_town_layout_payload(payload: Any) -> list[str]:
@@ -407,7 +408,7 @@ def load_town_layout() -> dict[str, Any] | None:
 CANONICAL_MAP: dict[str, Any] = {
     "definition_id": "town_canonical_v1",
     "asset": "town_canonical_v1",
-    "image": "/art/case_004/fountain_daylight_map.png",
+    "image": "/art/town/town_canonical_v1_day.png",
     "width": 2048,
     "height": 1536,
     "tile_size": 32,
@@ -442,6 +443,10 @@ _BOUNDS_TILES: dict[str, tuple[int, int, int, int]] = {
     "loc_ruth_cottage": (48, 29, 11, 9),
     "loc_solicitors_office": (42, 37, 9, 6),
     "loc_elias_bench": (31, 22, 4, 2),
+    "loc_fishery": (43, 8, 5, 5),
+    "loc_lake": (2, 2, 14, 10),
+    "loc_woodland": (1, 34, 3, 12),
+    "loc_meadow": (30, 37, 12, 9),
 }
 
 
@@ -471,7 +476,7 @@ CANONICAL_ADJACENCY: dict[str, list[str]] = {
         "loc_fountain", "loc_hobbs_cafe", "loc_bookshop", "loc_clinic",
         "loc_pub", "loc_marcus_house", "loc_owen_house", "loc_elias_house",
         "loc_priya_flat", "loc_nadia_flat", "loc_ben_flat", "loc_ruth_cottage",
-        "loc_solicitors_office",
+        "loc_solicitors_office", "loc_fishery", "loc_lake", "loc_woodland", "loc_meadow",
     ],
     "loc_fountain": ["loc_village_square", "loc_elias_bench"],
     "loc_hobbs_cafe": ["loc_village_square", "loc_cafe_kitchen", "loc_clara_flat"],
@@ -494,6 +499,10 @@ CANONICAL_ADJACENCY: dict[str, list[str]] = {
     "loc_pub": ["loc_village_square"],
     "loc_ruth_cottage": ["loc_village_square"],
     "loc_solicitors_office": ["loc_village_square"],
+    "loc_fishery": ["loc_village_square"],
+    "loc_lake": ["loc_village_square"],
+    "loc_woodland": ["loc_village_square"],
+    "loc_meadow": ["loc_village_square"],
 }
 
 
@@ -506,6 +515,10 @@ SEMANTIC_ASSETS: dict[str, dict[str, Any]] = {
     "loc_hobbs_cafe": {"category": "location", "asset": "struct_hobbs_cafe_cutaway"},
     "loc_cafe_kitchen": {"category": "location", "asset": "struct_cafe_kitchen_cutaway"},
     "loc_cafe_storage": {"category": "location", "asset": "struct_cafe_storage_cutaway"},
+    "loc_fishery": {"category": "location", "asset": "struct_fishery"},
+    "loc_lake": {"category": "location", "asset": "struct_lake"},
+    "loc_woodland": {"category": "location", "asset": "struct_woodland"},
+    "loc_meadow": {"category": "location", "asset": "struct_meadow"},
     "obj_fountain_stone": {"category": "evidence", "asset": "obj_fountain_coping_stone", "glyph": "◆"},
     "obj_blackmail_letters": {"category": "evidence", "asset": "obj_blackmail_letters", "glyph": "✉"},
     "obj_ben_phone": {"category": "evidence", "asset": "obj_phone", "glyph": "☎"},
