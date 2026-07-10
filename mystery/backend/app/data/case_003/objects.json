@@ -1,0 +1,94 @@
+[
+  {
+    "object_id": "obj_pill_bottle",
+    "name": "Elias's afternoon pill organiser",
+    "description": "A weekly pill organiser Nadia prepares for Elias at the start of each week. The Tuesday afternoon compartment contains two extra pale yellow capsules among his usual white tablets. The colour difference is obvious once the lid is opened, and the pale capsules are not his prescribed medication.",
+    "is_weapon": true,
+    "normal_location_id": "loc_elias_bench",
+    "final_location_id": "loc_clinic_dispensary",
+    "access_rules": ["nurse"],
+    "touched_by_agent_ids": ["agent_nadia", "agent_elias"],
+    "last_seen_time": "17:05",
+    "hidden_state": "extra_capsules_dissolved_in_system",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_dispensary_log",
+    "name": "Clinic dispensary log",
+    "description": "The controlled-medication dispensing log. An entry for digoxin 0.25mg is crossed out and rewritten on Monday's page — the correction is in a different ink from the surrounding entries.",
+    "normal_location_id": "loc_clinic_dispensary",
+    "final_location_id": "loc_clinic_dispensary",
+    "access_rules": ["nurse", "doctor"],
+    "touched_by_agent_ids": ["agent_nadia", "agent_dr_haig"],
+    "last_seen_time": "17:00",
+    "hidden_state": "falsified_dosage_entry",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_solicitor_appointment",
+    "name": "Solicitor appointment card",
+    "description": "A card in Elias's coat pocket: 'Whittle & Cross, 18:30 — re: will amendment, final signature.' Elias had an appointment this evening to finalise a change to his will.",
+    "normal_location_id": "loc_elias_bench",
+    "final_location_id": "loc_elias_bench",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_elias"],
+    "last_seen_time": "17:00",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_clinic_bequest_letter",
+    "name": "Original bequest letter",
+    "description": "In the clinic filing cabinet: a letter from Elias two years ago confirming he intended to leave his cottage estate to the clinic fund. Nadia's initials are on the file — she was the one who handled it.",
+    "normal_location_id": "loc_clinic",
+    "final_location_id": "loc_clinic",
+    "access_rules": ["nurse", "doctor"],
+    "touched_by_agent_ids": ["agent_nadia", "agent_elias"],
+    "last_seen_time": "16:30",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_elias_notebook",
+    "name": "Elias's personal notebook",
+    "description": "A small notebook Elias always carries. An entry from yesterday evening reads: 'Called W&C — 18:30 appointment confirmed. Nadia will not be pleased, but it is my estate and not the clinic's to decide.'",
+    "normal_location_id": "loc_elias_bench",
+    "final_location_id": "loc_elias_bench",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_elias"],
+    "last_seen_time": "17:00",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_ben_complaint_letter",
+    "name": "Draft complaint about Ben Carter",
+    "description": "A folded draft letter in Elias's coat, addressed to Ben's courier depot manager. Elias accuses Ben of forging delivery signatures and leaving clinic supplies unattended, and says he will hand the letter over after his solicitor appointment unless Ben apologises in writing.",
+    "normal_location_id": "loc_elias_bench",
+    "final_location_id": "loc_elias_bench",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_elias"],
+    "last_seen_time": "17:00",
+    "clue_relevance": "red_herring_motive"
+  },
+  {
+    "object_id": "obj_clinic_delivery_manifest",
+    "name": "Clinic delivery manifest",
+    "description": "A signed courier manifest for the clinic pouch Ben delivered at 16:48. The reception hatch signature is Ben's, but the controlled-medication dispensary sign-in sheet beside it has no entry for him.",
+    "normal_location_id": "loc_clinic",
+    "final_location_id": "loc_clinic",
+    "access_rules": ["clinic_staff"],
+    "touched_by_agent_ids": ["agent_ben", "agent_nadia"],
+    "last_seen_time": "16:50",
+    "clue_relevance": "red_herring_access"
+  },
+  {
+    "object_id": "obj_nadia_notebook",
+    "name": "Nadia's patient notes",
+    "description": "Nadia's personal patient notes for Elias. Among careful nursing observations, a separate page at the back is headed 'Estate update — Elias' and contains a list of projected clinic budget improvements based on the bequest. It is dated six months ago.",
+    "normal_location_id": "loc_clinic",
+    "final_location_id": "loc_clinic",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_nadia"],
+    "last_seen_time": "16:50",
+    "hidden_state": "hidden_in_locked_drawer",
+    "clue_relevance": "motive"
+  }
+]
