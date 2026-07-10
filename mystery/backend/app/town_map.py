@@ -65,8 +65,8 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
     if not isinstance(grid, dict):
         errors.append("Grid configuration must be a JSON object")
     else:
-        if grid.get("cols") != 64 or grid.get("rows") != 48:
-            errors.append("Grid size must be exactly 64 columns by 48 rows")
+        if grid.get("cols") != 192 or grid.get("rows") != 144:
+            errors.append("Grid size must be exactly 192 columns by 144 rows")
         if grid.get("tile_size") != 32:
             errors.append("Tile size must be exactly 32")
             
@@ -107,8 +107,8 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                 else:
                     if w <= 0 or h <= 0:
                         errors.append(f"Bounds width and height for {loc_id} must be positive")
-                    if x < 0 or y < 0 or x + w > 64 or y + h > 48:
-                        errors.append(f"Bounds for {loc_id} must remain within the 64x48 grid")
+                    if x < 0 or y < 0 or x + w > 192 or y + h > 144:
+                        errors.append(f"Bounds for {loc_id} must remain within the 192x144 grid")
                     effective_locs[loc_id] = {"x": x, "y": y, "w": w, "h": h}
             
             mode = loc_data.get("mode")
@@ -214,8 +214,8 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                     else:
                         if w <= 0 or h <= 0:
                             errors.append(f"Overridden bounds width and height for {loc_id} in case {case_id} must be positive")
-                        if x < 0 or y < 0 or x + w > 64 or y + h > 48:
-                            errors.append(f"Overridden bounds for {loc_id} in case {case_id} must remain within 64x48 grid")
+                        if x < 0 or y < 0 or x + w > 192 or y + h > 144:
+                            errors.append(f"Overridden bounds for {loc_id} in case {case_id} must remain within 192x144 grid")
             
             def get_effective_bounds(l_id: str) -> dict[str, int] | None:
                 if l_id in loc_bounds:
@@ -260,7 +260,7 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                         if not isinstance(ax, (int, float)) or isinstance(ax, bool) or not isinstance(ay, (int, float)) or isinstance(ay, bool):
                             errors.append(f"Anchor coordinates for '{obj_id}' in case {case_id} must be numbers")
                         else:
-                            if ax < 0 or ay < 0 or ax >= 64 or ay >= 48:
+                            if ax < 0 or ay < 0 or ax >= 192 or ay >= 144:
                                 errors.append(f"Anchor coordinates for '{obj_id}' in case {case_id} lie outside grid")
                                 
                             is_external = anchor_data.get("external", False) or render_policy == "external"
@@ -306,8 +306,8 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                 if not isinstance(tx, int) or isinstance(tx, bool) or not isinstance(ty, int) or isinstance(ty, bool):
                     errors.append(f"Tile coordinates under '{layer_name}' must be integers")
                 else:
-                    if tx < 0 or tx >= 64 or ty < 0 or ty >= 48:
-                        errors.append(f"Tile coordinate ({tx}, {ty}) under '{layer_name}' sits outside the 64x48 grid")
+                    if tx < 0 or tx >= 192 or ty < 0 or ty >= 144:
+                        errors.append(f"Tile coordinate ({tx}, {ty}) under '{layer_name}' sits outside the 192x144 grid")
                 if tile_id not in ALLOWED_TILES:
                     errors.append(f"Unknown tile ID '{tile_id}' under layer '{layer_name}'")
 
@@ -364,8 +364,8 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                 if not isinstance(px, (int, float)) or isinstance(px, bool) or not isinstance(py, (int, float)) or isinstance(py, bool):
                     errors.append(f"Prop coordinates for '{instance_id}' must be numbers")
                 else:
-                    if px < 0 or px >= 64 or py < 0 or py >= 48:
-                        errors.append(f"Prop coordinate ({px}, {py}) sits outside the 64x48 grid")
+                    if px < 0 or px >= 192 or py < 0 or py >= 144:
+                        errors.append(f"Prop coordinate ({px}, {py}) sits outside the 192x144 grid")
                 
                 p_layer = prop.get("layer", "props")
                 if p_layer not in ALLOWED_LAYERS:
@@ -409,10 +409,10 @@ CANONICAL_MAP: dict[str, Any] = {
     "definition_id": "town_canonical_v1",
     "asset": "town_canonical_v1",
     "image": "/art/town/town_canonical_v1_day.png",
-    "width": 2048,
-    "height": 1536,
+    "width": 6144,
+    "height": 4608,
     "tile_size": 32,
-    "grid": {"cols": 64, "rows": 48},
+    "grid": {"cols": 192, "rows": 144},
     "origin": "north_west",
     "base_palette": "neutral_daylight_soft_ambient",
     "lighting_overlay": "runtime_lightingTint",
@@ -421,32 +421,32 @@ CANONICAL_MAP: dict[str, Any] = {
 # Canonical layout bounds from docs/canonical_town_layout.md, converted from
 # tiles to canonical map pixels. These are visual recommendations only.
 _BOUNDS_TILES: dict[str, tuple[int, int, int, int]] = {
-    "loc_village_square": (18, 14, 28, 16),
-    "loc_fountain": (29, 19, 10, 9),
-    "loc_marcus_house": (28, 5, 11, 8),
-    "loc_marcus_study": (31, 7, 8, 6),
-    "loc_hobbs_cafe": (18, 7, 11, 8),
-    "loc_cafe_kitchen": (20, 12, 5, 5),
-    "loc_cafe_storage": (25, 12, 5, 5),
-    "loc_clinic": (39, 15, 9, 8),
-    "loc_clinic_dispensary": (45, 16, 6, 6),
-    "loc_bookshop": (10, 9, 10, 8),
-    "loc_bookshop_back": (10, 13, 10, 6),
-    "loc_rear_alley": (22, 5, 20, 4),
-    "loc_pub": (9, 6, 11, 10),
-    "loc_owen_house": (47, 13, 11, 10),
-    "loc_elias_house": (24, 31, 8, 7),
-    "loc_clara_flat": (19, 3, 7, 5),
-    "loc_ben_flat": (5, 24, 7, 5),
-    "loc_priya_flat": (6, 29, 7, 5),
-    "loc_nadia_flat": (40, 10, 6, 5),
-    "loc_ruth_cottage": (48, 29, 11, 9),
-    "loc_solicitors_office": (42, 37, 9, 6),
-    "loc_elias_bench": (31, 22, 4, 2),
-    "loc_fishery": (43, 8, 5, 5),
-    "loc_lake": (2, 2, 14, 10),
-    "loc_woodland": (1, 34, 3, 12),
-    "loc_meadow": (30, 37, 12, 9),
+    "loc_village_square": (82, 62, 28, 16),
+    "loc_fountain": (93, 67, 10, 9),
+    "loc_marcus_house": (92, 53, 11, 8),
+    "loc_marcus_study": (95, 55, 8, 6),
+    "loc_hobbs_cafe": (82, 55, 11, 8),
+    "loc_cafe_kitchen": (84, 60, 5, 5),
+    "loc_cafe_storage": (89, 60, 5, 5),
+    "loc_clinic": (103, 63, 9, 8),
+    "loc_clinic_dispensary": (109, 64, 6, 6),
+    "loc_bookshop": (74, 57, 10, 8),
+    "loc_bookshop_back": (74, 61, 10, 6),
+    "loc_rear_alley": (86, 53, 20, 4),
+    "loc_pub": (73, 54, 11, 10),
+    "loc_owen_house": (111, 61, 11, 10),
+    "loc_elias_house": (88, 79, 8, 7),
+    "loc_clara_flat": (83, 51, 7, 5),
+    "loc_ben_flat": (69, 72, 7, 5),
+    "loc_priya_flat": (70, 77, 7, 5),
+    "loc_nadia_flat": (104, 58, 6, 5),
+    "loc_ruth_cottage": (112, 77, 11, 9),
+    "loc_solicitors_office": (106, 85, 9, 6),
+    "loc_elias_bench": (95, 70, 4, 2),
+    "loc_fishery": (107, 56, 5, 5),
+    "loc_lake": (66, 50, 14, 10),
+    "loc_woodland": (65, 82, 3, 12),
+    "loc_meadow": (94, 85, 12, 9),
 }
 
 

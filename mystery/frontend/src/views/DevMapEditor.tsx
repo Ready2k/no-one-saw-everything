@@ -225,6 +225,9 @@ export default function DevMapEditor() {
   const [showImportModal, setShowImportModal] = useState<boolean>(false);
   const [importText, setImportText] = useState<string>("");
 
+  const cols = layout?.grid?.cols || 192;
+  const rows = layout?.grid?.rows || 144;
+
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragInfo = useRef<{
     type: "location" | "object" | "resize" | "prop";
@@ -503,11 +506,11 @@ export default function DevMapEditor() {
 
     const rect = canvasRef.current.getBoundingClientRect();
     const getGridCoords = (clientX: number, clientY: number) => {
-      const tx = Math.floor(((clientX - rect.left) / rect.width) * 64);
-      const ty = Math.floor(((clientY - rect.top) / rect.height) * 48);
+      const tx = Math.floor(((clientX - rect.left) / rect.width) * cols);
+      const ty = Math.floor(((clientY - rect.top) / rect.height) * rows);
       return {
-        x: Math.max(0, Math.min(63, tx)),
-        y: Math.max(0, Math.min(47, ty))
+        x: Math.max(0, Math.min(cols - 1, tx)),
+        y: Math.max(0, Math.min(rows - 1, ty))
       };
     };
 
@@ -607,11 +610,11 @@ export default function DevMapEditor() {
         const deltaX_px = moveEvent.clientX - dragInfo.current.startX;
         const deltaY_px = moveEvent.clientY - dragInfo.current.startY;
         
-        let deltaX_tiles = Math.round(deltaX_px * (64 / rect.width));
-        let deltaY_tiles = Math.round(deltaY_px * (48 / rect.height));
+        let deltaX_tiles = Math.round(deltaX_px * (cols / rect.width));
+        let deltaY_tiles = Math.round(deltaY_px * (rows / rect.height));
 
-        const newX = Math.max(0, Math.min(63, dragInfo.current.initialX + deltaX_tiles));
-        const newY = Math.max(0, Math.min(47, dragInfo.current.initialY + deltaY_tiles));
+        const newX = Math.max(0, Math.min(cols - 1, dragInfo.current.initialX + deltaX_tiles));
+        const newY = Math.max(0, Math.min(rows - 1, dragInfo.current.initialY + deltaY_tiles));
 
         setLayout((prev) => {
           if (!prev) return null;
@@ -703,8 +706,8 @@ export default function DevMapEditor() {
       if (!dragInfo.current || !canvasRef.current || !layout) return;
       const drag = dragInfo.current;
       const rect = canvasRef.current.getBoundingClientRect();
-      const scaleX = 64 / rect.width;
-      const scaleY = 48 / rect.height;
+      const scaleX = cols / rect.width;
+      const scaleY = rows / rect.height;
 
       const deltaX_px = moveEvent.clientX - drag.startX;
       const deltaY_px = moveEvent.clientY - drag.startY;
@@ -721,18 +724,18 @@ export default function DevMapEditor() {
       }
 
       if (drag.type === "location") {
-        const newX = Math.max(0, Math.min(64 - 1, drag.initialX + deltaX_tiles));
-        const newY = Math.max(0, Math.min(48 - 1, drag.initialY + deltaY_tiles));
+        const newX = Math.max(0, Math.min(cols - 1, drag.initialX + deltaX_tiles));
+        const newY = Math.max(0, Math.min(rows - 1, drag.initialY + deltaY_tiles));
         updateLocationBounds(drag.id, { x: newX, y: newY });
       } else if (drag.type === "resize") {
         if (drag.initialW && drag.initialH) {
-          const newW = Math.max(1, Math.min(64 - drag.initialX, drag.initialW + deltaX_tiles));
-          const newH = Math.max(1, Math.min(48 - drag.initialY, drag.initialH + deltaY_tiles));
+          const newW = Math.max(1, Math.min(cols - drag.initialX, drag.initialW + deltaX_tiles));
+          const newH = Math.max(1, Math.min(rows - drag.initialY, drag.initialH + deltaY_tiles));
           updateLocationBounds(drag.id, { w: newW, h: newH });
         }
       } else if (drag.type === "object") {
-        const newX = Math.max(0, Math.min(64 - 1, drag.initialX + deltaX_tiles));
-        const newY = Math.max(0, Math.min(48 - 1, drag.initialY + deltaY_tiles));
+        const newX = Math.max(0, Math.min(cols - 1, drag.initialX + deltaX_tiles));
+        const newY = Math.max(0, Math.min(rows - 1, drag.initialY + deltaY_tiles));
         updateObjectAnchor(drag.id, { x: newX, y: newY });
       }
     };
@@ -927,8 +930,8 @@ export default function DevMapEditor() {
         showToast("Import failed: Version must be town_layout_editor_v2", "error");
         return;
       }
-      if (!parsed.grid || parsed.grid.cols !== 64 || parsed.grid.rows !== 48) {
-        showToast("Import failed: Grid size must be 64x48", "error");
+      if (!parsed.grid || parsed.grid.cols !== 192 || parsed.grid.rows !== 144) {
+        showToast("Import failed: Grid size must be 192x144", "error");
         return;
       }
 
@@ -957,13 +960,13 @@ export default function DevMapEditor() {
   const renderGridLines = () => {
     const lines = [];
     const lineBg = solidRenderView ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.05)";
-    for (let i = 1; i < 64; i++) {
+    for (let i = 1; i < cols; i++) {
       lines.push(
         <div
           key={`v-${i}`}
           style={{
             position: "absolute",
-            left: `${(i / 64) * 100}%`,
+            left: `${(i / cols) * 100}%`,
             top: 0,
             bottom: 0,
             width: "1px",
@@ -973,13 +976,13 @@ export default function DevMapEditor() {
         />
       );
     }
-    for (let i = 1; i < 48; i++) {
+    for (let i = 1; i < rows; i++) {
       lines.push(
         <div
           key={`h-${i}`}
           style={{
             position: "absolute",
-            top: `${(i / 48) * 100}%`,
+            top: `${(i / rows) * 100}%`,
             left: 0,
             right: 0,
             height: "1px",
@@ -1261,20 +1264,20 @@ export default function DevMapEditor() {
         }
         .canvas-bg-art {
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
+          top: 33.333%;
+          left: 33.333%;
+          width: 33.333%;
+          height: 33.333%;
           background-size: cover;
           pointer-events: none;
           z-index: 1;
         }
         .canvas-safety-margin {
           position: absolute;
-          left: 6.25%;
-          top: 8.33%;
-          right: 6.25%;
-          bottom: 8.33%;
+          left: 2.0833%;
+          top: 2.7778%;
+          right: 2.0833%;
+          bottom: 2.7778%;
           border: 2px dashed rgba(244, 63, 94, 0.25);
           pointer-events: none;
           display: flex;
@@ -1625,7 +1628,7 @@ export default function DevMapEditor() {
             style={{
               width: "100%",
               maxWidth: "960px",
-              aspectRatio: "64 / 48",
+              aspectRatio: `${cols} / ${rows}`,
               backgroundColor: solidRenderView ? TILE_COLORS["tile_grass"] : "#111113"
             }}
             onPointerDown={handleCanvasPointerDown}
@@ -1656,10 +1659,10 @@ export default function DevMapEditor() {
                   key={`${layerName}-${tile.x}-${tile.y}-${idx}`}
                   style={{
                     position: "absolute",
-                    left: `${(tile.x / 64) * 100}%`,
-                    top: `${(tile.y / 48) * 100}%`,
-                    width: `${(1 / 64) * 100}%`,
-                    height: `${(1 / 48) * 100}%`,
+                    left: `${(tile.x / cols) * 100}%`,
+                    top: `${(tile.y / rows) * 100}%`,
+                    width: `${(1 / cols) * 100}%`,
+                    height: `${(1 / rows) * 100}%`,
                     backgroundColor: TILE_COLORS[tile.tile_id] || "#ccc",
                     border: "1px solid rgba(255, 255, 255, 0.05)",
                     zIndex: ALLOWED_LAYERS.indexOf(layerName) + 2,
@@ -1680,10 +1683,10 @@ export default function DevMapEditor() {
                   key={prop.instance_id}
                   style={{
                     position: "absolute",
-                    left: `${(prop.x / 64) * 100}%`,
-                    top: `${(prop.y / 48) * 100}%`,
-                    width: `${((prop.w || 1) / 64) * 100}%`,
-                    height: `${((prop.h || 1) / 48) * 100}%`,
+                    left: `${(prop.x / cols) * 100}%`,
+                    top: `${(prop.y / rows) * 100}%`,
+                    width: `${((prop.w || 1) / cols) * 100}%`,
+                    height: `${((prop.h || 1) / rows) * 100}%`,
                     backgroundColor: isSelected ? "rgba(56, 189, 248, 0.6)" : "rgba(245, 158, 11, 0.45)",
                     border: isSelected ? "2px solid #0ea5e9" : "1px solid #f59e0b",
                     color: "#fff",
@@ -1718,11 +1721,11 @@ export default function DevMapEditor() {
                       if (!dragInfo.current) return;
                       const deltaX_px = moveEvent.clientX - dragInfo.current.startX;
                       const deltaY_px = moveEvent.clientY - dragInfo.current.startY;
-                      let deltaX_tiles = Math.round(deltaX_px * (64 / rect.width));
-                      let deltaY_tiles = Math.round(deltaY_px * (48 / rect.height));
+                      let deltaX_tiles = Math.round(deltaX_px * (cols / rect.width));
+                      let deltaY_tiles = Math.round(deltaY_px * (rows / rect.height));
 
-                      const newX = Math.max(0, Math.min(63, dragInfo.current.initialX + deltaX_tiles));
-                      const newY = Math.max(0, Math.min(47, dragInfo.current.initialY + deltaY_tiles));
+                      const newX = Math.max(0, Math.min(cols - 1, dragInfo.current.initialX + deltaX_tiles));
+                      const newY = Math.max(0, Math.min(rows - 1, dragInfo.current.initialY + deltaY_tiles));
 
                       setLayout((prev) => {
                         if (!prev) return null;
@@ -1790,10 +1793,10 @@ export default function DevMapEditor() {
                   key={loc.location_id}
                   className={`location-block ${isSelected ? "selected" : ""}`}
                   style={{
-                    left: `${(x / 64) * 100}%`,
-                    top: `${(y / 48) * 100}%`,
-                    width: `${(w / 64) * 100}%`,
-                    height: `${(h / 48) * 100}%`,
+                    left: `${(x / cols) * 100}%`,
+                    top: `${(y / rows) * 100}%`,
+                    width: `${(w / cols) * 100}%`,
+                    height: `${(h / rows) * 100}%`,
                     borderColor: borderCol,
                     borderWidth: isSelected ? "3px" : "2px",
                     background: bgCol,
@@ -1834,8 +1837,8 @@ export default function DevMapEditor() {
                     key={obj.object_id}
                     className={`object-anchor-dot ${isSelected ? "selected" : ""}`}
                     style={{
-                      left: `${(x / 64) * 100}%`,
-                      top: `${(y / 48) * 100}%`,
+                      left: `${(x / cols) * 100}%`,
+                      top: `${(y / rows) * 100}%`,
                       opacity: previewMode === "fog" && !isLocVisible ? 0.3 : 1,
                       zIndex: 25
                     }}

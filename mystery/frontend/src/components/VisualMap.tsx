@@ -271,7 +271,7 @@ export default function VisualMap({
         style={{
           transform: `translate(${view.tx}px, ${view.ty}px) scale(${view.scale})`,
           transition: smooth.current ? "transform 0.45s ease" : undefined,
-
+          backgroundColor: "#166534",
         } as React.CSSProperties}
       >
         <img
@@ -279,7 +279,13 @@ export default function VisualMap({
           src={mapImageUrl(data.map.image)}
           alt="Village map"
           draggable={false}
-          style={isCanonicalPilot ? { filter: "saturate(0.96) brightness(1.08)" } : undefined}
+          style={{
+            left: "33.333%",
+            top: "33.333%",
+            width: "33.333%",
+            height: "33.333%",
+            ...(isCanonicalPilot ? { filter: "saturate(0.96) brightness(1.08)" } : {})
+          }}
         />
 
         {currentMinutes != null && (

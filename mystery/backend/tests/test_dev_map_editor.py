@@ -30,14 +30,14 @@ def test_validate_town_layout_payload_constraints_v2():
     # Valid payload base structure
     valid_payload = {
         "version": "town_layout_editor_v2",
-        "grid": {"cols": 64, "rows": 48, "tile_size": 32},
+        "grid": {"cols": 192, "rows": 144, "tile_size": 32},
         "canonical_locations": {
             "loc_fountain": {
-                "bounds": {"x": 29, "y": 19, "w": 10, "h": 9},
+                "bounds": {"x": 93, "y": 67, "w": 10, "h": 9},
                 "mode": "exterior"
             },
             "loc_village_square": {
-                "bounds": {"x": 18, "y": 14, "w": 28, "h": 16}, # Completely overlaps / contains loc_fountain
+                "bounds": {"x": 82, "y": 62, "w": 28, "h": 16}, # Completely overlaps / contains loc_fountain
                 "mode": "exterior"
             }
         },
@@ -48,7 +48,7 @@ def test_validate_town_layout_payload_constraints_v2():
                 "object_anchors": {
                     "obj_fountain_stone": {
                         "location_id": "loc_fountain",
-                        "anchor": {"x": 36, "y": 23},
+                        "anchor": {"x": 100, "y": 71},
                         "semantic_asset_id": "obj_fountain_coping_stone",
                         "render_policy": "discovery_gated"
                     }
@@ -58,7 +58,7 @@ def test_validate_town_layout_payload_constraints_v2():
         "tile_layers": {
             "base": {
                 "tiles": [
-                    {"x": 10, "y": 14, "tile_id": "tile_cobble"}
+                    {"x": 74, "y": 62, "tile_id": "tile_cobble"}
                 ]
             }
         },
@@ -68,8 +68,8 @@ def test_validate_town_layout_payload_constraints_v2():
                     "instance_id": "prop_fountain_main_001",
                     "asset_id": "prop_fountain_coping",
                     "location_id": "loc_fountain",
-                    "x": 32,
-                    "y": 22,
+                    "x": 96,
+                    "y": 70,
                     "w": 5,
                     "h": 5,
                     "layer": "props"
@@ -81,8 +81,8 @@ def test_validate_town_layout_payload_constraints_v2():
                     "asset_id": "prop_muddy_footprint",
                     "object_id": "obj_mud_bootprint",
                     "location_id": "loc_fountain",
-                    "x": 35,
-                    "y": 24,
+                    "x": 99,
+                    "y": 72,
                     "render_policy": "discovery_gated"
                 }
             ]
@@ -103,11 +103,11 @@ def test_validate_town_layout_payload_constraints_v2():
     bad_payload = dict(valid_payload)
     bad_payload["canonical_locations"] = {
         "loc_fountain": {
-            "bounds": {"x": 29, "y": 19, "w": 10, "h": 9},
+            "bounds": {"x": 93, "y": 67, "w": 10, "h": 9},
             "mode": "exterior"
         },
         "loc_clinic": {
-            "bounds": {"x": 30, "y": 20, "w": 5, "h": 5}, # Overlaps with fountain, not allowed nesting pair
+            "bounds": {"x": 94, "y": 68, "w": 5, "h": 5}, # Overlaps with fountain, not allowed nesting pair
             "mode": "exterior"
         }
     }
@@ -142,15 +142,15 @@ def test_validate_town_layout_payload_constraints_v2():
                 "instance_id": "prop_fountain_main_001",
                 "asset_id": "prop_fountain_coping",
                 "location_id": "loc_fountain",
-                "x": 32,
-                "y": 22
+                "x": 96,
+                "y": 70
             },
             {
                 "instance_id": "prop_fountain_main_001", # Duplicate
                 "asset_id": "prop_bench",
                 "location_id": "loc_fountain",
-                "x": 33,
-                "y": 22
+                "x": 97,
+                "y": 70
             }
         ]
     }
@@ -165,8 +165,8 @@ def test_validate_town_layout_payload_constraints_v2():
                 "instance_id": "case004_bootprint_001",
                 "asset_id": "prop_muddy_footprint",
                 "location_id": "loc_fountain",
-                "x": 35,
-                "y": 24,
+                "x": 99,
+                "y": 72,
                 "render_policy": "discovery_gated" # No object_id
             }
         ]
