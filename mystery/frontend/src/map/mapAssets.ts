@@ -21,10 +21,7 @@ export const SPRITE_SHEET = {
   idleRow: 0,
 } as const;
 
-// the_ville tilemap is 140x100 tiles of 32px each (see maze_meta_info.json).
-// An agent's on-screen footprint should track 1/140 of the map's width and
-// 1/100 of its height — not a fixed pixel size, or it ends up wildly out of
-// scale relative to furniture/buildings at any given zoom.
+// Legacy fallback grid. Migrated maps return their own grid in MapReplayData.
 export const MAP_GRID = { cols: 140, rows: 100 } as const;
 
 // The original Phaser renderer (environment/frontend_server/templates/demo/

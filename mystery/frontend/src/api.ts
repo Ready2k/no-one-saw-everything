@@ -292,6 +292,11 @@ export const api = {
     regenerate: (caseId: string) => request<any>(`/api/generated_cases/${caseId}/regenerate`, { method: "POST" }),
     delete: (caseId: string) => request<{ status: string }>(`/api/generated_cases/${caseId}`, { method: "DELETE" }),
   },
+  getDevMapLayout: () => request<any>("/api/dev/map-editor/layout"),
+  saveDevMapLayout: (payload: any) => request<{ status: string }>("/api/dev/map-editor/layout", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }),
 };
 
 export function minutes(hhmm: string): number {

@@ -19,6 +19,7 @@ import TopBar from "./components/TopBar";
 import { useToast } from "./components/Toast";
 import { audioManager } from "./audio";
 import { markCaseStarted } from "./progress";
+import DevMapEditor from "./views/DevMapEditor";
 
 export interface World {
   caseOverview: CaseOverview;
@@ -88,6 +89,24 @@ export interface CaseMeta {
 }
 
 export default function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname + window.location.hash);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname + window.location.hash);
+    };
+    window.addEventListener("popstate", handleLocationChange);
+    window.addEventListener("hashchange", handleLocationChange);
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+      window.removeEventListener("hashchange", handleLocationChange);
+    };
+  }, []);
+
+  const isDevMapEditor = currentPath === "/dev/map-editor" || currentPath.endsWith("/dev/map-editor") || window.location.hash === "#/dev/map-editor";
+  if (isDevMapEditor) {
+    return <DevMapEditor />;
+  }
 
   const [world, setWorld] = useState<World | null>(null);
   const [cases, setCases] = useState<CaseMeta[]>([]);

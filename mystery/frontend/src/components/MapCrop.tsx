@@ -21,6 +21,7 @@ export default function MapCrop({
   const loc = data.locations.find((l) => l.location_id === locationId);
   if (!loc) return null;
   const { width: mapW, height: mapH } = data.map;
+  const cropPad = data.visual?.crop_padding_by_location?.[locationId] ?? CROP_PAD;
   let cx: number;
   let cy: number;
   let scale: number;
@@ -30,7 +31,7 @@ export default function MapCrop({
     cy = b.y + b.height / 2;
     // Cover the establishing-shot frame. `min` leaves letterbox bars whenever
     // a tall location (such as the pub bounds) is shown in the wide card.
-    scale = Math.max(width / (b.width * CROP_PAD), height / (b.height * CROP_PAD));
+    scale = Math.max(width / (b.width * cropPad), height / (b.height * cropPad));
   } else if (loc.map_position) {
     cx = loc.map_position.x;
     cy = loc.map_position.y;

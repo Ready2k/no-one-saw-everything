@@ -2,6 +2,18 @@
 
 Status: design specification. This document defines the reusable visual vocabulary; it does not generate or wire artwork.
 
+Implementation note: the Case 004 pilot now consumes a code-backed version of this contract from `backend/app/town_map.py`. The versioned daylight pilot image is temporary reference art behind the canonical geometry; the source-image transform is explicitly temporary until the final tile library exists. Discovered object glyphs are temporary renderer hooks, not final art.
+
+### Semantic object/evidence contract
+
+Case 004 exposes `visual.object_visuals` from the map replay projection. Each entry keeps the authoritative `object_id`, adds a stable `semantic_asset_id`, and includes `anchor`, `location_id`, `state`, `marker_state`, `render_mode`, `safe_to_render`, `overlay_ids`, and linked clue IDs. The states are:
+
+- `hidden`: the object is outside the case-visible/fog-revealed location set; it is never rendered.
+- `visible`: the location is visible, but the linked clue has not been discovered; the evidence marker is suppressed and `safe_to_render` is false.
+- `discovered`: the existing session contains one of the object's linked clue IDs; the evidence marker may render.
+
+`overlay_ids` express case presentation such as `overlay_missing_coping` and `overlay_muddy_footprint`. The frontend renderer currently uses temporary glyphs for discovered evidence only. Final sprites can replace the glyph field by `semantic_asset_id` without changing case data or discovery logic. Future cases should add a semantic asset mapping and anchor in the visual map definition, then derive state only from their existing clue session and visible-location set.
+
 ## Style and technical contract
 
 - Cute top-down orthographic RPG, roofless/opened buildings, readable interiors, modest outlines, warm daylight/soft ambient base.

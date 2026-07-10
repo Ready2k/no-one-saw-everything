@@ -95,11 +95,52 @@ export interface MapEvent {
 export interface MapReplayData {
   case_id: string;
   mode: "player" | "truth";
-  map: { asset: string; image: string; width: number; height: number };
+  map: {
+    asset: string;
+    image: string;
+    width: number;
+    height: number;
+    definition_id?: string;
+    tile_size?: number;
+    grid?: { cols: number; rows: number };
+    origin?: string;
+    base_palette?: string;
+    lighting_overlay?: string;
+  };
+  visual?: MapVisualContract;
   time_range: { start: string; end: string };
   locations: MapLocation[];
   agents: MapAgent[];
   events: MapEvent[];
+}
+
+export interface MapVisualObject {
+  object_id: string;
+  semantic_asset_id: string;
+  category: string;
+  location_id: string | null;
+  anchor: MapPosition;
+  position: MapPosition;
+  state: "hidden" | "visible" | "discovered";
+  marker_state: "suppressed" | "active";
+  render_mode: "suppressed" | "background_prop" | "evidence_marker";
+  safe_to_render: boolean;
+  glyph: string | null;
+  clue_ids: string[];
+  overlay_ids: string[];
+  damaged: boolean;
+}
+
+export interface MapVisualContract {
+  mode: "canonical_pilot" | "legacy_fallback";
+  definition_id: string;
+  visible_location_ids: string[] | null;
+  overlays: string[];
+  crop_padding_by_location?: Record<string, number>;
+  object_visuals?: MapVisualObject[];
+  objects: MapVisualObject[];
+  adjacency: Record<string, string[]>;
+  canonical_locations: Record<string, { bounds: MapBounds; position: MapPosition; layer: "exterior" | "interior" }>;
 }
 
 export interface EventPublic {

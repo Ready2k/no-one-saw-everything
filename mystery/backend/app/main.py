@@ -336,22 +336,37 @@ def map_replay(
     accusation has been submitted (the reveal gate).
     """
     from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
+    from .town_map import CANONICAL_MAP, map_payload
 
     case = case_data()
     sess = session()
 
-    # Case 004 has a bespoke night-time village map. Keep the canonical
-    # Smallville map as the default for every other authored/generated case.
+    # Case 004 is the only migrated pilot. Its existing image remains a
+    # temporary visual asset, while geometry and semantic layers come from
+    # the reusable canonical contract. Other cases preserve legacy fallback.
     if case.case.case_id == "case_004":
-        map_asset = "case_004_fountain_midnight"
-        map_image = "/art/case_004/fountain_midnight_map.png"
-        map_width = 1448
-        map_height = 1086
+        map_asset = CANONICAL_MAP["asset"]
+        map_image = CANONICAL_MAP["image"]
+        map_width = CANONICAL_MAP["width"]
+        map_height = CANONICAL_MAP["height"]
+        map_definition = CANONICAL_MAP
     else:
         map_asset = MAP_ASSET
         map_image = MAP_IMAGE
         map_width = MAP_WIDTH
         map_height = MAP_HEIGHT
+        map_definition = {
+            "definition_id": "legacy_the_ville",
+            "asset": map_asset,
+            "image": map_image,
+            "width": map_width,
+            "height": map_height,
+            "tile_size": 32,
+            "grid": {"cols": 140, "rows": 100},
+            "origin": "north_west",
+            "base_palette": "legacy",
+            "lighting_overlay": "runtime_lightingTint",
+        }
 
     if mode not in ("player", "truth"):
         raise HTTPException(400, "mode must be 'player' or 'truth'")
@@ -372,12 +387,19 @@ def map_replay(
             "image": map_image,
             "width": map_width,
             "height": map_height,
+            "definition_id": map_definition["definition_id"],
+            "tile_size": map_definition["tile_size"],
+            "grid": map_definition["grid"],
+            "origin": map_definition["origin"],
+            "base_palette": map_definition["base_palette"],
+            "lighting_overlay": map_definition["lighting_overlay"],
         },
+        "visual": map_payload(case, sess.discovered_clue_ids),
         "time_range": {
             "start": case.case.sim_start_time,
             "end": case.case.discovery_time,
         },
-        "locations": [project_map_location(l) for l in case.locations],
+        "locations": [project_map_location(l, case.case.case_id) for l in case.locations],
         "agents": [project_map_agent(a) for a in case.agents],
         "events": events,
     }
@@ -1259,3 +1281,117 @@ def delete_generated_case(case_id: str):
         return {"status": "deleted"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# Developer Map Editor Endpoints (Dev-only)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/dev/map-editor/layout")
+def get_dev_map_layout():
+    import json
+    enable_editor = os.getenv("ENABLE_DEV_MAP_EDITOR", "false").lower() == "true"
+    if not enable_editor:
+        raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
+
+    from .town_map import TOWN_LAYOUT_FILE, _BOUNDS_TILES
+    from .case_store import list_all_cases, get_case
+    
+    layout_data = {}
+    if TOWN_LAYOUT_FILE.exists():
+        try:
+            layout_data = json.loads(TOWN_LAYOUT_FILE.read_text())
+        except Exception:
+            layout_data = {}
+            
+    if not layout_data:
+        layout_data = {
+            "version": "town_layout_editor_v2",
+            "grid": {"cols": 64, "rows": 48, "tile_size": 32},
+            "canonical_locations": {},
+            "case_overrides": {},
+            "tile_layers": {},
+            "prop_instances": {}
+        }
+        
+    cases_details = []
+    for c in list_all_cases():
+        case_id = c["case_id"]
+        try:
+            case_data = get_case(case_id)
+            locations = []
+            for l in case_data.locations:
+                locations.append({
+                    "location_id": l.location_id,
+                    "name": l.name,
+                    "description": l.description,
+                    "legacy_bounds": l.map_bounds.model_dump() if hasattr(l.map_bounds, "model_dump") else (l.map_bounds if l.map_bounds else None),
+                    "legacy_position": l.map_position.model_dump() if hasattr(l.map_position, "model_dump") else (l.map_position if l.map_position else None),
+                    "visual_layer": l.visual_layer
+                })
+            objects = []
+            for o in case_data.objects:
+                objects.append({
+                    "object_id": o.object_id,
+                    "name": o.name,
+                    "description": o.description,
+                    "normal_location_id": o.normal_location_id,
+                    "final_location_id": o.final_location_id,
+                })
+            cases_details.append({
+                "case_id": case_id,
+                "title": case_data.case.title,
+                "locations": locations,
+                "objects": objects
+            })
+        except Exception:
+            pass
+
+    return {
+        "layout": layout_data,
+        "cases": cases_details,
+        "canonical_recommended_locations": {
+            loc_id: {
+                "bounds": {"x": b[0], "y": b[1], "w": b[2], "h": b[3]},
+                "mode": "interior" if loc_id in {
+                    "loc_cafe_kitchen", "loc_cafe_storage", "loc_bookshop_back",
+                    "loc_clinic_dispensary", "loc_marcus_study", "loc_clara_flat",
+                    "loc_ben_flat", "loc_priya_flat", "loc_nadia_flat"
+                } else "exterior"
+            }
+            for loc_id, b in _BOUNDS_TILES.items()
+        }
+    }
+
+
+@app.post("/api/dev/map-editor/layout")
+def save_dev_map_layout(payload: dict = Body(...)):
+    import json
+    enable_editor = os.getenv("ENABLE_DEV_MAP_EDITOR", "false").lower() == "true"
+    if not enable_editor:
+        raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
+
+    from .town_map import TOWN_LAYOUT_FILE, validate_town_layout_payload
+    
+    errors = validate_town_layout_payload(payload)
+    if errors:
+        raise HTTPException(status_code=400, detail={"errors": errors})
+        
+    try:
+        temp_file = TOWN_LAYOUT_FILE.with_suffix(".json.tmp")
+        backup_file = TOWN_LAYOUT_FILE.with_suffix(".json.bak")
+        
+        TOWN_LAYOUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        
+        temp_file.write_text(json.dumps(payload, indent=2))
+        
+        if TOWN_LAYOUT_FILE.exists():
+            if backup_file.exists():
+                backup_file.unlink()
+            TOWN_LAYOUT_FILE.rename(backup_file)
+            
+        temp_file.rename(TOWN_LAYOUT_FILE)
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to persist layout: {e}")
+

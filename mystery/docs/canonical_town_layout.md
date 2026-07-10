@@ -2,6 +2,10 @@
 
 Status: proposed visual layout; existing runtime coordinates remain unchanged until a later implementation pass.
 
+Implementation note: Case 004 is the first migrated consumer. Its runtime map response uses `town_canonical_v1` dimensions and an explicitly documented temporary source-image transform so the pilot bounds match the current daylight reference artwork. The canonical tile coordinates remain the target layout; unmigrated cases retain the legacy `the_ville` definition and fallback placement.
+
+The Case 004 visual contract includes `visual.object_visuals`. Object anchors are image-space points derived from the pilot bounds, while their semantic IDs remain independent of the temporary raster image. Fog/location visibility can produce `hidden` or `visible` object states, but only `discovered` objects have `safe_to_render: true` and an active evidence marker.
+
 ## Grid contract
 
 - Canvas: 64 columns x 48 rows, 32px logical tiles, 2048x1536 source canvas.

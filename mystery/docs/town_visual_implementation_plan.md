@@ -2,6 +2,10 @@
 
 Status: implementation plan only. No runtime wiring is performed by the audit pass.
 
+Pilot status: the Case 004 architecture phase is now implemented. The pilot uses a versioned daylight reference image, a temporary source-image coordinate transform, per-location crop padding, and reduced-opacity runtime tint so night scenes remain readable. Remaining phases below describe future asset production and migration work; cases 001, 002, 003, 005, and 006 are intentionally not migrated.
+
+Semantic evidence hardening is implemented for Case 004. The map API now returns `visual.object_visuals` with hidden/visible/discovered states, suppressed/active marker state, safe-render gating, semantic anchors, and case overlay IDs. Temporary glyphs render only for discovered evidence. Full fog masking, clickable map evidence inspection, selected-object UI, background-prop sprites, and final raster replacement remain future work.
+
 ## Phase 0 — approval gate
 
 Confirm the stable-ID mappings, 64x48 / 32px grid, fountain-centred layout, and case overlay policy in `town_asset_bible.md` and `canonical_town_layout.md`. Do not start full art production before this gate.

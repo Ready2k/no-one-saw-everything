@@ -6,6 +6,7 @@ import { AGENT_TILE_SCALE, MAP_GRID, mapImageUrl } from "../map/mapAssets";
 import { lightingTint } from "../map/lighting";
 import AgentSprite from "./AgentSprite";
 import EventMarker from "./EventMarker";
+import SemanticMapObject from "./SemanticMapObject";
 
 // Positions are stored in map-image pixels; we place everything with
 // percentages so the map can scale responsively.
@@ -52,6 +53,7 @@ export default function VisualMap({
   onSelectAgent: (agentId: string) => void;
 }) {
   const { width, height } = data.map;
+  const isCanonicalPilot = data.visual?.mode === "canonical_pilot";
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ scale: 1, tx: 0, ty: 0 });
@@ -75,9 +77,10 @@ export default function VisualMap({
   // zoom before comparing against the true (pre-transform) tile size —
   // otherwise the floor would itself get multiplied by the zoom transform
   // and characters would grow past their correct tile size once zoomed in.
+  const grid = data.map.grid ?? MAP_GRID;
   const agentSize = {
-    width: Math.max((containerSize.w / MAP_GRID.cols) * AGENT_TILE_SCALE, MIN_AGENT_PX / view.scale),
-    height: Math.max((containerSize.h / MAP_GRID.rows) * AGENT_TILE_SCALE, MIN_AGENT_PX / view.scale),
+    width: Math.max((containerSize.w / grid.cols) * AGENT_TILE_SCALE, MIN_AGENT_PX / view.scale),
+    height: Math.max((containerSize.h / grid.rows) * AGENT_TILE_SCALE, MIN_AGENT_PX / view.scale),
   };
   const drag = useRef<{ startX: number; startY: number; tx: number; ty: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
@@ -276,14 +279,29 @@ export default function VisualMap({
           src={mapImageUrl(data.map.image)}
           alt="Village map"
           draggable={false}
+          style={isCanonicalPilot ? { filter: "saturate(0.96) brightness(1.08)" } : undefined}
         />
 
         {currentMinutes != null && (
           <div
             className="map-lighting-overlay"
-            style={{ backgroundColor: lightingTint(currentMinutes) }}
+            style={{
+              backgroundColor: lightingTint(currentMinutes),
+              opacity: isCanonicalPilot ? 0.42 : 1,
+            }}
           />
         )}
+
+        {(data.visual?.object_visuals ?? data.visual?.objects ?? [])
+          .filter((object) => object.safe_to_render && object.marker_state === "active")
+          .map((object) => (
+            <SemanticMapObject
+              key={object.object_id}
+              object={object}
+              width={width}
+              height={height}
+            />
+          ))}
 
         {traceSegments.length > 0 && (
           <svg className="map-trace-svg" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">

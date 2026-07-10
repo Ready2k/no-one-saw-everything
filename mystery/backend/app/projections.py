@@ -164,13 +164,20 @@ def project_map_event(event: Event) -> Optional[dict[str, Any]]:
     return projected
 
 
-def project_map_location(loc: Location) -> dict[str, Any]:
+def project_map_location(loc: Location, case_id: str | None = None) -> dict[str, Any]:
     from .map_layout import location_visuals
 
-    position, bounds, layer = location_visuals(loc)
+    if case_id == "case_004":
+        from .town_map import pilot_location_visuals
+
+        position, bounds, layer = pilot_location_visuals(loc.location_id)
+        if position is None:
+            position, bounds, layer = location_visuals(loc)
+    else:
+        position, bounds, layer = location_visuals(loc)
     projected = project_location(loc)
-    projected["map_position"] = position.model_dump() if position else None
-    projected["map_bounds"] = bounds.model_dump() if bounds else None
+    projected["map_position"] = position.model_dump() if hasattr(position, "model_dump") else position
+    projected["map_bounds"] = bounds.model_dump() if hasattr(bounds, "model_dump") else bounds
     projected["visual_layer"] = layer
     return projected
 
