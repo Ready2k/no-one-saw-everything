@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
 import type { AccusationResult, CluePublic, Note } from "../types";
 import AccusationCeremony from "./AccusationCeremony";
 import { audioManager } from "../audio";
 import { recordCaseResult } from "../progress";
+import Portrait from "../components/Portrait";
 
 export default function Accuse() {
   const { agents, caseOverview } = useWorld();
@@ -21,6 +22,19 @@ export default function Accuse() {
   }, [result, caseOverview.title]);
 
   const [accused, setAccused] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const [motive, setMotive] = useState("");
   const [method, setMethod] = useState("");
   const [opportunity, setOpportunity] = useState("");
@@ -76,14 +90,45 @@ export default function Accuse() {
 
         <label className="field">
           <span>Who killed Marcus Bell?</span>
-          <select value={accused} onChange={(e) => setAccused(e.target.value)}>
-            <option value="">Choose a suspect…</option>
-            {living.map((a) => (
-              <option key={a.agent_id} value={a.agent_id}>
-                {a.portrait} {a.full_name} — {a.occupation}
-              </option>
-            ))}
-          </select>
+          <div className="custom-select" ref={dropdownRef} style={{ position: "relative" }}>
+            <button
+              type="button"
+              className="custom-select-trigger"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              {accused ? (
+                <>
+                  <Portrait agent={living.find((a) => a.agent_id === accused)!} size="small" />
+                  <span>
+                    {living.find((a) => a.agent_id === accused)!.full_name} —{" "}
+                    {living.find((a) => a.agent_id === accused)!.occupation}
+                  </span>
+                </>
+              ) : (
+                <span>Choose a suspect…</span>
+              )}
+            </button>
+            {dropdownOpen && (
+              <div className="custom-select-dropdown panel">
+                {living.map((a) => (
+                  <button
+                    key={a.agent_id}
+                    type="button"
+                    className={`custom-select-option ${accused === a.agent_id ? "selected" : ""}`}
+                    onClick={() => {
+                      setAccused(a.agent_id);
+                      setDropdownOpen(false);
+                    }}
+                  >
+                    <Portrait agent={a} size="small" />
+                    <span>
+                      <strong>{a.full_name}</strong> — <span className="muted">{a.occupation}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </label>
 
         <label className="field">
