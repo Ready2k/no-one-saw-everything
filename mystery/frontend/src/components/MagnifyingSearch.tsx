@@ -33,6 +33,8 @@ export function MagnifyingSearch({
   bounds,
   hiddenClues,
   imageUrl = "/map/the_ville.png",
+  mapWidth = 719,
+  mapHeight = 513,
   spriteAsset,
   isPortrait = false,
   sheetFolded = true,
@@ -41,6 +43,8 @@ export function MagnifyingSearch({
   bounds: MapBounds | null;
   hiddenClues: ClueHotspot[];
   imageUrl?: string;
+  mapWidth?: number;
+  mapHeight?: number;
   spriteAsset?: string;
   isPortrait?: boolean;
   /** Body exam only: while the morgue sheet covers the subject, nothing can be found. */
@@ -77,14 +81,17 @@ export function MagnifyingSearch({
     return () => observer.disconnect();
   }, []);
 
-  const MAP_W = isPortrait ? 512 : 719;
-  const MAP_H = isPortrait ? 512 : 513;
+  const MAP_W = isPortrait ? 512 : mapWidth;
+  const MAP_H = isPortrait ? 512 : mapHeight;
 
   const safeBounds = bounds || { x: 0, y: 0, width: MAP_W, height: MAP_H };
 
   // Reduce the view window to zoom in on the map
-  const VIEW_W = (isPortrait ? MAP_W : 240) / zoomLevel;
-  const VIEW_H = (isPortrait ? MAP_H : 160) / zoomLevel;
+  // The normal map uses a 240×160 investigation window, but an authored
+  // illustration can be a compact 0–100 scene. Never ask the crop to show a
+  // viewport larger than the source image, or it will shrink into one corner.
+  const VIEW_W = (isPortrait ? MAP_W : Math.min(240, MAP_W)) / zoomLevel;
+  const VIEW_H = (isPortrait ? MAP_H : Math.min(160, MAP_H)) / zoomLevel;
 
   const cx = safeBounds.x + safeBounds.width / 2 + panOffset.x;
   const cy = safeBounds.y + safeBounds.height / 2 + panOffset.y;

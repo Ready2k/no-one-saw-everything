@@ -28,7 +28,9 @@ export default function MapCrop({
     const b = loc.map_bounds;
     cx = b.x + b.width / 2;
     cy = b.y + b.height / 2;
-    scale = Math.min(width / (b.width * CROP_PAD), height / (b.height * CROP_PAD));
+    // Cover the establishing-shot frame. `min` leaves letterbox bars whenever
+    // a tall location (such as the pub bounds) is shown in the wide card.
+    scale = Math.max(width / (b.width * CROP_PAD), height / (b.height * CROP_PAD));
   } else if (loc.map_position) {
     cx = loc.map_position.x;
     cy = loc.map_position.y;

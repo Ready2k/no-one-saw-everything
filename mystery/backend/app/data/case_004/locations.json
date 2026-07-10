@@ -5,6 +5,9 @@
     "description": "The open heart of the village. At night, lit only by a single lamp post near the clinic. Silent except for the fountain.",
     "connected_location_ids": ["loc_fountain", "loc_pub", "loc_owen_house", "loc_clinic", "loc_elias_house"],
     "visibility_type": "public",
+    "map_position": {"x": 724, "y": 540},
+    "map_bounds": {"x": 360, "y": 280, "width": 730, "height": 560},
+    "visual_layer": "exterior",
     "camera_coverage": false
   },
   {
@@ -13,14 +16,21 @@
     "description": "The old stone fountain in the centre of the square. The stone coping is crumbling in places — a loose piece is missing from the east rim.",
     "connected_location_ids": ["loc_village_square"],
     "visibility_type": "public",
-    "murder_suitable": true
+    "murder_suitable": true,
+    "map_position": {"x": 724, "y": 540},
+    "map_bounds": {"x": 505, "y": 350, "width": 440, "height": 390},
+    "visual_layer": "exterior",
+    "illustration": "/art/case_004/fountain_closeup.png"
   },
   {
     "location_id": "loc_pub",
     "name": "The Mallet & Crown",
     "description": "The village pub, on the west side of the square. Closes at eleven on weeknights.",
     "connected_location_ids": ["loc_village_square"],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {"x": 205, "y": 330},
+    "map_bounds": {"x": 0, "y": 130, "width": 420, "height": 520},
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_owen_house",
@@ -28,14 +38,20 @@
     "description": "Owen's house on the corner of the square, timber yard behind. Gate faces the square.",
     "connected_location_ids": ["loc_village_square"],
     "access_rules": ["owner"],
-    "visibility_type": "private"
+    "visibility_type": "private",
+    "map_position": {"x": 1230, "y": 590},
+    "map_bounds": {"x": 1080, "y": 390, "width": 368, "height": 430},
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_clinic",
     "name": "Village Clinic",
     "description": "The small clinic. Nadia's flat is above it — her living room faces the square.",
     "connected_location_ids": ["loc_village_square"],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {"x": 1080, "y": 155},
+    "map_bounds": {"x": 900, "y": 0, "width": 390, "height": 310},
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_elias_house",
@@ -43,7 +59,10 @@
     "description": "Elias's cottage on the square's south side. His bedroom window faces the fountain.",
     "connected_location_ids": ["loc_village_square"],
     "access_rules": ["owner"],
-    "visibility_type": "private"
+    "visibility_type": "private",
+    "map_position": {"x": 760, "y": 900},
+    "map_bounds": {"x": 430, "y": 790, "width": 640, "height": 296},
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_priya_flat",
@@ -51,7 +70,10 @@
     "description": "Priya's flat two streets from the square.",
     "connected_location_ids": ["loc_village_square"],
     "access_rules": ["owner"],
-    "visibility_type": "private"
+    "visibility_type": "private",
+    "map_position": {"x": 1260, "y": 900},
+    "map_bounds": {"x": 1090, "y": 790, "width": 358, "height": 296},
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_ben_flat",
@@ -59,6 +81,9 @@
     "description": "Ben's small flat above the newsagent, one street from the square.",
     "connected_location_ids": ["loc_village_square"],
     "access_rules": ["owner"],
-    "visibility_type": "private"
+    "visibility_type": "private",
+    "map_position": {"x": 1210, "y": 870},
+    "map_bounds": {"x": 1090, "y": 790, "width": 358, "height": 296},
+    "visual_layer": "exterior"
   }
 ]

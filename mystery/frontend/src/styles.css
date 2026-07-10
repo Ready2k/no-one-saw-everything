@@ -1081,6 +1081,8 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   white-space: nowrap;
 }
 .map-agent:hover .map-agent-name { color: var(--accent); }
+.map-agent.background-agent .map-agent-name { display: none; }
+.map-agent.background-agent:hover .map-agent-name { display: block; }
 .map-agent.stale { opacity: 0.45; }
 .map-agent.stale .map-agent-name { font-style: italic; }
 .map-agent.victim .map-agent-name { color: var(--danger); }

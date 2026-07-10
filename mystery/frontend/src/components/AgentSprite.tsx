@@ -28,7 +28,7 @@ export default function AgentSprite({
       : agent.full_name;
   return (
     <button
-      className={`map-agent ${stale ? "stale" : ""} ${agent.is_victim ? "victim" : ""}`}
+      className={`map-agent ${agent.is_background ? "background-agent" : ""} ${stale ? "stale" : ""} ${agent.is_victim ? "victim" : ""}`}
       style={{ left: x, top: y }}
       title={title}
       onClick={onClick}

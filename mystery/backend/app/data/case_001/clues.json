@@ -307,20 +307,20 @@
             ]
         },
         {
-            "clue_id": "clue_owen_delivery",
-            "title": "Owen's timber delivery",
+            "clue_id": "clue_owen_delayed_delivery",
+            "title": "Owen's delayed delivery",
             "clue_type": "witness_statement",
-            "description": "Owen was in his yard from 07:15 signing for a timber delivery. The driver was with him until after eight \u2014 right through the murder window.",
-            "strength": "strong",
-            "reliability": 0.9,
-            "ambiguity": "low",
+            "description": "Owen claims he was in his yard from 07:15, but the delivery driver didn't arrive until 08:05, leaving Owen alone and unaccounted for during the murder window.",
+            "strength": "medium",
+            "reliability": 0.85,
+            "ambiguity": "medium",
             "discoverability": {
                 "method": "interview",
                 "agent_id": "agent_owen",
                 "question_type": "alibi"
             },
             "supports_conclusion_ids": [
-                "conc_owen_innocent"
+                "conc_owen_no_alibi"
             ],
             "linked_agent_ids": [
                 "agent_owen"
@@ -385,19 +385,19 @@
         },
         {
             "clue_id": "clue_isabella_clinic",
-            "title": "Isabella's clinic visit",
+            "title": "Isabella alone in the clinic",
             "clue_type": "witness_statement",
-            "description": "Nadia took Isabella's blood pressure at the clinic from about 07:40 to 08:00 \u2014 covering the whole murder window. Isabella was agitated about 'a difficult meeting'.",
-            "strength": "strong",
-            "reliability": 0.9,
-            "ambiguity": "low",
+            "description": "Isabella arrived at the clinic at 07:40, but Nadia left her alone in the waiting room until 08:00. She was unobserved during the murder window.",
+            "strength": "medium",
+            "reliability": 0.85,
+            "ambiguity": "medium",
             "discoverability": {
                 "method": "interview",
                 "agent_id": "agent_nadia",
                 "question_type": "alibi"
             },
             "supports_conclusion_ids": [
-                "conc_isabella_innocent"
+                "conc_isabella_no_alibi"
             ],
             "linked_agent_ids": [
                 "agent_isabella",
@@ -534,12 +534,12 @@
             ]
         },
         {
-            "conclusion_id": "conc_owen_innocent",
-            "type": "innocence_anchor",
-            "summary": "Owen was with the timber delivery driver through the entire murder window.",
+            "conclusion_id": "conc_owen_no_alibi",
+            "type": "red_herring",
+            "summary": "Owen was alone in his yard waiting for a delayed delivery during the murder window, leaving him without an alibi.",
             "target_agent_id": "agent_owen",
             "supported_by_clue_ids": [
-                "clue_owen_delivery"
+                "clue_owen_delayed_delivery"
             ]
         },
         {
@@ -553,9 +553,9 @@
             ]
         },
         {
-            "conclusion_id": "conc_isabella_innocent",
-            "type": "innocence_anchor",
-            "summary": "Isabella was at the clinic with Nadia from 07:40 to 08:00.",
+            "conclusion_id": "conc_isabella_no_alibi",
+            "type": "red_herring",
+            "summary": "Isabella was left alone in the clinic waiting room during the murder window, leaving her without an alibi.",
             "target_agent_id": "agent_isabella",
             "supported_by_clue_ids": [
                 "clue_isabella_clinic"

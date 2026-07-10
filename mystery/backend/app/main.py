@@ -340,6 +340,19 @@ def map_replay(
     case = case_data()
     sess = session()
 
+    # Case 004 has a bespoke night-time village map. Keep the canonical
+    # Smallville map as the default for every other authored/generated case.
+    if case.case.case_id == "case_004":
+        map_asset = "case_004_fountain_midnight"
+        map_image = "/art/case_004/fountain_midnight_map.png"
+        map_width = 1448
+        map_height = 1086
+    else:
+        map_asset = MAP_ASSET
+        map_image = MAP_IMAGE
+        map_width = MAP_WIDTH
+        map_height = MAP_HEIGHT
+
     if mode not in ("player", "truth"):
         raise HTTPException(400, "mode must be 'player' or 'truth'")
     if mode == "truth":
@@ -355,10 +368,10 @@ def map_replay(
         "case_id": case.case.case_id,
         "mode": mode,
         "map": {
-            "asset": MAP_ASSET,
-            "image": MAP_IMAGE,
-            "width": MAP_WIDTH,
-            "height": MAP_HEIGHT,
+            "asset": map_asset,
+            "image": map_image,
+            "width": map_width,
+            "height": map_height,
         },
         "time_range": {
             "start": case.case.sim_start_time,

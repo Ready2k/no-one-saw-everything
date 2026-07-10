@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
 import type { InspectResult, LocationPublic } from "../types";
@@ -8,13 +8,20 @@ import { audioManager } from "../audio";
 import LocationTransition, {
   shouldPlayLocationTransition,
 } from "../components/LocationTransition";
+import { getMapInfo } from "../map/mapInfo";
+import type { MapReplayData } from "../types";
 
 export default function Places() {
   const { locations } = useWorld();
+  const [mapData, setMapData] = useState<MapReplayData | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<InspectResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
+
+  useEffect(() => {
+    getMapInfo().then(setMapData).catch(() => setMapData(null));
+  }, []);
 
   const inspect = async (locationId: string) => {
     const loc = locations.find((l) => l.location_id === locationId);
@@ -91,8 +98,13 @@ export default function Places() {
             )}
             
             <MagnifyingSearch
-               bounds={result.location.map_bounds}
+               bounds={result.location.illustration
+                 ? { x: 0, y: 0, width: 100, height: 100 }
+                 : result.location.map_bounds}
                hiddenClues={result.hidden_clues || []}
+               imageUrl={result.location.illustration || mapData?.map.image}
+               mapWidth={result.location.illustration ? 100 : mapData?.map.width}
+               mapHeight={result.location.illustration ? 100 : mapData?.map.height}
                onDiscover={handleDiscover}
             />
 

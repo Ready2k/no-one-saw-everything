@@ -130,11 +130,11 @@
       "agent_owen"
     ],
     "event_type": "arrival",
-    "truth_description": "Owen returns to his yard, still fuming, and starts hauling timber about.",
+    "truth_description": "Owen returns to his yard to wait for a timber delivery. The driver is late, leaving Owen alone and fuming until 08:05.",
     "visibility": "public",
     "importance": 4,
     "linked_clue_ids": [
-      "clue_owen_delivery"
+      "clue_owen_delayed_delivery"
     ]
   },
   {
@@ -224,7 +224,7 @@
       "agent_nadia"
     ],
     "event_type": "arrival",
-    "truth_description": "Isabella arrives at the clinic, tense and pale, and asks Nadia to check her blood pressure before 'a difficult meeting'.",
+    "truth_description": "Isabella arrives at the clinic, tense and pale. Nadia is dealing with a patient, leaving Isabella alone in the empty waiting room until 08:00.",
     "visibility": "public",
     "importance": 6,
     "linked_clue_ids": [
