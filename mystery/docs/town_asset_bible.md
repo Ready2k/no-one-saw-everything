@@ -1,8 +1,21 @@
 # Town Asset Bible
 
-Status: design specification. This document defines the reusable visual vocabulary; it does not generate or wire artwork.
+Status: design specification plus current runtime asset contract.
 
-Implementation note: the Case 004 pilot now consumes a code-backed version of this contract from `backend/app/town_map.py`. The versioned daylight pilot image is temporary reference art behind the canonical geometry; the source-image transform is explicitly temporary until the final tile library exists. Discovered object glyphs are temporary renderer hooks, not final art.
+Implementation note: the Case 004 pilot now consumes a code-backed version of this contract from `backend/app/town_map.py`. The canonical overworld is a 3x3 HD tile mosaic under `frontend/public/art/town/tiles_3x3_hd/`. B2 is paired for zoom behavior: `town_overworld_B2_all_cases_external_hd.png` for overview/exterior and `town_overworld_B2_interior_hd.png` for close/interior. Discovered object glyphs remain temporary renderer hooks, not final art.
+
+### Location function tags
+
+Location functions are stored as metadata, not painted into the raster map. `LOCATION_FUNCTION_TAGS` in `backend/app/town_map.py` maps each existing `loc_*` ID to:
+
+- `display_name`: human-facing label used for migration/debugging;
+- `function_tag`: stable role such as `pub`, `clinic`, `bookshop`, `flat`, `cafe`, `fountain`, `service_alley`;
+- `building_role`: broader category such as `business`, `residence`, `public_service`, `landmark`, `office`;
+- `case_ids`: cases that use that location;
+- optional `parent_location_id`: sub-rooms/flats nested under a larger building;
+- `zoom_behavior`: `external`, `internal`, or `external_to_internal`.
+
+The API exposes these tags through `visual.canonical_locations`. Future migrations should prefer these tags plus canonical bounds over inferring meaning from the painted image.
 
 ### Semantic object/evidence contract
 
@@ -17,7 +30,7 @@ Case 004 exposes `visual.object_visuals` from the map replay projection. Each en
 ## Style and technical contract
 
 - Cute top-down orthographic RPG, roofless/opened buildings, readable interiors, modest outlines, warm daylight/soft ambient base.
-- Use a 32px tile and character-frame contract so the existing 32px sprite sheets remain compatible. Proposed canonical canvas: 64x48 tiles (2048x1536), 4:3, with a 4-tile safety margin around the populated town.
+- Use a 32px tile and character-frame contract so the existing 32px sprite sheets remain compatible. The full canonical overworld is 192x144 tiles (6144x4608), composed from 3x3 cells of 64x48 tiles (2048x1536). B2 is the centre town cell.
 - Keep global lighting neutral in the base asset. `lightingTint(minutesOfDay)` remains the global time-of-day overlay. Lamps, windows, and fireplaces are small local emissive accents only.
 - Art must be authored as layered assets: base terrain, town structures, reusable props, case overlay, evidence marker, and fog mask.
 - Suggested asset naming: `tile_*`, `struct_*`, `prop_*`, `obj_*`, `overlay_*`, `fx_*`, `fog_*`, `loc_*`. Existing case/object/location IDs remain authoritative and are referenced in metadata.
