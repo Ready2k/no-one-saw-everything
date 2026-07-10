@@ -46,6 +46,11 @@ API or the frontend.
 
 - **Procedural Generation** (phase 7A, 7B) — LLM-assisted generation of new cases based on templates. Safe, deterministic fallback on generation failure.
 - **LLM Surface Dialogue** (phase 7C) — The engine intercepts deterministic dialogue responses and uses an LLM to rewrite them for narrative flavor.
+- **Canonical town map pilot** — Case 004 can use a 3x3 `town_canonical_v1`
+  overworld mosaic. The centre B2 tile has paired external/internal assets:
+  overview zoom shows roofed exteriors, close zoom swaps to the roofless
+  investigation interior. Location function tags (`pub`, `clinic`, `bookshop`,
+  `flat`, etc.) are data-driven and discovery-safe.
 
 Not yet built: free-text LLM interrogation (phase 9).
 
@@ -87,13 +92,31 @@ backend/app/
   challenge.py    # deterministic challenge resolution + player-safe projection
   judge.py        # deterministic accusation scoring + gated truth reveal
   main.py         # FastAPI endpoints
+  town_map.py     # visual-only canonical town map contract, zoom tile variants,
+                  #   location function tags, and discovery-gated object visuals
   data/case_001/  # the locked hand-authored case (+ challenges.json, solution.json)
   llm/            # LLM adapter interfaces, config, prompts, and dialogue rewriters
   mystery_architect.py  # LLM generation orchestration and fallback
 frontend/src/
   views/          # Overview, Rewind, Places, Suspects (interview + challenge),
                   #   Board, Accuse (accusation form + reveal)
+  map/            # map image/tile resolution, including zoom-aware B2 external→internal swap
 ```
+
+### Canonical town map notes
+
+The town art lives under `frontend/public/art/town/`. The current canonical
+manifest is `town_canonical_v1_manifest.json`; the runtime map definition is in
+`backend/app/town_map.py`. The full overworld is `6144x4608` (`192x144` logical
+tiles) assembled from nine `2048x1536` HD tiles. B2 is the centre village tile:
+
+- zoomed out: `tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png`
+- zoomed in: `tiles_3x3_hd/town_overworld_B2_interior_hd.png`
+
+The frontend chooses the zoomed-in B2 variant through `map.zoom_image_tiles`
+once scale reaches `3.2`. Keep case logic out of these assets: hidden clues,
+evidence markers, damage states, and culprit information must remain governed
+by the existing clue/session projection.
 
 ### Dialogue Rewrite Architecture (Phase 7C)
 

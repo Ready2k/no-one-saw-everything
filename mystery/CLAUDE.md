@@ -162,6 +162,28 @@ GenerateCaseModal / LlmSettingsModal / PlaytestPanel). `components/` are shared 
 handles map projection/assets; `audio.ts` + Howler drive ambient/stinger audio
 (`public/audio/`). The frontend only ever sees projected, truth-free data until `/api/reveal`.
 
+### Canonical town map/art contract
+
+The migrated town map is visual-only and must not become case truth. `backend/app/town_map.py`
+owns the `town_canonical_v1` contract: a 6144x4608, 192x144-grid overworld assembled from a
+3x3 mosaic of 2048x1536 HD tiles under `frontend/public/art/town/tiles_3x3_hd/`. Case 004 is
+currently the only runtime consumer with `mode: "canonical_overworld"`; cases 001, 002, 003,
+005, and 006 intentionally retain `legacy_fallback` until migrated.
+
+The centre tile B2 has paired all-cases assets. Zoomed-out views use
+`town_overworld_B2_all_cases_external_hd.png`; zoomed-in views swap B2 to
+`town_overworld_B2_interior_hd.png` via `map.zoom_image_tiles.threshold` (currently `3.2`).
+`frontend/src/map/mapAssets.ts` resolves the tile set using the current scale, and both
+`VisualMap.tsx` and `MapCrop.tsx` pass their zoom/crop scale so close views reveal the
+roofless interior while overview views keep roofs.
+
+Location identity is carried by data, not labels painted into art. `LOCATION_FUNCTION_TAGS` in
+`town_map.py` maps existing `loc_*` IDs to `display_name`, `function_tag`, `building_role`,
+`case_ids`, optional `parent_location_id`, and `zoom_behavior`. The API includes those tags in
+`visual.canonical_locations`; `frontend/src/types.ts` mirrors this additive metadata. Evidence
+still follows the existing discovery gate: object visuals may know their semantic anchors, but
+only `safe_to_render: true` / `marker_state: "active"` objects may appear.
+
 ## Specs & docs
 
 The game is built from a spec pack (spec numbers are referenced throughout, e.g. spec 06 =
