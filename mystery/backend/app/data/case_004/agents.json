@@ -131,13 +131,13 @@
     "occupation": "Bookshop assistant",
     "traits": [
       "careful",
-      "kind",
+      "fiercely protective of Ben",
       "conflict-averse"
     ],
     "portrait": "🌸",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Home by evening. That night, she and Ben were supposed to meet at ten. He cancelled with a vague message.",
+    "routine_summary": "Home by evening. That night, she and Ben were supposed to meet at ten. She lied to protect him after he cancelled.",
     "voice_card": "Soft-spoken and apologetic; qualifies everything ('I think', 'maybe') and trails off under pressure.",
     "relationships": [
       {
@@ -199,20 +199,20 @@
     "traits": [
       "gregarious",
       "sharp memory for faces",
-      "discreet about personal matters"
+      "hiding financial stress"
     ],
     "portrait": "🍺",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_pub",
-    "routine_summary": "Closes the pub at 23:00. Saw both Owen and Ben that evening.",
+    "routine_summary": "Closes the pub at 23:00. Secretly owed Owen money and followed him out that night.",
     "voice_card": "Warm and talkative about faces and comings-and-goings, but goes vague the moment a question turns personal.",
     "relationships": [
       {
         "target_agent_id": "agent_owen",
-        "relationship_type": "regular_customer",
-        "affinity": 0.5,
-        "trust": 0.5,
-        "tension": 0.0
+        "relationship_type": "resentful_debtor",
+        "affinity": 0.2,
+        "trust": 0.1,
+        "tension": 0.8
       },
       {
         "target_agent_id": "agent_ben",

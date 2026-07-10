@@ -18,11 +18,11 @@
     "min_groups": 2
   },
   "opportunity": {
-    "canonical": "Ben was seen crossing the square late at night. Elias heard two voices at the fountain, one identified as Owen's. Physical traces — muddy jacket cuff and bootprint — place Ben at the fountain during the murder window.",
+    "canonical": "Ben was seen crossing the square late at night. Nadia heard two voices at the fountain, one identified as Owen's. Priya initially provided a false alibi for Ben, but a timestamped cancellation text proves he was not with her. Physical traces — muddy jacket cuff and bootprint — place Ben at the fountain during the murder window.",
     "concept_groups": [
       ["seen crossing", "square", "late", "night", "22:35"],
       ["bootprint", "mud", "jacket", "cuff", "fountain flower bed"],
-      ["home", "alibi", "no alibi", "alone", "no witness", "cannot account"]
+      ["home", "alibi", "false alibi", "Priya", "cancelled text", "cannot account"]
     ],
     "min_groups": 1
   },
@@ -31,9 +31,10 @@
     "clue_arson_clipping",
     "clue_ben_cancel_text",
     "clue_nadia_night_sighting",
-    "clue_elias_voices",
+    "clue_nadia_voices",
+    "clue_priya_false_alibi",
     "clue_bootprint",
     "clue_jacket_mud"
   ],
-  "explanation": "Correct. Ben Carter killed Owen Price. That evening, clearing his late father's belongings, Ben found seven blackmail letters from Owen spanning twelve years — Owen had extorted Ted Carter over the village hall fire of 2011. Ben cancelled his evening plans at 22:00 and went to the square. He confronted Owen at the fountain just before eleven. Owen laughed and said Ted had come to him. Ben seized the loose coping stone from the fountain rim and struck Owen. Nadia saw Ben crossing the square at 22:35; Elias heard two voices from the fountain — Owen's laugh, a younger voice — and saw a figure leave quickly at 23:18. Mud from the flower bed was still on Ben's jacket cuff the next morning. The bootprint in the bed matches his resoled work boot."
+  "explanation": "Correct. Ben Carter killed Owen Price. That evening, clearing his late father's belongings, Ben found seven blackmail letters from Owen spanning twelve years — Owen had extorted Ted Carter over the village hall fire of 2011. Ben cancelled his evening plans with Priya at 22:00 and went to the square. Priya tried to cover for him with a false alibi, but the timestamped text broke it. Ben confronted Owen at the fountain just before eleven. Owen laughed and said Ted had come to him. Ben seized the loose coping stone from the fountain rim and struck Owen. Nadia saw Ben crossing the square at 22:35 and later heard two voices from the fountain — Owen's laugh, a younger voice. Elias saw a figure leave quickly at 23:18. Mud from the flower bed was still on Ben's jacket cuff the next morning. The bootprint in the bed matches his resoled work boot. Fred Dunmore argued with Owen earlier, but had returned to the pub by 22:55."
 }

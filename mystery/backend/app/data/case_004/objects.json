@@ -77,5 +77,27 @@
     "touched_by_agent_ids": ["agent_ben"],
     "last_seen_time": "23:20",
     "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_fred_lighter",
+    "name": "Engraved brass lighter",
+    "description": "A heavy brass lighter found in the mud near the fountain. It is engraved with 'The Mallet & Crown'.",
+    "normal_location_id": "loc_pub",
+    "final_location_id": "loc_fountain",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_fred"],
+    "last_seen_time": "22:50",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_pub_ledger",
+    "name": "The pub ledger",
+    "description": "A ledger kept behind the bar at the pub. It shows massive debts and regular, extortionate payments made to Owen Price.",
+    "normal_location_id": "loc_pub",
+    "final_location_id": "loc_pub",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_fred", "agent_owen"],
+    "last_seen_time": "23:00",
+    "clue_relevance": "motive"
   }
 ]

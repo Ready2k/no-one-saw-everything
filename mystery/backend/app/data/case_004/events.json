@@ -60,6 +60,27 @@
     "linked_clue_ids": ["clue_owen_left_pub"]
   },
   {
+    "event_id": "ev_2250_fred_argument",
+    "time": "22:50",
+    "location_id": "loc_fountain",
+    "agent_ids": ["agent_fred", "agent_owen"],
+    "event_type": "argument",
+    "truth_description": "Fred catches up to Owen near the fountain. They argue briefly but intensely about Fred's massive unpaid debts and Owen's extortion. Fred drops his engraved lighter in the mud. He leaves Owen alive.",
+    "visibility": "hidden",
+    "object_ids": ["obj_fred_lighter"],
+    "importance": 8
+  },
+  {
+    "event_id": "ev_2255_fred_returns",
+    "time": "22:55",
+    "location_id": "loc_pub",
+    "agent_ids": ["agent_fred"],
+    "event_type": "movement",
+    "truth_description": "Fred storms back into the pub, locking the door behind him.",
+    "visibility": "private",
+    "importance": 7
+  },
+  {
     "event_id": "ev_2255_elias_window",
     "time": "22:55",
     "location_id": "loc_elias_house",
@@ -80,9 +101,9 @@
     "truth_description": "Ben shows Owen the letters. Owen smirks — 'your dad came to me, not the other way round. He wanted protecting.' He is contemptuous and shows no remorse. Ben's voice rises.",
     "player_description": "From the direction of the fountain, two voices — a younger and an older. The older sounds dismissive.",
     "visibility": "public_partial",
-    "audible_to_agent_ids": ["agent_elias"],
+    "audible_to_agent_ids": ["agent_nadia"],
     "importance": 9,
-    "linked_clue_ids": ["clue_elias_voices"]
+    "linked_clue_ids": ["clue_nadia_voices"]
   },
   {
     "event_id": "ev_2314_murder",

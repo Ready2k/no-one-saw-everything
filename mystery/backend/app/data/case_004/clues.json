@@ -82,16 +82,16 @@
       "linked_event_ids": ["ev_2255_elias_window"]
     },
     {
-      "clue_id": "clue_elias_voices",
+      "clue_id": "clue_nadia_voices",
       "title": "A younger and an older voice — the older dismissive",
       "clue_type": "witness_statement",
-      "description": "Elias heard voices from the direction of the fountain around 23:00: a younger voice, rising in anger, and an older one — calm, contemptuous. He heard the older voice laugh once. He recognised the older voice as Owen's.",
+      "description": "Nadia heard voices from the direction of the fountain around 23:00: a younger voice, rising in anger, and an older one — calm, contemptuous. She heard the older voice laugh once. She recognised the older voice as Owen's.",
       "strength": "medium",
       "reliability": 0.6,
       "ambiguity": "high",
-      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline", "required_prior_clue_ids": ["clue_elias_two_figures"]},
+      "discoverability": {"method": "interview", "agent_id": "agent_nadia", "question_type": "timeline", "required_prior_clue_ids": ["clue_nadia_night_sighting"]},
       "supports_conclusion_ids": ["conc_ben_opportunity", "conc_ben_motive"],
-      "linked_agent_ids": ["agent_elias", "agent_owen", "agent_ben"],
+      "linked_agent_ids": ["agent_nadia", "agent_owen", "agent_ben"],
       "linked_event_ids": ["ev_2300_confrontation"]
     },
     {
@@ -102,7 +102,7 @@
       "strength": "medium",
       "reliability": 0.55,
       "ambiguity": "high",
-      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline", "required_prior_clue_ids": ["clue_elias_voices"]},
+      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline", "required_prior_clue_ids": ["clue_elias_two_figures"]},
       "supports_conclusion_ids": ["conc_ben_opportunity"],
       "linked_agent_ids": ["agent_elias", "agent_ben"],
       "linked_event_ids": ["ev_2318_ben_flees"]
@@ -168,6 +168,45 @@
       "discoverability": {"method": "interview", "agent_id": "agent_fred", "question_type": "alibi"},
       "supports_conclusion_ids": ["conc_ben_opportunity"],
       "linked_agent_ids": ["agent_fred", "agent_ben"]
+    },
+    {
+      "clue_id": "clue_fred_lighter_found",
+      "title": "Fred's engraved pub lighter near the fountain",
+      "clue_type": "physical_evidence",
+      "description": "A heavy brass lighter engraved with 'The Mallet & Crown' was found in the mud near the fountain. This places Fred Dunmore at the scene of the crime.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "medium",
+      "discoverability": {"method": "inspect", "location_id": "loc_fountain"},
+      "supports_conclusion_ids": ["conc_fred_red_herring"],
+      "linked_agent_ids": ["agent_fred"],
+      "linked_object_ids": ["obj_fred_lighter"],
+      "linked_event_ids": ["ev_2250_fred_argument"]
+    },
+    {
+      "clue_id": "clue_fred_ledger_debt",
+      "title": "The pub ledger shows extortionate debts",
+      "clue_type": "document",
+      "description": "A ledger behind the bar shows Fred owes massive debts, with regular extortionate payments logged to Owen Price. Owen was threatening to ruin him.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {"method": "inspect", "location_id": "loc_pub"},
+      "supports_conclusion_ids": ["conc_fred_red_herring"],
+      "linked_agent_ids": ["agent_fred", "agent_owen"],
+      "linked_object_ids": ["obj_pub_ledger"]
+    },
+    {
+      "clue_id": "clue_priya_false_alibi",
+      "title": "Priya provided a false alibi for Ben",
+      "clue_type": "witness_statement",
+      "description": "Priya initially lied, claiming Ben was with her all evening. When confronted with the cancelled text, she admits she lied to protect him.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {"method": "interview", "agent_id": "agent_priya", "question_type": "alibi", "required_prior_clue_ids": ["clue_ben_cancel_text"]},
+      "supports_conclusion_ids": ["conc_ben_opportunity"],
+      "linked_agent_ids": ["agent_priya", "agent_ben"]
     }
   ],
   "conclusions": [
@@ -177,15 +216,15 @@
       "summary": "Ben discovered that Owen had blackmailed his father for twelve years over the village hall arson. He found the letters the same evening and confronted Owen.",
       "target_agent_id": "agent_ben",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_blackmail_letters", "clue_arson_clipping", "clue_elias_voices"]
+      "supported_by_clue_ids": ["clue_blackmail_letters", "clue_arson_clipping", "clue_nadia_voices"]
     },
     {
       "conclusion_id": "conc_ben_opportunity",
       "type": "opportunity",
-      "summary": "Ben cancelled his evening plans at 22:00, was seen crossing the square at 22:35, had no verifiable alibi for the murder window, and carries physical traces of the fountain flower bed.",
+      "summary": "Ben cancelled his evening plans at 22:00, was seen crossing the square at 22:35, had his alibi broken by a timestamped text, and carries physical traces of the fountain flower bed.",
       "target_agent_id": "agent_ben",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_ben_cancel_text", "clue_nadia_night_sighting", "clue_elias_two_figures", "clue_elias_fleeing_figure", "clue_bootprint", "clue_jacket_mud", "clue_ben_no_evening_alibi"]
+      "supported_by_clue_ids": ["clue_ben_cancel_text", "clue_nadia_night_sighting", "clue_elias_two_figures", "clue_elias_fleeing_figure", "clue_bootprint", "clue_jacket_mud", "clue_priya_false_alibi", "clue_ben_no_evening_alibi"]
     },
     {
       "conclusion_id": "conc_method",
@@ -193,6 +232,14 @@
       "summary": "Owen was struck with a loose piece of the fountain's stone coping. The bloodied stone was found beside the body; the gap in the fountain rim is fresh.",
       "required_for_solution": true,
       "supported_by_clue_ids": ["clue_fountain_stone"]
+    },
+    {
+      "conclusion_id": "conc_fred_red_herring",
+      "type": "red_herring",
+      "summary": "Fred owed Owen extortionate debts and his lighter was found near the scene, but he returned to the pub by 22:55, giving him an alibi for the time of death.",
+      "target_agent_id": "agent_fred",
+      "required_for_solution": false,
+      "supported_by_clue_ids": ["clue_fred_lighter_found", "clue_fred_ledger_debt"]
     }
   ]
 }

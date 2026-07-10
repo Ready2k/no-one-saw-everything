@@ -118,14 +118,14 @@
         "question_type": "timeline",
         "time_from": "22:00",
         "time_to": "23:30",
-        "answer_text": "I was at my bedroom window around ten to eleven \u2014 I get up in the night, always have. I saw two figures by the fountain. Couldn't make out who, too dark. Then I heard voices \u2014 a younger one, raised, and an older one I'd swear was Owen's. The older voice laughed. Then it went quiet. Then, a few minutes later, one figure walked away fast toward the newsagent's end.",
+        "answer_text": "I was at my bedroom window around ten to eleven \u2014 I get up in the night, always have. I saw two figures by the fountain. Couldn't make out who, too dark. Then, a few minutes later, one figure walked away fast toward the newsagent's end.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "disturbed",
         "claims": [
           {
             "claim_id": "claim_elias_night_witness",
-            "summary": "Elias saw two figures at the fountain around 22:55, heard voices, and one figure leave quickly after 23:15.",
+            "summary": "Elias saw two figures at the fountain around 22:55, and one figure leave quickly after 23:15.",
             "claim_type": "sighting",
             "time_reference": "23:00",
             "location_reference_id": "loc_fountain",
@@ -134,11 +134,9 @@
         ],
         "reveals_clue_ids": [
           "clue_elias_two_figures",
-          "clue_elias_voices",
           "clue_elias_fleeing_figure"
         ],
         "suggested_followups": [
-          "Could you tell anything about the younger voice?",
           "Which direction did the figure go?"
         ]
       }
@@ -159,14 +157,14 @@
         "question_type": "timeline",
         "time_from": "22:00",
         "time_to": "23:00",
-        "answer_text": "I was at home. I was drawing the curtains around half ten and I noticed Ben Carter crossing the square \u2014 heading toward the fountain end. I thought it was unusual. He's not normally out at that hour. I didn't think more about it until this morning.",
+        "answer_text": "I was at home. I was drawing the curtains around half ten and I noticed Ben Carter crossing the square \u2014 heading toward the fountain end. Then around eleven, I heard raised voices from the square. A younger voice sounding angry, and then an older voice \u2014 Owen's \u2014 laughing cruelly. It gave me a chill.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "careful",
         "claims": [
           {
             "claim_id": "claim_nadia_saw_ben",
-            "summary": "Nadia saw Ben crossing the square toward the fountain at about 22:35.",
+            "summary": "Nadia saw Ben crossing the square toward the fountain at about 22:35, and later heard voices including Owen laughing.",
             "claim_type": "sighting",
             "time_reference": "22:35",
             "location_reference_id": "loc_village_square",
@@ -174,7 +172,8 @@
           }
         ],
         "reveals_clue_ids": [
-          "clue_nadia_night_sighting"
+          "clue_nadia_night_sighting",
+          "clue_nadia_voices"
         ]
       }
     ]
@@ -218,6 +217,23 @@
         "reveals_clue_ids": [
           "clue_fred_only_saw_owen"
         ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_fred_lighter_found",
+        "answer_text": "Alright, look. I followed him out at ten-to-eleven. He owed me a fortune, threatened to ruin the pub. We argued by the fountain. But I left him there! I went straight back to the pub at five-to-eleven and locked the door. I didn't kill him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_fred_argument",
+            "summary": "Fred admits to arguing with Owen by the fountain at 22:50 over debts, but says he returned to the pub alive at 22:55.",
+            "claim_type": "alibi",
+            "time_reference": "22:50",
+            "truthfulness": "true"
+          }
+        ]
       }
     ]
   },
@@ -233,15 +249,34 @@
     },
     "rules": [
       {
-        "question_type": "timeline",
-        "answer_text": "Ben cancelled at ten o'clock \u2014 said he'd found something and would explain later. I texted back but he didn't reply until this morning. He seemed upset but I didn't want to push.",
+        "question_type": "alibi",
+        "answer_text": "Ben was with me. He came over around half-past ten and we stayed in watching a film. He didn't leave until this morning. He couldn't have done it.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_priya_false_alibi",
+            "summary": "Priya falsely claims Ben was with her all night.",
+            "claim_type": "alibi",
+            "truthfulness": "false"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_priya_false_alibi"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_cancel_text",
+        "answer_text": "Okay... okay, he wasn't with me. He cancelled at ten o'clock \u2014 said he'd found something and would explain later. I texted back but he didn't reply until this morning. I just... I wanted to protect him.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "worried",
         "claims": [
           {
             "claim_id": "claim_priya_ben_cancelled",
-            "summary": "Priya confirms Ben cancelled their evening plans at 22:00 citing 'something he'd found', and did not reply further until morning.",
+            "summary": "Priya admits Ben cancelled their evening plans at 22:00 citing 'something he'd found', and did not reply further until morning.",
             "claim_type": "statement",
             "time_reference": "22:00",
             "truthfulness": "true"
