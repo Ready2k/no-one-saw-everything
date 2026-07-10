@@ -3,36 +3,98 @@
   "motive": {
     "canonical": "Priya forged Isabella's signature on the partnership transfer documents and killed Isabella to prevent her exposing the forgery to the solicitor.",
     "concept_groups": [
-      ["forge", "forged", "fake", "faked", "signature", "document", "signed", "falsified"],
-      ["partnership", "transfer", "expansion", "bookshop", "inheritance"],
-      ["solicitor", "expose", "reveal", "discover", "found out", "letter", "whittle"]
+      [
+        "forge",
+        "forged",
+        "fake",
+        "faked",
+        "signature",
+        "document",
+        "signed",
+        "falsified"
+      ],
+      [
+        "partnership",
+        "transfer",
+        "expansion",
+        "bookshop",
+        "inheritance"
+      ],
+      [
+        "solicitor",
+        "expose",
+        "reveal",
+        "discover",
+        "found out",
+        "letter",
+        "whittle"
+      ]
     ],
     "min_groups": 2
   },
   "method": {
     "canonical": "Blunt force with the brass letter opener on Isabella's desk, in the bookshop back room.",
     "concept_groups": [
-      ["blunt", "struck", "strike", "hit", "bludgeon", "blow", "beat", "impact"],
-      ["letter opener", "opener", "brass", "desk"]
+      [
+        "blunt",
+        "struck",
+        "strike",
+        "hit",
+        "bludgeon",
+        "blow",
+        "beat",
+        "impact"
+      ],
+      [
+        "letter opener",
+        "opener",
+        "brass",
+        "desk"
+      ]
     ],
     "min_groups": 2
   },
   "opportunity": {
-    "canonical": "Priya was alone in the bookshop with Isabella during the murder window. The invoice gap and green thread prove she left the stockroom and entered the back room.",
+    "canonical": "Priya was with Isabella in the back room during the murder window. Ben saw them arguing by Isabella's desk, the invoice gap breaks Priya's stockroom alibi, and the green thread proves she used the rear exit.",
     "concept_groups": [
-      ["alone", "stockroom", "no alibi", "unaccounted", "gap", "invoice"],
-      ["scarf", "thread", "green", "latch", "rear door"],
-      ["back room", "office", "behind counter"]
+      [
+        "ben",
+        "argument",
+        "arguing",
+        "desk",
+        "telephone",
+        "together"
+      ],
+      [
+        "stockroom",
+        "no alibi",
+        "unaccounted",
+        "gap",
+        "invoice"
+      ],
+      [
+        "scarf",
+        "thread",
+        "green",
+        "latch",
+        "rear door"
+      ],
+      [
+        "back room",
+        "office",
+        "behind counter"
+      ]
     ],
     "min_groups": 1
   },
   "key_clue_ids": [
     "clue_forged_document",
     "clue_solicitor_letter",
+    "clue_ben_argument_glimpse",
     "clue_scarf_thread",
     "clue_invoice_discrepancy",
     "clue_staged_breakin",
     "clue_letter_opener_wiped"
   ],
-  "explanation": "Correct. Priya Shah killed Isabella Reed. Priya had forged Isabella's signature on the bookshop partnership transfer after Marcus Bell named her his successor — she didn't trust Isabella to agree. When the solicitor's letter arrived at 11:10 confirming Isabella had discovered the forgery and booked a 13:30 appointment, Priya read it first and understood her window was closing. She confronted Isabella in the back room at 12:35; when Isabella reached for the telephone, Priya seized the Victorian letter opener and struck her. She staged a break-in by smashing the window pane from inside — but the glass fell the wrong way. Her scarf snagged on the rear latch as she fled through the alley. The invoice timestamp proves she was not in the stockroom during the murder window."
+  "explanation": "Correct. Priya Shah killed Isabella Reed. Priya had forged Isabella's signature on the bookshop partnership transfer after Marcus Bell named her his successor \u2014 she didn't trust Isabella to agree. When the solicitor's letter arrived at 11:10 confirming Isabella had discovered the forgery and booked a 13:30 appointment, Priya read it first and understood her window was closing. Ben's glimpse through the counter door places Priya and Isabella together in the back room at 12:38, mid-argument, with Isabella by the telephone. Minutes later, when Isabella reached for that telephone, Priya seized the Victorian letter opener and struck her. She staged a break-in by smashing the window pane from inside \u2014 but the glass fell the wrong way. Her scarf snagged on the rear latch as she fled through the alley, and the invoice timestamp proves her stockroom alibi is false."
 }

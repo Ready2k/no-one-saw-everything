@@ -2,8 +2,8 @@
   {
     "agent_id": "agent_priya",
     "default_answers": {
-      "alibi": "I was in the stockroom all morning. It was a big delivery \u2014 boxes everywhere. I barely came out.",
-      "timeline": "Stockroom from seven. Sorting, shelving. I didn't hear anything unusual.",
+      "alibi": "I was in the stockroom all lunchtime. It was a big delivery \u2014 boxes everywhere. I barely came out.",
+      "timeline": "Stockroom from eleven. Sorting, shelving. I didn't hear anything unusual.",
       "last_seen_victim": "Just before nine, briefly, when she arrived. She went straight to the back. I didn't disturb her.",
       "relationship": "Isabella gave me everything. This job, this life. I can't believe she's gone.",
       "evidence": "I don't know what that could mean.",
@@ -12,7 +12,7 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I was in the stockroom from seven until Nadia came through. Sorting the week's delivery on my own \u2014 there was a mix-up with the invoice but I got it sorted. I heard Nadia come in and went through to see what was happening. That's when I understood.",
+        "answer_text": "I was in the stockroom from eleven until Nadia came through. Sorting the week's delivery on my own \u2014 there was a mix-up with the invoice but I got it sorted. I heard Nadia come in and went through to see what was happening. That's when I understood.",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "quiet_grief",
@@ -52,7 +52,7 @@
       },
       {
         "question_type": "last_seen_victim",
-        "answer_text": "She came in around half eight \u2014 earlier than usual. She said good morning and went through to the back. She sounded like herself. Normal. Nothing in her voice that would have told me...anything.",
+        "answer_text": "She came in around half twelve \u2014 earlier than usual. She said good morning and went through to the back. She sounded like herself. Normal. Nothing in her voice that would have told me...anything.",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "careful_sadness",
@@ -84,7 +84,7 @@
       },
       {
         "question_type": "relationship",
-        "answer_text": "She was demanding. She expected a lot and made you feel it when you fell short. But she saw something in me no one else did. I owe her everything. Even if we... disagreed, lately.",
+        "answer_text": "She was demanding. Precise. If a shelf was crooked by half an inch, she'd see it from the doorway and make you feel six years old. But she also trusted me with more than anyone ever had. That's the worst of it. She could make you feel chosen and judged in the same breath.",
         "answer_type": "claim",
         "truthfulness": "mistaken",
         "emotional_shift": "controlled",
@@ -119,7 +119,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_scarf_thread",
-        "answer_text": "My scarf? I wore it this morning, it catches on everything in that stockroom \u2014 shelves, corners. A thread on a door latch means nothing. I go through that back door all the time for deliveries.",
+        "answer_text": "My scarf? I wore it this afternoon, it catches on everything in that stockroom \u2014 shelves, corners. A thread on a door latch means nothing. I go through that back door all the time for deliveries.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "sharp",
@@ -151,19 +151,27 @@
       {
         "question_type": "location",
         "topic_location_id": "loc_bookshop_back",
-        "answer_text": "I didn't go into the back room this morning \u2014 that was Isabella's private space and she hadn't called for me. I respected that boundary.",
+        "answer_text": "I didn't go into the back room this afternoon \u2014 that was Isabella's private space and she hadn't called for me. I respected that boundary.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "composed",
         "claims": [
           {
             "claim_id": "claim_priya_not_in_back",
-            "summary": "Priya denies entering the bookshop back room this morning.",
+            "summary": "Priya denies entering the bookshop back room this afternoon.",
             "claim_type": "statement",
             "location_reference_id": "loc_bookshop_back",
             "truthfulness": "false"
           }
         ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_argument_glimpse",
+        "answer_text": "Ben was in the front for seconds. He caught a fragment and built a story around it. Isabella was upset with me, yes, but I never crossed that doorway. People hear one sharp sentence and imagine the rest.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "frayed"
       }
     ]
   },
@@ -171,7 +179,7 @@
     "agent_id": "agent_owen",
     "default_answers": {
       "alibi": "My yard. All morning. Concrete to pour \u2014 doesn't wait for anyone.",
-      "timeline": "Yard from seven. Danny and Lee were with me until half past one.",
+      "timeline": "Yard from eleven. Danny and Lee were with me until half past one.",
       "last_seen_victim": "Couple of days ago. She sent me another letter \u2014 her solicitor, third reminder. Like I hadn't heard the first two.",
       "relationship": "She lent me money and enjoyed reminding me of it. I'm not going to pretend it was friendly.",
       "evidence": "You'd need to be more specific.",
@@ -180,7 +188,7 @@
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I was pouring a concrete base in my yard from seven this morning. Danny Marsh and Lee Tuck were with me. Concrete sets when it sets \u2014 you can't leave it. We finished around half past one. Ask them both.",
+        "answer_text": "I was pouring a concrete base in my yard from eleven this afternoon. Danny Marsh and Lee Tuck were with me. Concrete sets when it sets \u2014 you can't leave it. We finished around half past one. Ask them both.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "steady",
@@ -245,8 +253,8 @@
     "agent_id": "agent_elias",
     "default_answers": {
       "alibi": "The bench, as always. Six-forty until the fuss started.",
-      "timeline": "I can tell you who went where all morning from that bench. My memory's perfectly good.",
-      "last_seen_victim": "Isabella, going into the bookshop around half eight. Earlier than usual.",
+      "timeline": "I can tell you who went where all lunchtime from that bench. My memory's perfectly good.",
+      "last_seen_victim": "Isabella, going into the bookshop around half twelve. Earlier than usual.",
       "relationship": "Fine woman. Ran a tight ship. She and I never had a cross word.",
       "evidence": "Ask me something specific.",
       "location": "I see the square better than anyone."
@@ -256,7 +264,7 @@
         "question_type": "timeline",
         "time_from": "12:20",
         "time_to": "13:00",
-        "answer_text": "Owen was prowling past the bookshop around twenty-five past eight, waving a bit of paper. He stood at the window for a good ten seconds \u2014 I thought he was going to go in. He didn't. Then Isabella arrived at half past, went straight in. Nothing unusual until the carrying-on inside.",
+        "answer_text": "Owen was prowling past the bookshop around twenty-five past twelve, waving a bit of paper. He stood at the window for a good ten seconds \u2014 I thought he was going to go in. He didn't. Then Isabella arrived at half past, went straight in. Nothing unusual until the carrying-on inside.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "animated",
@@ -288,7 +296,7 @@
       },
       {
         "question_type": "alibi",
-        "answer_text": "Bench, six-forty. I saw Priya arrive at the bookshop at seven on the dot \u2014 she's like a clock, that one. Then the postwoman. Then Owen making a face at the window. Then Isabella. Then nothing until Nadia ran out.",
+        "answer_text": "Bench, ten-forty. I saw Priya arrive at the bookshop at eleven on the dot \u2014 she's like a clock, that one. Then the postwoman. Then Owen making a face at the window. Then Isabella. Then nothing until Nadia ran out.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "precise",
@@ -308,8 +316,8 @@
   {
     "agent_id": "agent_nadia",
     "default_answers": {
-      "alibi": "At the clinic until I went to the bookshop just after nine.",
-      "timeline": "Clinic all morning. I stop by the bookshop sometimes to borrow reference books.",
+      "alibi": "At the clinic until I went to the bookshop just after one.",
+      "timeline": "Clinic all lunchtime. I stop by the bookshop sometimes to borrow reference books.",
       "last_seen_victim": "Yesterday, briefly, at the clinic door. She looked distracted.",
       "relationship": "Neighbours for years. Professional respect.",
       "evidence": "I can tell you what I observed at the scene.",
@@ -347,7 +355,7 @@
         "question_type": "timeline",
         "time_from": "12:30",
         "time_to": "13:15",
-        "answer_text": "I was at the clinic until nine-ten. I walked over to borrow a book. Priya said Isabella was in the back. I went through. I wish she'd been right.",
+        "answer_text": "I was at the clinic until one-ten. I walked over to borrow a book. Priya said Isabella was in the back. I went through. I wish she'd been right.",
         "answer_type": "claim",
         "truthfulness": "true"
       }
@@ -368,7 +376,7 @@
         "question_type": "timeline",
         "time_from": "11:00",
         "time_to": "12:00",
-        "answer_text": "I delivered to the bookshop at seven-ten. Sealed letter from Whittle & Cross \u2014 I remember because it's a solicitor's franking, you notice those. Pushed it through the slot and moved on. Nothing unusual.",
+        "answer_text": "I delivered to the bookshop at eleven-ten. Sealed letter from Whittle & Cross \u2014 I remember because it's a solicitor's franking, you notice those. Pushed it through the slot and moved on. Nothing unusual.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "factual",
@@ -428,13 +436,21 @@
     "rules": [
       {
         "question_type": "timeline",
-        "time_from": "12:40",
+        "time_from": "12:35",
         "time_to": "13:00",
-        "answer_text": "I was loading up to leave around twenty-to. Went back down the alley to pick up an empty crate. Noticed the back window of the bookshop was broken \u2014 one pane, small. The glass was in the alley. Well, mostly. Thought it must have been a delivery gone wrong. Then I heard about Isabella.",
+        "answer_text": "It wasn't just the alley bit. A couple of minutes before the bang \u2014 call it twenty-two to or thereabouts \u2014 I stepped into the front shop with a parcel for Hobbs that had landed in the wrong stack. Through the counter door I saw Priya in the back room, right up near Isabella's desk, and Isabella said, proper sharp, 'You do not get to decide this for me.' I left the parcel and got out of there. Then around ten-to I was in the alley for an empty crate and noticed the broken pane.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "shocked",
         "claims": [
+          {
+            "claim_id": "claim_ben_argument_glimpse",
+            "summary": "Ben saw Priya near Isabella's desk in the back room at about 12:38 and heard Isabella snap, 'You do not get to decide this for me.'",
+            "claim_type": "sighting",
+            "time_reference": "12:38",
+            "location_reference_id": "loc_bookshop_back",
+            "truthfulness": "true"
+          },
           {
             "claim_id": "claim_ben_window",
             "summary": "Ben noticed the broken bookshop back window at about 12:50 in the rear alley.",
@@ -445,6 +461,7 @@
           }
         ],
         "reveals_clue_ids": [
+          "clue_ben_argument_glimpse",
           "clue_ben_broken_window"
         ],
         "suggested_followups": [
@@ -452,9 +469,21 @@
         ]
       },
       {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "Priya and me? We got into the habit of taking coffee when my round crossed hers. She'd been wound tight all week, talking like one conversation was going to decide the rest of her life. I thought she meant asking Isabella for more responsibility. Maybe I was kidding myself.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "guarded",
+        "claims": [],
+        "reveals_memory_ids": [
+          "mem_ben_priya_restless"
+        ]
+      },
+      {
         "question_type": "evidence",
         "topic_clue_id": "clue_staged_breakin",
-        "answer_text": "The glass? Yeah, now that you ask \u2014 most of it was in the alley, but there was a big chunk still inside on the sill. I remember thinking that was odd. Shouldn't it all be in the alley if someone came through from outside?",
+        "answer_text": "The glass? Yeah, now that you ask \u2014 there was some in the alley, sure, but the biggest bit was still inside on the sill and there were more jagged pieces in the room than there ought to have been. I remember thinking: if someone smashed their way in, why's the room keeping the worst of it?",
         "answer_type": "claim",
         "truthfulness": "true",
         "reveals_clue_ids": [

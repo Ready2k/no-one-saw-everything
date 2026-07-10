@@ -3,7 +3,13 @@
     "location_id": "loc_village_square",
     "name": "Village Square",
     "description": "The open heart of the village, with a stone fountain, benches, and a view of the cafe and bookshop fronts.",
-    "connected_location_ids": ["loc_hobbs_cafe", "loc_bookshop", "loc_clinic", "loc_rear_alley", "loc_owen_house"],
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_bookshop",
+      "loc_clinic",
+      "loc_rear_alley",
+      "loc_owen_house"
+    ],
     "visibility_type": "public",
     "camera_coverage": false
   },
@@ -11,64 +17,99 @@
     "location_id": "loc_bookshop",
     "name": "Reed & Bell Bookshop",
     "description": "Isabella Reed's bookshop. Front area with shelves and a counter; a door behind the counter leads to the back room.",
-    "connected_location_ids": ["loc_village_square", "loc_bookshop_back", "loc_rear_alley"],
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_bookshop_back",
+      "loc_rear_alley"
+    ],
     "visibility_type": "public"
   },
   {
     "location_id": "loc_bookshop_back",
     "name": "Bookshop Back Room",
     "description": "A cramped back office and stockroom behind the bookshop counter. Isabella's desk, the safe, shelves of stock. A rear door opens onto the alley.",
-    "connected_location_ids": ["loc_bookshop", "loc_rear_alley"],
-    "access_rules": ["staff", "keyholder"],
+    "connected_location_ids": [
+      "loc_bookshop",
+      "loc_rear_alley"
+    ],
+    "access_rules": [
+      "staff",
+      "keyholder"
+    ],
     "visibility_type": "private",
-    "audible_from_location_ids": ["loc_bookshop", "loc_rear_alley"],
+    "audible_from_location_ids": [
+      "loc_bookshop",
+      "loc_rear_alley"
+    ],
     "murder_suitable": true
   },
   {
     "location_id": "loc_rear_alley",
     "name": "Rear Alley",
     "description": "A narrow service alley running behind the bookshop. Bins, crates, and the bookshop's rear door.",
-    "connected_location_ids": ["loc_village_square", "loc_bookshop_back", "loc_bookshop"],
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_bookshop_back",
+      "loc_bookshop"
+    ],
     "visibility_type": "public",
-    "audible_from_location_ids": ["loc_bookshop_back"]
+    "audible_from_location_ids": [
+      "loc_bookshop_back"
+    ]
   },
   {
     "location_id": "loc_hobbs_cafe",
     "name": "Hobbs Cafe",
     "description": "The village cafe. Counter, tables, and the till at the front; kitchen behind.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
-    "audible_from_location_ids": ["loc_village_square"],
+    "audible_from_location_ids": [
+      "loc_village_square"
+    ],
     "camera_coverage": false
   },
   {
     "location_id": "loc_clinic",
     "name": "Village Clinic",
     "description": "A small clinic on the square where Nadia Cole works the early shift.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public"
   },
   {
     "location_id": "loc_owen_house",
     "name": "Owen Price's House & Yard",
     "description": "Owen's house and builder's timber yard on the far side of the square.",
-    "connected_location_ids": ["loc_village_square"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "public"
   },
   {
     "location_id": "loc_priya_flat",
     "name": "Priya's Flat",
     "description": "Priya's rented flat two streets behind the square. Small and tidy.",
-    "connected_location_ids": ["loc_village_square"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "private"
   },
   {
     "location_id": "loc_fountain",
     "name": "Fountain",
     "description": "The stone fountain in the middle of the village square.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public"
   }
 ]
