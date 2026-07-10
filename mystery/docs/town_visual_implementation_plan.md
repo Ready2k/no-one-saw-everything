@@ -1,10 +1,12 @@
 # Town Visual Implementation Plan
 
-Status: implementation plan only. No runtime wiring is performed by the audit pass.
+Status: implementation plan with the current Case 004 canonical-overworld pilot noted.
 
-Pilot status: the Case 004 architecture phase is now implemented. The pilot uses a versioned daylight reference image, a temporary source-image coordinate transform, per-location crop padding, and reduced-opacity runtime tint so night scenes remain readable. Remaining phases below describe future asset production and migration work; cases 001, 002, 003, 005, and 006 are intentionally not migrated.
+Pilot status: the Case 004 architecture phase is now implemented. The pilot uses `town_canonical_v1`, a 6144x4608 3x3 HD tile mosaic, per-location crop padding, reduced-opacity runtime tint, and a zoom-aware B2 swap: external/roofed at overview scale and roofless/interior at close scale. Remaining phases below describe future asset production and migration work; cases 001, 002, 003, 005, and 006 are intentionally not migrated.
 
 Semantic evidence hardening is implemented for Case 004. The map API now returns `visual.object_visuals` with hidden/visible/discovered states, suppressed/active marker state, safe-render gating, semantic anchors, and case overlay IDs. Temporary glyphs render only for discovered evidence. Full fog masking, clickable map evidence inspection, selected-object UI, background-prop sprites, and final raster replacement remain future work.
+
+Location function tagging is implemented as additive metadata. `LOCATION_FUNCTION_TAGS` in `backend/app/town_map.py` identifies houses, flats, pub, clinic, cafe, bookshop, office, alley, and landmarks by existing `loc_*` IDs. The API includes those tags in `visual.canonical_locations`; the art manifest mirrors them for production/migration reference.
 
 ## Phase 0 — approval gate
 
@@ -12,23 +14,24 @@ Confirm the stable-ID mappings, 64x48 / 32px grid, fountain-centred layout, and 
 
 ## Phase 1 — asset manifest and renderer contract
 
-Add a visual-only manifest, ideally under `frontend/public/art/town/manifest.json`, containing:
+Maintain the visual-only manifest at `frontend/public/art/town/town_canonical_v1_manifest.json`, containing:
 
 - canonical map asset, dimensions, tile size, grid, origin;
 - location bounds and sub-zones keyed by existing location IDs;
+- location function tags and case coverage keyed by existing location IDs;
 - reusable prop asset IDs and anchor points;
 - case overlay asset IDs and state keys;
 - source/licence metadata for every non-bespoke asset.
 
 Extend the map response with canonical geometry and a case-aware asset/overlay description while preserving legacy `map_position`, `map_bounds`, `asset`, `image`, `width`, and `height` fields during migration.
 
-Likely files: `backend/app/map_layout.py`, `backend/app/projections.py`, `backend/app/main.py`, `frontend/src/types.ts`, `frontend/src/map/mapAssets.ts`, `frontend/src/map/mapInfo.ts`.
+Current files: `backend/app/town_map.py`, `backend/app/data/town/town_layout.json`, `frontend/src/types.ts`, `frontend/src/map/mapAssets.ts`, `frontend/src/components/VisualMap.tsx`, `frontend/src/components/MapCrop.tsx`, and the town manifest.
 
 ## Phase 2 — neutral base map and reusable tiles
 
-Create the daylight/soft-ambient town base: terrain, square, fountain, paths, alley, building cutaways, roofs removed/opened, and expansion margins. Keep local lamps/windows/fireplaces subtle. Verify the base at midnight, dawn, noon, dusk, and night with runtime tint applied.
+Create/maintain the daylight/soft-ambient town base: terrain, square, fountain, paths, alley, overview roofs, close-view building cutaways, and expansion margins. Keep local lamps/windows/fireplaces subtle. Verify the base at midnight, dawn, noon, dusk, and night with runtime tint applied.
 
-The existing case-004 image remains a reference and fallback until the pilot has parity. Do not bake its midnight palette into the canonical base.
+The existing case-004 image remains a reference/fallback. Do not bake its midnight palette into the canonical base.
 
 ## Phase 3 — prop anchors and evidence-safe overlays
 
