@@ -208,6 +208,7 @@ export default function DevMapEditor() {
   const [showUnderlay, setShowUnderlay] = useState<boolean>(true);
   const [underlayOpacity, setUnderlayOpacity] = useState<number>(0.35);
   const [blankGridMode, setBlankGridMode] = useState<boolean>(false);
+  const [solidRenderView, setSolidRenderView] = useState<boolean>(false);
 
   // Layer Visibility settings
   const [visibleLayers, setVisibleLayers] = useState<Record<string, boolean>>(() => {
@@ -954,6 +955,7 @@ export default function DevMapEditor() {
 
   const renderGridLines = () => {
     const lines = [];
+    const lineBg = solidRenderView ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.05)";
     for (let i = 1; i < 64; i++) {
       lines.push(
         <div
@@ -964,7 +966,7 @@ export default function DevMapEditor() {
             top: 0,
             bottom: 0,
             width: "1px",
-            background: "rgba(255, 255, 255, 0.05)",
+            background: lineBg,
             pointerEvents: "none"
           }}
         />
@@ -980,7 +982,7 @@ export default function DevMapEditor() {
             left: 0,
             right: 0,
             height: "1px",
-            background: "rgba(255, 255, 255, 0.05)",
+            background: lineBg,
             pointerEvents: "none"
           }}
         />
@@ -1494,7 +1496,11 @@ export default function DevMapEditor() {
               <input type="checkbox" checked={blankGridMode} onChange={(e) => setBlankGridMode(e.target.checked)} />
               Blank Neutral Grid Mode
             </label>
-            {!blankGridMode && (
+            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.8rem", color: "#94a3b8", marginTop: "4px" }}>
+              <input type="checkbox" checked={solidRenderView} onChange={(e) => setSolidRenderView(e.target.checked)} />
+              🌲 Solid Render View (Grass Backdrop)
+            </label>
+            {!blankGridMode && !solidRenderView && (
               <>
                 <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.8rem", color: "#94a3b8", marginTop: "4px" }}>
                   <input type="checkbox" checked={showUnderlay} onChange={(e) => setShowUnderlay(e.target.checked)} />
@@ -1619,6 +1625,7 @@ export default function DevMapEditor() {
               width: "100%",
               maxWidth: "960px",
               aspectRatio: "64 / 48",
+              backgroundColor: solidRenderView ? TILE_COLORS["tile_grass"] : "#111113"
             }}
             onPointerDown={handleCanvasPointerDown}
           >
@@ -1630,8 +1637,8 @@ export default function DevMapEditor() {
               className="canvas-bg-art" 
               style={{
                 backgroundImage: `url("/art/case_004/fountain_daylight_map.png")`,
-                opacity: !blankGridMode && showUnderlay ? underlayOpacity : 0,
-                display: !blankGridMode && showUnderlay ? "block" : "none"
+                opacity: !blankGridMode && showUnderlay && !solidRenderView ? underlayOpacity : 0,
+                display: !blankGridMode && showUnderlay && !solidRenderView ? "block" : "none"
               }}
             />
 
