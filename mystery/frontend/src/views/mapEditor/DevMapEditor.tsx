@@ -1,0 +1,3121 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { api } from "../../api";
+import { useToast } from "../../components/Toast";
+import {
+  ALLOWED_LAYERS,
+  ALLOWED_PROPS,
+  ALLOWED_TILES,
+  Bounds,
+  Camera,
+  CaseObjectRef,
+  CaseLocationRef,
+  CaseRef,
+  FLOOD_FILL_LIMIT,
+  HISTORY_LIMIT,
+  LocationSource,
+  MAX_SCALE,
+  MIN_SCALE,
+  PROP_EMOJIS,
+  PreviewMode,
+  PropInstance,
+  RENDER_POLICIES,
+  Selection,
+  TILE_COLORS,
+  TOOL_DEFS,
+  TileLayer,
+  ToolId,
+  TownLayout,
+  UNDERLAY_SOURCES,
+  UnderlaySourceId,
+  clamp,
+  deepClone,
+  emptyOverride,
+  isNestingAllowed,
+  tileKey
+} from "./editorTypes";
+import {
+  HANDLE_PX,
+  Scene,
+  SceneAnchor,
+  SceneLocation,
+  SceneProp,
+  ToolOverlay,
+  drawMinimap,
+  drawScene,
+  minimapToWorld
+} from "./renderer";
+
+// ---------------------------------------------------------------------------
+// Pure layout resolvers / mutators (shared between canvas gestures and panels)
+// ---------------------------------------------------------------------------
+
+type CanonicalRecs = Record<string, { bounds: Bounds; mode: string }>;
+
+interface EffectiveLocation {
+  bounds: Bounds;
+  mode: string;
+  source: LocationSource;
+  isOverridden: boolean;
+}
+
+function resolveLocation(
+  layout: TownLayout,
+  recs: CanonicalRecs,
+  caseId: string,
+  locId: string
+): EffectiveLocation {
+  let bounds = recs[locId]?.bounds || { x: 4, y: 4, w: 6, h: 6 };
+  let mode = recs[locId]?.mode || "exterior";
+  let source: LocationSource = "recommended";
+  let isOverridden = false;
+
+  if (layout.canonical_locations[locId]) {
+    bounds = layout.canonical_locations[locId].bounds;
+    mode = layout.canonical_locations[locId].mode;
+    source = "canonical";
+  }
+  if (caseId !== "canonical" && layout.case_overrides[caseId]?.location_bounds[locId]) {
+    bounds = layout.case_overrides[caseId].location_bounds[locId];
+    source = "case_override";
+    isOverridden = true;
+  }
+  return { bounds, mode, source, isOverridden };
+}
+
+function resolveAnchor(
+  layout: TownLayout,
+  recs: CanonicalRecs,
+  caseId: string,
+  obj: CaseObjectRef
+) {
+  const a = layout.case_overrides[caseId]?.object_anchors[obj.object_id];
+  if (a) {
+    return {
+      location_id: a.location_id,
+      anchor: a.anchor,
+      semantic_asset_id: a.semantic_asset_id,
+      render_policy: a.render_policy,
+      external: a.external
+    };
+  }
+  const locId = obj.normal_location_id || obj.final_location_id || "loc_village_square";
+  const lb = resolveLocation(layout, recs, caseId, locId).bounds;
+  return {
+    location_id: locId,
+    anchor: { x: Math.floor(lb.x + lb.w / 2), y: Math.floor(lb.y + lb.h / 2) },
+    semantic_asset_id: "",
+    render_policy: "discovery_gated",
+    external: false
+  };
+}
+
+function isLocationVisibleIn(layout: TownLayout, caseId: string, locId: string): boolean {
+  if (caseId === "canonical") return true;
+  const ov = layout.case_overrides[caseId];
+  if (!ov) return false;
+  return ov.visible_locations.includes(locId);
+}
+
+function applyLocationBounds(
+  layout: TownLayout,
+  recs: CanonicalRecs,
+  caseId: string,
+  locId: string,
+  updates: Partial<Bounds>
+): void {
+  if (caseId === "canonical") {
+    if (!layout.canonical_locations[locId]) {
+      const eff = resolveLocation(layout, recs, "canonical", locId);
+      layout.canonical_locations[locId] = { bounds: { ...eff.bounds }, mode: eff.mode };
+    }
+    Object.assign(layout.canonical_locations[locId].bounds, updates);
+  } else {
+    if (!layout.case_overrides[caseId]) layout.case_overrides[caseId] = emptyOverride();
+    const eff = resolveLocation(layout, recs, caseId, locId);
+    layout.case_overrides[caseId].location_bounds[locId] = { ...eff.bounds, ...updates };
+  }
+}
+
+function applyAnchor(
+  layout: TownLayout,
+  recs: CanonicalRecs,
+  caseId: string,
+  obj: CaseObjectRef,
+  updates: Partial<{ x: number; y: number }>
+): void {
+  if (caseId === "canonical") return;
+  if (!layout.case_overrides[caseId]) layout.case_overrides[caseId] = emptyOverride();
+  const eff = resolveAnchor(layout, recs, caseId, obj);
+  layout.case_overrides[caseId].object_anchors[obj.object_id] = {
+    location_id: eff.location_id,
+    anchor: { ...eff.anchor, ...updates },
+    semantic_asset_id: eff.semantic_asset_id || "",
+    render_policy: eff.render_policy || "discovery_gated",
+    external: eff.external || false
+  };
+}
+
+function applyPropUpdate(
+  layout: TownLayout,
+  instanceId: string,
+  fn: (p: PropInstance) => void
+): boolean {
+  for (const scope of Object.keys(layout.prop_instances || {})) {
+    const p = layout.prop_instances[scope].find((q) => q.instance_id === instanceId);
+    if (p) {
+      fn(p);
+      return true;
+    }
+  }
+  return false;
+}
+
+function findProp(layout: TownLayout, instanceId: string): { prop: PropInstance; scope: string } | null {
+  for (const scope of Object.keys(layout.prop_instances || {})) {
+    const p = layout.prop_instances[scope].find((q) => q.instance_id === instanceId);
+    if (p) return { prop: p, scope };
+  }
+  return null;
+}
+
+function mergedProps(layout: TownLayout, caseId: string): PropInstance[] {
+  const canonical = layout.prop_instances?.["canonical"] || [];
+  const caseProps = caseId !== "canonical" ? layout.prop_instances?.[caseId] || [] : [];
+  return [...canonical, ...caseProps];
+}
+
+function ensureLayer(layout: TownLayout, layerName: string): TileLayer {
+  if (!layout.tile_layers) layout.tile_layers = {};
+  if (!layout.tile_layers[layerName]) layout.tile_layers[layerName] = { tiles: [] };
+  return layout.tile_layers[layerName];
+}
+
+// --- Location contents (anchors + props) follow the location when it moves ---
+
+type AttachedItem =
+  | { kind: "anchor"; caseId: string; objId: string; ox: number; oy: number }
+  | { kind: "prop"; scope: string; id: string; ox: number; oy: number };
+
+/**
+ * Everything positioned inside a location's current bounds that should move
+ * with it: evidence anchors (only in cases whose effective bounds are the ones
+ * being edited) and prop instances assigned to the location.
+ */
+function collectAttached(
+  l: TownLayout,
+  scopeCaseId: string,
+  locId: string,
+  b: Bounds
+): AttachedItem[] {
+  const inside = (x: number, y: number) =>
+    x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h;
+  const out: AttachedItem[] = [];
+  for (const [caseId, ov] of Object.entries(l.case_overrides || {})) {
+    // Editing canonical bounds doesn't affect a case that pins its own bounds
+    if (scopeCaseId === "canonical" ? !!ov.location_bounds?.[locId] : caseId !== scopeCaseId) continue;
+    for (const [objId, a] of Object.entries(ov.object_anchors || {})) {
+      if (a.location_id === locId && inside(a.anchor.x, a.anchor.y)) {
+        out.push({ kind: "anchor", caseId, objId, ox: a.anchor.x, oy: a.anchor.y });
+      }
+    }
+  }
+  for (const [scope, list] of Object.entries(l.prop_instances || {})) {
+    for (const p of list) {
+      if (p.location_id === locId && inside(p.x, p.y)) {
+        out.push({ kind: "prop", scope, id: p.instance_id, ox: p.x, oy: p.y });
+      }
+    }
+  }
+  return out;
+}
+
+/** Reposition collected items at their original offset plus the location's delta. */
+function applyAttached(
+  l: TownLayout,
+  items: AttachedItem[],
+  dx: number,
+  dy: number,
+  cols: number,
+  rows: number
+): void {
+  if (dx === 0 && dy === 0) return;
+  for (const it of items) {
+    const nx = clamp(it.ox + dx, 0, cols - 1);
+    const ny = clamp(it.oy + dy, 0, rows - 1);
+    if (it.kind === "anchor") {
+      const a = l.case_overrides?.[it.caseId]?.object_anchors?.[it.objId];
+      if (a) {
+        a.anchor.x = nx;
+        a.anchor.y = ny;
+      }
+    } else {
+      const p = l.prop_instances?.[it.scope]?.find((q) => q.instance_id === it.id);
+      if (p) {
+        p.x = nx;
+        p.y = ny;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Gestures
+// ---------------------------------------------------------------------------
+
+type Gesture =
+  | { kind: "pan"; lastX: number; lastY: number }
+  | { kind: "paint"; before: TownLayout; erase: boolean; last: { x: number; y: number }; painted: Set<string> }
+  | { kind: "rect"; before: TownLayout; start: { x: number; y: number }; current: { x: number; y: number }; erase: boolean }
+  | { kind: "moveLoc"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: Bounds; mutated: boolean; attached: AttachedItem[] }
+  | { kind: "resizeLoc"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: Bounds; mutated: boolean }
+  | { kind: "moveAnchor"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
+  | { kind: "moveProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
+  | { kind: "resizeProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { w: number; h: number }; mutated: boolean };
+
+interface MirrorState {
+  selectedCaseId: string;
+  activeTool: ToolId;
+  selection: Selection;
+  previewMode: PreviewMode;
+  showEvidenceAnchors: boolean;
+  underlaySource: UnderlaySourceId;
+  underlayOpacity: number;
+  solidRenderView: boolean;
+  showGrid: boolean;
+  showLabels: boolean;
+  showSafety: boolean;
+  showMinimap: boolean;
+  visibleLayers: Record<string, boolean>;
+  selectedTileId: string;
+  selectedPropId: string;
+  paintLayer: string;
+  propLayer: string;
+  brushSize: number;
+  fineAdjustment: boolean;
+  activeLocations: CaseLocationRef[];
+  activeObjects: CaseObjectRef[];
+  canonicalRecs: CanonicalRecs;
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+export default function DevMapEditor() {
+  const { showToast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [layout, setLayout] = useState<TownLayout | null>(null);
+  const [cases, setCases] = useState<CaseRef[]>([]);
+  const [canonicalRecs, setCanonicalRecs] = useState<CanonicalRecs>({});
+
+  const [history, setHistory] = useState<TownLayout[]>([]);
+  const [redoStack, setRedoStack] = useState<TownLayout[]>([]);
+  const [isDirty, setIsDirty] = useState(false);
+  const [serverErrors, setServerErrors] = useState<string[]>([]);
+
+  const [activeTool, setActiveTool] = useState<ToolId>("select");
+  const [selectedTileId, setSelectedTileId] = useState("tile_grass");
+  const [selectedPropId, setSelectedPropId] = useState("prop_bench");
+  const [paintLayer, setPaintLayer] = useState("base");
+  const [propLayer, setPropLayer] = useState("props");
+  const [brushSize, setBrushSize] = useState(1);
+
+  const [selectedCaseId, setSelectedCaseId] = useState("canonical");
+  const [selection, setSelection] = useState<Selection>(null);
+
+  const [previewMode, setPreviewMode] = useState<PreviewMode>("debug");
+  const [fineAdjustment, setFineAdjustment] = useState(false);
+  const [showEvidenceAnchors, setShowEvidenceAnchors] = useState(true);
+  const [underlaySource, setUnderlaySource] = useState<UnderlaySourceId>("town_overworld");
+  const [underlayOpacity, setUnderlayOpacity] = useState(0.5);
+  const [solidRenderView, setSolidRenderView] = useState(false);
+  const [showGrid, setShowGrid] = useState(true);
+  const [showLabels, setShowLabels] = useState(true);
+  const [showSafety, setShowSafety] = useState(true);
+  const [showMinimap, setShowMinimap] = useState(true);
+  const [visibleLayers, setVisibleLayers] = useState<Record<string, boolean>>(() => {
+    const d: Record<string, boolean> = {};
+    ALLOWED_LAYERS.forEach((l) => (d[l] = true));
+    return d;
+  });
+
+  const [locationSearch, setLocationSearch] = useState("");
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [importText, setImportText] = useState("");
+
+  // --- Refs (canvas world, not React world) ---
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const minimapRef = useRef<HTMLCanvasElement>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const layoutRef = useRef<TownLayout | null>(null);
+  const casesRef = useRef<CaseRef[]>([]);
+  const cameraRef = useRef<Camera>({ x: 0, y: 0, scale: 6 });
+  // w/h start at 0 so the initial fit waits for a real ResizeObserver measurement
+  const sizeRef = useRef({ w: 0, h: 0, dpr: 1 });
+  const gestureRef = useRef<Gesture | null>(null);
+  const hoverRef = useRef<{ x: number; y: number } | null>(null);
+  const hoverLocRef = useRef<string | null>(null);
+  const spaceRef = useRef(false);
+  const rafPending = useRef(false);
+  const didFitRef = useRef(false);
+  const underlayImgs = useRef<Record<string, HTMLImageElement>>({});
+  const lastSceneRef = useRef<Scene | null>(null);
+  const minimapDragRef = useRef(false);
+  const stateRef = useRef<MirrorState | null>(null);
+  const keyDownRef = useRef<(e: KeyboardEvent) => void>(() => {});
+  const keyUpRef = useRef<(e: KeyboardEvent) => void>(() => {});
+
+  const statusCoordsRef = useRef<HTMLSpanElement>(null);
+  const statusHoverLocRef = useRef<HTMLSpanElement>(null);
+  const zoomLabelRef = useRef<HTMLSpanElement>(null);
+  const statusZoomRef = useRef<HTMLSpanElement>(null);
+
+  const cols = layout?.grid?.cols || 192;
+  const rows = layout?.grid?.rows || 144;
+
+  // --- Derived collections ---
+  const activeLocations = useMemo<CaseLocationRef[]>(() => {
+    if (selectedCaseId === "canonical") {
+      const all = new Map<string, CaseLocationRef>();
+      cases.forEach((c) => c.locations.forEach((l) => all.set(l.location_id, l)));
+      return Array.from(all.values());
+    }
+    return cases.find((c) => c.case_id === selectedCaseId)?.locations || [];
+  }, [cases, selectedCaseId]);
+
+  const activeObjects = useMemo<CaseObjectRef[]>(() => {
+    if (selectedCaseId === "canonical") return [];
+    return cases.find((c) => c.case_id === selectedCaseId)?.objects || [];
+  }, [cases, selectedCaseId]);
+
+  const activeProps = useMemo<PropInstance[]>(() => {
+    if (!layout) return [];
+    return mergedProps(layout, selectedCaseId);
+  }, [layout, selectedCaseId]);
+
+  // Mirrors backend validate_town_layout_payload (town_map.py) across ALL scopes,
+  // so anything that would 400 on save is flagged here first.
+  const validationWarnings = useMemo<string[]>(() => {
+    const w: string[] = [];
+    if (!layout) return w;
+    const contract = new Set(Object.keys(canonicalRecs));
+    const gCols = layout.grid?.cols || 192;
+    const gRows = layout.grid?.rows || 144;
+    const inGrid = (b: Bounds) => b.x >= 0 && b.y >= 0 && b.x + b.w <= gCols && b.y + b.h <= gRows;
+    const overlapping = (a: Bounds, b: Bounds) =>
+      !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y);
+
+    // Canonical location entries
+    const canonicalBounds: Record<string, Bounds> = {};
+    for (const [locId, data] of Object.entries(layout.canonical_locations || {})) {
+      if (!contract.has(locId)) {
+        w.push(`Canonical location "${locId}" is not in the canonical contract.`);
+      }
+      const b = data?.bounds;
+      if (!b) continue;
+      canonicalBounds[locId] = b;
+      if (b.w <= 0 || b.h <= 0) {
+        w.push(`Bounds for "${locId}" must have positive width and height.`);
+      } else if (!inGrid(b)) {
+        w.push(`Bounds for "${locId}" extend outside the ${gCols}×${gRows} grid.`);
+      }
+      if (data.mode !== "interior" && data.mode !== "exterior") {
+        w.push(`Location "${locId}" has invalid mode "${data.mode}".`);
+      }
+    }
+    const cIds = Object.keys(canonicalBounds);
+    for (let i = 0; i < cIds.length; i++) {
+      for (let j = i + 1; j < cIds.length; j++) {
+        if (isNestingAllowed(cIds[i], cIds[j])) continue;
+        if (overlapping(canonicalBounds[cIds[i]], canonicalBounds[cIds[j]])) {
+          w.push(`Overlap between "${cIds[i]}" and "${cIds[j]}" without parent-child allowance.`);
+        }
+      }
+    }
+
+    // Per-case overrides (every case, not just the selected scope)
+    for (const c of cases) {
+      const ov = layout.case_overrides?.[c.case_id];
+      if (!ov) continue;
+      const tag = c.case_id.toUpperCase();
+      const caseLocIds = new Set(c.locations.map((l) => l.location_id));
+
+      for (const [locId, b] of Object.entries(ov.location_bounds || {})) {
+        if (!caseLocIds.has(locId) && !contract.has(locId)) {
+          w.push(`[${tag}] Override references unknown location "${locId}".`);
+        }
+        if (b.w <= 0 || b.h <= 0) {
+          w.push(`[${tag}] Override bounds for "${locId}" must have positive width and height.`);
+        } else if (!inGrid(b)) {
+          w.push(`[${tag}] Override bounds for "${locId}" extend outside the grid.`);
+        }
+      }
+
+      const visible = ov.visible_locations || [];
+      const eff: Record<string, Bounds> = {};
+      for (const locId of visible) {
+        eff[locId] = resolveLocation(layout, canonicalRecs, c.case_id, locId).bounds;
+      }
+      const vIds = Object.keys(eff);
+      for (let i = 0; i < vIds.length; i++) {
+        for (let j = i + 1; j < vIds.length; j++) {
+          if (isNestingAllowed(vIds[i], vIds[j])) continue;
+          if (overlapping(eff[vIds[i]], eff[vIds[j]])) {
+            w.push(`[${tag}] Visible locations "${vIds[i]}" and "${vIds[j]}" overlap without parent-child allowance.`);
+          }
+        }
+      }
+
+      for (const obj of c.objects) {
+        const a = ov.object_anchors?.[obj.object_id];
+        if (!a) continue;
+        const policy = a.render_policy || "discovery_gated";
+        if (policy !== "debug_only" && !visible.includes(a.location_id)) {
+          w.push(
+            `[${tag}] Anchor "${obj.object_id}" sits in hidden location "${a.location_id}" — mark that location visible in this case, or set the anchor's policy to Debug Only.`
+          );
+        }
+        if (a.anchor.x < 0 || a.anchor.y < 0 || a.anchor.x >= gCols || a.anchor.y >= gRows) {
+          w.push(`[${tag}] Anchor "${obj.object_id}" lies outside the grid.`);
+        } else if (!a.external) {
+          const b = resolveLocation(layout, canonicalRecs, c.case_id, a.location_id).bounds;
+          const inside =
+            a.anchor.x >= b.x && a.anchor.x < b.x + b.w && a.anchor.y >= b.y && a.anchor.y < b.y + b.h;
+          if (!inside) {
+            w.push(`[${tag}] Anchor "${obj.object_id}" is outside the bounds of "${a.location_id}".`);
+          }
+        }
+      }
+    }
+
+    // Prop instances across all scopes
+    for (const [scope, list] of Object.entries(layout.prop_instances || {})) {
+      for (const p of list) {
+        if (!contract.has(p.location_id)) {
+          w.push(`Prop "${p.instance_id}" (${scope}) is assigned to unknown location "${p.location_id}".`);
+        }
+        if (p.x < 0 || p.y < 0 || p.x >= gCols || p.y >= gRows) {
+          w.push(`Prop "${p.instance_id}" (${scope}) sits outside the grid.`);
+        }
+        if (p.render_policy === "discovery_gated" && !p.object_id) {
+          w.push(`Prop "${p.instance_id}" (${scope}) is discovery-gated but lacks a linked object_id.`);
+        }
+      }
+    }
+
+    return w;
+  }, [layout, cases, canonicalRecs]);
+
+  // --- Rendering ---
+  const requestRender = () => {
+    if (rafPending.current) return;
+    rafPending.current = true;
+    requestAnimationFrame(() => {
+      rafPending.current = false;
+      draw();
+    });
+  };
+
+  const draw = () => {
+    const canvas = canvasRef.current;
+    const lay = layoutRef.current;
+    const st = stateRef.current;
+    if (!canvas || !lay || !st) return;
+
+    const gCols = lay.grid?.cols || 192;
+    const gRows = lay.grid?.rows || 144;
+    const { w, h, dpr } = sizeRef.current;
+    const g = gestureRef.current;
+
+    // Locations
+    const locations: SceneLocation[] = [];
+    if (st.visibleLayers["debug_bounds"]) {
+      for (const l of st.activeLocations) {
+        const eff = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, l.location_id);
+        const visible = isLocationVisibleIn(lay, st.selectedCaseId, l.location_id);
+        if (!visible && st.previewMode === "player_reveal") continue;
+        locations.push({
+          id: l.location_id,
+          name: l.name,
+          bounds: eff.bounds,
+          source: eff.source,
+          alpha: st.previewMode === "fog" && !visible ? 0.15 : 1,
+          selected: st.selection?.kind === "location" && st.selection.id === l.location_id,
+          hovered: hoverLocRef.current === l.location_id && st.activeTool === "select"
+        });
+      }
+    }
+
+    // Anchors
+    const anchors: SceneAnchor[] = [];
+    if (st.visibleLayers["object_anchors"] && st.showEvidenceAnchors && st.selectedCaseId !== "canonical") {
+      for (const o of st.activeObjects) {
+        const eff = resolveAnchor(lay, st.canonicalRecs, st.selectedCaseId, o);
+        const locVisible = isLocationVisibleIn(lay, st.selectedCaseId, eff.location_id);
+        if (st.previewMode === "player_reveal" && !locVisible) continue;
+        anchors.push({
+          id: o.object_id,
+          name: o.name,
+          x: eff.anchor.x,
+          y: eff.anchor.y,
+          alpha: st.previewMode === "fog" && !locVisible ? 0.3 : 1,
+          selected: st.selection?.kind === "object" && st.selection.id === o.object_id
+        });
+      }
+    }
+
+    // Props
+    const props: SceneProp[] = [];
+    for (const p of mergedProps(lay, st.selectedCaseId)) {
+      const layerName = p.layer || "props";
+      if (!st.visibleLayers[layerName]) continue;
+      props.push({
+        id: p.instance_id,
+        assetId: p.asset_id,
+        x: p.x,
+        y: p.y,
+        w: p.w || 1,
+        h: p.h || 1,
+        layer: layerName,
+        selected: st.selection?.kind === "prop" && st.selection.id === p.instance_id
+      });
+    }
+
+    // Tool overlay
+    let overlay: ToolOverlay = null;
+    const hov = hoverRef.current;
+    if (g?.kind === "rect") {
+      const r = normRect(g.start, g.current);
+      overlay = { kind: "rect", ...r, erase: g.erase, tileId: st.selectedTileId };
+    } else if (hov) {
+      if (st.activeTool === "paint" || st.activeTool === "erase") {
+        overlay = { kind: "brush", cells: brushCells(hov.x, hov.y, st.brushSize, gCols, gRows), erase: st.activeTool === "erase" };
+      } else if (st.activeTool === "rect" || st.activeTool === "fill" || st.activeTool === "picker") {
+        overlay = { kind: "brush", cells: [{ x: hov.x, y: hov.y }], erase: false };
+      } else if (st.activeTool === "prop") {
+        overlay = { kind: "propGhost", x: hov.x, y: hov.y, assetId: st.selectedPropId };
+      }
+    }
+
+    const scene: Scene = {
+      cssW: w,
+      cssH: h,
+      dpr,
+      camera: cameraRef.current,
+      cols: gCols,
+      rows: gRows,
+      tileLayers: lay.tile_layers || {},
+      visibleLayers: st.visibleLayers,
+      underlayImg: st.underlaySource === "none" ? null : underlayImgs.current[st.underlaySource] || null,
+      underlayOpacity: st.underlayOpacity,
+      underlayPlacement:
+        UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource)?.placement === "full" ? "full" : "centre_third",
+      solidRender: st.solidRenderView,
+      showGrid: st.showGrid,
+      showSafety: st.showSafety,
+      showLabels: st.showLabels,
+      locations,
+      anchors,
+      props,
+      overlay
+    };
+    lastSceneRef.current = scene;
+    drawScene(canvas, scene);
+    if (st.showMinimap && minimapRef.current) {
+      drawMinimap(minimapRef.current, scene);
+    }
+  };
+
+  // Mirror render-relevant state into a ref, then redraw. Runs every render.
+  useEffect(() => {
+    stateRef.current = {
+      selectedCaseId,
+      activeTool,
+      selection,
+      previewMode,
+      showEvidenceAnchors,
+      underlaySource,
+      underlayOpacity,
+      solidRenderView,
+      showGrid,
+      showLabels,
+      showSafety,
+      showMinimap,
+      visibleLayers,
+      selectedTileId,
+      selectedPropId,
+      paintLayer,
+      propLayer,
+      brushSize,
+      fineAdjustment,
+      activeLocations,
+      activeObjects,
+      canonicalRecs
+    };
+    requestRender();
+  });
+
+  useEffect(() => {
+    layoutRef.current = layout;
+    requestRender();
+  }, [layout]);
+
+  useEffect(() => {
+    casesRef.current = cases;
+  }, [cases]);
+
+  // --- Boot: preload underlays + fetch layout ---
+  useEffect(() => {
+    for (const u of UNDERLAY_SOURCES) {
+      const img = new Image();
+      img.src = u.url;
+      img.onload = () => requestRender();
+      underlayImgs.current[u.id] = img;
+    }
+    api
+      .getDevMapLayout()
+      .then((data) => {
+        const cleanLayout = {
+          ...data.layout,
+          tile_layers: data.layout.tile_layers || {},
+          prop_instances: data.layout.prop_instances || {}
+        } as TownLayout;
+        setLayout(cleanLayout);
+        setCases(data.cases);
+        setCanonicalRecs(data.canonical_recommended_locations);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || "Failed to load layout. Enable dev flags.");
+        setLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Unsaved-changes guard
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "You have unsaved changes in the map editor. Are you sure you want to leave?";
+        return e.returnValue;
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  // --- Canvas sizing ---
+  useEffect(() => {
+    if (loading) return;
+    const el = workspaceRef.current;
+    const canvas = canvasRef.current;
+    if (!el || !canvas) return;
+    const ro = new ResizeObserver(() => {
+      const r = el.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.round(r.width * dpr));
+      canvas.height = Math.max(1, Math.round(r.height * dpr));
+      canvas.style.width = `${r.width}px`;
+      canvas.style.height = `${r.height}px`;
+      sizeRef.current = { w: r.width, h: r.height, dpr };
+      tryInitialFit();
+      requestRender();
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
+
+  const tryInitialFit = () => {
+    if (didFitRef.current || !layoutRef.current || sizeRef.current.w < 60) return;
+    didFitRef.current = true;
+    fitView();
+  };
+
+  useEffect(() => {
+    if (layout) tryInitialFit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layout]);
+
+  // Minimap needs its own backing-store sizing
+  useEffect(() => {
+    const mm = minimapRef.current;
+    if (!mm || !showMinimap) return;
+    const dpr = window.devicePixelRatio || 1;
+    mm.width = Math.round(220 * dpr);
+    mm.height = Math.round(165 * dpr);
+    mm.style.width = "220px";
+    mm.style.height = "165px";
+    requestRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showMinimap, loading]);
+
+  // --- Camera ---
+  const clampCamera = () => {
+    const lay = layoutRef.current;
+    if (!lay) return;
+    const cam = cameraRef.current;
+    const { w, h } = sizeRef.current;
+    const vw = w / cam.scale;
+    const vh = h / cam.scale;
+    cam.x = clamp(cam.x, -vw * 0.85, lay.grid.cols - vw * 0.15);
+    cam.y = clamp(cam.y, -vh * 0.85, lay.grid.rows - vh * 0.15);
+  };
+
+  const updateZoomLabel = () => {
+    const text = `${Math.round((cameraRef.current.scale / 32) * 100)}%`;
+    if (zoomLabelRef.current) zoomLabelRef.current.textContent = text;
+    if (statusZoomRef.current) statusZoomRef.current.textContent = text;
+  };
+
+  const zoomAt = (cssX: number, cssY: number, factor: number) => {
+    const cam = cameraRef.current;
+    const newScale = clamp(cam.scale * factor, MIN_SCALE, MAX_SCALE);
+    const wx = cam.x + cssX / cam.scale;
+    const wy = cam.y + cssY / cam.scale;
+    cam.scale = newScale;
+    cam.x = wx - cssX / newScale;
+    cam.y = wy - cssY / newScale;
+    clampCamera();
+    updateZoomLabel();
+    requestRender();
+  };
+
+  const zoomCentered = (factor: number) => {
+    zoomAt(sizeRef.current.w / 2, sizeRef.current.h / 2, factor);
+  };
+
+  const fitView = () => {
+    const lay = layoutRef.current;
+    if (!lay) return;
+    const { w, h } = sizeRef.current;
+    const gCols = lay.grid.cols;
+    const gRows = lay.grid.rows;
+    const scale = clamp(Math.min((w - 40) / gCols, (h - 40) / gRows), MIN_SCALE, MAX_SCALE);
+    cameraRef.current = {
+      scale,
+      x: gCols / 2 - w / (2 * scale),
+      y: gRows / 2 - h / (2 * scale)
+    };
+    updateZoomLabel();
+    requestRender();
+  };
+
+  const zoomToBounds = (b: Bounds) => {
+    const { w, h } = sizeRef.current;
+    const scale = clamp(Math.min(w / (b.w + 10), h / (b.h + 10)), MIN_SCALE, MAX_SCALE);
+    cameraRef.current = {
+      scale,
+      x: b.x + b.w / 2 - w / (2 * scale),
+      y: b.y + b.h / 2 - h / (2 * scale)
+    };
+    updateZoomLabel();
+    requestRender();
+  };
+
+  // Wheel: plain scroll pans, ⌘/Ctrl (incl. trackpad pinch) or Alt zooms
+  useEffect(() => {
+    if (loading) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      if (e.ctrlKey || e.metaKey || e.altKey) {
+        zoomAt(e.clientX - rect.left, e.clientY - rect.top, Math.exp(-e.deltaY * 0.0024));
+      } else {
+        const cam = cameraRef.current;
+        cam.x += e.deltaX / cam.scale;
+        cam.y += e.deltaY / cam.scale;
+        clampCamera();
+        requestRender();
+      }
+    };
+    canvas.addEventListener("wheel", onWheel, { passive: false });
+    return () => canvas.removeEventListener("wheel", onWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
+
+  // --- History / commits ---
+  const pushHistory = (snap: TownLayout) => {
+    setHistory((h) => [...h.slice(-(HISTORY_LIMIT - 1)), snap]);
+    setRedoStack([]);
+  };
+
+  const commitLayout = (next: TownLayout, before: TownLayout | null) => {
+    layoutRef.current = next;
+    setLayout(next);
+    setIsDirty(true);
+    if (before) pushHistory(before);
+  };
+
+  const mutateLayout = (fn: (l: TownLayout) => void, opts: { undoable?: boolean } = {}) => {
+    const cur = layoutRef.current;
+    if (!cur) return;
+    const copy = deepClone(cur);
+    fn(copy);
+    commitLayout(copy, opts.undoable ? cur : null);
+  };
+
+  const handleUndo = () => {
+    if (!history.length || !layoutRef.current) return;
+    const prev = history[history.length - 1];
+    setRedoStack((r) => [...r, layoutRef.current!]);
+    setHistory((h) => h.slice(0, -1));
+    layoutRef.current = prev;
+    setLayout(prev);
+    setIsDirty(true);
+  };
+
+  const handleRedo = () => {
+    if (!redoStack.length || !layoutRef.current) return;
+    const next = redoStack[redoStack.length - 1];
+    setHistory((h) => [...h, layoutRef.current!]);
+    setRedoStack((r) => r.slice(0, -1));
+    layoutRef.current = next;
+    setLayout(next);
+    setIsDirty(true);
+  };
+
+  // --- Coordinate helpers ---
+  const eventToWorld = (e: { clientX: number; clientY: number }) => {
+    const canvas = canvasRef.current!;
+    const rect = canvas.getBoundingClientRect();
+    const cam = cameraRef.current;
+    return {
+      wx: cam.x + (e.clientX - rect.left) / cam.scale,
+      wy: cam.y + (e.clientY - rect.top) / cam.scale
+    };
+  };
+
+  const eventToTile = (e: { clientX: number; clientY: number }) => {
+    const { wx, wy } = eventToWorld(e);
+    const lay = layoutRef.current!;
+    return {
+      x: clamp(Math.floor(wx), 0, lay.grid.cols - 1),
+      y: clamp(Math.floor(wy), 0, lay.grid.rows - 1)
+    };
+  };
+
+  const snappedDelta = (world: { wx: number; wy: number }, start: { wx: number; wy: number }) => {
+    const fine = stateRef.current?.fineAdjustment;
+    const snap = (v: number) => (fine ? Math.round(v * 2) / 2 : Math.round(v));
+    return { dx: snap(world.wx - start.wx), dy: snap(world.wy - start.wy) };
+  };
+
+  // --- Tile tools ---
+  const stampBrush = (cx: number, cy: number, g: Extract<Gesture, { kind: "paint" }>) => {
+    const st = stateRef.current!;
+    const lay = layoutRef.current!;
+    const size = st.brushSize;
+    const half = Math.floor((size - 1) / 2);
+    const layer = ensureLayer(lay, st.paintLayer);
+    for (let dx = 0; dx < size; dx++) {
+      for (let dy = 0; dy < size; dy++) {
+        const x = cx - half + dx;
+        const y = cy - half + dy;
+        if (x < 0 || y < 0 || x >= lay.grid.cols || y >= lay.grid.rows) continue;
+        const key = tileKey(x, y);
+        if (g.painted.has(key)) continue;
+        g.painted.add(key);
+        layer.tiles = layer.tiles.filter((t) => !(t.x === x && t.y === y));
+        if (!g.erase) layer.tiles.push({ x, y, tile_id: st.selectedTileId });
+      }
+    }
+  };
+
+  const paintLine = (from: { x: number; y: number }, to: { x: number; y: number }, g: Extract<Gesture, { kind: "paint" }>) => {
+    let x0 = from.x;
+    let y0 = from.y;
+    const x1 = to.x;
+    const y1 = to.y;
+    const dx = Math.abs(x1 - x0);
+    const dy = -Math.abs(y1 - y0);
+    const sx = x0 < x1 ? 1 : -1;
+    const sy = y0 < y1 ? 1 : -1;
+    let err = dx + dy;
+    for (;;) {
+      stampBrush(x0, y0, g);
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 >= dy) {
+        err += dy;
+        x0 += sx;
+      }
+      if (e2 <= dx) {
+        err += dx;
+        y0 += sy;
+      }
+    }
+  };
+
+  const floodFill = (tile: { x: number; y: number }) => {
+    const st = stateRef.current!;
+    const before = layoutRef.current!;
+    const copy = deepClone(before);
+    const layer = ensureLayer(copy, st.paintLayer);
+    const map = new Map<string, string>();
+    layer.tiles.forEach((t) => map.set(tileKey(t.x, t.y), t.tile_id));
+    const target = map.get(tileKey(tile.x, tile.y));
+    if (target === st.selectedTileId) return;
+
+    const gCols = copy.grid.cols;
+    const gRows = copy.grid.rows;
+    const queue = [tile];
+    const seen = new Set([tileKey(tile.x, tile.y)]);
+    const cells: Array<{ x: number; y: number }> = [];
+    while (queue.length) {
+      const c = queue.pop()!;
+      cells.push(c);
+      if (cells.length > FLOOD_FILL_LIMIT) {
+        showToast(`Flood fill region exceeds ${FLOOD_FILL_LIMIT} tiles — aborted. Use the rectangle tool for large fills.`, "error");
+        return;
+      }
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        const nx = c.x + dx;
+        const ny = c.y + dy;
+        if (nx < 0 || ny < 0 || nx >= gCols || ny >= gRows) continue;
+        const k = tileKey(nx, ny);
+        if (seen.has(k) || map.get(k) !== target) continue;
+        seen.add(k);
+        queue.push({ x: nx, y: ny });
+      }
+    }
+    for (const c of cells) map.set(tileKey(c.x, c.y), st.selectedTileId);
+    layer.tiles = Array.from(map.entries()).map(([k, tid]) => {
+      const [x, y] = k.split(",").map(Number);
+      return { x, y, tile_id: tid };
+    });
+    commitLayout(copy, before);
+    showToast(`Filled ${cells.length} tiles with ${st.selectedTileId.replace("tile_", "")}.`, "success");
+  };
+
+  const samplePicker = (tile: { x: number; y: number }) => {
+    const st = stateRef.current!;
+    const lay = layoutRef.current!;
+    for (let i = ALLOWED_LAYERS.length - 1; i >= 0; i--) {
+      const layerName = ALLOWED_LAYERS[i];
+      if (!st.visibleLayers[layerName]) continue;
+      const layer = lay.tile_layers?.[layerName];
+      if (!layer) continue;
+      const found = layer.tiles.find((t) => t.x === tile.x && t.y === tile.y);
+      if (found) {
+        setSelectedTileId(found.tile_id);
+        setPaintLayer(layerName);
+        showToast(`Picked ${found.tile_id.replace("tile_", "")} on layer "${layerName}".`, "info");
+        return;
+      }
+    }
+    showToast("No painted tile at that cell.", "info");
+  };
+
+  const applyRectGesture = (g: Extract<Gesture, { kind: "rect" }>) => {
+    const st = stateRef.current!;
+    const next = deepClone(g.before);
+    const layer = ensureLayer(next, st.paintLayer);
+    const r = normRect(g.start, g.current);
+    layer.tiles = layer.tiles.filter(
+      (t) => !(t.x >= r.x && t.x < r.x + r.w && t.y >= r.y && t.y < r.y + r.h)
+    );
+    if (!g.erase) {
+      for (let x = r.x; x < r.x + r.w; x++) {
+        for (let y = r.y; y < r.y + r.h; y++) {
+          layer.tiles.push({ x, y, tile_id: st.selectedTileId });
+        }
+      }
+    }
+    commitLayout(next, g.before);
+  };
+
+  // --- Props ---
+  const findLocationIdAtWorld = (wx: number, wy: number): string | null => {
+    const st = stateRef.current;
+    const lay = layoutRef.current;
+    if (!st || !lay) return null;
+    let best: { id: string; area: number } | null = null;
+    for (const l of st.activeLocations) {
+      const b = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, l.location_id).bounds;
+      if (wx >= b.x && wx < b.x + b.w && wy >= b.y && wy < b.y + b.h) {
+        const area = b.w * b.h;
+        if (!best || area < best.area) best = { id: l.location_id, area };
+      }
+    }
+    return best ? best.id : null;
+  };
+
+  const placeProp = (tile: { x: number; y: number }, world: { wx: number; wy: number }) => {
+    const st = stateRef.current!;
+    const before = layoutRef.current!;
+    const copy = deepClone(before);
+    // The save validator only accepts canonical-contract location ids on props
+    const hit = findLocationIdAtWorld(tile.x + 0.5, tile.y + 0.5);
+    const locId = hit && st.canonicalRecs[hit] ? hit : "loc_village_square";
+    const inst: PropInstance = {
+      instance_id: `prop_${st.selectedPropId.replace(/^prop_/, "")}_${Date.now().toString().slice(-6)}`,
+      asset_id: st.selectedPropId,
+      location_id: locId,
+      x: tile.x,
+      y: tile.y,
+      layer: st.propLayer,
+      render_policy: "always_visible"
+    };
+    if (!copy.prop_instances) copy.prop_instances = {};
+    if (!copy.prop_instances[st.selectedCaseId]) copy.prop_instances[st.selectedCaseId] = [];
+    copy.prop_instances[st.selectedCaseId].push(inst);
+    layoutRef.current = copy;
+    setSelection({ kind: "prop", id: inst.instance_id });
+    gestureRef.current = {
+      kind: "moveProp",
+      before,
+      id: inst.instance_id,
+      startW: world,
+      orig: { x: inst.x, y: inst.y },
+      mutated: true
+    };
+    requestRender();
+  };
+
+  const deleteProp = (instanceId: string) => {
+    mutateLayout(
+      (l) => {
+        for (const scope of Object.keys(l.prop_instances || {})) {
+          l.prop_instances[scope] = l.prop_instances[scope].filter((p) => p.instance_id !== instanceId);
+        }
+      },
+      { undoable: true }
+    );
+    setSelection(null);
+    showToast("Prop instance deleted.", "success");
+  };
+
+  const duplicateProp = (instanceId: string) => {
+    const lay = layoutRef.current;
+    if (!lay) return;
+    const found = findProp(lay, instanceId);
+    if (!found) return;
+    const copyId = `prop_${found.prop.asset_id.replace(/^prop_/, "")}_${Date.now().toString().slice(-6)}`;
+    mutateLayout(
+      (l) => {
+        const src = findProp(l, instanceId);
+        if (!src) return;
+        l.prop_instances[src.scope].push({
+          ...deepClone(src.prop),
+          instance_id: copyId,
+          x: clamp(src.prop.x + 1, 0, l.grid.cols - 1),
+          y: clamp(src.prop.y + 1, 0, l.grid.rows - 1)
+        });
+      },
+      { undoable: true }
+    );
+    setSelection({ kind: "prop", id: copyId });
+    showToast("Prop duplicated.", "success");
+  };
+
+  // --- Select tool hit testing ---
+  const selectionHandleWorld = (): { x: number; y: number } | null => {
+    const st = stateRef.current;
+    const lay = layoutRef.current;
+    if (!st || !lay || !st.selection) return null;
+    if (st.selection.kind === "location") {
+      const b = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, st.selection.id).bounds;
+      return { x: b.x + b.w, y: b.y + b.h };
+    }
+    if (st.selection.kind === "prop") {
+      const found = findProp(lay, st.selection.id);
+      if (!found) return null;
+      return { x: found.prop.x + (found.prop.w || 1), y: found.prop.y + (found.prop.h || 1) };
+    }
+    return null;
+  };
+
+  const beginSelectGesture = (e: React.PointerEvent, world: { wx: number; wy: number }) => {
+    const st = stateRef.current!;
+    const lay = layoutRef.current!;
+    const cam = cameraRef.current;
+    const tolWorld = (HANDLE_PX + 4) / cam.scale;
+
+    // 1. Resize handle of the current selection
+    const corner = selectionHandleWorld();
+    if (corner && st.selection && Math.hypot(world.wx - corner.x, world.wy - corner.y) <= tolWorld) {
+      const before = lay;
+      layoutRef.current = deepClone(lay);
+      if (st.selection.kind === "location") {
+        const orig = resolveLocation(before, st.canonicalRecs, st.selectedCaseId, st.selection.id).bounds;
+        gestureRef.current = { kind: "resizeLoc", before, id: st.selection.id, startW: world, orig: { ...orig }, mutated: false };
+      } else if (st.selection.kind === "prop") {
+        const found = findProp(before, st.selection.id)!;
+        gestureRef.current = {
+          kind: "resizeProp",
+          before,
+          id: st.selection.id,
+          startW: world,
+          orig: { w: found.prop.w || 1, h: found.prop.h || 1 },
+          mutated: false
+        };
+      }
+      return;
+    }
+
+    // 2. Evidence anchors
+    if (st.selectedCaseId !== "canonical" && st.showEvidenceAnchors && st.visibleLayers["object_anchors"]) {
+      for (const o of st.activeObjects) {
+        const eff = resolveAnchor(lay, st.canonicalRecs, st.selectedCaseId, o);
+        if (Math.hypot(world.wx - eff.anchor.x, world.wy - eff.anchor.y) <= 12 / cam.scale) {
+          setSelection({ kind: "object", id: o.object_id });
+          const before = lay;
+          layoutRef.current = deepClone(lay);
+          gestureRef.current = { kind: "moveAnchor", before, id: o.object_id, startW: world, orig: { ...eff.anchor }, mutated: false };
+          return;
+        }
+      }
+    }
+
+    // 3. Props (topmost wins)
+    const props = mergedProps(lay, st.selectedCaseId);
+    for (let i = props.length - 1; i >= 0; i--) {
+      const p = props[i];
+      if (!st.visibleLayers[p.layer || "props"]) continue;
+      if (world.wx >= p.x && world.wx < p.x + (p.w || 1) && world.wy >= p.y && world.wy < p.y + (p.h || 1)) {
+        setSelection({ kind: "prop", id: p.instance_id });
+        const before = lay;
+        layoutRef.current = deepClone(lay);
+        gestureRef.current = { kind: "moveProp", before, id: p.instance_id, startW: world, orig: { x: p.x, y: p.y }, mutated: false };
+        return;
+      }
+    }
+
+    // 4. Locations (smallest area wins so nested rooms stay selectable)
+    if (st.visibleLayers["debug_bounds"]) {
+      let best: { id: string; bounds: Bounds; area: number } | null = null;
+      for (const l of st.activeLocations) {
+        const b = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, l.location_id).bounds;
+        if (world.wx >= b.x && world.wx < b.x + b.w && world.wy >= b.y && world.wy < b.y + b.h) {
+          const area = b.w * b.h;
+          if (!best || area < best.area) best = { id: l.location_id, bounds: b, area };
+        }
+      }
+      if (best) {
+        setSelection({ kind: "location", id: best.id });
+        const before = lay;
+        layoutRef.current = deepClone(lay);
+        gestureRef.current = {
+          kind: "moveLoc",
+          before,
+          id: best.id,
+          startW: world,
+          orig: { ...best.bounds },
+          mutated: false,
+          attached: collectAttached(before, st.selectedCaseId, best.id, best.bounds)
+        };
+        return;
+      }
+    }
+
+    // 5. Empty space: clear selection and pan
+    setSelection(null);
+    gestureRef.current = { kind: "pan", lastX: e.clientX, lastY: e.clientY };
+  };
+
+  // --- In-gesture mutators (layoutRef.current is a private clone here) ---
+  const setLocBoundsInRef = (locId: string, updates: Partial<Bounds>) => {
+    const st = stateRef.current!;
+    applyLocationBounds(layoutRef.current!, st.canonicalRecs, st.selectedCaseId, locId, updates);
+  };
+
+  const setAnchorInRef = (objId: string, updates: Partial<{ x: number; y: number }>) => {
+    const st = stateRef.current!;
+    const obj = st.activeObjects.find((o) => o.object_id === objId);
+    if (!obj) return;
+    applyAnchor(layoutRef.current!, st.canonicalRecs, st.selectedCaseId, obj, updates);
+  };
+
+  // --- Pointer events ---
+  const onCanvasPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const lay = layoutRef.current;
+    const st = stateRef.current;
+    if (!lay || !st || e.button === 2) return;
+    e.preventDefault();
+    canvasRef.current?.setPointerCapture(e.pointerId);
+
+    const world = eventToWorld(e);
+    const tile = eventToTile(e);
+
+    if (e.button === 1 || spaceRef.current || st.activeTool === "pan") {
+      gestureRef.current = { kind: "pan", lastX: e.clientX, lastY: e.clientY };
+      setCanvasCursor("grabbing");
+      return;
+    }
+
+    switch (st.activeTool) {
+      case "paint":
+      case "erase": {
+        if (e.altKey) {
+          samplePicker(tile);
+          return;
+        }
+        const before = lay;
+        layoutRef.current = deepClone(lay);
+        const g: Extract<Gesture, { kind: "paint" }> = {
+          kind: "paint",
+          before,
+          erase: st.activeTool === "erase",
+          last: tile,
+          painted: new Set()
+        };
+        gestureRef.current = g;
+        stampBrush(tile.x, tile.y, g);
+        requestRender();
+        break;
+      }
+      case "rect":
+        gestureRef.current = { kind: "rect", before: lay, start: tile, current: tile, erase: e.altKey };
+        requestRender();
+        break;
+      case "fill":
+        floodFill(tile);
+        break;
+      case "picker":
+        samplePicker(tile);
+        break;
+      case "prop":
+        placeProp(tile, world);
+        break;
+      default:
+        beginSelectGesture(e, world);
+    }
+  };
+
+  const onCanvasPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const lay = layoutRef.current;
+    const st = stateRef.current;
+    if (!lay || !st) return;
+    const world = eventToWorld(e);
+    const tile = eventToTile(e);
+
+    if (statusCoordsRef.current) statusCoordsRef.current.textContent = `${tile.x}, ${tile.y}`;
+    const hovLoc = findLocationIdAtWorld(world.wx, world.wy);
+    hoverLocRef.current = hovLoc;
+    if (statusHoverLocRef.current) statusHoverLocRef.current.textContent = hovLoc || "—";
+
+    const g = gestureRef.current;
+    if (!g) {
+      const prev = hoverRef.current;
+      hoverRef.current = tile;
+      updateCursor(world);
+      if (!prev || prev.x !== tile.x || prev.y !== tile.y) requestRender();
+      return;
+    }
+
+    const gCols = lay.grid.cols;
+    const gRows = lay.grid.rows;
+
+    switch (g.kind) {
+      case "pan": {
+        const cam = cameraRef.current;
+        cam.x -= (e.clientX - g.lastX) / cam.scale;
+        cam.y -= (e.clientY - g.lastY) / cam.scale;
+        g.lastX = e.clientX;
+        g.lastY = e.clientY;
+        clampCamera();
+        requestRender();
+        break;
+      }
+      case "paint":
+        paintLine(g.last, tile, g);
+        g.last = tile;
+        hoverRef.current = tile;
+        requestRender();
+        break;
+      case "rect":
+        g.current = tile;
+        requestRender();
+        break;
+      case "moveLoc": {
+        const { dx, dy } = snappedDelta(world, g.startW);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        const nx = clamp(g.orig.x + dx, 0, Math.max(0, gCols - g.orig.w));
+        const ny = clamp(g.orig.y + dy, 0, Math.max(0, gRows - g.orig.h));
+        setLocBoundsInRef(g.id, { x: nx, y: ny });
+        applyAttached(layoutRef.current!, g.attached, nx - g.orig.x, ny - g.orig.y, gCols, gRows);
+        requestRender();
+        break;
+      }
+      case "resizeLoc": {
+        const { dx, dy } = snappedDelta(world, g.startW);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        setLocBoundsInRef(g.id, {
+          w: clamp(g.orig.w + dx, 1, gCols - g.orig.x),
+          h: clamp(g.orig.h + dy, 1, gRows - g.orig.y)
+        });
+        requestRender();
+        break;
+      }
+      case "moveAnchor": {
+        const { dx, dy } = snappedDelta(world, g.startW);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        setAnchorInRef(g.id, {
+          x: clamp(g.orig.x + dx, 0, gCols - 1),
+          y: clamp(g.orig.y + dy, 0, gRows - 1)
+        });
+        requestRender();
+        break;
+      }
+      case "moveProp": {
+        const dx = Math.round(world.wx - g.startW.wx);
+        const dy = Math.round(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        applyPropUpdate(layoutRef.current!, g.id, (p) => {
+          p.x = clamp(g.orig.x + dx, 0, gCols - 1);
+          p.y = clamp(g.orig.y + dy, 0, gRows - 1);
+        });
+        requestRender();
+        break;
+      }
+      case "resizeProp": {
+        const dx = Math.round(world.wx - g.startW.wx);
+        const dy = Math.round(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        applyPropUpdate(layoutRef.current!, g.id, (p) => {
+          p.w = Math.max(1, g.orig.w + dx);
+          p.h = Math.max(1, g.orig.h + dy);
+        });
+        requestRender();
+        break;
+      }
+    }
+  };
+
+  const onCanvasPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const g = gestureRef.current;
+    if (!g) return;
+    gestureRef.current = null;
+    try {
+      canvasRef.current?.releasePointerCapture(e.pointerId);
+    } catch {
+      /* already released */
+    }
+
+    if (g.kind === "pan") {
+      updateCursor(eventToWorld(e));
+      return;
+    }
+    if (g.kind === "rect") {
+      applyRectGesture(g);
+      requestRender();
+      return;
+    }
+    if (g.kind === "paint") {
+      if (g.painted.size > 0) {
+        setLayout(layoutRef.current!);
+        setIsDirty(true);
+        pushHistory(g.before);
+      } else {
+        layoutRef.current = g.before;
+        requestRender();
+      }
+      return;
+    }
+    // Move / resize gestures
+    if (g.mutated) {
+      setLayout(layoutRef.current!);
+      setIsDirty(true);
+      pushHistory(g.before);
+    } else {
+      layoutRef.current = g.before;
+      requestRender();
+    }
+  };
+
+  const cancelGesture = (): boolean => {
+    const g = gestureRef.current;
+    if (!g) return false;
+    gestureRef.current = null;
+    if (g.kind !== "pan") {
+      layoutRef.current = g.before;
+      requestRender();
+    }
+    return true;
+  };
+
+  const setCanvasCursor = (cursor: string) => {
+    if (canvasRef.current) canvasRef.current.style.cursor = cursor;
+  };
+
+  const updateCursor = (world: { wx: number; wy: number }) => {
+    const st = stateRef.current;
+    if (!st) return;
+    if (spaceRef.current || st.activeTool === "pan") {
+      setCanvasCursor(gestureRef.current?.kind === "pan" ? "grabbing" : "grab");
+      return;
+    }
+    switch (st.activeTool) {
+      case "paint":
+      case "erase":
+      case "rect":
+      case "fill":
+      case "picker":
+        setCanvasCursor("crosshair");
+        return;
+      case "prop":
+        setCanvasCursor("copy");
+        return;
+      default: {
+        const cam = cameraRef.current;
+        const corner = selectionHandleWorld();
+        if (corner && Math.hypot(world.wx - corner.x, world.wy - corner.y) <= (HANDLE_PX + 4) / cam.scale) {
+          setCanvasCursor("nwse-resize");
+          return;
+        }
+        setCanvasCursor(hoverLocRef.current ? "move" : "default");
+      }
+    }
+  };
+
+  // --- Minimap interaction ---
+  const minimapJump = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const mm = minimapRef.current;
+    const scene = lastSceneRef.current;
+    if (!mm || !scene) return;
+    const rect = mm.getBoundingClientRect();
+    const p = minimapToWorld(mm, scene, e.clientX - rect.left, e.clientY - rect.top);
+    const cam = cameraRef.current;
+    const { w, h } = sizeRef.current;
+    cam.x = p.x - w / (2 * cam.scale);
+    cam.y = p.y - h / (2 * cam.scale);
+    clampCamera();
+    requestRender();
+  };
+
+  // --- Keyboard ---
+  const nudgeSelection = (dx: number, dy: number, big: boolean) => {
+    const st = stateRef.current;
+    const lay = layoutRef.current;
+    if (!st || !lay || !st.selection) return;
+    const step = big ? 5 : st.fineAdjustment ? 0.5 : 1;
+    const mx = dx * step;
+    const my = dy * step;
+    const gCols = lay.grid.cols;
+    const gRows = lay.grid.rows;
+    const sel = st.selection;
+    if (sel.kind === "location") {
+      mutateLayout(
+        (l) => {
+          const b = resolveLocation(l, st.canonicalRecs, st.selectedCaseId, sel.id).bounds;
+          const nx = clamp(b.x + mx, 0, Math.max(0, gCols - b.w));
+          const ny = clamp(b.y + my, 0, Math.max(0, gRows - b.h));
+          const attached = collectAttached(l, st.selectedCaseId, sel.id, b);
+          applyLocationBounds(l, st.canonicalRecs, st.selectedCaseId, sel.id, { x: nx, y: ny });
+          applyAttached(l, attached, nx - b.x, ny - b.y, gCols, gRows);
+        },
+        { undoable: true }
+      );
+    } else if (sel.kind === "object") {
+      const obj = st.activeObjects.find((o) => o.object_id === sel.id);
+      if (!obj) return;
+      const a = resolveAnchor(lay, st.canonicalRecs, st.selectedCaseId, obj).anchor;
+      mutateLayout(
+        (l) =>
+          applyAnchor(l, st.canonicalRecs, st.selectedCaseId, obj, {
+            x: clamp(a.x + mx, 0, gCols - 1),
+            y: clamp(a.y + my, 0, gRows - 1)
+          }),
+        { undoable: true }
+      );
+    } else if (sel.kind === "prop") {
+      mutateLayout(
+        (l) => {
+          applyPropUpdate(l, sel.id, (p) => {
+            p.x = clamp(p.x + Math.round(mx), 0, gCols - 1);
+            p.y = clamp(p.y + Math.round(my), 0, gRows - 1);
+          });
+        },
+        { undoable: true }
+      );
+    }
+  };
+
+  keyDownRef.current = (e: KeyboardEvent) => {
+    const tag = (document.activeElement?.tagName || "").toUpperCase();
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    if (showExportModal || showImportModal || showShortcuts) {
+      if (e.key === "Escape") {
+        setShowExportModal(false);
+        setShowImportModal(false);
+        setShowShortcuts(false);
+      }
+      return;
+    }
+    const meta = e.ctrlKey || e.metaKey;
+    const key = e.key.toLowerCase();
+
+    if (meta && key === "z") {
+      e.preventDefault();
+      if (e.shiftKey) handleRedo();
+      else handleUndo();
+      return;
+    }
+    if (meta && key === "y") {
+      e.preventDefault();
+      handleRedo();
+      return;
+    }
+    if (meta && key === "s") {
+      e.preventDefault();
+      handleSave();
+      return;
+    }
+    if (meta && key === "d") {
+      if (selection?.kind === "prop") {
+        e.preventDefault();
+        duplicateProp(selection.id);
+      }
+      return;
+    }
+    if (meta) return;
+
+    switch (e.key) {
+      case " ":
+        if (!spaceRef.current) {
+          spaceRef.current = true;
+          setCanvasCursor("grab");
+        }
+        e.preventDefault();
+        return;
+      case "Escape":
+        if (!cancelGesture()) setSelection(null);
+        return;
+      case "Delete":
+      case "Backspace":
+        if (selection?.kind === "prop") deleteProp(selection.id);
+        return;
+      case "[":
+        setBrushSize((s) => Math.max(1, s - 1));
+        return;
+      case "]":
+        setBrushSize((s) => Math.min(8, s + 1));
+        return;
+      case "+":
+      case "=":
+        zoomCentered(1.25);
+        return;
+      case "-":
+        zoomCentered(0.8);
+        return;
+      case "0":
+        fitView();
+        return;
+      case "?":
+        setShowShortcuts(true);
+        return;
+      case "ArrowLeft":
+        e.preventDefault();
+        nudgeSelection(-1, 0, e.shiftKey);
+        return;
+      case "ArrowRight":
+        e.preventDefault();
+        nudgeSelection(1, 0, e.shiftKey);
+        return;
+      case "ArrowUp":
+        e.preventDefault();
+        nudgeSelection(0, -1, e.shiftKey);
+        return;
+      case "ArrowDown":
+        e.preventDefault();
+        nudgeSelection(0, 1, e.shiftKey);
+        return;
+    }
+
+    const tool = TOOL_DEFS.find((t) => t.key.toLowerCase() === key);
+    if (tool) {
+      setActiveTool(tool.id);
+      return;
+    }
+    if (key === "m") setShowMinimap((v) => !v);
+  };
+
+  keyUpRef.current = (e: KeyboardEvent) => {
+    if (e.key === " ") {
+      spaceRef.current = false;
+      setCanvasCursor("default");
+    }
+  };
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => keyDownRef.current(e);
+    const up = (e: KeyboardEvent) => keyUpRef.current(e);
+    window.addEventListener("keydown", down);
+    window.addEventListener("keyup", up);
+    return () => {
+      window.removeEventListener("keydown", down);
+      window.removeEventListener("keyup", up);
+    };
+  }, []);
+
+  // --- Panel operations ---
+  const toggleLocationVisibility = (locId: string) => {
+    if (selectedCaseId === "canonical") return;
+    mutateLayout(
+      (l) => {
+        if (!l.case_overrides[selectedCaseId]) l.case_overrides[selectedCaseId] = emptyOverride();
+        const list = l.case_overrides[selectedCaseId].visible_locations;
+        l.case_overrides[selectedCaseId].visible_locations = list.includes(locId)
+          ? list.filter((id) => id !== locId)
+          : [...list, locId];
+      },
+      { undoable: true }
+    );
+  };
+
+  const promoteToCanonical = () => {
+    if (!layout || selectedCaseId === "canonical" || selection?.kind !== "location") return;
+    const locId = selection.id;
+    const eff = resolveLocation(layout, canonicalRecs, selectedCaseId, locId);
+    mutateLayout(
+      (l) => {
+        if (!l.canonical_locations[locId]) {
+          l.canonical_locations[locId] = { bounds: { ...eff.bounds }, mode: eff.mode };
+        } else {
+          l.canonical_locations[locId].bounds = { ...eff.bounds };
+        }
+        if (l.case_overrides[selectedCaseId]?.location_bounds[locId]) {
+          delete l.case_overrides[selectedCaseId].location_bounds[locId];
+        }
+      },
+      { undoable: true }
+    );
+    showToast(`Promoted bounds of '${locId}' to canonical town template.`, "success");
+  };
+
+  const resetToCanonicalRec = () => {
+    if (selection?.kind !== "location") return;
+    const rec = canonicalRecs[selection.id];
+    if (!rec) return;
+    const locId = selection.id;
+    mutateLayout((l) => applyLocationBounds(l, canonicalRecs, selectedCaseId, locId, rec.bounds), { undoable: true });
+    showToast("Reset to recommended layout bounds.", "info");
+  };
+
+  const resetToLegacyFallback = () => {
+    if (selection?.kind !== "location") return;
+    const loc = activeLocations.find((l) => l.location_id === selection.id);
+    if (!loc?.legacy_bounds) return;
+    const locId = selection.id;
+    const lb = loc.legacy_bounds;
+    mutateLayout(
+      (l) =>
+        applyLocationBounds(l, canonicalRecs, selectedCaseId, locId, {
+          x: lb.x / 32,
+          y: lb.y / 32,
+          w: lb.width / 32,
+          h: lb.height / 32
+        }),
+      { undoable: true }
+    );
+    showToast("Reset to legacy contract bounds.", "info");
+  };
+
+  const handleSave = () => {
+    const lay = layoutRef.current;
+    if (!lay) return;
+    if (validationWarnings.length > 0) {
+      showToast(`Cannot save: ${validationWarnings.length} validation warning(s) — see the Validations panel.`, "error");
+      return;
+    }
+    api
+      .saveDevMapLayout(lay)
+      .then(() => {
+        setIsDirty(false);
+        setServerErrors([]);
+        showToast("Layout saved atomically with backup created.", "success");
+      })
+      .catch((err: Error) => {
+        const msgs = String(err.message || "").split("\n").filter(Boolean);
+        setServerErrors(msgs);
+        showToast(
+          msgs.length > 1
+            ? `Save rejected: ${msgs.length} server validation errors — see the Validations panel.`
+            : `Save failed: ${msgs[0] || "unknown error"}`,
+          "error"
+        );
+      });
+  };
+
+  const handleImportTextSubmit = () => {
+    try {
+      const parsed = JSON.parse(importText) as TownLayout;
+      if (parsed.version !== "town_layout_editor_v2") {
+        showToast("Import failed: version must be town_layout_editor_v2.", "error");
+        return;
+      }
+      if (!parsed.grid || parsed.grid.cols !== cols || parsed.grid.rows !== rows) {
+        showToast(`Import failed: grid size must be ${cols}×${rows}.`, "error");
+        return;
+      }
+      mutateLayout(
+        (l) => {
+          Object.assign(l, {
+            ...parsed,
+            tile_layers: parsed.tile_layers || {},
+            prop_instances: parsed.prop_instances || {}
+          });
+        },
+        { undoable: true }
+      );
+      setShowImportModal(false);
+      showToast("JSON layout imported. Review changes and click Save.", "success");
+    } catch (err: any) {
+      showToast(`JSON syntax error: ${err.message}`, "error");
+    }
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([JSON.stringify(layout, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "town_layout.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExit = () => {
+    if (isDirty && !window.confirm("You have unsaved layout modifications. Exit anyway?")) return;
+    window.location.hash = "#/";
+  };
+
+  const selectLocationFromList = (locId: string) => {
+    setSelection({ kind: "location", id: locId });
+    if (activeTool !== "select") setActiveTool("select");
+  };
+
+  const zoomToLocation = (locId: string) => {
+    if (!layout) return;
+    zoomToBounds(resolveLocation(layout, canonicalRecs, selectedCaseId, locId).bounds);
+  };
+
+  const paintedTileCount = useMemo(() => {
+    if (!layout?.tile_layers) return 0;
+    return Object.values(layout.tile_layers).reduce((acc, l) => acc + (l.tiles?.length || 0), 0);
+  }, [layout]);
+
+  const filteredLocations = useMemo(() => {
+    const q = locationSearch.trim().toLowerCase();
+    const sorted = [...activeLocations].sort((a, b) => a.name.localeCompare(b.name));
+    if (!q) return sorted;
+    return sorted.filter(
+      (l) => l.name.toLowerCase().includes(q) || l.location_id.toLowerCase().includes(q)
+    );
+  }, [activeLocations, locationSearch]);
+
+  const activeToolDef = TOOL_DEFS.find((t) => t.id === activeTool)!;
+
+  // -------------------------------------------------------------------------
+  // Render
+  // -------------------------------------------------------------------------
+
+  if (loading) {
+    return (
+      <div className="dev-map-loading">
+        <style>{BASE_SCREEN_CSS}</style>
+        <div className="spinner" />
+        Loading Map Studio…
+      </div>
+    );
+  }
+
+  if (error || !layout) {
+    return (
+      <div className="dev-map-error">
+        <style>{BASE_SCREEN_CSS}</style>
+        <h3>Developer Environment Error</h3>
+        <p>{error || "Layout configuration not parsed."}</p>
+        <button className="retry-btn" onClick={() => window.location.reload()}>
+          Retry Connection
+        </button>
+      </div>
+    );
+  }
+
+  const selectedLocation =
+    selection?.kind === "location" ? activeLocations.find((l) => l.location_id === selection.id) : null;
+  const selectedLocationEff = selectedLocation
+    ? resolveLocation(layout, canonicalRecs, selectedCaseId, selectedLocation.location_id)
+    : null;
+  const selectedObject =
+    selection?.kind === "object" ? activeObjects.find((o) => o.object_id === selection.id) : null;
+  const selectedObjectEff = selectedObject
+    ? resolveAnchor(layout, canonicalRecs, selectedCaseId, selectedObject)
+    : null;
+  const selectedProp =
+    selection?.kind === "prop" ? activeProps.find((p) => p.instance_id === selection.id) : null;
+
+  return (
+    <div className="dev-map-root">
+      <style>{EDITOR_CSS}</style>
+
+      {/* ---------------- Header ---------------- */}
+      <header className="dev-map-header">
+        <div className="header-title-section">
+          <h2>🗺 Map Studio</h2>
+          <span className="grid-chip">
+            {cols}×{rows} · {layout.grid.tile_size}px tiles
+          </span>
+          {isDirty && <span className="dirty-badge">● Unsaved changes</span>}
+        </div>
+        <div className="actions-group">
+          <button
+            className="mse-btn mse-btn-secondary"
+            onClick={handleUndo}
+            disabled={history.length === 0}
+            title="Undo (⌘Z)"
+          >
+            ↩ Undo{history.length > 0 ? ` (${history.length})` : ""}
+          </button>
+          <button
+            className="mse-btn mse-btn-secondary"
+            onClick={handleRedo}
+            disabled={redoStack.length === 0}
+            title="Redo (⇧⌘Z)"
+          >
+            ↪ Redo
+          </button>
+          <div className="header-divider" />
+          <button className="mse-btn mse-btn-secondary" onClick={() => setShowShortcuts(true)} title="Keyboard shortcuts (?)">
+            ⌨
+          </button>
+          <button className="mse-btn mse-btn-secondary" onClick={() => setShowImportModal(true)}>
+            📥 Import
+          </button>
+          <button className="mse-btn mse-btn-secondary" onClick={() => setShowExportModal(true)}>
+            📤 Export
+          </button>
+          <button
+            className={`mse-btn mse-btn-primary ${validationWarnings.length ? "mse-btn-warn" : ""}`}
+            onClick={handleSave}
+            title="Save (⌘S)"
+          >
+            {validationWarnings.length ? `⚠ Fix ${validationWarnings.length} to save` : "💾 Save Layout"}
+          </button>
+          <button className="mse-btn mse-btn-danger" onClick={handleExit}>
+            Exit
+          </button>
+        </div>
+      </header>
+
+      <div className="main-editor-layout">
+        {/* ---------------- Left sidebar ---------------- */}
+        <aside className="left-sidebar">
+          <div className="control-group">
+            <label className="section-title">Target Scope</label>
+            <select
+              value={selectedCaseId}
+              onChange={(e) => {
+                setSelectedCaseId(e.target.value);
+                setSelection(null);
+              }}
+            >
+              <option value="canonical">Canonical Town Template</option>
+              {cases.map((c) => (
+                <option key={c.case_id} value={c.case_id}>
+                  {c.case_id.toUpperCase()} — {c.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="control-group">
+            <label className="section-title">Tools</label>
+            <div className="tool-grid">
+              {TOOL_DEFS.map((t) => (
+                <button
+                  key={t.id}
+                  className={`mse-tool-btn ${activeTool === t.id ? "active" : ""}`}
+                  onClick={() => setActiveTool(t.id)}
+                  title={`${t.label} (${t.key})`}
+                >
+                  <span className="tool-icon">{t.icon}</span>
+                  <span className="tool-name">{t.label.split(" ")[0]}</span>
+                  <span className="tool-key">{t.key}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {(activeTool === "paint" || activeTool === "erase" || activeTool === "rect" || activeTool === "fill" || activeTool === "picker") && (
+            <div className="control-group">
+              <label className="section-title">Tile Brush</label>
+              <div className="inline-row">
+                <label className="mini-label">Layer</label>
+                <select value={paintLayer} onChange={(e) => setPaintLayer(e.target.value)}>
+                  {ALLOWED_LAYERS.map((l) => (
+                    <option key={l} value={l}>
+                      {l}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {(activeTool === "paint" || activeTool === "erase") && (
+                <div className="inline-row">
+                  <label className="mini-label">Size {brushSize}×{brushSize}</label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={8}
+                    step={1}
+                    value={brushSize}
+                    onChange={(e) => setBrushSize(parseInt(e.target.value, 10))}
+                  />
+                </div>
+              )}
+              {activeTool !== "erase" && (
+                <div className="palette-grid">
+                  {ALLOWED_TILES.map((tId) => (
+                    <div
+                      key={tId}
+                      className={`palette-item ${selectedTileId === tId ? "active" : ""}`}
+                      style={{ backgroundColor: TILE_COLORS[tId] || "#ccc" }}
+                      onClick={() => setSelectedTileId(tId)}
+                      title={tId}
+                    >
+                      <span className="palette-item-text">{tId.replace("tile_", "")}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTool === "prop" && (
+            <div className="control-group">
+              <label className="section-title">Prop Palette</label>
+              <div className="inline-row">
+                <label className="mini-label">Layer</label>
+                <select value={propLayer} onChange={(e) => setPropLayer(e.target.value)}>
+                  {ALLOWED_LAYERS.map((l) => (
+                    <option key={l} value={l}>
+                      {l}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="palette-grid">
+                {ALLOWED_PROPS.map((pId) => (
+                  <div
+                    key={pId}
+                    className={`palette-item prop ${selectedPropId === pId ? "active" : ""}`}
+                    onClick={() => setSelectedPropId(pId)}
+                    title={pId}
+                  >
+                    <span className="palette-emoji">{PROP_EMOJIS[pId] || "📦"}</span>
+                    <span className="palette-item-text">{pId.replace("prop_", "")}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <details open className="sidebar-section">
+            <summary className="section-title">View</summary>
+            <div className="control-group">
+              <div className="inline-row">
+                <label className="mini-label">Underlay</label>
+                <select value={underlaySource} onChange={(e) => setUnderlaySource(e.target.value as UnderlaySourceId)}>
+                  {UNDERLAY_SOURCES.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.label}
+                    </option>
+                  ))}
+                  <option value="none">None (blank grid)</option>
+                </select>
+              </div>
+              {underlaySource !== "none" && (
+                <div className="inline-row">
+                  <label className="mini-label">Opacity {Math.round(underlayOpacity * 100)}%</label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={underlayOpacity}
+                    onChange={(e) => setUnderlayOpacity(parseFloat(e.target.value))}
+                  />
+                </div>
+              )}
+              <label className="check-row">
+                <input type="checkbox" checked={showGrid} onChange={(e) => setShowGrid(e.target.checked)} />
+                Grid lines
+              </label>
+              <label className="check-row">
+                <input type="checkbox" checked={showLabels} onChange={(e) => setShowLabels(e.target.checked)} />
+                Location labels
+              </label>
+              <label className="check-row">
+                <input type="checkbox" checked={showSafety} onChange={(e) => setShowSafety(e.target.checked)} />
+                Playable boundary
+              </label>
+              <label className="check-row">
+                <input type="checkbox" checked={showMinimap} onChange={(e) => setShowMinimap(e.target.checked)} />
+                Minimap (M)
+              </label>
+              <label className="check-row">
+                <input type="checkbox" checked={solidRenderView} onChange={(e) => setSolidRenderView(e.target.checked)} />
+                🌲 Solid grass backdrop
+              </label>
+            </div>
+          </details>
+
+          <details open className="sidebar-section">
+            <summary className="section-title">Layers</summary>
+            <div className="layer-list">
+              {[...ALLOWED_LAYERS].reverse().map((l) => (
+                <label key={l} className={`layer-item ${paintLayer === l ? "target" : ""}`}>
+                  <span className="layer-name">
+                    {paintLayer === l && <span className="target-dot" title="Active paint layer" />}
+                    {l}
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={visibleLayers[l]}
+                    onChange={() => setVisibleLayers((prev) => ({ ...prev, [l]: !prev[l] }))}
+                  />
+                </label>
+              ))}
+            </div>
+          </details>
+
+          <details open className="sidebar-section">
+            <summary className="section-title">Locations ({filteredLocations.length})</summary>
+            <input
+              className="search-input"
+              type="text"
+              placeholder="Search locations…"
+              value={locationSearch}
+              onChange={(e) => setLocationSearch(e.target.value)}
+            />
+            <div className="location-list">
+              {filteredLocations.map((l) => {
+                const eff = resolveLocation(layout, canonicalRecs, selectedCaseId, l.location_id);
+                const isSel = selection?.kind === "location" && selection.id === l.location_id;
+                const visible = isLocationVisibleIn(layout, selectedCaseId, l.location_id);
+                return (
+                  <div
+                    key={l.location_id}
+                    className={`location-item ${isSel ? "selected" : ""}`}
+                    onClick={() => selectLocationFromList(l.location_id)}
+                    onDoubleClick={() => zoomToLocation(l.location_id)}
+                    title={`${l.location_id} — double-click to zoom`}
+                  >
+                    <span className={`source-dot ${eff.source}`} />
+                    <span className="loc-name">{l.name}</span>
+                    {selectedCaseId !== "canonical" && (
+                      <button
+                        className={`eye-btn ${visible ? "on" : ""}`}
+                        title={visible ? "Visible in this case" : "Hidden in this case"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleLocationVisibility(l.location_id);
+                        }}
+                      >
+                        {visible ? "👁" : "–"}
+                      </button>
+                    )}
+                    <button
+                      className="focus-btn"
+                      title="Zoom to location"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        zoomToLocation(l.location_id);
+                      }}
+                    >
+                      ⌖
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </details>
+        </aside>
+
+        {/* ---------------- Canvas workspace ---------------- */}
+        <main className="editor-workspace" ref={workspaceRef}>
+          <canvas
+            ref={canvasRef}
+            className="editor-canvas"
+            onPointerDown={onCanvasPointerDown}
+            onPointerMove={onCanvasPointerMove}
+            onPointerUp={onCanvasPointerUp}
+            onPointerLeave={() => {
+              if (!gestureRef.current) {
+                hoverRef.current = null;
+                hoverLocRef.current = null;
+                if (statusCoordsRef.current) statusCoordsRef.current.textContent = "—";
+                if (statusHoverLocRef.current) statusHoverLocRef.current.textContent = "—";
+                requestRender();
+              }
+            }}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+
+          <div className="mse-zoombar">
+            <button onClick={() => zoomCentered(0.8)} title="Zoom out (-)">
+              −
+            </button>
+            <span ref={zoomLabelRef} className="zoom-label">
+              …
+            </span>
+            <button onClick={() => zoomCentered(1.25)} title="Zoom in (+)">
+              +
+            </button>
+            <button onClick={fitView} title="Fit map (0)">
+              ⤢
+            </button>
+          </div>
+
+          {showMinimap && (
+            <canvas
+              ref={minimapRef}
+              className="minimap"
+              onPointerDown={(e) => {
+                minimapDragRef.current = true;
+                (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
+                minimapJump(e);
+              }}
+              onPointerMove={(e) => {
+                if (minimapDragRef.current) minimapJump(e);
+              }}
+              onPointerUp={() => {
+                minimapDragRef.current = false;
+              }}
+            />
+          )}
+        </main>
+
+        {/* ---------------- Right properties panel ---------------- */}
+        <aside className="properties-panel">
+          {selectedLocation && selectedLocationEff ? (
+            <div className="panel-stack">
+              <div className="section-title">Selected Location</div>
+              <div className="control-group">
+                <label>ID</label>
+                <input type="text" value={selectedLocation.location_id} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Name</label>
+                <input type="text" value={selectedLocation.name} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Source</label>
+                <div className={`source-tag ${selectedLocationEff.source}`}>
+                  {selectedLocationEff.source.replace("_", " ").toUpperCase()}
+                  {selectedLocationEff.isOverridden && " (override active)"}
+                </div>
+              </div>
+              <div className="num-grid">
+                {(["x", "y", "w", "h"] as const).map((k) => (
+                  <div key={k} className="control-group">
+                    <label>{k === "x" ? "Tile X" : k === "y" ? "Tile Y" : k === "w" ? "Width" : "Height"}</label>
+                    <input
+                      type="number"
+                      value={selectedLocationEff.bounds[k]}
+                      step={fineAdjustment ? 0.5 : 1}
+                      onChange={(e) => {
+                        const v = parseFloat(e.target.value);
+                        if (Number.isNaN(v)) return;
+                        const locId = selectedLocation.location_id;
+                        mutateLayout((l) => {
+                          const b = resolveLocation(l, canonicalRecs, selectedCaseId, locId).bounds;
+                          const attached = k === "x" || k === "y" ? collectAttached(l, selectedCaseId, locId, b) : [];
+                          applyLocationBounds(l, canonicalRecs, selectedCaseId, locId, { [k]: v });
+                          if (k === "x" || k === "y") {
+                            applyAttached(l, attached, k === "x" ? v - b.x : 0, k === "y" ? v - b.y : 0, cols, rows);
+                          }
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="control-group">
+                <label>Mode</label>
+                <select
+                  value={selectedLocationEff.mode}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const locId = selectedLocation.location_id;
+                    const bounds = selectedLocationEff.bounds;
+                    mutateLayout((l) => {
+                      if (!l.canonical_locations[locId]) {
+                        l.canonical_locations[locId] = { bounds: { ...bounds }, mode: val };
+                      } else {
+                        l.canonical_locations[locId].mode = val;
+                      }
+                    });
+                  }}
+                >
+                  <option value="exterior">Exterior</option>
+                  <option value="interior">Interior</option>
+                </select>
+              </div>
+              {selectedCaseId !== "canonical" && (
+                <label className="check-row">
+                  <input
+                    type="checkbox"
+                    checked={isLocationVisibleIn(layout, selectedCaseId, selectedLocation.location_id)}
+                    onChange={() => toggleLocationVisibility(selectedLocation.location_id)}
+                  />
+                  Visible in this case override
+                </label>
+              )}
+              <div className="btn-row">
+                <button className="mse-btn mse-btn-secondary" onClick={() => zoomToLocation(selectedLocation.location_id)}>
+                  ⌖ Zoom to
+                </button>
+                <button className="mse-btn mse-btn-secondary" onClick={resetToCanonicalRec}>
+                  Recommended
+                </button>
+                <button className="mse-btn mse-btn-secondary" onClick={resetToLegacyFallback}>
+                  Legacy
+                </button>
+              </div>
+              {selectedCaseId !== "canonical" && (
+                <button className="mse-btn mse-btn-secondary" onClick={promoteToCanonical}>
+                  👑 Promote bounds to canonical
+                </button>
+              )}
+            </div>
+          ) : selectedObject && selectedObjectEff ? (
+            <div className="panel-stack">
+              <div className="section-title">Selected Evidence Anchor</div>
+              <div className="control-group">
+                <label>ID</label>
+                <input type="text" value={selectedObject.object_id} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Name</label>
+                <input type="text" value={selectedObject.name} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Anchored In</label>
+                <input type="text" value={selectedObjectEff.location_id} readOnly className="ro" />
+              </div>
+              <div className="num-grid">
+                {(["x", "y"] as const).map((k) => (
+                  <div key={k} className="control-group">
+                    <label>Anchor {k.toUpperCase()}</label>
+                    <input
+                      type="number"
+                      value={selectedObjectEff.anchor[k]}
+                      step={fineAdjustment ? 0.5 : 1}
+                      onChange={(e) => {
+                        const v = parseFloat(e.target.value);
+                        if (Number.isNaN(v)) return;
+                        mutateLayout((l) => applyAnchor(l, canonicalRecs, selectedCaseId, selectedObject, { [k]: v }));
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="control-group">
+                <label>Render Policy</label>
+                <select
+                  value={selectedObjectEff.render_policy || "discovery_gated"}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    mutateLayout((l) => {
+                      applyAnchor(l, canonicalRecs, selectedCaseId, selectedObject, {});
+                      l.case_overrides[selectedCaseId].object_anchors[selectedObject.object_id].render_policy = val;
+                    });
+                  }}
+                >
+                  {RENDER_POLICIES.map((p) => (
+                    <option key={p.value} value={p.value}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          ) : selectedProp ? (
+            <div className="panel-stack">
+              <div className="section-title">Selected Prop</div>
+              <div className="control-group">
+                <label>Instance</label>
+                <input type="text" value={selectedProp.instance_id} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Asset</label>
+                <div className="asset-tag">
+                  <span>{PROP_EMOJIS[selectedProp.asset_id] || "📦"}</span> {selectedProp.asset_id}
+                </div>
+              </div>
+              <div className="num-grid">
+                {(
+                  [
+                    ["x", "Prop X"],
+                    ["y", "Prop Y"],
+                    ["w", "Width"],
+                    ["h", "Height"]
+                  ] as const
+                ).map(([k, label]) => (
+                  <div key={k} className="control-group">
+                    <label>{label}</label>
+                    <input
+                      type="number"
+                      value={k === "w" ? selectedProp.w || 1 : k === "h" ? selectedProp.h || 1 : selectedProp[k]}
+                      onChange={(e) => {
+                        const v = parseFloat(e.target.value);
+                        if (Number.isNaN(v)) return;
+                        mutateLayout((l) => {
+                          applyPropUpdate(l, selectedProp.instance_id, (p) => {
+                            (p as any)[k] = k === "w" || k === "h" ? Math.max(1, v) : v;
+                          });
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="control-group">
+                <label>Layer</label>
+                <select
+                  value={selectedProp.layer || "props"}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    mutateLayout((l) => {
+                      applyPropUpdate(l, selectedProp.instance_id, (p) => (p.layer = val));
+                    });
+                  }}
+                >
+                  {ALLOWED_LAYERS.map((l) => (
+                    <option key={l} value={l}>
+                      {l}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="control-group">
+                <label>Render Policy</label>
+                <select
+                  value={selectedProp.render_policy || "always_visible"}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    mutateLayout((l) => {
+                      applyPropUpdate(l, selectedProp.instance_id, (p) => (p.render_policy = val));
+                    });
+                  }}
+                >
+                  {RENDER_POLICIES.map((p) => (
+                    <option key={p.value} value={p.value}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="control-group">
+                <label>Linked Clue Object ID (optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. obj_mud_bootprint"
+                  value={selectedProp.object_id || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    mutateLayout((l) => {
+                      applyPropUpdate(l, selectedProp.instance_id, (p) => (p.object_id = val || undefined));
+                    });
+                  }}
+                />
+              </div>
+              <div className="btn-row">
+                <button className="mse-btn mse-btn-secondary" onClick={() => duplicateProp(selectedProp.instance_id)}>
+                  ⧉ Duplicate
+                </button>
+                <button className="mse-btn mse-btn-danger" onClick={() => deleteProp(selectedProp.instance_id)}>
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="panel-stack">
+              <div className="section-title">Workspace</div>
+              <label className="check-row">
+                <input type="checkbox" checked={fineAdjustment} onChange={(e) => setFineAdjustment(e.target.checked)} />
+                Fine snap (0.5-tile increments)
+              </label>
+              <div className="control-group">
+                <label>Preview Mode</label>
+                <select value={previewMode} onChange={(e) => setPreviewMode(e.target.value as PreviewMode)}>
+                  <option value="debug">Canonical Debug View</option>
+                  <option value="player_reveal">Player Case Reveal View</option>
+                  <option value="fog">Fogged Non-case Areas</option>
+                </select>
+              </div>
+              <label className="check-row">
+                <input
+                  type="checkbox"
+                  checked={showEvidenceAnchors}
+                  onChange={(e) => setShowEvidenceAnchors(e.target.checked)}
+                />
+                Show evidence anchors
+              </label>
+              <div className="hint-box">
+                <strong>{activeToolDef.label}</strong>
+                <span>{activeToolDef.hint}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="validations-block">
+            <div className="section-title">Validations ({validationWarnings.length})</div>
+            {serverErrors.length > 0 && (
+              <div className="warnings-panel">
+                <strong>Server rejected the last save:</strong>
+                {serverErrors.map((e, idx) => (
+                  <div key={idx}>• {e}</div>
+                ))}
+              </div>
+            )}
+            {validationWarnings.length === 0 ? (
+              serverErrors.length === 0 && <div className="ok-box">✓ No coordinate warnings.</div>
+            ) : (
+              <div className="warnings-panel">
+                {validationWarnings.map((w, idx) => (
+                  <div key={idx}>• {w}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
+
+      {/* ---------------- Status bar ---------------- */}
+      <footer className="status-bar">
+        <span className="sb-tool">
+          {activeToolDef.icon} {activeToolDef.label}
+        </span>
+        <span className="sb-hint">{activeToolDef.hint}</span>
+        <span className="sb-right">
+          <span>
+            Tile <span ref={statusCoordsRef} className="mono">—</span>
+          </span>
+          <span>
+            Loc <span ref={statusHoverLocRef} className="mono">—</span>
+          </span>
+          <span>
+            Layer <span className="mono">{activeTool === "prop" ? propLayer : paintLayer}</span>
+          </span>
+          <span>
+            Tiles <span className="mono">{paintedTileCount}</span>
+          </span>
+          <span>
+            Zoom <span ref={statusZoomRef} className="mono">…</span>
+          </span>
+        </span>
+      </footer>
+
+      {/* ---------------- Modals ---------------- */}
+      {showExportModal && (
+        <div className="mse-modal-overlay" onClick={() => setShowExportModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="section-title">Export Layout JSON</div>
+            <textarea readOnly value={JSON.stringify(layout, null, 2)} onClick={(e) => (e.target as HTMLTextAreaElement).select()} />
+            <div className="modal-actions">
+              <button className="mse-btn mse-btn-secondary" onClick={handleDownload}>
+                ⬇ Download .json
+              </button>
+              <button
+                className="mse-btn mse-btn-secondary"
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(layout, null, 2));
+                  showToast("Copied layout to clipboard!", "success");
+                }}
+              >
+                📋 Copy
+              </button>
+              <button className="mse-btn mse-btn-primary" onClick={() => setShowExportModal(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showImportModal && (
+        <div className="mse-modal-overlay" onClick={() => setShowImportModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="section-title">Paste Layout JSON (schema v2)</div>
+            <textarea value={importText} placeholder="Paste JSON here…" onChange={(e) => setImportText(e.target.value)} />
+            <div className="modal-actions">
+              <button className="mse-btn mse-btn-secondary" onClick={() => setShowImportModal(false)}>
+                Cancel
+              </button>
+              <button className="mse-btn mse-btn-primary" onClick={handleImportTextSubmit}>
+                Import Layout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showShortcuts && (
+        <div className="mse-modal-overlay" onClick={() => setShowShortcuts(false)}>
+          <div className="modal-content shortcuts" onClick={(e) => e.stopPropagation()}>
+            <div className="section-title">Keyboard Shortcuts</div>
+            <div className="shortcuts-grid">
+              {TOOL_DEFS.map((t) => (
+                <React.Fragment key={t.id}>
+                  <kbd>{t.key}</kbd>
+                  <span>{t.label}</span>
+                </React.Fragment>
+              ))}
+              <kbd>⌘Z / ⇧⌘Z</kbd>
+              <span>Undo / Redo</span>
+              <kbd>⌘S</kbd>
+              <span>Save layout</span>
+              <kbd>⌘D</kbd>
+              <span>Duplicate selected prop</span>
+              <kbd>Space</kbd>
+              <span>Hold to pan (any tool)</span>
+              <kbd>Scroll</kbd>
+              <span>Pan · ⌘/Ctrl+scroll or pinch to zoom</span>
+              <kbd>+ / − / 0</kbd>
+              <span>Zoom in / out / fit map</span>
+              <kbd>[ / ]</kbd>
+              <span>Brush size down / up</span>
+              <kbd>Arrows</kbd>
+              <span>Nudge selection (⇧ = 5 tiles)</span>
+              <kbd>Alt+click</kbd>
+              <span>Eyedropper while painting · erase with rectangle tool</span>
+              <kbd>Del</kbd>
+              <span>Delete selected prop</span>
+              <kbd>M</kbd>
+              <span>Toggle minimap</span>
+              <kbd>Esc</kbd>
+              <span>Cancel gesture / clear selection</span>
+            </div>
+            <div className="modal-actions">
+              <button className="mse-btn mse-btn-primary" onClick={() => setShowShortcuts(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Helpers & styles
+// ---------------------------------------------------------------------------
+
+function normRect(a: { x: number; y: number }, b: { x: number; y: number }) {
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  return { x, y, w: Math.abs(a.x - b.x) + 1, h: Math.abs(a.y - b.y) + 1 };
+}
+
+function brushCells(cx: number, cy: number, size: number, cols: number, rows: number) {
+  const half = Math.floor((size - 1) / 2);
+  const cells: Array<{ x: number; y: number }> = [];
+  for (let dx = 0; dx < size; dx++) {
+    for (let dy = 0; dy < size; dy++) {
+      const x = cx - half + dx;
+      const y = cy - half + dy;
+      if (x < 0 || y < 0 || x >= cols || y >= rows) continue;
+      cells.push({ x, y });
+    }
+  }
+  return cells;
+}
+
+const BASE_SCREEN_CSS = `
+  .dev-map-loading, .dev-map-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    height: 100vh;
+    width: 100vw;
+    background: #0a0a0d;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .dev-map-loading .spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #27272a;
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: dev-map-spin 0.9s linear infinite;
+  }
+  @keyframes dev-map-spin { to { transform: rotate(360deg); } }
+  .dev-map-error .retry-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background: #0ea5e9;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+`;
+
+const EDITOR_CSS = `
+  ${BASE_SCREEN_CSS}
+  .dev-map-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    background: #0a0a0d;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+  }
+  .dev-map-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #131316;
+    border-bottom: 1px solid #26262b;
+    z-index: 10;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .header-title-section { display: flex; align-items: center; gap: 12px; }
+  .header-title-section h2 { font-size: 1.05rem; margin: 0; font-weight: 700; color: #fff; white-space: nowrap; }
+  .grid-chip {
+    font-size: 0.7rem;
+    font-family: ui-monospace, monospace;
+    color: #94a3b8;
+    background: #1c1c21;
+    border: 1px solid #2c2c33;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+  .dirty-badge {
+    background: rgba(234, 179, 8, 0.15);
+    color: #eab308;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .actions-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .header-divider { width: 1px; height: 22px; background: #2c2c33; margin: 0 4px; }
+  .mse-btn {
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .mse-btn:disabled { opacity: 0.4; cursor: default; }
+  .mse-btn-primary { background: #0ea5e9; color: #fff; }
+  .mse-btn-primary:hover:not(:disabled) { background: #0284c7; }
+  .mse-btn-primary.mse-btn-warn { background: #b45309; }
+  .mse-btn-primary.mse-btn-warn:hover { background: #92400e; }
+  .mse-btn-secondary { background: #222227; color: #e2e8f0; border: 1px solid #333339; }
+  .mse-btn-secondary:hover:not(:disabled) { background: #333339; }
+  .mse-btn-danger { background: #be123c; color: #fff; }
+  .mse-btn-danger:hover { background: #9f1239; }
+
+  .main-editor-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+  .left-sidebar {
+    width: 292px;
+    min-width: 292px;
+    background: #131316;
+    border-right: 1px solid #26262b;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 14px;
+    gap: 16px;
+  }
+  .properties-panel {
+    width: 312px;
+    min-width: 312px;
+    background: #131316;
+    border-left: 1px solid #26262b;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 14px;
+    gap: 16px;
+  }
+  .panel-stack { display: flex; flex-direction: column; gap: 12px; }
+  .section-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #38bdf8;
+    font-weight: 700;
+  }
+  .sidebar-section > summary { cursor: pointer; user-select: none; list-style: none; display: flex; align-items: center; gap: 6px; }
+  .sidebar-section > summary::before { content: "▸"; color: #52525b; transition: transform 0.12s; font-size: 0.7rem; }
+  .sidebar-section[open] > summary::before { transform: rotate(90deg); }
+  .sidebar-section > *:not(summary) { margin-top: 10px; }
+
+  .control-group { display: flex; flex-direction: column; gap: 6px; }
+  .control-group label { font-size: 0.72rem; color: #94a3b8; }
+  .control-group select, .control-group input[type="text"], .control-group input[type="number"], .search-input {
+    background: #0a0a0d;
+    border: 1px solid #2c2c33;
+    color: #e2e8f0;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .control-group select:focus, .control-group input:focus, .search-input:focus { border-color: #38bdf8; }
+  .control-group input.ro { opacity: 0.55; }
+  .inline-row { display: flex; align-items: center; gap: 8px; }
+  .inline-row select, .inline-row input[type="range"] { flex: 1; min-width: 0; }
+  .mini-label { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; min-width: 78px; }
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: #b6c2d0;
+    user-select: none;
+  }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-row .mse-btn { flex: 1; justify-content: center; }
+  .num-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .tool-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .mse-tool-btn {
+    position: relative;
+    padding: 8px 2px 6px;
+    background: #0a0a0d;
+    border: 1px solid #2c2c33;
+    border-radius: 8px;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+  }
+  .mse-tool-btn:hover { border-color: #52525b; color: #e2e8f0; }
+  .mse-tool-btn.active { background: rgba(14, 165, 233, 0.12); border-color: #0ea5e9; color: #38bdf8; }
+  .tool-icon { font-size: 15px; line-height: 1; }
+  .tool-name { font-size: 8.5px; font-weight: 600; }
+  .tool-key {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 8px;
+    color: #52525b;
+    font-family: ui-monospace, monospace;
+  }
+  .mse-tool-btn.active .tool-key { color: #38bdf8; }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    max-height: 210px;
+    overflow-y: auto;
+    background: #0a0a0d;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #2c2c33;
+    align-items: start;
+  }
+  .palette-item {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #2c2c33;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+    overflow: hidden;
+    position: relative;
+    min-height: 50px;
+  }
+  .palette-item.prop { background: #1c1c21; }
+  .palette-item:hover { transform: scale(1.06); border-color: #a1a1aa; z-index: 2; }
+  .palette-item.active { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45); }
+  .palette-emoji { font-size: 16px; }
+  .palette-item-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    font-size: 7px;
+    color: #d4d4d8;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 2px 1px;
+  }
+
+  .layer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #0a0a0d;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #2c2c33;
+    max-height: 190px;
+    overflow-y: auto;
+  }
+  .layer-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.73rem;
+    color: #94a3b8;
+    padding: 3px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .layer-item:hover { background: #1c1c21; }
+  .layer-item.target { color: #e2e8f0; }
+  .layer-name { display: flex; align-items: center; gap: 6px; }
+  .target-dot { width: 6px; height: 6px; border-radius: 50%; background: #38bdf8; }
+
+  .location-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #0a0a0d;
+    border: 1px solid #2c2c33;
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .location-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 7px;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    user-select: none;
+  }
+  .location-item:hover { background: #1c1c21; }
+  .location-item.selected { background: rgba(14, 165, 233, 0.14); color: #7dd3fc; }
+  .loc-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .source-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .source-dot.recommended { background: #64748b; }
+  .source-dot.canonical { background: #38bdf8; }
+  .source-dot.case_override { background: #fda4af; }
+  .eye-btn, .focus-btn {
+    background: none;
+    border: none;
+    color: #52525b;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 1px 3px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .eye-btn.on { color: #4ade80; }
+  .eye-btn:hover, .focus-btn:hover { background: #26262b; color: #e2e8f0; }
+
+  .editor-workspace {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #0a0a0d;
+    min-width: 0;
+  }
+  .editor-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+  .mse-zoombar {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(19, 19, 22, 0.92);
+    border: 1px solid #2c2c33;
+    border-radius: 8px;
+    padding: 3px;
+    backdrop-filter: blur(6px);
+  }
+  .mse-zoombar button {
+    width: 28px;
+    height: 26px;
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .mse-zoombar button:hover { background: #26262b; }
+  .zoom-label {
+    min-width: 44px;
+    text-align: center;
+    font-size: 0.72rem;
+    font-family: ui-monospace, monospace;
+    color: #94a3b8;
+  }
+  .minimap {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    border: 1px solid #2c2c33;
+    border-radius: 8px;
+    cursor: crosshair;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  .source-tag { font-size: 0.8rem; font-weight: 700; }
+  .source-tag.recommended { color: #94a3b8; }
+  .source-tag.canonical { color: #38bdf8; }
+  .source-tag.case_override { color: #fda4af; }
+  .asset-tag { font-size: 0.85rem; color: #e2e8f0; display: flex; align-items: center; gap: 6px; }
+
+  .hint-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(56, 189, 248, 0.06);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.76rem;
+    color: #94a3b8;
+  }
+  .hint-box strong { color: #7dd3fc; font-size: 0.78rem; }
+
+  .validations-block { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+  .ok-box {
+    color: #4ade80;
+    font-size: 0.8rem;
+    padding: 8px 10px;
+    background: rgba(74, 222, 128, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(74, 222, 128, 0.12);
+  }
+  .warnings-panel {
+    max-height: 170px;
+    overflow-y: auto;
+    background: rgba(244, 63, 94, 0.05);
+    border: 1px solid rgba(244, 63, 94, 0.18);
+    color: #fda4af;
+    font-size: 0.76rem;
+    padding: 8px 10px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 5px 14px;
+    background: #131316;
+    border-top: 1px solid #26262b;
+    font-size: 0.72rem;
+    color: #94a3b8;
+    min-height: 26px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .sb-tool { color: #7dd3fc; font-weight: 600; flex-shrink: 0; }
+  .sb-hint { overflow: hidden; text-overflow: ellipsis; opacity: 0.75; flex: 1; min-width: 0; }
+  .sb-right { display: flex; gap: 14px; flex-shrink: 0; }
+  .mono { font-family: ui-monospace, monospace; color: #e2e8f0; }
+
+  .mse-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal-content {
+    background: #131316;
+    border: 1px solid #2c2c33;
+    padding: 22px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 680px;
+    max-height: 84vh;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+  }
+  .modal-content textarea {
+    width: 100%;
+    height: 320px;
+    background: #0a0a0d;
+    border: 1px solid #2c2c33;
+    color: #e2e8f0;
+    font-family: ui-monospace, monospace;
+    padding: 12px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+  }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+  .modal-content.shortcuts { max-width: 520px; }
+  .shortcuts-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    align-items: center;
+  }
+  .shortcuts-grid kbd {
+    background: #1c1c21;
+    border: 1px solid #333339;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    font-family: ui-monospace, monospace;
+    color: #7dd3fc;
+    justify-self: start;
+    white-space: nowrap;
+  }
+`;

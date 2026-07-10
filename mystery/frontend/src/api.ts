@@ -293,10 +293,23 @@ export const api = {
     delete: (caseId: string) => request<{ status: string }>(`/api/generated_cases/${caseId}`, { method: "DELETE" }),
   },
   getDevMapLayout: () => request<any>("/api/dev/map-editor/layout"),
-  saveDevMapLayout: (payload: any) => request<{ status: string }>("/api/dev/map-editor/layout", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  }),
+  saveDevMapLayout: async (payload: any): Promise<{ status: string }> => {
+    const res = await fetch("/api/dev/map-editor/layout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      // Validation failures return detail as {errors: [...]} — surface each error
+      const body = await res.json().catch(() => ({} as any));
+      const detail = body?.detail;
+      if (Array.isArray(detail?.errors) && detail.errors.length) {
+        throw new Error(detail.errors.join("\n"));
+      }
+      throw new Error(typeof detail === "string" ? detail : `Request failed: ${res.status}`);
+    }
+    return res.json();
+  },
 };
 
 export function minutes(hhmm: string): number {
