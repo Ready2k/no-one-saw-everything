@@ -8,10 +8,10 @@
   "canonical_locations": {
     "loc_village_square": {
       "bounds": {
-        "x": 82,
-        "y": 62,
-        "w": 28,
-        "h": 16
+        "x": 83,
+        "y": 58,
+        "w": 26,
+        "h": 20
       },
       "mode": "exterior",
       "notes": "Central square plaza"
@@ -19,7 +19,7 @@
     "loc_fountain": {
       "bounds": {
         "x": 91,
-        "y": 65,
+        "y": 62,
         "w": 10,
         "h": 9
       },
@@ -28,18 +28,18 @@
     },
     "loc_marcus_house": {
       "bounds": {
-        "x": 110,
-        "y": 73,
-        "w": 11,
-        "h": 8
+        "x": 112,
+        "y": 74,
+        "w": 13,
+        "h": 19
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_marcus_study": {
       "bounds": {
-        "x": 110,
-        "y": 77,
+        "x": 119,
+        "y": 74,
         "w": 6,
         "h": 4
       },
@@ -49,9 +49,9 @@
     "loc_hobbs_cafe": {
       "bounds": {
         "x": 91,
-        "y": 54,
-        "w": 11,
-        "h": 8
+        "y": 52,
+        "w": 10,
+        "h": 6
       },
       "mode": "exterior",
       "notes": ""
@@ -59,19 +59,19 @@
     "loc_cafe_kitchen": {
       "bounds": {
         "x": 91,
-        "y": 57,
-        "w": 11,
-        "h": 2
+        "y": 52,
+        "w": 5,
+        "h": 3
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_cafe_storage": {
       "bounds": {
-        "x": 94,
-        "y": 54,
-        "w": 8,
-        "h": 3
+        "x": 97,
+        "y": 52,
+        "w": 4,
+        "h": 2
       },
       "mode": "interior",
       "notes": ""
@@ -79,9 +79,9 @@
     "loc_clinic": {
       "bounds": {
         "x": 110,
-        "y": 65,
-        "w": 9,
-        "h": 8
+        "y": 60,
+        "w": 13,
+        "h": 10
       },
       "mode": "interior",
       "notes": ""
@@ -99,7 +99,7 @@
     "loc_bookshop": {
       "bounds": {
         "x": 72,
-        "y": 66,
+        "y": 56,
         "w": 10,
         "h": 8
       },
@@ -109,7 +109,7 @@
     "loc_bookshop_back": {
       "bounds": {
         "x": 68,
-        "y": 66,
+        "y": 56,
         "w": 4,
         "h": 8
       },
@@ -120,26 +120,26 @@
       "bounds": {
         "x": 86,
         "y": 50,
-        "w": 20,
-        "h": 4
+        "w": 15,
+        "h": 2
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_pub": {
       "bounds": {
-        "x": 82,
+        "x": 80,
         "y": 78,
-        "w": 11,
-        "h": 10
+        "w": 12,
+        "h": 11
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_owen_house": {
       "bounds": {
-        "x": 117,
-        "y": 82,
+        "x": 128,
+        "y": 79,
         "w": 6,
         "h": 13
       },
@@ -148,8 +148,8 @@
     },
     "loc_elias_house": {
       "bounds": {
-        "x": 107,
-        "y": 85,
+        "x": 126,
+        "y": 72,
         "w": 8,
         "h": 7
       },
@@ -159,47 +159,47 @@
     "loc_clara_flat": {
       "bounds": {
         "x": 86,
-        "y": 54,
+        "y": 52,
         "w": 5,
-        "h": 7
+        "h": 6
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_ben_flat": {
       "bounds": {
-        "x": 68,
-        "y": 82,
-        "w": 10,
-        "h": 5
+        "x": 66,
+        "y": 72,
+        "w": 11,
+        "h": 8
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_priya_flat": {
       "bounds": {
-        "x": 68,
-        "y": 87,
-        "w": 10,
-        "h": 5
+        "x": 66,
+        "y": 80,
+        "w": 11,
+        "h": 8
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_nadia_flat": {
       "bounds": {
-        "x": 119,
-        "y": 65,
+        "x": 123,
+        "y": 60,
         "w": 5,
-        "h": 8
+        "h": 10
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_ruth_cottage": {
       "bounds": {
-        "x": 113,
-        "y": 52,
+        "x": 122,
+        "y": 48,
         "w": 11,
         "h": 9
       },
@@ -208,7 +208,7 @@
     },
     "loc_solicitors_office": {
       "bounds": {
-        "x": 93,
+        "x": 97,
         "y": 78,
         "w": 9,
         "h": 6
@@ -228,40 +228,40 @@
     },
     "loc_fishery": {
       "bounds": {
-        "x": 78,
-        "y": 48,
-        "w": 5,
-        "h": 7
+        "x": 49,
+        "y": 54,
+        "w": 15,
+        "h": 14
       },
       "mode": "exterior",
       "notes": "Fishery"
     },
     "loc_lake": {
       "bounds": {
-        "x": 64,
-        "y": 48,
-        "w": 14,
-        "h": 10
+        "x": 10,
+        "y": 54,
+        "w": 39,
+        "h": 33
       },
       "mode": "exterior",
       "notes": "Lover's Lake"
     },
     "loc_woodland": {
       "bounds": {
-        "x": 65,
-        "y": 82,
-        "w": 3,
-        "h": 12
+        "x": 49,
+        "y": 96,
+        "w": 84,
+        "h": 10
       },
       "mode": "exterior",
       "notes": "Whispering Woodland"
     },
     "loc_meadow": {
       "bounds": {
-        "x": 94,
-        "y": 85,
-        "w": 12,
-        "h": 9
+        "x": 50,
+        "y": 89,
+        "w": 60,
+        "h": 7
       },
       "mode": "exterior",
       "notes": "Green Meadow"
@@ -289,7 +289,7 @@
           "location_id": "loc_fountain",
           "anchor": {
             "x": 100,
-            "y": 71
+            "y": 68
           },
           "semantic_asset_id": "obj_fountain_coping_stone",
           "render_policy": "discovery_gated"
@@ -298,7 +298,7 @@
           "location_id": "loc_fountain",
           "anchor": {
             "x": 98,
-            "y": 73
+            "y": 70
           },
           "semantic_asset_id": "obj_muddy_bootprint",
           "render_policy": "discovery_gated"
@@ -306,8 +306,8 @@
         "obj_ben_jacket_mud": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 72,
-            "y": 84
+            "x": 70,
+            "y": 74
           },
           "semantic_asset_id": "obj_muddy_jacket",
           "render_policy": "discovery_gated",
@@ -317,7 +317,7 @@
           "location_id": "loc_fountain",
           "anchor": {
             "x": 97,
-            "y": 72
+            "y": 69
           },
           "semantic_asset_id": "obj_pub_lighter",
           "render_policy": "discovery_gated",
@@ -336,8 +336,8 @@
         "obj_blackmail_letters": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 70,
-            "y": 84
+            "x": 68,
+            "y": 74
           },
           "semantic_asset_id": "obj_blackmail_letters",
           "render_policy": "discovery_gated",
@@ -346,8 +346,8 @@
         "obj_arson_clipping": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 71,
-            "y": 84
+            "x": 69,
+            "y": 74
           },
           "semantic_asset_id": "obj_arson_clipping",
           "render_policy": "discovery_gated",
@@ -356,8 +356,8 @@
         "obj_ben_phone": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 73,
-            "y": 84
+            "x": 71,
+            "y": 74
           },
           "semantic_asset_id": "obj_phone",
           "render_policy": "discovery_gated",
@@ -367,7 +367,7 @@
           "location_id": "loc_fountain",
           "anchor": {
             "x": 97,
-            "y": 71
+            "y": 68
           },
           "semantic_asset_id": "obj_pub_receipt",
           "render_policy": "discovery_gated"
