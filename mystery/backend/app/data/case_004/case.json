@@ -1,0 +1,19 @@
+{
+  "case_id": "case_004",
+  "case_type": "revenge",
+  "title": "The Fountain at Midnight",
+  "status": "locked",
+  "victim_id": "agent_owen",
+  "killer_id": "agent_ben",
+  "motive_summary": "Ben found blackmail letters in his late father's belongings proving Owen had extorted him for years over an arson. When Ben confronted Owen at the fountain that night and Owen laughed it off, Ben struck him with a stone from the fountain surround.",
+  "method": "blunt_force",
+  "weapon_id": "obj_fountain_stone",
+  "murder_location_id": "loc_fountain",
+  "time_of_death": "23:14",
+  "discovery_time": "23:45",
+  "discovered_by": "agent_elias",
+  "discovery_location_id": "loc_village_square",
+  "sim_start_time": "22:00",
+  "murder_window": ["23:05", "23:25"],
+  "overview_text": "23:45 — Owen Price is found dead beside the village fountain by Elias Grant, who noticed the slumped shape from his bedroom window. Owen had been struck with a piece of the fountain's stone coping. The sim rewinds to 22:00 that evening; the timeline is murky, with multiple villagers awake or moving through the square. The night can be explored from 22:00."
+}
