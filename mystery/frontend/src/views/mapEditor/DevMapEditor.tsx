@@ -36,8 +36,10 @@ import {
   isNestingAllowed,
   tileKey
 } from "./editorTypes";
+import { SnapUnderlayTile, snapBoundsToStructure } from "./snapFit";
 import {
   HANDLE_PX,
+  ROTATE_HANDLE_OFFSET_PX,
   Scene,
   SceneAnchor,
   SceneLocation,
@@ -131,6 +133,63 @@ function resolveLocationView(
     return { bounds: internal, mode: ext.mode, source: "internal", isOverridden: false, hasInternal: true };
   }
   return { ...ext, hasInternal: false };
+}
+
+function rotateVec(dx: number, dy: number, deg: number): { x: number; y: number } {
+  const r = (deg * Math.PI) / 180;
+  const cos = Math.cos(r);
+  const sin = Math.sin(r);
+  return { x: dx * cos - dy * sin, y: dx * sin + dy * cos };
+}
+
+/** Point-in-bounds test honouring the visual rotation around the centre. */
+function boundsContainsPoint(b: Bounds, wx: number, wy: number): boolean {
+  const cx = b.x + b.w / 2;
+  const cy = b.y + b.h / 2;
+  const local = rotateVec(wx - cx, wy - cy, -(b.rotation || 0));
+  return Math.abs(local.x) <= b.w / 2 && Math.abs(local.y) <= b.h / 2;
+}
+
+/** Normalize degrees to (-180, 180]; 0 is returned as undefined so unrotated
+ * bounds stay clean in the saved JSON. */
+function normalizeRotation(deg: number): number | undefined {
+  const norm = ((((deg + 180) % 360) + 360) % 360) - 180;
+  return norm === 0 ? undefined : norm;
+}
+
+function rectCorners(b: Bounds): Array<{ x: number; y: number }> {
+  const cx = b.x + b.w / 2;
+  const cy = b.y + b.h / 2;
+  return [
+    { x: -b.w / 2, y: -b.h / 2 },
+    { x: b.w / 2, y: -b.h / 2 },
+    { x: b.w / 2, y: b.h / 2 },
+    { x: -b.w / 2, y: b.h / 2 }
+  ].map((p) => {
+    const r = rotateVec(p.x, p.y, b.rotation || 0);
+    return { x: cx + r.x, y: cy + r.y };
+  });
+}
+
+/** Separating-axis overlap for possibly-rotated bounds (touching edges do
+ * not count as overlap, matching the server validator). */
+function orientedOverlap(a: Bounds, b: Bounds): boolean {
+  const ca = rectCorners(a);
+  const cb = rectCorners(b);
+  for (const corners of [ca, cb]) {
+    for (let i = 0; i < 4; i++) {
+      const p1 = corners[i];
+      const p2 = corners[(i + 1) % 4];
+      const axisX = p2.y - p1.y;
+      const axisY = p1.x - p2.x;
+      const pa = ca.map((p) => axisX * p.x + axisY * p.y);
+      const pb = cb.map((p) => axisX * p.x + axisY * p.y);
+      if (Math.max(...pa) <= Math.min(...pb) + 1e-9 || Math.max(...pb) <= Math.min(...pa) + 1e-9) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 function isLocationVisibleIn(layout: TownLayout, caseId: string, locId: string): boolean {
@@ -320,6 +379,7 @@ type Gesture =
   | { kind: "rect"; before: TownLayout; start: { x: number; y: number }; current: { x: number; y: number }; erase: boolean }
   | { kind: "moveLoc"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: Bounds; mutated: boolean; attached: AttachedItem[] }
   | { kind: "resizeLoc"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: Bounds; mutated: boolean }
+  | { kind: "rotateLoc"; before: TownLayout; id: string; center: { x: number; y: number }; startAngle: number; origRot: number; mutated: boolean }
   | { kind: "moveAnchor"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
   | { kind: "moveProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
   | { kind: "resizeProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { w: number; h: number }; mutated: boolean };
@@ -460,8 +520,6 @@ export default function DevMapEditor() {
     const gCols = layout.grid?.cols || 192;
     const gRows = layout.grid?.rows || 144;
     const inGrid = (b: Bounds) => b.x >= 0 && b.y >= 0 && b.x + b.w <= gCols && b.y + b.h <= gRows;
-    const overlapping = (a: Bounds, b: Bounds) =>
-      !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y);
 
     // Canonical location entries (external + internal view sets)
     const canonicalBounds: Record<string, Bounds> = {};
@@ -473,7 +531,9 @@ export default function DevMapEditor() {
       const b = data?.bounds;
       if (!b) continue;
       canonicalBounds[locId] = b;
-      internalBounds[locId] = data.bounds_internal || b;
+      // Internal-view overlaps only compare authored internal bounds;
+      // inherited external rectangles aren't internal-art footprints.
+      if (data.bounds_internal) internalBounds[locId] = data.bounds_internal;
       if (b.w <= 0 || b.h <= 0) {
         w.push(`Bounds for "${locId}" must have positive width and height.`);
       } else if (!inGrid(b)) {
@@ -496,7 +556,7 @@ export default function DevMapEditor() {
       for (let i = 0; i < ids.length; i++) {
         for (let j = i + 1; j < ids.length; j++) {
           if (isNestingAllowed(ids[i], ids[j])) continue;
-          if (overlapping(set[ids[i]], set[ids[j]])) {
+          if (orientedOverlap(set[ids[i]], set[ids[j]])) {
             w.push(`Overlap between "${ids[i]}" and "${ids[j]}"${label} without parent-child allowance.`);
           }
         }
@@ -532,7 +592,7 @@ export default function DevMapEditor() {
       for (let i = 0; i < vIds.length; i++) {
         for (let j = i + 1; j < vIds.length; j++) {
           if (isNestingAllowed(vIds[i], vIds[j])) continue;
-          if (overlapping(eff[vIds[i]], eff[vIds[j]])) {
+          if (orientedOverlap(eff[vIds[i]], eff[vIds[j]])) {
             w.push(`[${tag}] Visible locations "${vIds[i]}" and "${vIds[j]}" overlap without parent-child allowance.`);
           }
         }
@@ -550,11 +610,18 @@ export default function DevMapEditor() {
         if (a.anchor.x < 0 || a.anchor.y < 0 || a.anchor.x >= gCols || a.anchor.y >= gRows) {
           w.push(`[${tag}] Anchor "${obj.object_id}" lies outside the grid.`);
         } else if (!a.external) {
-          const b = resolveLocation(layout, canonicalRecs, c.case_id, a.location_id).bounds;
+          // Anchors are placed against the art, which may be aligned in
+          // either view: containment in the external bounds OR the authored
+          // internal-view bounds counts, honouring rotation.
+          const ext = resolveLocation(layout, canonicalRecs, c.case_id, a.location_id).bounds;
+          const internal = layout.canonical_locations[a.location_id]?.bounds_internal;
           const inside =
-            a.anchor.x >= b.x && a.anchor.x < b.x + b.w && a.anchor.y >= b.y && a.anchor.y < b.y + b.h;
+            boundsContainsPoint(ext, a.anchor.x, a.anchor.y) ||
+            (!!internal && boundsContainsPoint(internal, a.anchor.x, a.anchor.y));
           if (!inside) {
-            w.push(`[${tag}] Anchor "${obj.object_id}" is outside the bounds of "${a.location_id}".`);
+            w.push(
+              `[${tag}] Anchor "${obj.object_id}" is outside both the external and internal bounds of "${a.location_id}".`
+            );
           }
         }
       }
@@ -1121,7 +1188,7 @@ export default function DevMapEditor() {
     let best: { id: string; area: number } | null = null;
     for (const l of st.activeLocations) {
       const b = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, l.location_id, st.mapView).bounds;
-      if (wx >= b.x && wx < b.x + b.w && wy >= b.y && wy < b.y + b.h) {
+      if (boundsContainsPoint(b, wx, wy)) {
         const area = b.w * b.h;
         if (!best || area < best.area) best = { id: l.location_id, area };
       }
@@ -1204,7 +1271,8 @@ export default function DevMapEditor() {
     if (!st || !lay || !st.selection) return null;
     if (st.selection.kind === "location") {
       const b = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, st.selection.id, st.mapView).bounds;
-      return { x: b.x + b.w, y: b.y + b.h };
+      const v = rotateVec(b.w / 2, b.h / 2, b.rotation || 0);
+      return { x: b.x + b.w / 2 + v.x, y: b.y + b.h / 2 + v.y };
     }
     if (st.selection.kind === "prop") {
       const found = findProp(lay, st.selection.id);
@@ -1214,11 +1282,42 @@ export default function DevMapEditor() {
     return null;
   };
 
+  /** World position of the rotation handle for the selected location. */
+  const rotationHandleWorld = (): { x: number; y: number; bounds: Bounds } | null => {
+    const st = stateRef.current;
+    const lay = layoutRef.current;
+    if (!st || !lay || st.selection?.kind !== "location") return null;
+    const b = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, st.selection.id, st.mapView).bounds;
+    const offWorld = b.h / 2 + ROTATE_HANDLE_OFFSET_PX / cameraRef.current.scale;
+    const v = rotateVec(0, -offWorld, b.rotation || 0);
+    return { x: b.x + b.w / 2 + v.x, y: b.y + b.h / 2 + v.y, bounds: b };
+  };
+
   const beginSelectGesture = (e: React.PointerEvent, world: { wx: number; wy: number }) => {
     const st = stateRef.current!;
     const lay = layoutRef.current!;
     const cam = cameraRef.current;
     const tolWorld = (HANDLE_PX + 4) / cam.scale;
+
+    // 0. Rotation handle of the selected location
+    const rotH = rotationHandleWorld();
+    if (rotH && st.selection?.kind === "location" && Math.hypot(world.wx - rotH.x, world.wy - rotH.y) <= tolWorld) {
+      const before = lay;
+      layoutRef.current = deepClone(lay);
+      const b = rotH.bounds;
+      const cx = b.x + b.w / 2;
+      const cy = b.y + b.h / 2;
+      gestureRef.current = {
+        kind: "rotateLoc",
+        before,
+        id: st.selection.id,
+        center: { x: cx, y: cy },
+        startAngle: Math.atan2(world.wy - cy, world.wx - cx),
+        origRot: b.rotation || 0,
+        mutated: false
+      };
+      return;
+    }
 
     // 1. Resize handle of the current selection
     const corner = selectionHandleWorld();
@@ -1275,7 +1374,7 @@ export default function DevMapEditor() {
       let best: { id: string; bounds: Bounds; area: number } | null = null;
       for (const l of st.activeLocations) {
         const b = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, l.location_id, st.mapView).bounds;
-        if (world.wx >= b.x && world.wx < b.x + b.w && world.wy >= b.y && world.wy < b.y + b.h) {
+        if (boundsContainsPoint(b, world.wx, world.wy)) {
           const area = b.w * b.h;
           if (!best || area < best.area) best = { id: l.location_id, bounds: b, area };
         }
@@ -1432,12 +1531,29 @@ export default function DevMapEditor() {
         break;
       }
       case "resizeLoc": {
-        const { dx, dy } = snappedDelta(world, g.startW);
+        // Measure the drag along the rect's own (possibly rotated) axes so
+        // the corner follows the pointer on rotated bounds.
+        const local = rotateVec(world.wx - g.startW.wx, world.wy - g.startW.wy, -(g.orig.rotation || 0));
+        const fine = stateRef.current?.fineAdjustment;
+        const snap = (v: number) => (fine ? Math.round(v * 2) / 2 : Math.round(v));
+        const dx = snap(local.x);
+        const dy = snap(local.y);
         if (dx !== 0 || dy !== 0) g.mutated = true;
         setLocBoundsInRef(g.id, {
           w: clamp(g.orig.w + dx, 1, gCols - g.orig.x),
           h: clamp(g.orig.h + dy, 1, gRows - g.orig.y)
         });
+        requestRender();
+        break;
+      }
+      case "rotateLoc": {
+        const angle = Math.atan2(world.wy - g.center.y, world.wx - g.center.x);
+        let deg = g.origRot + ((angle - g.startAngle) * 180) / Math.PI;
+        const snap = e.shiftKey ? 15 : 1;
+        deg = Math.round(deg / snap) * snap;
+        const norm = normalizeRotation(deg);
+        if ((norm ?? 0) !== g.origRot) g.mutated = true;
+        setLocBoundsInRef(g.id, { rotation: norm });
         requestRender();
         break;
       }
@@ -1552,6 +1668,11 @@ export default function DevMapEditor() {
         return;
       default: {
         const cam = cameraRef.current;
+        const rotH = rotationHandleWorld();
+        if (rotH && Math.hypot(world.wx - rotH.x, world.wy - rotH.y) <= (HANDLE_PX + 4) / cam.scale) {
+          setCanvasCursor("grab");
+          return;
+        }
         const corner = selectionHandleWorld();
         if (corner && Math.hypot(world.wx - corner.x, world.wy - corner.y) <= (HANDLE_PX + 4) / cam.scale) {
           setCanvasCursor("nwse-resize");
@@ -1578,11 +1699,11 @@ export default function DevMapEditor() {
   };
 
   // --- Keyboard ---
-  const nudgeSelection = (dx: number, dy: number, big: boolean) => {
+  const nudgeSelection = (dx: number, dy: number, big: boolean, micro = false) => {
     const st = stateRef.current;
     const lay = layoutRef.current;
     if (!st || !lay || !st.selection) return;
-    const step = big ? 5 : st.fineAdjustment ? 0.5 : 1;
+    const step = big ? 5 : micro ? 0.1 : st.fineAdjustment ? 0.5 : 1;
     const mx = dx * step;
     const my = dy * step;
     const gCols = lay.grid.cols;
@@ -1623,6 +1744,76 @@ export default function DevMapEditor() {
         { undoable: true }
       );
     }
+  };
+
+  /** The active underlay art as placed world-rect images (B2 swapped per view). */
+  const currentUnderlayTiles = (): SnapUnderlayTile[] => {
+    const st = stateRef.current;
+    if (!st || st.underlaySource === "none") return [];
+    const def = UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource);
+    return (def?.tiles || [])
+      .map((t) => {
+        const url = st.mapView === "internal" && t.url === HD_B2_EXTERNAL_URL ? HD_B2_INTERNAL_URL : t.url;
+        return { img: underlayImgs.current[url], x: t.x, y: t.y, w: t.w, h: t.h };
+      })
+      .filter((t) => !!t.img);
+  };
+
+  /** Refine the selected location's rough box to hug the structure in the art. */
+  const snapSelectionToStructure = () => {
+    const st = stateRef.current;
+    const lay = layoutRef.current;
+    if (!st || !lay || st.selection?.kind !== "location") return;
+    const tiles = currentUnderlayTiles();
+    if (!tiles.length) {
+      showToast("No underlay art to snap to — pick an underlay source first.", "error");
+      return;
+    }
+    const sel = st.selection;
+    const rough = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, sel.id, st.mapView).bounds;
+    const result = snapBoundsToStructure(rough, tiles, lay.grid.cols, lay.grid.rows);
+    if (!result) {
+      showToast("Snap failed: art not loaded for that area yet.", "error");
+      return;
+    }
+    mutateLayout(
+      (l) =>
+        applyLocationBoundsView(
+          l,
+          st.canonicalRecs,
+          st.selectedCaseId,
+          sel.id,
+          { ...result.bounds, rotation: result.bounds.rotation },
+          st.mapView
+        ),
+      { undoable: true }
+    );
+    const b = result.bounds;
+    showToast(
+      `Snapped to structure: (${b.x},${b.y}) ${b.w}×${b.h}${b.rotation ? ` ∠${b.rotation}°` : ""} · edge fit ×${result.gain.toFixed(2)} — undo with ⌘Z if it grabbed the wrong outline.`,
+      "success"
+    );
+  };
+
+  const rotateSelection = (delta: number) => {
+    const st = stateRef.current;
+    const lay = layoutRef.current;
+    if (!st || !lay || st.selection?.kind !== "location") return;
+    const sel = st.selection;
+    mutateLayout(
+      (l) => {
+        const b = resolveLocationView(l, st.canonicalRecs, st.selectedCaseId, sel.id, st.mapView).bounds;
+        applyLocationBoundsView(
+          l,
+          st.canonicalRecs,
+          st.selectedCaseId,
+          sel.id,
+          { rotation: normalizeRotation((b.rotation || 0) + delta) },
+          st.mapView
+        );
+      },
+      { undoable: true }
+    );
   };
 
   keyDownRef.current = (e: KeyboardEvent) => {
@@ -1700,19 +1891,31 @@ export default function DevMapEditor() {
         return;
       case "ArrowLeft":
         e.preventDefault();
-        nudgeSelection(-1, 0, e.shiftKey);
+        nudgeSelection(-1, 0, e.shiftKey, e.altKey);
         return;
       case "ArrowRight":
         e.preventDefault();
-        nudgeSelection(1, 0, e.shiftKey);
+        nudgeSelection(1, 0, e.shiftKey, e.altKey);
         return;
       case "ArrowUp":
         e.preventDefault();
-        nudgeSelection(0, -1, e.shiftKey);
+        nudgeSelection(0, -1, e.shiftKey, e.altKey);
         return;
       case "ArrowDown":
         e.preventDefault();
-        nudgeSelection(0, 1, e.shiftKey);
+        nudgeSelection(0, 1, e.shiftKey, e.altKey);
+        return;
+      case ",":
+        rotateSelection(-1);
+        return;
+      case "<":
+        rotateSelection(-15);
+        return;
+      case ".":
+        rotateSelection(1);
+        return;
+      case ">":
+        rotateSelection(15);
         return;
     }
 
@@ -1723,6 +1926,7 @@ export default function DevMapEditor() {
     }
     if (key === "m") setShowMinimap((v) => !v);
     if (key === "t") setMapView((v) => (v === "external" ? "internal" : "external"));
+    if (key === "s") snapSelectionToStructure();
   };
 
   keyUpRef.current = (e: KeyboardEvent) => {
@@ -2361,6 +2565,40 @@ export default function DevMapEditor() {
                   </div>
                 ))}
               </div>
+              <div className="num-grid">
+                <div className="control-group">
+                  <label>Rotation ° (match camera angle)</label>
+                  <input
+                    type="number"
+                    step={1}
+                    value={selectedLocationEff.bounds.rotation ?? 0}
+                    onChange={(e) => {
+                      const v = parseFloat(e.target.value);
+                      if (Number.isNaN(v)) return;
+                      const locId = selectedLocation.location_id;
+                      mutateLayout((l) =>
+                        applyLocationBoundsView(l, canonicalRecs, selectedCaseId, locId, { rotation: normalizeRotation(v) }, mapView)
+                      );
+                    }}
+                  />
+                </div>
+                <div className="control-group">
+                  <label>&nbsp;</label>
+                  <button
+                    className="mse-btn mse-btn-secondary"
+                    disabled={!selectedLocationEff.bounds.rotation}
+                    onClick={() => {
+                      const locId = selectedLocation.location_id;
+                      mutateLayout(
+                        (l) => applyLocationBoundsView(l, canonicalRecs, selectedCaseId, locId, { rotation: undefined }, mapView),
+                        { undoable: true }
+                      );
+                    }}
+                  >
+                    ↺ Reset 0°
+                  </button>
+                </div>
+              </div>
               <div className="control-group">
                 <label>Mode</label>
                 <select
@@ -2392,6 +2630,13 @@ export default function DevMapEditor() {
                   Visible in this case override
                 </label>
               )}
+              <button
+                className="mse-btn mse-btn-primary"
+                title="Refine the rough box so its edges hug the structure outline in the underlay art (S)"
+                onClick={snapSelectionToStructure}
+              >
+                🧲 Snap to structure
+              </button>
               {mapView === "internal" ? (
                 <div className="btn-row">
                   <button className="mse-btn mse-btn-secondary" onClick={() => zoomToLocation(selectedLocation.location_id)}>
@@ -2753,7 +2998,11 @@ export default function DevMapEditor() {
               <kbd>[ / ]</kbd>
               <span>Brush size down / up</span>
               <kbd>Arrows</kbd>
-              <span>Nudge selection (⇧ = 5 tiles)</span>
+              <span>Nudge selection (⇧ = 5 tiles · ⌥ = 0.1 micro-nudge)</span>
+              <kbd>, / .</kbd>
+              <span>Rotate selected location 1° (⇧ = 15°) · drag the amber handle to rotate freely</span>
+              <kbd>S</kbd>
+              <span>Snap selected location to the structure outline in the art</span>
               <kbd>Alt+click</kbd>
               <span>Eyedropper while painting · erase with rectangle tool</span>
               <kbd>Del</kbd>

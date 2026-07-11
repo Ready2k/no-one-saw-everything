@@ -52,6 +52,9 @@ export interface MapBounds {
   y: number;
   width: number;
   height: number;
+  // Visual rotation in degrees around the rect centre (matches the art's
+  // camera angle). Axis-aligned x/y/width/height stay the logical bounds.
+  rotation?: number;
 }
 
 export type VisualEventType =
@@ -138,11 +141,30 @@ export interface MapVisualObject {
   damaged: boolean;
 }
 
+export interface MapLightOverlay {
+  id: string;
+  semantic_asset_id:
+    | "light_streetlamp_pool"
+    | "light_window_warm"
+    | "light_window_cool"
+    | "light_pub_window_glow"
+    | "light_fireplace_glow";
+  location_id: string | null;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  from: string;
+  to: string;
+  opacity?: number;
+}
+
 export interface MapVisualContract {
   mode: "canonical_pilot" | "canonical_overworld" | "legacy_fallback";
   definition_id: string;
   visible_location_ids: string[] | null;
   overlays: string[];
+  light_overlays?: MapLightOverlay[];
   crop_padding_by_location?: Record<string, number>;
   object_visuals?: MapVisualObject[];
   objects: MapVisualObject[];

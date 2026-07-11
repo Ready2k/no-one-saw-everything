@@ -1019,6 +1019,45 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   transition: background-color 0.6s ease;
 }
 
+.map-light-local {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transform: translateZ(0);
+  transition: opacity 0.45s ease;
+}
+.map-light-local.light_streetlamp_pool {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 240, 170, 0.62) 0 6%, rgba(255, 213, 105, 0.36) 16%, rgba(255, 180, 72, 0.18) 34%, transparent 70%),
+    radial-gradient(ellipse at 50% 58%, rgba(255, 210, 105, 0.22) 0 32%, transparent 76%);
+  filter: blur(0.5px);
+}
+.map-light-local.light_window_warm,
+.map-light-local.light_pub_window_glow,
+.map-light-local.light_fireplace_glow {
+  border-radius: 18%;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(255, 231, 150, 0.82) 0 16%, rgba(255, 174, 74, 0.42) 38%, transparent 72%),
+    linear-gradient(90deg, transparent 47%, rgba(255, 247, 195, 0.32) 49% 51%, transparent 53%);
+  box-shadow: 0 0 18px rgba(255, 181, 83, 0.28);
+}
+.map-light-local.light_pub_window_glow {
+  border-radius: 12%;
+  background:
+    radial-gradient(ellipse at 35% 50%, rgba(255, 227, 139, 0.84) 0 13%, rgba(255, 164, 69, 0.42) 32%, transparent 65%),
+    radial-gradient(ellipse at 68% 50%, rgba(255, 220, 126, 0.78) 0 12%, rgba(255, 149, 62, 0.36) 30%, transparent 62%);
+}
+.map-light-local.light_window_cool {
+  border-radius: 18%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(201, 231, 255, 0.68) 0 18%, rgba(112, 177, 255, 0.28) 42%, transparent 74%);
+  box-shadow: 0 0 14px rgba(142, 196, 255, 0.18);
+}
+.map-light-local.light_fireplace_glow {
+  background: radial-gradient(ellipse at 50% 55%, rgba(255, 150, 54, 0.75) 0 18%, rgba(255, 79, 34, 0.34) 38%, transparent 72%);
+}
+
 .semantic-map-object {
   position: absolute;
   transform: translate(-50%, -50%);

@@ -60,8 +60,16 @@
     { "id": "legacy_centre_town", "file": "town_canonical_v1_day.png", "runtime": "reference_only" },
     { "id": "case_004_overlay", "file": "/art/case_004/case_004_overlay_v1.png", "runtime": "case_selected", "status": "intentionally_empty_and_unwired" },
     { "id": "evidence_markers", "runtime": "visual.object_visuals", "discovery_gated": true },
-    { "id": "runtime_lighting", "runtime": "lightingTint(minutesOfDay)" }
+    { "id": "runtime_lighting", "runtime": "lightingTint(minutesOfDay)" },
+    { "id": "local_light_overlays", "runtime": "visual.light_overlays", "time_gated": true }
   ],
+  "local_light_assets": {
+    "light_streetlamp_pool": { "runtime": "css_gradient", "blend": "screen", "purpose": "streetlamp pools after dark" },
+    "light_window_warm": { "runtime": "css_gradient", "blend": "screen", "purpose": "occupied warm house windows" },
+    "light_window_cool": { "runtime": "css_gradient", "blend": "screen", "purpose": "clinic/office after-hours windows" },
+    "light_pub_window_glow": { "runtime": "css_gradient", "blend": "screen", "purpose": "pub frontage while open" },
+    "light_fireplace_glow": { "runtime": "css_gradient", "blend": "screen", "purpose": "interior hearth/emissive props" }
+  },
   "locations": {
     "loc_village_square": { "x": 18, "y": 14, "w": 28, "h": 16 },
     "loc_fountain": { "x": 27, "y": 17, "w": 10, "h": 9 },

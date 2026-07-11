@@ -6,6 +6,7 @@ import { AGENT_TILE_SCALE, MAP_GRID, mapImageTiles, mapImageUrl } from "../map/m
 import { lightingTint } from "../map/lighting";
 import AgentSprite from "./AgentSprite";
 import EventMarker from "./EventMarker";
+import MapLightOverlay from "./MapLightOverlay";
 import SemanticMapObject from "./SemanticMapObject";
 
 // Positions are stored in map-image pixels; we place everything with
@@ -434,6 +435,17 @@ export default function VisualMap({
             );
           })}
 
+        {currentMinutes != null &&
+          (data.visual?.light_overlays ?? []).map((light) => (
+            <MapLightOverlay
+              key={light.id}
+              light={light}
+              width={width}
+              height={height}
+              currentMinutes={currentMinutes}
+            />
+          ))}
+
         {(data.visual?.object_visuals ?? data.visual?.objects ?? [])
           .filter((object) => object.safe_to_render && object.marker_state === "active")
           .map((object) => (
@@ -493,6 +505,9 @@ export default function VisualMap({
                     width: pct(bounds.width, width),
                     height: pct(bounds.height, height),
                     borderWidth: `${Math.max(1.25 / view.scale, 0.4)}px`,
+                    // Visual rotation matches the art's camera angle; the
+                    // logical bounds stay axis-aligned.
+                    transform: bounds.rotation ? `rotate(${bounds.rotation}deg)` : undefined,
                   }}
                 />
               )}

@@ -49,6 +49,22 @@
   },
   "tile_contract": { "cols": 192, "rows": 144, "tile_size": 32 },
   "runtime_lighting": "frontend/src/map/lighting.ts",
+  "local_light_overlays": {
+    "source": "visual.light_overlays",
+    "renderer": "frontend/src/components/MapLightOverlay.tsx",
+    "render_when": "currentMinutes is within each overlay's from/to clock range",
+    "blend": "screen",
+    "policy": "Ambient occupancy and civic lighting only; no hidden culprit silhouettes or unearned clue state.",
+    "case_004_examples": [
+      "square_lamp_west",
+      "square_lamp_clinic",
+      "pub_front_windows",
+      "elias_bedroom_window",
+      "ben_flat_window",
+      "priya_flat_window",
+      "clinic_after_hours_light"
+    ]
+  },
   "evidence_markers": {
     "source": "visual.object_visuals",
     "render_when": "safe_to_render === true",

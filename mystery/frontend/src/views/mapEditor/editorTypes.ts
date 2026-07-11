@@ -7,6 +7,10 @@ export interface Bounds {
   y: number;
   w: number;
   h: number;
+  // Visual rotation in degrees around the rect centre, matching the art's
+  // camera angle. The axis-aligned x/y/w/h remain the logical bounds for
+  // containment/overlap checks; rotation only affects how the box is drawn.
+  rotation?: number;
 }
 
 export interface LocationData {
@@ -299,7 +303,7 @@ export const RENDER_POLICIES = [
 ];
 
 export const TOOL_DEFS: Array<{ id: ToolId; label: string; icon: string; key: string; hint: string }> = [
-  { id: "select", label: "Select / Move", icon: "⬚", key: "V", hint: "Click to select · drag to move · corner handle resizes · drag empty space pans" },
+  { id: "select", label: "Select / Move", icon: "⬚", key: "V", hint: "Click to select · drag to move · corner handle resizes · amber handle rotates · arrows nudge" },
   { id: "pan", label: "Pan", icon: "✋", key: "H", hint: "Drag to pan · scroll wheel pans · ⌘/Ctrl+scroll or pinch zooms" },
   { id: "paint", label: "Paint tiles", icon: "🖌", key: "B", hint: "Click / drag to paint · Alt-click samples a tile · [ ] adjusts brush size" },
   { id: "erase", label: "Erase tiles", icon: "◻", key: "E", hint: "Click / drag to erase tiles on the target layer · [ ] adjusts brush size" },

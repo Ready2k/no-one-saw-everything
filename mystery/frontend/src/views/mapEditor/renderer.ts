@@ -86,6 +86,8 @@ const SOURCE_COLORS: Record<LocationSource, { border: string; fill: string }> = 
 };
 
 export const HANDLE_PX = 10;
+// Screen-px gap between a selected rect's top edge and its rotation handle.
+export const ROTATE_HANDLE_OFFSET_PX = 22;
 
 function roundRectPath(
   ctx: CanvasRenderingContext2D,
@@ -260,50 +262,85 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
     }
   }
 
-  // Location bounds
+  // Location bounds (drawn rotated around the rect centre when the bounds
+  // carry a visual rotation matching the art's camera angle)
   for (const loc of scene.locations) {
     const { x, y, w, h } = loc.bounds;
-    const px = X(x);
-    const py = Y(y);
+    const rot = ((loc.bounds.rotation || 0) * Math.PI) / 180;
     const pw = w * s;
     const ph = h * s;
-    if (px + pw < -40 || px > cssW + 40 || py + ph < -40 || py > cssH + 40) continue;
+    const cx = X(x) + pw / 2;
+    const cy = Y(y) + ph / 2;
+    const cullRad = Math.hypot(pw, ph) / 2 + 40;
+    if (cx + cullRad < 0 || cx - cullRad > cssW || cy + cullRad < 0 || cy - cullRad > cssH) continue;
 
     const colors = SOURCE_COLORS[loc.source];
     ctx.save();
     ctx.globalAlpha = loc.alpha;
+    ctx.translate(cx, cy);
+    if (rot) ctx.rotate(rot);
     ctx.fillStyle = colors.fill;
-    ctx.fillRect(px, py, pw, ph);
+    ctx.fillRect(-pw / 2, -ph / 2, pw, ph);
     ctx.strokeStyle = colors.border;
     ctx.lineWidth = loc.selected ? 2.5 : loc.hovered ? 2 : 1.25;
-    ctx.strokeRect(px, py, pw, ph);
+    ctx.strokeRect(-pw / 2, -ph / 2, pw, ph);
     if (loc.selected) {
       ctx.strokeStyle = "rgba(255,255,255,0.85)";
       ctx.lineWidth = 1;
-      ctx.strokeRect(px - 2, py - 2, pw + 4, ph + 4);
+      ctx.strokeRect(-pw / 2 - 2, -ph / 2 - 2, pw + 4, ph + 4);
     }
+    ctx.restore();
 
+    // Labels stay horizontal for readability regardless of rotation
     if (scene.showLabels && pw > 44 && ph > 16) {
+      ctx.save();
+      ctx.globalAlpha = loc.alpha;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = "700 11px -apple-system, 'Segoe UI', sans-serif";
       ctx.shadowColor = "rgba(0,0,0,0.85)";
       ctx.shadowBlur = 4;
       ctx.fillStyle = "#fff";
-      const cx = px + pw / 2;
-      const cy = py + ph / 2;
       ctx.fillText(loc.name, cx, s >= 5 && ph > 34 ? cy - 7 : cy, pw - 8);
       if (s >= 5 && ph > 34) {
         ctx.font = "500 9px ui-monospace, monospace";
         ctx.fillStyle = "rgba(255,255,255,0.75)";
-        ctx.fillText(`(${fmt(x)},${fmt(y)}) ${fmt(w)}×${fmt(h)}`, cx, cy + 8, pw - 8);
+        const rotSuffix = loc.bounds.rotation ? ` ∠${fmt(loc.bounds.rotation)}°` : "";
+        ctx.fillText(`(${fmt(x)},${fmt(y)}) ${fmt(w)}×${fmt(h)}${rotSuffix}`, cx, cy + 8, pw - 8);
       }
       ctx.shadowBlur = 0;
+      ctx.restore();
     }
-    ctx.restore();
 
     if (loc.selected) {
-      drawHandle(ctx, px + pw, py + ph);
+      // Resize handle at the rotated bottom-right corner
+      const cos = Math.cos(rot);
+      const sin = Math.sin(rot);
+      const hx = cx + (pw / 2) * cos - (ph / 2) * sin;
+      const hy = cy + (pw / 2) * sin + (ph / 2) * cos;
+      drawHandle(ctx, hx, hy);
+
+      // Rotation handle above the rotated top edge, tethered to the rect
+      const ry = -ph / 2 - ROTATE_HANDLE_OFFSET_PX;
+      const rx0 = cx - (ph / 2) * -sin;
+      const ry0 = cy + (ph / 2) * -cos;
+      const rhx = cx + ry * -sin;
+      const rhy = cy + ry * cos;
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,0.6)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(rx0, ry0);
+      ctx.lineTo(rhx, rhy);
+      ctx.stroke();
+      ctx.fillStyle = "#fbbf24";
+      ctx.strokeStyle = "#09090b";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(rhx, rhy, HANDLE_PX / 2 + 1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
     }
   }
 

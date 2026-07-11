@@ -49,6 +49,60 @@ ALLOWED_NESTING = {
     ("loc_village_square", "loc_elias_bench")
 }
 
+def _rect_corners(b: dict[str, Any]) -> list[tuple[float, float]]:
+    """World-space corners of a bounds dict, honouring visual rotation."""
+    import math
+
+    rot = math.radians(b.get("rotation") or 0)
+    cx = b["x"] + b["w"] / 2
+    cy = b["y"] + b["h"] / 2
+    cos = math.cos(rot)
+    sin = math.sin(rot)
+    return [
+        (cx + lx * cos - ly * sin, cy + lx * sin + ly * cos)
+        for lx, ly in (
+            (-b["w"] / 2, -b["h"] / 2),
+            (b["w"] / 2, -b["h"] / 2),
+            (b["w"] / 2, b["h"] / 2),
+            (-b["w"] / 2, b["h"] / 2),
+        )
+    ]
+
+
+def _oriented_overlap(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    """Separating-axis overlap for possibly-rotated bounds. Touching edges do
+    not count as overlap, matching the axis-aligned semantics used before."""
+    ca = _rect_corners(a)
+    cb = _rect_corners(b)
+    for corners in (ca, cb):
+        for i in range(4):
+            x1, y1 = corners[i]
+            x2, y2 = corners[(i + 1) % 4]
+            ax = y2 - y1
+            ay = x1 - x2
+            pa = [ax * px + ay * py for px, py in ca]
+            pb = [ax * px + ay * py for px, py in cb]
+            if max(pa) <= min(pb) + 1e-9 or max(pb) <= min(pa) + 1e-9:
+                return False
+    return True
+
+
+def _point_in_bounds(b: dict[str, Any], px: float, py: float) -> bool:
+    """Point containment honouring visual rotation around the rect centre."""
+    import math
+
+    rot = math.radians(b.get("rotation") or 0)
+    cx = b["x"] + b["w"] / 2
+    cy = b["y"] + b["h"] / 2
+    dx = px - cx
+    dy = py - cy
+    cos = math.cos(-rot)
+    sin = math.sin(-rot)
+    lx = dx * cos - dy * sin
+    ly = dx * sin + dy * cos
+    return abs(lx) <= b["w"] / 2 and abs(ly) <= b["h"] / 2
+
+
 def validate_town_layout_payload(payload: Any) -> list[str]:
     """Validates the layout payload and returns a list of error strings.
     If the list is empty, the payload is valid.
@@ -98,7 +152,14 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                 errors.append(f"{label} width and height must be positive")
             if x < 0 or y < 0 or x + w > 192 or y + h > 144:
                 errors.append(f"{label} must remain within the 192x144 grid")
-            return {"x": x, "y": y, "w": w, "h": h}
+            rotation = bounds.get("rotation")
+            if rotation is not None and (not isinstance(rotation, (int, float)) or isinstance(rotation, bool)):
+                errors.append(f"{label} rotation must be a number (degrees)")
+                rotation = 0
+            out = {"x": x, "y": y, "w": w, "h": h}
+            if rotation:
+                out["rotation"] = rotation
+            return out
 
         def check_overlaps(locs: dict[str, dict[str, Any]], view_label: str) -> None:
             loc_ids = list(locs.keys())
@@ -108,19 +169,15 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                     idB = loc_ids[j]
                     if (idA, idB) in ALLOWED_NESTING or (idB, idA) in ALLOWED_NESTING:
                         continue
-                    bA = locs[idA]
-                    bB = locs[idB]
-                    overlap = not (
-                        bA["x"] + bA["w"] <= bB["x"] or
-                        bB["x"] + bB["w"] <= bA["x"] or
-                        bA["y"] + bA["h"] <= bB["y"] or
-                        bB["y"] + bB["h"] <= bA["y"]
-                    )
-                    if overlap:
+                    if _oriented_overlap(locs[idA], locs[idB]):
                         errors.append(f"Overlap detected between top-level locations '{idA}' and '{idB}'{view_label} without allowed nesting relationship")
 
         effective_locs = {}
-        # Internal-view bounds (roofless close-up art); inherit external when unset.
+        # Internal-view overlap checks only compare locations with *authored*
+        # internal bounds. A location without them merely inherits its
+        # external rectangle for display — treating that as an internal-view
+        # footprint produces false positives (e.g. a room repositioned on the
+        # close-up art landing inside the village square's inherited bounds).
         effective_locs_internal = {}
         for loc_id, loc_data in canonical_locs.items():
             if not isinstance(loc_data, dict):
@@ -137,7 +194,6 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                 checked = check_bounds_dict(bounds, f"Bounds for {loc_id}")
                 if checked:
                     effective_locs[loc_id] = checked
-                    effective_locs_internal[loc_id] = checked
 
             bounds_internal = loc_data.get("bounds_internal")
             if bounds_internal is not None:
@@ -191,7 +247,10 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
             for loc_id in visible_locs:
                 if loc_bounds and loc_id in loc_bounds:
                     b = loc_bounds[loc_id]
-                    effective_case_locs[loc_id] = {"x": b.get("x", 0), "y": b.get("y", 0), "w": b.get("w", 1), "h": b.get("h", 1)}
+                    eff = {"x": b.get("x", 0), "y": b.get("y", 0), "w": b.get("w", 1), "h": b.get("h", 1)}
+                    if b.get("rotation"):
+                        eff["rotation"] = b["rotation"]
+                    effective_case_locs[loc_id] = eff
                 elif loc_id in effective_locs:
                     effective_case_locs[loc_id] = effective_locs[loc_id]
                 elif loc_id in _BOUNDS_TILES:
@@ -205,15 +264,7 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                     idB = case_loc_ids[j]
                     if (idA, idB) in ALLOWED_NESTING or (idB, idA) in ALLOWED_NESTING:
                         continue
-                    bA = effective_case_locs[idA]
-                    bB = effective_case_locs[idB]
-                    overlap = not (
-                        bA["x"] + bA["w"] <= bB["x"] or
-                        bB["x"] + bB["w"] <= bA["x"] or
-                        bA["y"] + bA["h"] <= bB["y"] or
-                        bB["y"] + bB["h"] <= bA["y"]
-                    )
-                    if overlap:
+                    if _oriented_overlap(effective_case_locs[idA], effective_case_locs[idB]):
                         errors.append(f"Overlap detected in case {case_id} between locations '{idA}' and '{idB}' without allowed nesting relationship")
 
             if not isinstance(loc_bounds, dict):
@@ -243,7 +294,10 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                 if l_id in canonical_locs:
                     b = canonical_locs[l_id].get("bounds")
                     if b:
-                        return {"x": b["x"], "y": b["y"], "w": b["w"], "h": b["h"]}
+                        out = {"x": b["x"], "y": b["y"], "w": b["w"], "h": b["h"]}
+                        if b.get("rotation"):
+                            out["rotation"] = b["rotation"]
+                        return out
                 if l_id in _BOUNDS_TILES:
                     tx, ty, tw, th = _BOUNDS_TILES[l_id]
                     return {"x": tx, "y": ty, "w": tw, "h": th}
@@ -285,17 +339,25 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                                 
                             is_external = anchor_data.get("external", False) or render_policy == "external"
                             if not is_external and loc_id:
+                                # An anchor is placed against the art, which may
+                                # be aligned in either view: accept containment
+                                # in the external bounds OR the authored
+                                # internal-view bounds, honouring rotation.
                                 eff_bounds = get_effective_bounds(loc_id)
-                                if eff_bounds:
-                                    bx = eff_bounds["x"]
-                                    by = eff_bounds["y"]
-                                    bw = eff_bounds["w"]
-                                    bh = eff_bounds["h"]
-                                    if not (bx <= ax < bx + bw and by <= ay < by + bh):
-                                        errors.append(
-                                            f"Object anchor for '{obj_id}' at ({ax}, {ay}) is outside the bounds of '{loc_id}' "
-                                            f"({bx}, {by}, {bw}, {bh}) and not marked as external"
-                                        )
+                                internal_bounds = None
+                                loc_entry = canonical_locs.get(loc_id) if isinstance(canonical_locs, dict) else None
+                                if isinstance(loc_entry, dict) and isinstance(loc_entry.get("bounds_internal"), dict):
+                                    internal_bounds = loc_entry["bounds_internal"]
+                                inside = False
+                                if eff_bounds and _point_in_bounds(eff_bounds, ax, ay):
+                                    inside = True
+                                elif internal_bounds and _point_in_bounds(internal_bounds, ax, ay):
+                                    inside = True
+                                if eff_bounds and not inside:
+                                    errors.append(
+                                        f"Object anchor for '{obj_id}' at ({ax}, {ay}) is outside both the external and "
+                                        f"internal bounds of '{loc_id}' and not marked as external"
+                                    )
 
                     semantic_asset_id = anchor_data.get("semantic_asset_id")
                     if semantic_asset_id is not None and not isinstance(semantic_asset_id, str):
@@ -632,6 +694,93 @@ OBJECT_OVERLAYS: dict[str, list[str]] = {
     "obj_mud_bootprint": ["overlay_muddy_footprint"],
 }
 
+TOWN_LIGHT_OVERLAYS: list[dict[str, Any]] = [
+    {
+        "id": "square_lamp_west",
+        "semantic_asset_id": "light_streetlamp_pool",
+        "location_id": "loc_village_square",
+        "x": 2800,
+        "y": 2268,
+        "width": 360,
+        "height": 360,
+        "from": "19:30",
+        "to": "06:30",
+        "opacity": 0.72,
+    },
+    {
+        "id": "square_lamp_clinic",
+        "semantic_asset_id": "light_streetlamp_pool",
+        "location_id": "loc_village_square",
+        "x": 3408,
+        "y": 2112,
+        "width": 340,
+        "height": 340,
+        "from": "19:30",
+        "to": "06:30",
+        "opacity": 0.66,
+    },
+    {
+        "id": "pub_front_windows",
+        "semantic_asset_id": "light_pub_window_glow",
+        "location_id": "loc_pub",
+        "x": 2508,
+        "y": 1912,
+        "width": 460,
+        "height": 250,
+        "from": "17:30",
+        "to": "23:15",
+        "opacity": 0.82,
+    },
+    {
+        "id": "elias_bedroom_window",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_elias_house",
+        "x": 2976,
+        "y": 2632,
+        "width": 160,
+        "height": 105,
+        "from": "22:00",
+        "to": "05:30",
+        "opacity": 0.72,
+    },
+    {
+        "id": "ben_flat_window",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_ben_flat",
+        "x": 2304,
+        "y": 2388,
+        "width": 170,
+        "height": 108,
+        "from": "21:30",
+        "to": "01:00",
+        "opacity": 0.68,
+    },
+    {
+        "id": "priya_flat_window",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_priya_flat",
+        "x": 2328,
+        "y": 2540,
+        "width": 165,
+        "height": 105,
+        "from": "21:00",
+        "to": "23:30",
+        "opacity": 0.62,
+    },
+    {
+        "id": "clinic_after_hours_light",
+        "semantic_asset_id": "light_window_cool",
+        "location_id": "loc_clinic",
+        "x": 3504,
+        "y": 2200,
+        "width": 190,
+        "height": 120,
+        "from": "18:00",
+        "to": "06:00",
+        "opacity": 0.46,
+    },
+]
+
 
 CASE_MAPS: dict[str, dict[str, Any]] = {
     "case_004": {
@@ -653,6 +802,7 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
             "loc_ben_flat": 2.2,
             "loc_priya_flat": 2.2,
         },
+        "light_overlays": TOWN_LIGHT_OVERLAYS,
     }
 }
 
@@ -695,8 +845,7 @@ def pilot_location_visuals(location_id: str) -> tuple[dict[str, int] | None, dic
         if location_id in visible_locations:
             bounds_override = case_override.get("location_bounds", {}).get(location_id)
             if bounds_override:
-                x, y, w, h = bounds_override["x"], bounds_override["y"], bounds_override["w"], bounds_override["h"]
-                px_bounds = {"x": x * 32, "y": y * 32, "width": w * 32, "height": h * 32}
+                px_bounds = _tile_bounds_to_px(bounds_override)
                 px_pos = _center(px_bounds)
                 layer = "exterior"
                 canonical_loc_data = layout.get("canonical_locations", {}).get(location_id)
@@ -712,9 +861,7 @@ def pilot_location_visuals(location_id: str) -> tuple[dict[str, int] | None, dic
                 
             canonical_loc_data = layout.get("canonical_locations", {}).get(location_id)
             if canonical_loc_data and "bounds" in canonical_loc_data:
-                b = canonical_loc_data["bounds"]
-                x, y, w, h = b["x"], b["y"], b["w"], b["h"]
-                px_bounds = {"x": x * 32, "y": y * 32, "width": w * 32, "height": h * 32}
+                px_bounds = _tile_bounds_to_px(canonical_loc_data["bounds"])
                 px_pos = _center(px_bounds)
                 layer = canonical_loc_data.get("mode", "exterior")
                 return px_pos, px_bounds, layer
@@ -727,6 +874,15 @@ def pilot_location_visuals(location_id: str) -> tuple[dict[str, int] | None, dic
     return _center(bounds), bounds, "interior" if location_id in {
         "loc_pub", "loc_ben_flat", "loc_priya_flat", "loc_elias_house"
     } else "exterior"
+
+
+def _tile_bounds_to_px(b: dict[str, Any]) -> dict[str, Any]:
+    """Convert tile-space editor bounds to image-pixel bounds, carrying the
+    optional visual rotation (degrees) through unchanged."""
+    px: dict[str, Any] = {"x": b["x"] * 32, "y": b["y"] * 32, "width": b["w"] * 32, "height": b["h"] * 32}
+    if b.get("rotation"):
+        px["rotation"] = b["rotation"]
+    return px
 
 
 def pilot_location_bounds_internal(location_id: str) -> dict[str, int] | None:
@@ -742,7 +898,7 @@ def pilot_location_bounds_internal(location_id: str) -> dict[str, int] | None:
     b = loc_data.get("bounds_internal")
     if not b:
         return None
-    return {"x": b["x"] * 32, "y": b["y"] * 32, "width": b["w"] * 32, "height": b["h"] * 32}
+    return _tile_bounds_to_px(b)
 
 
 def map_config(case_id: str) -> dict[str, Any] | None:
@@ -848,6 +1004,7 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
             "definition_id": "legacy_the_ville",
             "visible_location_ids": None,
             "overlays": [],
+            "light_overlays": [],
             "objects": [],
             "adjacency": {},
             "canonical_locations": {},
@@ -885,6 +1042,7 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
         "definition_id": config["map"]["definition_id"],
         "visible_location_ids": visible_location_ids_list,
         "overlays": config["overlays"],
+        "light_overlays": config.get("light_overlays", []),
         "crop_padding_by_location": config.get("crop_padding_by_location", {}),
         "object_visuals": object_visuals,
         "objects": object_visuals,

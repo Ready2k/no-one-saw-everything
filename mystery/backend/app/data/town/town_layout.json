@@ -24,7 +24,13 @@
         "h": 9
       },
       "mode": "exterior",
-      "notes": "Fountain"
+      "notes": "Fountain",
+      "bounds_internal": {
+        "x": 96,
+        "y": 74,
+        "w": 10,
+        "h": 9
+      }
     },
     "loc_marcus_house": {
       "bounds": {
@@ -154,7 +160,14 @@
         "h": 7
       },
       "mode": "interior",
-      "notes": ""
+      "notes": "",
+      "bounds_internal": {
+        "x": 82.1,
+        "y": 77,
+        "w": 6,
+        "h": 4,
+        "rotation": 30
+      }
     },
     "loc_clara_flat": {
       "bounds": {
@@ -174,7 +187,14 @@
         "h": 8
       },
       "mode": "interior",
-      "notes": ""
+      "notes": "",
+      "bounds_internal": {
+        "x": 82.6,
+        "y": 64.5,
+        "w": 4,
+        "h": 4,
+        "rotation": 39
+      }
     },
     "loc_priya_flat": {
       "bounds": {
@@ -184,7 +204,14 @@
         "h": 8
       },
       "mode": "interior",
-      "notes": ""
+      "notes": "",
+      "bounds_internal": {
+        "x": 80.6,
+        "y": 70.1,
+        "w": 4.8,
+        "h": 3.7,
+        "rotation": -39
+      }
     },
     "loc_nadia_flat": {
       "bounds": {
@@ -201,20 +228,27 @@
         "x": 122,
         "y": 48,
         "w": 11,
-        "h": 9
+        "h": 9,
+        "rotation": 2
       },
       "mode": "interior",
       "notes": ""
     },
     "loc_solicitors_office": {
       "bounds": {
-        "x": 97,
-        "y": 78,
+        "x": 96,
+        "y": 82,
         "w": 9,
         "h": 6
       },
       "mode": "interior",
-      "notes": ""
+      "notes": "",
+      "bounds_internal": {
+        "x": 97,
+        "y": 83,
+        "w": 9,
+        "h": 6
+      }
     },
     "loc_elias_bench": {
       "bounds": {
@@ -228,13 +262,19 @@
     },
     "loc_fishery": {
       "bounds": {
-        "x": 49,
-        "y": 54,
-        "w": 15,
-        "h": 14
+        "x": 51,
+        "y": 32,
+        "w": 37,
+        "h": 15
       },
       "mode": "exterior",
-      "notes": "Fishery"
+      "notes": "Fishery",
+      "bounds_internal": {
+        "x": 50,
+        "y": 30,
+        "w": 39,
+        "h": 14
+      }
     },
     "loc_lake": {
       "bounds": {
@@ -244,27 +284,45 @@
         "h": 33
       },
       "mode": "exterior",
-      "notes": "Lover's Lake"
+      "notes": "Lover's Lake",
+      "bounds_internal": {
+        "x": 26,
+        "y": 45,
+        "w": 39,
+        "h": 33
+      }
     },
     "loc_woodland": {
       "bounds": {
-        "x": 49,
-        "y": 96,
-        "w": 84,
-        "h": 10
+        "x": 121,
+        "y": 104,
+        "w": 71,
+        "h": 39
       },
       "mode": "exterior",
-      "notes": "Whispering Woodland"
+      "notes": "Whispering Woodland",
+      "bounds_internal": {
+        "x": 117,
+        "y": 96,
+        "w": 62,
+        "h": 48
+      }
     },
     "loc_meadow": {
       "bounds": {
-        "x": 50,
-        "y": 89,
-        "w": 60,
-        "h": 7
+        "x": 71,
+        "y": 97,
+        "w": 38,
+        "h": 47
       },
       "mode": "exterior",
-      "notes": "Green Meadow"
+      "notes": "Green Meadow",
+      "bounds_internal": {
+        "x": 70,
+        "y": 97,
+        "w": 39,
+        "h": 46
+      }
     }
   },
   "case_overrides": {
@@ -321,10 +379,11 @@
           "h": 4
         },
         "loc_elias_house": {
-          "x": 84,
-          "y": 76,
-          "w": 7,
-          "h": 4
+          "x": 83.1,
+          "y": 77,
+          "w": 6,
+          "h": 4,
+          "rotation": 30
         },
         "loc_owen_house": {
           "x": 113,
@@ -384,8 +443,8 @@
         "obj_blackmail_letters": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 83,
-            "y": 68
+            "x": 84,
+            "y": 66
           },
           "semantic_asset_id": "obj_blackmail_letters",
           "render_policy": "discovery_gated",
@@ -394,8 +453,8 @@
         "obj_arson_clipping": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 84,
-            "y": 68
+            "x": 85,
+            "y": 66
           },
           "semantic_asset_id": "obj_arson_clipping",
           "render_policy": "discovery_gated",
@@ -404,7 +463,7 @@
         "obj_ben_phone": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 85,
+            "x": 86,
             "y": 67
           },
           "semantic_asset_id": "obj_phone",
