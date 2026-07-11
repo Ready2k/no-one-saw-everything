@@ -5,6 +5,35 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.town_map import validate_town_layout_payload
+from app.place_library import create_building_instance, dress_building, load_building_library, location_art_asset
+from app.case_store import get_case
+from app.projections import project_location
+
+
+def test_building_library_bundles_and_dressing_are_deterministic():
+    library = load_building_library()
+    assert {"cafe_small_v1", "clinic_small_v1", "flats_two_storey_v1", "pub_small_v1", "cottage_small_v1"} <= set(library["buildings"])
+
+    building = library["buildings"]["cafe_small_v1"]
+    dressed = dress_building(building, 20, 30)
+    assert dressed["structures"]
+    assert any(tile["tile_id"] == "tile_path" for tile in dressed["paths"])
+    assert dressed == dress_building(building, 20, 30)
+
+    instance = create_building_instance("clinic_small_v1", 40, 50, instance_id="clinic_main", location_id="loc_clinic")
+    assert instance["exterior_asset"].endswith("clinic_small_v1_exterior.png")
+    assert instance["interior_asset"].endswith("clinic_small_v1_interior.png")
+    assert instance["derived_tiles"]["structures"]
+
+    filler = library["buildings"]["filler_barn_medium_v1"]
+    assert filler["filler"] is True
+    assert filler["investigable"] is False
+    assert filler["interior_asset"].endswith("filler_barn_medium_v1_interior.png")
+    assert location_art_asset("loc_hobbs_cafe", "external").endswith("cafe_small_v1_exterior.png")
+    assert location_art_asset("loc_hobbs_cafe", "internal").endswith("cafe_small_v1_interior.png")
+    assert location_art_asset("loc_clara_flat", "internal").endswith("clara_flat_interior_production.png")
+    cafe = next(loc for loc in get_case("case_001").locations if loc.location_id == "loc_hobbs_cafe")
+    assert project_location(cafe)["illustration"].endswith("cafe_small_v1_exterior.png")
 
 
 def test_dev_map_editor_endpoint_gating():

@@ -40,6 +40,7 @@ export interface SceneProp {
   h: number;
   layer: string;
   selected: boolean;
+  kind?: "prop" | "building";
 }
 
 /** One underlay image placed at a world-tile rectangle. */
@@ -240,21 +241,35 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
     const ph = p.h * s;
     if (px + pw < 0 || px > cssW || py + ph < 0 || py > cssH) continue;
 
+    const isBuilding = p.kind === "building" || p.assetId.startsWith("building:");
     ctx.save();
     roundRectPath(ctx, px, py, Math.max(pw, 3), Math.max(ph, 3), Math.min(4, s * 0.2));
-    ctx.fillStyle = p.selected ? "rgba(56, 189, 248, 0.45)" : "rgba(245, 158, 11, 0.32)";
+    ctx.fillStyle = isBuilding
+      ? p.selected ? "rgba(56, 189, 248, 0.38)" : "rgba(30, 41, 59, 0.68)"
+      : p.selected ? "rgba(56, 189, 248, 0.45)" : "rgba(245, 158, 11, 0.32)";
     ctx.fill();
-    ctx.strokeStyle = p.selected ? "#38bdf8" : "rgba(245, 158, 11, 0.9)";
+    ctx.strokeStyle = isBuilding ? (p.selected ? "#38bdf8" : "rgba(148, 163, 184, 0.95)") : (p.selected ? "#38bdf8" : "rgba(245, 158, 11, 0.9)");
     ctx.lineWidth = p.selected ? 2 : 1;
     ctx.stroke();
     ctx.restore();
 
-    const emojiSize = Math.min(pw, ph) * 0.72;
-    if (emojiSize >= 9) {
-      ctx.font = `${Math.min(emojiSize, 42)}px sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(PROP_EMOJIS[p.assetId] || "📦", px + pw / 2, py + ph / 2 + 1);
+    if (isBuilding) {
+      const label = p.assetId.replace(/^building:/, "").replace(/_v\d+$/, "").replace(/_/g, " ");
+      if (s >= 3) {
+        ctx.font = `600 ${Math.min(15, Math.max(9, s * 0.65))}px ui-monospace, monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#e2e8f0";
+        ctx.fillText(label, px + pw / 2, py + ph / 2);
+      }
+    } else {
+      const emojiSize = Math.min(pw, ph) * 0.72;
+      if (emojiSize >= 9) {
+        ctx.font = `${Math.min(emojiSize, 42)}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(PROP_EMOJIS[p.assetId] || "?", px + pw / 2, py + ph / 2 + 1);
+      }
     }
 
     if (p.selected) {
@@ -407,10 +422,11 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
     } else if (ov.kind === "propGhost") {
       const px = X(ov.x);
       const py = Y(ov.y);
+      const isBuilding = ov.assetId.startsWith("building:");
       ctx.save();
       ctx.globalAlpha = 0.55;
       roundRectPath(ctx, px, py, s, s, Math.min(4, s * 0.2));
-      ctx.fillStyle = "rgba(245, 158, 11, 0.35)";
+      ctx.fillStyle = isBuilding ? "rgba(30, 41, 59, 0.55)" : "rgba(245, 158, 11, 0.35)";
       ctx.fill();
       ctx.strokeStyle = "rgba(245, 158, 11, 0.9)";
       ctx.setLineDash([4, 3]);
@@ -420,7 +436,7 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
         ctx.font = `${Math.min(s * 0.72, 42)}px sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(PROP_EMOJIS[ov.assetId] || "📦", px + s / 2, py + s / 2 + 1);
+        ctx.fillText(isBuilding ? "building" : (PROP_EMOJIS[ov.assetId] || "?"), px + s / 2, py + s / 2 + 1);
       }
       ctx.restore();
     }

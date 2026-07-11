@@ -34,14 +34,28 @@ def project_agent(agent: Agent) -> dict[str, Any]:
     }
 
 
-def project_location(loc: Location) -> dict[str, Any]:
+def project_location(loc: Location, case_id: str | None = None) -> dict[str, Any]:
+    from .place_library import location_art_asset
+
+    # Existing authored illustrations, such as the Case 004 fountain closeup,
+    # remain authoritative. Library art fills only the missing cosmetic slot.
+    illustration = loc.illustration
+    if not illustration:
+        illustration = location_art_asset(
+            loc.location_id,
+            "internal" if loc.visual_layer == "interior" else "external",
+        )
     return {
         "location_id": loc.location_id,
         "name": loc.name,
         "description": loc.description,
         "connected_location_ids": loc.connected_location_ids,
         "visibility_type": loc.visibility_type,
-        "illustration": loc.illustration,
+        "illustration": illustration,
+        "building_art": {
+            "exterior": location_art_asset(loc.location_id, "external"),
+            "interior": location_art_asset(loc.location_id, "internal"),
+        },
     }
 
 
@@ -178,7 +192,7 @@ def project_map_location(loc: Location, case_id: str | None = None) -> dict[str,
             bounds_internal = pilot_location_bounds_internal(loc.location_id)
     else:
         position, bounds, layer = location_visuals(loc)
-    projected = project_location(loc)
+    projected = project_location(loc, case_id)
     projected["map_position"] = position.model_dump() if hasattr(position, "model_dump") else position
     projected["map_bounds"] = bounds.model_dump() if hasattr(bounds, "model_dump") else bounds
     # Internal (roofless close-up) view bounds; null inherits map_bounds.

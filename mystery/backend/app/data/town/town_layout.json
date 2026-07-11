@@ -518,5 +518,6 @@
       "tiles": []
     }
   },
-  "prop_instances": {}
+  "prop_instances": {},
+  "building_instances": []
 }

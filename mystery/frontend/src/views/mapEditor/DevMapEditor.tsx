@@ -6,6 +6,7 @@ import {
   ALLOWED_PROPS,
   ALLOWED_TILES,
   Bounds,
+  BuildingInstance,
   Camera,
   CaseObjectRef,
   CaseLocationRef,
@@ -401,6 +402,7 @@ interface MirrorState {
   visibleLayers: Record<string, boolean>;
   selectedTileId: string;
   selectedPropId: string;
+  selectedBuildingId: string;
   paintLayer: string;
   propLayer: string;
   brushSize: number;
@@ -431,6 +433,8 @@ export default function DevMapEditor() {
   const [activeTool, setActiveTool] = useState<ToolId>("select");
   const [selectedTileId, setSelectedTileId] = useState("tile_grass");
   const [selectedPropId, setSelectedPropId] = useState("prop_bench");
+  const [selectedBuildingId, setSelectedBuildingId] = useState("cafe_small_v1");
+  const [buildingLibrary, setBuildingLibrary] = useState<Record<string, any>>({});
   const [paintLayer, setPaintLayer] = useState("base");
   const [propLayer, setPropLayer] = useState("props");
   const [brushSize, setBrushSize] = useState(1);
@@ -719,6 +723,22 @@ export default function DevMapEditor() {
         selected: st.selection?.kind === "prop" && st.selection.id === p.instance_id
       });
     }
+    for (const b of lay.building_instances || []) {
+      const footprint = b.footprint || { w: 1, h: 1 };
+      if (st.visibleLayers["structures"]) {
+        props.push({
+          id: `building:${b.instance_id}`,
+          assetId: `building:${b.asset_id}`,
+          x: b.x,
+          y: b.y,
+          w: footprint.w,
+          h: footprint.h,
+          layer: "structures",
+          selected: false,
+          kind: "building"
+        });
+      }
+    }
 
     // Tool overlay
     let overlay: ToolOverlay = null;
@@ -733,6 +753,8 @@ export default function DevMapEditor() {
         overlay = { kind: "brush", cells: [{ x: hov.x, y: hov.y }], erase: false };
       } else if (st.activeTool === "prop") {
         overlay = { kind: "propGhost", x: hov.x, y: hov.y, assetId: st.selectedPropId };
+      } else if (st.activeTool === "building") {
+        overlay = { kind: "propGhost", x: hov.x, y: hov.y, assetId: `building:${st.selectedBuildingId}` };
       }
     }
 
@@ -793,6 +815,7 @@ export default function DevMapEditor() {
       visibleLayers,
       selectedTileId,
       selectedPropId,
+      selectedBuildingId,
       paintLayer,
       propLayer,
       brushSize,
@@ -830,11 +853,13 @@ export default function DevMapEditor() {
         const cleanLayout = {
           ...data.layout,
           tile_layers: data.layout.tile_layers || {},
-          prop_instances: data.layout.prop_instances || {}
+          prop_instances: data.layout.prop_instances || {},
+          building_instances: data.layout.building_instances || []
         } as TownLayout;
         setLayout(cleanLayout);
         setCases(data.cases);
         setCanonicalRecs(data.canonical_recommended_locations);
+        setBuildingLibrary(data.building_library?.buildings || {});
         setLoading(false);
       })
       .catch((err) => {
@@ -1228,6 +1253,64 @@ export default function DevMapEditor() {
     requestRender();
   };
 
+  const placeBuilding = (tile: { x: number; y: number }) => {
+    const st = stateRef.current!;
+    const before = layoutRef.current!;
+    const asset = buildingLibrary[st.selectedBuildingId];
+    if (!asset) {
+      showToast("Choose a building bundle first.", "error");
+      return;
+    }
+    const footprint = asset.footprint;
+    if (tile.x < 1 || tile.y < 1 || tile.x + footprint.w > before.grid.cols - 1 || tile.y + footprint.h > before.grid.rows - 1) {
+      showToast("That building would fall outside the town grid.", "error");
+      return;
+    }
+    const instance: BuildingInstance = {
+      instance_id: `building_${st.selectedBuildingId}_${Date.now().toString().slice(-6)}`,
+      asset_id: st.selectedBuildingId,
+      location_id: findLocationIdAtWorld(tile.x + 0.5, tile.y + 0.5) || "loc_village_square",
+      x: tile.x,
+      y: tile.y,
+      footprint,
+      exterior_asset: asset.exterior_asset,
+      interior_asset: asset.interior_asset,
+      entrances: asset.entrances,
+      derived_tiles: {}
+    };
+    const copy = deepClone(before);
+    copy.building_instances = [...(copy.building_instances || []), instance];
+    // The editor mirrors the backend's deterministic dressing contract.
+    const front = asset.surrounding_rules?.front;
+    const side = asset.surrounding_rules?.sides;
+    const rear = asset.surrounding_rules?.rear;
+    const rect = (x: number, y: number, w: number, h: number, tile_id: string) =>
+      Array.from({ length: w }, (_, dx) => Array.from({ length: h }, (_, dy) => ({ x: x + dx, y: y + dy, tile_id }))).flat();
+    const derived: Record<string, TileLayer> = {
+      structures: { tiles: rect(tile.x, tile.y, footprint.w, footprint.h, "tile_wall_exterior") },
+      paths: { tiles: front === "path" ? rect(tile.x, tile.y + footprint.h, footprint.w, 2, "tile_path") : [] },
+      terrain_detail: { tiles: [] }
+    };
+    if (["fence", "hedge", "flowerbed"].includes(side)) {
+      derived.terrain_detail.tiles.push(...rect(tile.x - 1, tile.y, 1, footprint.h, `tile_${side}`));
+      derived.terrain_detail.tiles.push(...rect(tile.x + footprint.w, tile.y, 1, footprint.h, `tile_${side}`));
+    }
+    if (rear === "service_path") derived.paths.tiles.push(...rect(tile.x, tile.y - 1, footprint.w, 1, "tile_path"));
+    instance.derived_tiles = derived;
+    for (const [layerName, layer] of Object.entries(derived)) {
+      const target = ensureLayer(copy, layerName);
+      const occupied = new Set(layer.tiles.map((t) => tileKey(t.x, t.y)));
+      target.tiles = target.tiles.filter((t) => !occupied.has(tileKey(t.x, t.y)));
+      target.tiles.push(...layer.tiles);
+    }
+    layoutRef.current = copy;
+    setLayout(copy);
+    setSelection(null);
+    setIsDirty(true);
+    showToast(`${asset.display_name} placed with entrance path and boundary dressing.`, "success");
+    requestRender();
+  };
+
   const deleteProp = (instanceId: string) => {
     mutateLayout(
       (l) => {
@@ -1469,6 +1552,9 @@ export default function DevMapEditor() {
         break;
       case "prop":
         placeProp(tile, world);
+        break;
+      case "building":
+        placeBuilding(tile);
         break;
       default:
         beginSelectGesture(e, world);
@@ -2336,6 +2422,26 @@ export default function DevMapEditor() {
             </div>
           )}
 
+          {activeTool === "building" && (
+            <div className="control-group">
+              <label className="section-title">Building Library</label>
+              <div className="view-note">Each bundle includes exterior and interior art references, rooms, an entrance, and automatic surrounding tiles.</div>
+              <div className="palette-grid">
+                {Object.entries(buildingLibrary).map(([id, building]) => (
+                  <div
+                    key={id}
+                    className={`palette-item prop ${selectedBuildingId === id ? "active" : ""}`}
+                    onClick={() => setSelectedBuildingId(id)}
+                    title={`${building.display_name} · ${building.footprint.w}×${building.footprint.h}`}
+                  >
+                    <span className="palette-emoji">🏠</span>
+                    <span className="palette-item-text">{building.display_name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <details open className="sidebar-section">
             <summary className="section-title">View</summary>
             <div className="control-group">
@@ -2917,7 +3023,7 @@ export default function DevMapEditor() {
             Loc <span ref={statusHoverLocRef} className="mono">—</span>
           </span>
           <span>
-            Layer <span className="mono">{activeTool === "prop" ? propLayer : paintLayer}</span>
+            Layer <span className="mono">{activeTool === "prop" ? propLayer : activeTool === "building" ? "structures + dressing" : paintLayer}</span>
           </span>
           <span>
             Tiles <span className="mono">{paintedTileCount}</span>

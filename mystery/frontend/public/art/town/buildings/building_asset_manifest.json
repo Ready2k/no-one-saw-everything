@@ -1,0 +1,116 @@
+{
+  "manifest_version": "building_asset_manifest_v1",
+  "source": "generated_and_cleaned_project_owned",
+  "style_reference": "/art/town/tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png",
+  "lighting": "neutral_daylight_runtime_tint",
+  "tile_size": 32,
+  "assets": [
+    {
+      "id": "cafe_small_v1",
+      "exterior": "production/cafe_small_v1_exterior.png",
+      "interior": "production/cafe_small_v1_interior.png"
+    },
+    {
+      "id": "clinic_small_v1",
+      "exterior": "production/clinic_small_v1_exterior.png",
+      "interior": "production/clinic_small_v1_interior.png"
+    },
+    {
+      "id": "flats_two_storey_v1",
+      "exterior": "production/flats_two_storey_v1_exterior.png",
+      "interior": "production/flats_two_storey_v1_interior.png"
+    },
+    {
+      "id": "pub_small_v1",
+      "exterior": "production/pub_small_v1_exterior.png",
+      "interior": "production/pub_small_v1_interior.png"
+    },
+    {
+      "id": "cottage_small_v1",
+      "exterior": "production/cottage_small_v1_exterior.png",
+      "interior": "production/cottage_small_v1_interior.png"
+    },
+    {
+      "id": "bookshop_small_v1",
+      "exterior": "production/bookshop_small_v1_exterior.png",
+      "interior": "production/bookshop_small_v1_interior.png"
+    },
+    {
+      "id": "house_small_v1",
+      "exterior": "production/house_small_v1_exterior.png",
+      "interior": "production/house_small_v1_interior.png"
+    },
+    {
+      "id": "house_large_study_v1",
+      "exterior": "production/house_large_study_v1_exterior.png",
+      "interior": "production/house_large_study_v1_interior.png"
+    },
+    {
+      "id": "house_yard_workshop_v1",
+      "exterior": "production/house_yard_workshop_v1_exterior.png",
+      "interior": "production/house_yard_workshop_v1_interior.png"
+    },
+    {
+      "id": "solicitors_office_small_v1",
+      "exterior": "production/solicitors_office_small_v1_exterior.png",
+      "interior": "production/solicitors_office_small_v1_interior.png"
+    },
+    {
+      "id": "fishery_worksite_v1",
+      "exterior": "production/fishery_worksite_v1_exterior.png",
+      "interior": "production/fishery_worksite_v1_interior.png"
+    },
+    {
+      "id": "clara_flat_variant",
+      "interior": "production/clara_flat_interior_production.png",
+      "parent_location_id": "loc_hobbs_cafe"
+    },
+    {
+      "id": "priya_flat_variant",
+      "interior": "production/priya_flat_interior_production.png"
+    },
+    {
+      "id": "nadia_flat_variant",
+      "interior": "production/nadia_flat_interior_production.png"
+    },
+    {
+      "id": "ruth_cottage_variant",
+      "interior": "production/ruth_cottage_garden_interior_production.png"
+    },
+    {
+      "id": "filler_farmhouse_small_v1",
+      "exterior": "production/filler_farmhouse_small_v1_exterior.png",
+      "interior": "production/filler_farmhouse_small_v1_interior.png",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_barn_medium_v1",
+      "exterior": "production/filler_barn_medium_v1_exterior.png",
+      "interior": "production/filler_barn_medium_v1_interior.png",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_boathouse_small_v1",
+      "exterior": "production/filler_boathouse_small_v1_exterior.png",
+      "interior": "production/filler_boathouse_small_v1_interior.png",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_windmill_small_v1",
+      "exterior": "production/filler_windmill_small_v1_exterior.png",
+      "interior": "production/filler_windmill_small_v1_interior.png",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_market_stall_v1",
+      "exterior": "production/filler_market_stall_v1_exterior.png",
+      "interior": "production/filler_market_stall_v1_interior.png",
+      "filler": true,
+      "investigable": false
+    }
+  ]
+}

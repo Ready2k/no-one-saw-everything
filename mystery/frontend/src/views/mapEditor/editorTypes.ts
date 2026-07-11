@@ -64,6 +64,20 @@ export interface PropInstance {
   render_policy?: string;
 }
 
+export interface BuildingInstance {
+  instance_id: string;
+  asset_id: string;
+  location_id: string;
+  x: number;
+  y: number;
+  rotation?: number;
+  exterior_asset?: string;
+  interior_asset?: string;
+  footprint?: { w: number; h: number };
+  entrances?: Array<{ x: number; y: number; facing: string }>;
+  derived_tiles?: Record<string, { tiles: TileEntry[] }>;
+}
+
 export interface TownLayout {
   version: string;
   grid: { cols: number; rows: number; tile_size: number };
@@ -71,6 +85,7 @@ export interface TownLayout {
   case_overrides: Record<string, CaseOverride>;
   tile_layers: Record<string, TileLayer>;
   prop_instances: Record<string, PropInstance[]>;
+  building_instances: BuildingInstance[];
 }
 
 export interface CaseLocationRef {
@@ -107,7 +122,8 @@ export type ToolId =
   | "rect"
   | "fill"
   | "picker"
-  | "prop";
+  | "prop"
+  | "building";
 
 export type PreviewMode = "debug" | "player_reveal" | "fog";
 
@@ -310,7 +326,8 @@ export const TOOL_DEFS: Array<{ id: ToolId; label: string; icon: string; key: st
   { id: "rect", label: "Rectangle fill", icon: "▭", key: "R", hint: "Drag a rectangle to fill with the selected tile · hold Alt to erase the area" },
   { id: "fill", label: "Flood fill", icon: "🪣", key: "G", hint: "Click to flood-fill a contiguous region on the target layer" },
   { id: "picker", label: "Eyedropper", icon: "💉", key: "I", hint: "Click a painted tile to pick its tile type and layer" },
-  { id: "prop", label: "Place props", icon: "🌳", key: "P", hint: "Click to place the selected prop · drag to fine-position before release" }
+  { id: "prop", label: "Place props", icon: "🌳", key: "P", hint: "Click to place the selected prop · drag to fine-position before release" },
+  { id: "building", label: "Place buildings", icon: "🏠", key: "U", hint: "Click to drop the selected place bundle · exterior, interior and dressing tiles stay linked" }
 ];
 
 export function deepClone<T>(value: T): T {

@@ -27,6 +27,7 @@ export interface LocationPublic {
   connected_location_ids: string[];
   visibility_type: "public" | "private";
   illustration: string | null;
+  building_art?: { exterior: string | null; interior: string | null };
 }
 
 export interface CaseOverview {

@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import CaseData
+from .place_library import load_building_library
 
 TOWN_LAYOUT_FILE = Path(__file__).parent / "data" / "town" / "town_layout.json"
 
@@ -133,6 +134,33 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
         errors.append(f"Failed to retrieve list of cases from store: {e}")
 
     valid_location_ids = set(CANONICAL_LOCATIONS.keys())
+
+    building_instances = payload.get("building_instances", [])
+    building_assets = load_building_library().get("buildings", {})
+    if not isinstance(building_instances, list):
+        errors.append("building_instances must be a list")
+    else:
+        seen_buildings: set[str] = set()
+        for instance in building_instances:
+            if not isinstance(instance, dict):
+                errors.append("Each building instance must be an object")
+                continue
+            instance_id = instance.get("instance_id")
+            asset_id = instance.get("asset_id")
+            if not isinstance(instance_id, str) or not instance_id:
+                errors.append("Building instance is missing instance_id")
+            elif instance_id in seen_buildings:
+                errors.append(f"Duplicate building instance id '{instance_id}'")
+            seen_buildings.add(instance_id)
+            if asset_id not in building_assets:
+                errors.append(f"Unknown building asset id '{asset_id}'")
+            x, y = instance.get("x"), instance.get("y")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y)):
+                errors.append(f"Building instance '{instance_id}' coordinates must be numbers")
+                continue
+            footprint = instance.get("footprint") or building_assets.get(asset_id, {}).get("footprint")
+            if isinstance(footprint, dict) and (x < 0 or y < 0 or x + footprint.get("w", 0) > 192 or y + footprint.get("h", 0) > 144):
+                errors.append(f"Building instance '{instance_id}' footprint must remain within the 192x144 grid")
     
     # 1. Validate canonical_locations
     canonical_locs = payload.get("canonical_locations", {})

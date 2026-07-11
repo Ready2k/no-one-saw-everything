@@ -1297,6 +1297,7 @@ def get_dev_map_layout():
         raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
 
     from .town_map import TOWN_LAYOUT_FILE, _BOUNDS_TILES
+    from .place_library import load_building_library
     from .case_store import list_all_cases, get_case
     
     layout_data = {}
@@ -1313,7 +1314,8 @@ def get_dev_map_layout():
             "canonical_locations": {},
             "case_overrides": {},
             "tile_layers": {},
-            "prop_instances": {}
+            "prop_instances": {},
+            "building_instances": []
         }
         
     cases_details = []
@@ -1362,7 +1364,8 @@ def get_dev_map_layout():
                 } else "exterior"
             }
             for loc_id, b in _BOUNDS_TILES.items()
-        }
+        },
+        "building_library": load_building_library()
     }
 
 
@@ -1396,4 +1399,3 @@ def save_dev_map_layout(payload: dict = Body(...)):
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to persist layout: {e}")
-
