@@ -42,12 +42,14 @@ def test_project_agent_round_trips_portrait_art():
     }
 
 
-def test_locations_expose_illustration_with_null_default():
+def test_locations_expose_illustration_field():
     locations = client.get("/api/locations").json()
     assert locations, "case must have locations"
     for loc in locations:
         assert "illustration" in loc
-        assert loc["illustration"] is None  # case_001 ships no art assets
+        # Resolved from place_library art (or None for locations without a mapped asset) —
+        # never absent, and never anything but a string or null.
+        assert loc["illustration"] is None or isinstance(loc["illustration"], str)
 
 
 def test_accusation_result_names_the_accused():

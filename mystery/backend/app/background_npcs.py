@@ -34,28 +34,92 @@ MAX_BACKGROUND_NPCS = 10
 # Fixed identity pool. `case_001` already ships two of these (Rosa, Tam) --
 # add_background_npcs() skips any full_name already present in the case, so
 # it never creates duplicates when topping up an existing cast.
+#
+# `activities` is keyed by time-of-day bucket (see _time_bucket): cases run at
+# any hour (case_004 starts at 22:00), so each NPC needs phrases that make
+# sense at that hour, and at least two per bucket so consecutive sightings of
+# the same NPC don't repeat the same line.
 BACKGROUND_NPC_POOL: list[dict] = [
     {"suffix": "rosa", "full_name": "Rosa Fenn", "occupation": "Groundskeeper",
-     "portrait": "🌿", "pronoun": "she", "verb": "tending the flowerbeds"},
+     "portrait": "🌿", "pronoun": "she", "activities": {
+         "morning": ["tending the flowerbeds", "watering the planters"],
+         "afternoon": ["trimming the hedges", "raking the paths"],
+         "evening": ["packing away her garden tools", "doing a last sweep of the green"],
+         "night": ["locking up the tool shed", "carrying a lantern home from the green"]}},
     {"suffix": "tam", "full_name": "Tam Doyle", "occupation": "Postal carrier",
-     "portrait": "📨", "pronoun": "he", "verb": "finishing a post round"},
+     "portrait": "📨", "pronoun": "he", "activities": {
+         "morning": ["starting the early post round", "sorting letters from his mailbag"],
+         "afternoon": ["finishing a post round", "emptying the postbox"],
+         "evening": ["heading home with an empty mailbag", "dropping off one last parcel"],
+         "night": ["out for some late air, off duty", "posting a letter of his own on the way home"]}},
     {"suffix": "birdie", "full_name": "Birdie Voss", "occupation": "Street sweeper",
-     "portrait": "🧹", "pronoun": "she", "verb": "sweeping the front step"},
+     "portrait": "🧹", "pronoun": "she", "activities": {
+         "morning": ["sweeping the front step", "brushing down the pavement"],
+         "afternoon": ["sweeping out the gutters", "picking up stray litter"],
+         "evening": ["sweeping up after the day's foot traffic", "stacking her brooms on the cart"],
+         "night": ["sweeping under the lamplight", "clearing the day's litter before turning in"]}},
     {"suffix": "gus", "full_name": "Gus Farrow", "occupation": "Newspaper seller",
-     "portrait": "📰", "pronoun": "he", "verb": "setting out the morning papers"},
+     "portrait": "📰", "pronoun": "he", "activities": {
+         "morning": ["setting out the morning papers", "calling the day's headlines"],
+         "afternoon": ["hawking the midday edition", "restocking his paper rack"],
+         "evening": ["selling off the last of the evening edition", "bundling unsold papers"],
+         "night": ["tying up bundles for tomorrow's papers", "shuttering the news stand"]}},
     {"suffix": "sal", "full_name": "Sal Ibori", "occupation": "Milkman",
-     "portrait": "🥛", "pronoun": "he", "verb": "leaving bottles on the step"},
+     "portrait": "🥛", "pronoun": "he", "activities": {
+         "morning": ["leaving bottles on the step", "clinking crates off the milk cart"],
+         "afternoon": ["collecting the empties", "settling milk accounts door to door"],
+         "evening": ["loading crates for tomorrow's round", "wheeling the milk cart back to the yard"],
+         "night": ["collecting empty bottles ahead of the dawn round", "readying the cart for the early round"]}},
     {"suffix": "effie", "full_name": "Effie Marsh", "occupation": "Dog walker",
-     "portrait": "🐕", "pronoun": "she", "verb": "walking the dog past"},
+     "portrait": "🐕", "pronoun": "she", "activities": {
+         "morning": ["walking the dog past", "letting the dog sniff every lamppost"],
+         "afternoon": ["walking a pair of dogs past", "throwing a stick for the dog"],
+         "evening": ["taking the dog for its evening walk", "coaxing the dog along home"],
+         "night": ["giving the dog its late-night walk", "walking the dog one last time before bed"]}},
     {"suffix": "cole", "full_name": "Cole Byrne", "occupation": "Window cleaner",
-     "portrait": "🪟", "pronoun": "he", "verb": "wiping down the windows"},
+     "portrait": "🪟", "pronoun": "he", "activities": {
+         "morning": ["wiping down the windows", "setting his ladder against a wall"],
+         "afternoon": ["polishing the shopfront glass", "moving his ladder to the next building"],
+         "evening": ["packing up his ladder and bucket", "collecting payment for the day's work"],
+         "night": ["carrying his ladder home", "heading home after a long day"]}},
     {"suffix": "min", "full_name": "Min Okafor", "occupation": "Baker's assistant",
-     "portrait": "🥖", "pronoun": "she", "verb": "carrying a tray of loaves"},
+     "portrait": "🥖", "pronoun": "she", "activities": {
+         "morning": ["carrying a tray of loaves", "delivering warm bread"],
+         "afternoon": ["fetching sacks of flour", "handing out the last of the lunch rolls"],
+         "evening": ["scrubbing down the bakery trays", "carrying home the day's unsold bread"],
+         "night": ["heading in to start the overnight dough", "hauling flour in for the overnight bake"]}},
     {"suffix": "dez", "full_name": "Dez Holt", "occupation": "Market stallholder",
-     "portrait": "🧺", "pronoun": "he", "verb": "setting up a stall"},
+     "portrait": "🧺", "pronoun": "he", "activities": {
+         "morning": ["setting up a stall", "laying out the morning's produce"],
+         "afternoon": ["calling out prices at the stall", "haggling with a customer"],
+         "evening": ["packing up the stall", "selling off the day's leftovers cheap"],
+         "night": ["wheeling the empty stall cart home", "counting the day's takings"]}},
     {"suffix": "wren", "full_name": "Wren Ashby", "occupation": "Busker",
-     "portrait": "🎻", "pronoun": "she", "verb": "tuning up for a morning busk"},
+     "portrait": "🎻", "pronoun": "she", "activities": {
+         "morning": ["tuning up for a morning busk", "picking a good corner to play"],
+         "afternoon": ["busking for the afternoon crowd", "collecting coins from her violin case"],
+         "evening": ["playing a last tune for the evening", "counting the coins from her case"],
+         "night": ["carrying her violin case home", "humming her way home from a late set"]}},
 ]
+
+
+def _time_bucket(minute: int) -> str:
+    """Coarse time-of-day bucket for an absolute minute-of-day."""
+    h = (minute // 60) % 24
+    if 5 <= h < 12:
+        return "morning"
+    if 12 <= h < 17:
+        return "afternoon"
+    if 17 <= h < 21:
+        return "evening"
+    return "night"
+
+
+def npc_activity(npc: dict, minute: int, stop_index: int) -> str:
+    """Pick an activity phrase appropriate to the hour, cycling through the
+    bucket's variants so back-to-back sightings don't repeat."""
+    phrases = npc["activities"][_time_bucket(minute)]
+    return phrases[stop_index % len(phrases)]
 
 
 def _to_min(hhmm: str) -> int:
@@ -173,7 +237,7 @@ def add_background_npcs(case: CaseData, rng: random.Random, target_count: int = 
                 location_id=loc,
                 agent_ids=[agent_id],
                 event_type="arrival" if j == 0 else "movement",
-                truth_description=f"{first_name} is seen near {loc_name}, {npc['verb']}.",
+                truth_description=f"{first_name} is seen near {loc_name}, {npc_activity(npc, t, j)}.",
                 visibility="public",
                 importance=2,
                 from_location_id=prev_loc,

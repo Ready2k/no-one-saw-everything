@@ -536,6 +536,27 @@
         "reveals_clue_ids": [
           "clue_owen_delayed_delivery"
         ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_owen_delayed_delivery",
+        "answer_text": "Alone the whole time — no, hang on, that's not fair to Col. He signed in at quarter past seven and didn't finish up until five past eight; he was there stacking timber with me the entire window, he just hadn't signed off yet when you'd call it 'arrived'. I said it wrong before. Ask him. Our signatures are both on the docket, timed.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_owen_driver_present",
+            "summary": "Owen revises his account: the delivery driver was present in the yard from 07:15 to 08:05, covering the entire murder window.",
+            "claim_type": "alibi",
+            "time_reference": "07:45",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_driver_corroborates"
+        ]
       }
     ]
   },
@@ -702,6 +723,27 @@
         ],
         "reveals_clue_ids": [
           "clue_isabella_clinic"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_isabella_clinic",
+        "answer_text": "Alone? No — I said she was left in the waiting room, I didn't say I wasn't in and out of it. I took her blood pressure myself, twenty to eight until eight, hovering the whole time because she was so wound up about that meeting. She didn't have a spare minute to herself, let alone to go anywhere.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "clarifying",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_isabella_bp_check",
+            "summary": "Nadia clarifies she was attending to Isabella's blood pressure check throughout the murder window, so Isabella was never actually alone.",
+            "claim_type": "alibi",
+            "time_reference": "07:50",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_nadia_isabella_bp_check"
         ]
       },
       {

@@ -149,7 +149,7 @@
       "agent_bg_cole"
     ],
     "event_type": "arrival",
-    "truth_description": "Cole is seen near The Mallet & Crown, wiping down the windows.",
+    "truth_description": "Cole is seen near The Mallet & Crown, carrying his ladder home.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -161,7 +161,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Village Clinic, wiping down the windows.",
+    "truth_description": "Cole is seen near Village Clinic, heading home after a long day.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -174,7 +174,7 @@
       "agent_bg_wren"
     ],
     "event_type": "arrival",
-    "truth_description": "Wren is seen near Village Clinic, tuning up for a morning busk.",
+    "truth_description": "Wren is seen near Village Clinic, carrying her violin case home.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -186,7 +186,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near The Mallet & Crown, tuning up for a morning busk.",
+    "truth_description": "Wren is seen near The Mallet & Crown, humming her way home from a late set.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -199,7 +199,7 @@
       "agent_bg_min"
     ],
     "event_type": "arrival",
-    "truth_description": "Min is seen near The Mallet & Crown, carrying a tray of loaves.",
+    "truth_description": "Min is seen near The Mallet & Crown, heading in to start the overnight dough.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -211,7 +211,7 @@
       "agent_bg_min"
     ],
     "event_type": "movement",
-    "truth_description": "Min is seen near Village Clinic, carrying a tray of loaves.",
+    "truth_description": "Min is seen near Village Clinic, hauling flour in for the overnight bake.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -224,7 +224,7 @@
       "agent_bg_effie"
     ],
     "event_type": "arrival",
-    "truth_description": "Effie is seen near Village Clinic, walking the dog past.",
+    "truth_description": "Effie is seen near Village Clinic, giving the dog its late-night walk.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -236,7 +236,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near The Mallet & Crown, walking the dog past.",
+    "truth_description": "Effie is seen near The Mallet & Crown, walking the dog one last time before bed.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -249,7 +249,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "arrival",
-    "truth_description": "Rosa is seen near The Mallet & Crown, tending the flowerbeds.",
+    "truth_description": "Rosa is seen near The Mallet & Crown, locking up the tool shed.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -261,7 +261,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "movement",
-    "truth_description": "Rosa is seen near Village Clinic, tending the flowerbeds.",
+    "truth_description": "Rosa is seen near Village Clinic, carrying a lantern home from the green.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -274,7 +274,7 @@
       "agent_bg_tam"
     ],
     "event_type": "arrival",
-    "truth_description": "Tam is seen near Village Clinic, finishing a post round.",
+    "truth_description": "Tam is seen near Village Clinic, out for some late air, off duty.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -286,7 +286,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near The Mallet & Crown, finishing a post round.",
+    "truth_description": "Tam is seen near The Mallet & Crown, posting a letter of his own on the way home.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -299,7 +299,7 @@
       "agent_bg_dez"
     ],
     "event_type": "arrival",
-    "truth_description": "Dez is seen near The Mallet & Crown, setting up a stall.",
+    "truth_description": "Dez is seen near The Mallet & Crown, wheeling the empty stall cart home.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -311,7 +311,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Village Clinic, setting up a stall.",
+    "truth_description": "Dez is seen near Village Clinic, counting the day's takings.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -324,7 +324,7 @@
       "agent_bg_sal"
     ],
     "event_type": "arrival",
-    "truth_description": "Sal is seen near Village Clinic, leaving bottles on the step.",
+    "truth_description": "Sal is seen near Village Clinic, collecting empty bottles ahead of the dawn round.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -336,7 +336,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near The Mallet & Crown, leaving bottles on the step.",
+    "truth_description": "Sal is seen near The Mallet & Crown, readying the cart for the early round.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -349,7 +349,7 @@
       "agent_bg_gus"
     ],
     "event_type": "arrival",
-    "truth_description": "Gus is seen near The Mallet & Crown, setting out the morning papers.",
+    "truth_description": "Gus is seen near The Mallet & Crown, tying up bundles for tomorrow's papers.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -361,7 +361,7 @@
       "agent_bg_gus"
     ],
     "event_type": "movement",
-    "truth_description": "Gus is seen near Village Clinic, setting out the morning papers.",
+    "truth_description": "Gus is seen near Village Clinic, shuttering the news stand.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -374,7 +374,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "arrival",
-    "truth_description": "Birdie is seen near Village Clinic, sweeping the front step.",
+    "truth_description": "Birdie is seen near Village Clinic, sweeping under the lamplight.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -386,7 +386,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "movement",
-    "truth_description": "Birdie is seen near The Mallet & Crown, sweeping the front step.",
+    "truth_description": "Birdie is seen near The Mallet & Crown, clearing the day's litter before turning in.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"

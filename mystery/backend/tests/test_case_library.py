@@ -10,9 +10,9 @@ TEST_DATA_DIR = Path(tempfile.mkdtemp())
 import app.case_store as cs
 
 @pytest.fixture(autouse=True)
-def restore_persistence():
+def restore_persistence(monkeypatch):
     importlib.reload(cs)
-    cs.DATA_DIR = TEST_DATA_DIR
+    monkeypatch.setattr(cs, "DATA_DIR", TEST_DATA_DIR)
 
 from fastapi.testclient import TestClient
 from app.main import app as fastapi_app

@@ -330,6 +330,32 @@
             ]
         },
         {
+            "clue_id": "clue_owen_driver_corroborates",
+            "title": "Owen's signed delivery docket",
+            "clue_type": "witness_statement",
+            "description": "Pressed on it, Owen admits he undersold it before: the driver never actually left. Col signed in at quarter past seven and didn't finish up until five past eight, the whole of the murder window, helping stack the order. Both their signatures are on the timed docket.",
+            "strength": "medium",
+            "reliability": 0.8,
+            "ambiguity": "low",
+            "discoverability": {
+                "method": "interview",
+                "agent_id": "agent_owen",
+                "question_type": "evidence",
+                "required_prior_clue_ids": [
+                    "clue_owen_delayed_delivery"
+                ]
+            },
+            "supports_conclusion_ids": [
+                "conc_owen_innocent"
+            ],
+            "linked_agent_ids": [
+                "agent_owen"
+            ],
+            "linked_event_ids": [
+                "ev_0715_owen_yard"
+            ]
+        },
+        {
             "clue_id": "clue_isabella_note",
             "title": "Isabella's note on the body",
             "clue_type": "document",
@@ -398,6 +424,33 @@
             },
             "supports_conclusion_ids": [
                 "conc_isabella_no_alibi"
+            ],
+            "linked_agent_ids": [
+                "agent_isabella",
+                "agent_nadia"
+            ],
+            "linked_event_ids": [
+                "ev_0740_isabella_clinic"
+            ]
+        },
+        {
+            "clue_id": "clue_nadia_isabella_bp_check",
+            "title": "The blood pressure check",
+            "clue_type": "witness_statement",
+            "description": "Pressed on it, Nadia clarifies: she said Isabella was left in the waiting room, not that she wasn't in and out of it. She took Isabella's blood pressure herself, twenty to eight until eight, hovering the whole time because Isabella was so wound up about the meeting. Isabella didn't have a spare minute to herself.",
+            "strength": "medium",
+            "reliability": 0.85,
+            "ambiguity": "low",
+            "discoverability": {
+                "method": "interview",
+                "agent_id": "agent_nadia",
+                "question_type": "evidence",
+                "required_prior_clue_ids": [
+                    "clue_isabella_clinic"
+                ]
+            },
+            "supports_conclusion_ids": [
+                "conc_isabella_innocent"
             ],
             "linked_agent_ids": [
                 "agent_isabella",
@@ -577,6 +630,24 @@
             "target_agent_id": "agent_ben",
             "supported_by_clue_ids": [
                 "clue_ben_priya_meeting"
+            ]
+        },
+        {
+            "conclusion_id": "conc_owen_innocent",
+            "type": "innocence_anchor",
+            "summary": "The delivery driver never left Owen's yard \u2014 he was covered for the entire murder window.",
+            "target_agent_id": "agent_owen",
+            "supported_by_clue_ids": [
+                "clue_owen_driver_corroborates"
+            ]
+        },
+        {
+            "conclusion_id": "conc_isabella_innocent",
+            "type": "innocence_anchor",
+            "summary": "Nadia was attending to Isabella's blood pressure check for the entire murder window \u2014 she was never actually alone.",
+            "target_agent_id": "agent_isabella",
+            "supported_by_clue_ids": [
+                "clue_nadia_isabella_bp_check"
             ]
         }
     ]

@@ -168,7 +168,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "movement",
-    "truth_description": "Rosa is seen near Village Clinic, tending the flowerbeds.",
+    "truth_description": "Rosa is seen near Village Clinic, watering the planters.",
     "importance": 2,
     "from_location_id": "loc_hobbs_cafe",
     "to_location_id": "loc_clinic"
@@ -206,7 +206,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near Reed & Bell Bookshop, tuning up for a morning busk.",
+    "truth_description": "Wren is seen near Reed & Bell Bookshop, picking a good corner to play.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_bookshop"
@@ -231,7 +231,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near Fountain, leaving bottles on the step.",
+    "truth_description": "Sal is seen near Fountain, clinking crates off the milk cart.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_fountain"
@@ -269,7 +269,7 @@
       "agent_bg_min"
     ],
     "event_type": "movement",
-    "truth_description": "Min is seen near Hobbs Cafe, carrying a tray of loaves.",
+    "truth_description": "Min is seen near Hobbs Cafe, delivering warm bread.",
     "importance": 2,
     "from_location_id": "loc_fountain",
     "to_location_id": "loc_hobbs_cafe"
@@ -294,7 +294,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Village Clinic, wiping down the windows.",
+    "truth_description": "Cole is seen near Village Clinic, setting his ladder against a wall.",
     "importance": 2,
     "from_location_id": "loc_hobbs_cafe",
     "to_location_id": "loc_clinic"
@@ -332,7 +332,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Reed & Bell Bookshop, setting up a stall.",
+    "truth_description": "Dez is seen near Reed & Bell Bookshop, laying out the morning's produce.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_bookshop"
@@ -357,7 +357,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "movement",
-    "truth_description": "Birdie is seen near Fountain, sweeping the front step.",
+    "truth_description": "Birdie is seen near Fountain, brushing down the pavement.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_fountain"
@@ -383,7 +383,7 @@
       "agent_bg_tam"
     ],
     "event_type": "arrival",
-    "truth_description": "Tam is seen near Fountain, finishing a post round.",
+    "truth_description": "Tam is seen near Fountain, starting the early post round.",
     "importance": 2,
     "to_location_id": "loc_fountain"
   },
@@ -395,7 +395,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near Hobbs Cafe, finishing a post round.",
+    "truth_description": "Tam is seen near Hobbs Cafe, sorting letters from his mailbag.",
     "importance": 2,
     "from_location_id": "loc_fountain",
     "to_location_id": "loc_hobbs_cafe"
@@ -408,7 +408,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near Village Clinic, finishing a post round.",
+    "truth_description": "Tam is seen near Village Clinic, starting the early post round.",
     "importance": 2,
     "from_location_id": "loc_hobbs_cafe",
     "to_location_id": "loc_clinic"
@@ -433,7 +433,7 @@
       "agent_bg_gus"
     ],
     "event_type": "movement",
-    "truth_description": "Gus is seen near Village Clinic, setting out the morning papers.",
+    "truth_description": "Gus is seen near Village Clinic, calling the day's headlines.",
     "importance": 2,
     "from_location_id": "loc_hobbs_cafe",
     "to_location_id": "loc_clinic"
@@ -458,7 +458,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near Reed & Bell Bookshop, walking the dog past.",
+    "truth_description": "Effie is seen near Reed & Bell Bookshop, letting the dog sniff every lamppost.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_bookshop"

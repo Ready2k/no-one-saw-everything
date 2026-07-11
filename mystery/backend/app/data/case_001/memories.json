@@ -164,7 +164,7 @@
     "emotional_weight": 5,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_isabella_clinic"],
+    "linked_clue_ids": ["clue_nadia_isabella_bp_check"],
     "linked_agent_ids": ["agent_nadia"],
     "linked_location_ids": ["loc_clinic"]
   },
@@ -205,7 +205,7 @@
     "emotional_weight": 4,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_owen_delivery"]
+    "linked_clue_ids": ["clue_owen_driver_corroborates"]
   },
   {
     "memory_id": "mem_ben_sighting",
@@ -321,7 +321,7 @@
     "emotional_weight": 4,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_isabella_clinic"],
+    "linked_clue_ids": ["clue_nadia_isabella_bp_check"],
     "linked_agent_ids": ["agent_isabella"]
   },
   {

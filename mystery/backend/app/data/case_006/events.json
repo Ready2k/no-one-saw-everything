@@ -129,7 +129,7 @@
       "agent_bg_sal"
     ],
     "event_type": "arrival",
-    "truth_description": "Sal is seen near Village Square, leaving bottles on the step.",
+    "truth_description": "Sal is seen near Village Square, loading crates for tomorrow's round.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -141,7 +141,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near Reed & Bell Bookshop, leaving bottles on the step.",
+    "truth_description": "Sal is seen near Reed & Bell Bookshop, wheeling the milk cart back to the yard.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -154,7 +154,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near Village Clinic, leaving bottles on the step.",
+    "truth_description": "Sal is seen near Village Clinic, loading crates for tomorrow's round.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -167,7 +167,7 @@
       "agent_bg_gus"
     ],
     "event_type": "arrival",
-    "truth_description": "Gus is seen near Reed & Bell Bookshop, setting out the morning papers.",
+    "truth_description": "Gus is seen near Reed & Bell Bookshop, selling off the last of the evening edition.",
     "importance": 2,
     "to_location_id": "loc_bookshop"
   },
@@ -179,7 +179,7 @@
       "agent_bg_gus"
     ],
     "event_type": "movement",
-    "truth_description": "Gus is seen near Village Clinic, setting out the morning papers.",
+    "truth_description": "Gus is seen near Village Clinic, bundling unsold papers.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -192,7 +192,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "arrival",
-    "truth_description": "Rosa is seen near Village Clinic, tending the flowerbeds.",
+    "truth_description": "Rosa is seen near Village Clinic, packing away her garden tools.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -204,7 +204,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "movement",
-    "truth_description": "Rosa is seen near Whittle & Cross Solicitors, tending the flowerbeds.",
+    "truth_description": "Rosa is seen near Whittle & Cross Solicitors, doing a last sweep of the green.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_solicitors_office"
@@ -217,7 +217,7 @@
       "agent_bg_wren"
     ],
     "event_type": "arrival",
-    "truth_description": "Wren is seen near Whittle & Cross Solicitors, tuning up for a morning busk.",
+    "truth_description": "Wren is seen near Whittle & Cross Solicitors, playing a last tune for the evening.",
     "importance": 2,
     "to_location_id": "loc_solicitors_office"
   },
@@ -229,7 +229,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near Village Square, tuning up for a morning busk.",
+    "truth_description": "Wren is seen near Village Square, counting the coins from her case.",
     "importance": 2,
     "from_location_id": "loc_solicitors_office",
     "to_location_id": "loc_village_square"
@@ -242,7 +242,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near Reed & Bell Bookshop, tuning up for a morning busk.",
+    "truth_description": "Wren is seen near Reed & Bell Bookshop, playing a last tune for the evening.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -255,7 +255,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "arrival",
-    "truth_description": "Birdie is seen near Village Square, sweeping the front step.",
+    "truth_description": "Birdie is seen near Village Square, sweeping up after the day's foot traffic.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -267,7 +267,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "movement",
-    "truth_description": "Birdie is seen near Reed & Bell Bookshop, sweeping the front step.",
+    "truth_description": "Birdie is seen near Reed & Bell Bookshop, stacking her brooms on the cart.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -280,7 +280,7 @@
       "agent_bg_tam"
     ],
     "event_type": "arrival",
-    "truth_description": "Tam is seen near Reed & Bell Bookshop, finishing a post round.",
+    "truth_description": "Tam is seen near Reed & Bell Bookshop, heading home with an empty mailbag.",
     "importance": 2,
     "to_location_id": "loc_bookshop"
   },
@@ -292,7 +292,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near Village Clinic, finishing a post round.",
+    "truth_description": "Tam is seen near Village Clinic, dropping off one last parcel.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -305,7 +305,7 @@
       "agent_bg_dez"
     ],
     "event_type": "arrival",
-    "truth_description": "Dez is seen near Village Clinic, setting up a stall.",
+    "truth_description": "Dez is seen near Village Clinic, packing up the stall.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -317,7 +317,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Whittle & Cross Solicitors, setting up a stall.",
+    "truth_description": "Dez is seen near Whittle & Cross Solicitors, selling off the day's leftovers cheap.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_solicitors_office"
@@ -330,7 +330,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Village Square, setting up a stall.",
+    "truth_description": "Dez is seen near Village Square, packing up the stall.",
     "importance": 2,
     "from_location_id": "loc_solicitors_office",
     "to_location_id": "loc_village_square"
@@ -343,7 +343,7 @@
       "agent_bg_effie"
     ],
     "event_type": "arrival",
-    "truth_description": "Effie is seen near Whittle & Cross Solicitors, walking the dog past.",
+    "truth_description": "Effie is seen near Whittle & Cross Solicitors, taking the dog for its evening walk.",
     "importance": 2,
     "to_location_id": "loc_solicitors_office"
   },
@@ -355,7 +355,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near Village Square, walking the dog past.",
+    "truth_description": "Effie is seen near Village Square, coaxing the dog along home.",
     "importance": 2,
     "from_location_id": "loc_solicitors_office",
     "to_location_id": "loc_village_square"
@@ -368,7 +368,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near Reed & Bell Bookshop, walking the dog past.",
+    "truth_description": "Effie is seen near Reed & Bell Bookshop, taking the dog for its evening walk.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -381,7 +381,7 @@
       "agent_bg_min"
     ],
     "event_type": "arrival",
-    "truth_description": "Min is seen near Village Square, carrying a tray of loaves.",
+    "truth_description": "Min is seen near Village Square, scrubbing down the bakery trays.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -393,7 +393,7 @@
       "agent_bg_min"
     ],
     "event_type": "movement",
-    "truth_description": "Min is seen near Reed & Bell Bookshop, carrying a tray of loaves.",
+    "truth_description": "Min is seen near Reed & Bell Bookshop, carrying home the day's unsold bread.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -406,7 +406,7 @@
       "agent_bg_cole"
     ],
     "event_type": "arrival",
-    "truth_description": "Cole is seen near Reed & Bell Bookshop, wiping down the windows.",
+    "truth_description": "Cole is seen near Reed & Bell Bookshop, packing up his ladder and bucket.",
     "importance": 2,
     "to_location_id": "loc_bookshop"
   },
@@ -418,7 +418,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Village Clinic, wiping down the windows.",
+    "truth_description": "Cole is seen near Village Clinic, collecting payment for the day's work.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -431,7 +431,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Whittle & Cross Solicitors, wiping down the windows.",
+    "truth_description": "Cole is seen near Whittle & Cross Solicitors, packing up his ladder and bucket.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_solicitors_office"
