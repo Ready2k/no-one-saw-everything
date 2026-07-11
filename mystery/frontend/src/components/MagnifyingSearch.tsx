@@ -36,6 +36,7 @@ export function MagnifyingSearch({
   mapWidth = 719,
   mapHeight = 513,
   spriteAsset,
+  isIllustration = false,
   isPortrait = false,
   sheetFolded = true,
   onDiscover,
@@ -46,6 +47,7 @@ export function MagnifyingSearch({
   mapWidth?: number;
   mapHeight?: number;
   spriteAsset?: string;
+  isIllustration?: boolean;
   isPortrait?: boolean;
   /** Body exam only: while the morgue sheet covers the subject, nothing can be found. */
   sheetFolded?: boolean;
@@ -61,6 +63,8 @@ export function MagnifyingSearch({
   const isDragging = useRef(false);
   const lastClientPos = useRef<{x: number, y: number} | null>(null);
   const dragDist = useRef(0);
+  const imageClassName = isIllustration ? "place-search-image fountain-lit" : "";
+  const imageRendering = isIllustration ? "auto" : "pixelated";
 
   const ZOOM = 2.5;
   // Lens scales with the search area so it reads as a hand magnifier over the
@@ -316,6 +320,7 @@ export function MagnifyingSearch({
             }} />
           ) : (
             <img
+              className={imageClassName}
               src={imageUrl}
               alt="Map area"
               onError={(e) => {
@@ -325,7 +330,7 @@ export function MagnifyingSearch({
               style={{
                  width: "100%",
                  height: "100%",
-                 imageRendering: "pixelated",
+                 imageRendering,
                  ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
               }}
             />
@@ -399,6 +404,7 @@ export function MagnifyingSearch({
                           }} />
                         ) : (
                           <img 
+                            className={imageClassName}
                             src={imageUrl} 
                             alt=""
                             onError={(e) => {
@@ -408,7 +414,7 @@ export function MagnifyingSearch({
                             style={{
                                width: "100%",
                                height: "100%",
-                               imageRendering: "pixelated",
+                               imageRendering,
                                ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
                             }}
                           />

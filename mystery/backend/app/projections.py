@@ -35,11 +35,13 @@ def project_agent(agent: Agent) -> dict[str, Any]:
 
 
 def project_location(loc: Location, case_id: str | None = None) -> dict[str, Any]:
-    from .place_library import location_art_asset
+    from .place_library import location_art_asset, location_search_illustration
 
     # Existing authored illustrations, such as the Case 004 fountain closeup,
     # remain authoritative. Library art fills only the missing cosmetic slot.
     illustration = loc.illustration
+    if not illustration:
+        illustration = location_search_illustration(loc.location_id, case_id)
     if not illustration:
         illustration = location_art_asset(
             loc.location_id,

@@ -454,6 +454,7 @@ export default function VisualMap({
               object={object}
               width={width}
               height={height}
+              zoomCompensation={1 / view.scale}
             />
           ))}
 

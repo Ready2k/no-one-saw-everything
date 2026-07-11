@@ -1060,20 +1060,20 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 
 .semantic-map-object {
   position: absolute;
-  transform: translate(-50%, -50%);
   z-index: 5;
-  width: 1.7rem;
-  height: 1.7rem;
+  width: 1.05rem;
+  height: 1.05rem;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 226, 142, 0.9);
+  border: 1px solid rgba(255, 226, 142, 0.82);
   border-radius: 50%;
-  background: rgba(47, 32, 58, 0.88);
+  background: rgba(47, 32, 58, 0.72);
   color: #ffe28e;
-  font-size: 0.9rem;
+  font-size: 0.62rem;
   line-height: 1;
   pointer-events: none;
-  text-shadow: 0 1px 2px #1a1024;
+  box-shadow: 0 0 0 2px rgba(16, 11, 24, 0.34), 0 0 9px rgba(255, 209, 105, 0.22);
+  text-shadow: 0 1px 1px #1a1024;
 }
 
 .semantic-map-object.damaged {
@@ -1367,6 +1367,15 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   overflow: hidden;
+}
+
+.place-search-image {
+  display: block;
+  object-fit: cover;
+}
+
+.place-search-image.fountain-lit {
+  filter: saturate(0.82) brightness(0.84) contrast(1.08) sepia(0.12);
 }
 
 .magnifying-lens {

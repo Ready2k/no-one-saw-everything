@@ -12,10 +12,12 @@ export default function SemanticMapObject({
   object,
   width,
   height,
+  zoomCompensation = 1,
 }: {
   object: MapVisualObject;
   width: number;
   height: number;
+  zoomCompensation?: number;
 }) {
   return (
     <div
@@ -23,6 +25,7 @@ export default function SemanticMapObject({
       style={{
         left: pct(object.position.x, width),
         top: pct(object.position.y, height),
+        transform: `translate(-50%, -50%) scale(${zoomCompensation})`,
       }}
       title={`${object.semantic_asset_id} — discovered evidence`}
       aria-label={`Discovered evidence: ${object.semantic_asset_id}`}

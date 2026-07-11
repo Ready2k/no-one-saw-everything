@@ -260,7 +260,8 @@ def get_agents():
 
 @app.get("/api/locations")
 def get_locations():
-    return [project_location(l) for l in case_data().locations]
+    case = case_data()
+    return [project_location(l, case.case.case_id) for l in case.locations]
 
 
 # ---------------------------------------------------------------------------
@@ -458,7 +459,7 @@ def inspect(req: InspectRequest):
         hint = "Something about this place feels off, but you can't put your finger on it yet."
     from .projections import project_map_location
     return {
-        "location": project_map_location(location),
+        "location": project_map_location(location, case.case.case_id),
         "new_clues": [], # deprecated but kept for frontend compatibility if needed
         "hidden_clues": hidden_clues,
         "known_clues": already,

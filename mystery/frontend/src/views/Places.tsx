@@ -105,6 +105,7 @@ export default function Places() {
                imageUrl={result.location.illustration || mapData?.map.image}
                mapWidth={result.location.illustration ? 100 : mapData?.map.width}
                mapHeight={result.location.illustration ? 100 : mapData?.map.height}
+               isIllustration={Boolean(result.location.illustration)}
                onDiscover={handleDiscover}
             />
 

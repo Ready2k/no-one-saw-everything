@@ -26,6 +26,23 @@ _INTERIOR_LOCATION_PARENTS = {
 }
 
 
+_CASE_004_SEARCH_ILLUSTRATIONS = {
+    "loc_pub": "/art/town/interiors_hd/mallet_crown_pub_full_interior_hd.png",
+    "loc_ben_flat": "/art/town/interiors_hd/ben_flat_interior_hd.png",
+    "loc_priya_flat": "/art/town/interiors_hd/priya_flat_interior_hd.png",
+    "loc_elias_house": "/art/town/interiors_hd/elias_cottage_full_interior_hd.png",
+    "loc_owen_house": "/art/town/interiors_hd/owen_house_workshop_yard_hd.png",
+    "loc_clinic": "/art/town/interiors_hd/village_clinic_full_interior_hd.png",
+}
+
+
+def location_search_illustration(location_id: str, case_id: str | None = None) -> str | None:
+    """Return high-resolution searchable place art for authored cases."""
+    if case_id != "case_004":
+        return None
+    return _CASE_004_SEARCH_ILLUSTRATIONS.get(location_id)
+
+
 def location_art_asset(location_id: str, view: str = "external") -> str | None:
     """Return the shared cosmetic art for a location without changing case truth."""
     library = load_building_library()
