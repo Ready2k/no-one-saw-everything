@@ -48,10 +48,10 @@ def test_case_004_places_use_hd_search_illustrations():
     assert locations["loc_elias_house"]["illustration"].endswith("/elias_cottage_full_interior_hd.png")
     assert locations["loc_owen_house"]["illustration"].endswith("/owen_house_workshop_yard_hd.png")
     assert locations["loc_clinic"]["illustration"].endswith("/village_clinic_full_interior_hd.png")
-    assert locations["loc_fishery"]["illustration"].endswith("/fishery_hd.png")
-    assert locations["loc_lake"]["illustration"].endswith("/lovers_lake_hd.png")
-    assert locations["loc_woodland"]["illustration"].endswith("/whispering_woodland_hd.png")
-    assert locations["loc_meadow"]["illustration"].endswith("/green_meadow_hd.png")
+    assert locations["loc_fishery"]["illustration"].endswith("/fishery_moonlight_hd.png")
+    assert locations["loc_lake"]["illustration"].endswith("/lovers_lake_moonlight_hd.png")
+    assert locations["loc_woodland"]["illustration"].endswith("/whispering_woodland_moonlight_hd.png")
+    assert locations["loc_meadow"]["illustration"].endswith("/green_meadow_moonlight_hd.png")
 
 
 def test_reusable_places_use_hd_search_illustrations_across_cases():

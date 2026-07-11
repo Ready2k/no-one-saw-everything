@@ -28,6 +28,10 @@ _INTERIOR_LOCATION_PARENTS = {
 
 _CASE_004_SEARCH_ILLUSTRATIONS = {
     "loc_village_square": "/art/case_004/village_square_moonlight_hd.png",
+    "loc_fishery": "/art/case_004/fishery_moonlight_hd.png",
+    "loc_lake": "/art/case_004/lovers_lake_moonlight_hd.png",
+    "loc_woodland": "/art/case_004/whispering_woodland_moonlight_hd.png",
+    "loc_meadow": "/art/case_004/green_meadow_moonlight_hd.png",
     "loc_pub": "/art/town/interiors_hd/mallet_crown_pub_full_interior_hd.png",
     "loc_ben_flat": "/art/town/interiors_hd/ben_flat_interior_hd.png",
     "loc_priya_flat": "/art/town/interiors_hd/priya_flat_interior_hd.png",

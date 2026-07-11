@@ -401,7 +401,7 @@ export default function VisualMap({
                 className="map-lighting-overlay"
                 style={{
                   backgroundColor: lightingTint(currentMinutes),
-                  opacity: isCanonicalPilot ? 0.42 : 1,
+                  opacity: 1,
                 }}
               />
             )}
