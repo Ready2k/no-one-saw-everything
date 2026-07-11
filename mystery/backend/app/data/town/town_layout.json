@@ -283,13 +283,62 @@
         "loc_woodland",
         "loc_meadow"
       ],
-      "location_bounds": {},
+      "location_bounds": {
+        "loc_village_square": {
+          "x": 95,
+          "y": 75,
+          "w": 10,
+          "h": 7
+        },
+        "loc_fountain": {
+          "x": 99,
+          "y": 76,
+          "w": 4,
+          "h": 4
+        },
+        "loc_pub": {
+          "x": 95,
+          "y": 66,
+          "w": 13,
+          "h": 7
+        },
+        "loc_clinic": {
+          "x": 105,
+          "y": 73,
+          "w": 8,
+          "h": 6
+        },
+        "loc_ben_flat": {
+          "x": 81,
+          "y": 66,
+          "w": 6,
+          "h": 3
+        },
+        "loc_priya_flat": {
+          "x": 80,
+          "y": 69,
+          "w": 6,
+          "h": 4
+        },
+        "loc_elias_house": {
+          "x": 84,
+          "y": 76,
+          "w": 7,
+          "h": 4
+        },
+        "loc_owen_house": {
+          "x": 113,
+          "y": 68,
+          "w": 7,
+          "h": 7
+        }
+      },
       "object_anchors": {
         "obj_fountain_stone": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 100,
-            "y": 68
+            "x": 102,
+            "y": 78
           },
           "semantic_asset_id": "obj_fountain_coping_stone",
           "render_policy": "discovery_gated"
@@ -297,37 +346,36 @@
         "obj_mud_bootprint": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 98,
-            "y": 70
+            "x": 100,
+            "y": 79
           },
           "semantic_asset_id": "obj_muddy_bootprint",
           "render_policy": "discovery_gated"
         },
-        "obj_ben_jacket_mud": {
-          "location_id": "loc_ben_flat",
-          "anchor": {
-            "x": 70,
-            "y": 74
-          },
-          "semantic_asset_id": "obj_muddy_jacket",
-          "render_policy": "discovery_gated",
-          "external": false
-        },
         "obj_fred_lighter": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 97,
-            "y": 69
+            "x": 100,
+            "y": 77
           },
           "semantic_asset_id": "obj_pub_lighter",
           "render_policy": "discovery_gated",
           "external": false
         },
+        "obj_owen_pub_receipt": {
+          "location_id": "loc_fountain",
+          "anchor": {
+            "x": 101,
+            "y": 77
+          },
+          "semantic_asset_id": "obj_pub_receipt",
+          "render_policy": "discovery_gated"
+        },
         "obj_pub_ledger": {
           "location_id": "loc_pub",
           "anchor": {
-            "x": 87,
-            "y": 78
+            "x": 98,
+            "y": 70
           },
           "semantic_asset_id": "obj_pub_ledger",
           "render_policy": "discovery_gated",
@@ -336,8 +384,8 @@
         "obj_blackmail_letters": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 68,
-            "y": 74
+            "x": 83,
+            "y": 68
           },
           "semantic_asset_id": "obj_blackmail_letters",
           "render_policy": "discovery_gated",
@@ -346,8 +394,8 @@
         "obj_arson_clipping": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 69,
-            "y": 74
+            "x": 84,
+            "y": 68
           },
           "semantic_asset_id": "obj_arson_clipping",
           "render_policy": "discovery_gated",
@@ -356,21 +404,22 @@
         "obj_ben_phone": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 71,
-            "y": 74
+            "x": 85,
+            "y": 67
           },
           "semantic_asset_id": "obj_phone",
           "render_policy": "discovery_gated",
           "external": false
         },
-        "obj_owen_pub_receipt": {
-          "location_id": "loc_fountain",
+        "obj_ben_jacket_mud": {
+          "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 97,
+            "x": 85,
             "y": 68
           },
-          "semantic_asset_id": "obj_pub_receipt",
-          "render_policy": "discovery_gated"
+          "semantic_asset_id": "obj_muddy_jacket",
+          "render_policy": "discovery_gated",
+          "external": false
         }
       }
     },
