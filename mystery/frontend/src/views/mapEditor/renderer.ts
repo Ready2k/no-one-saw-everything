@@ -81,7 +81,8 @@ export interface Scene {
 const SOURCE_COLORS: Record<LocationSource, { border: string; fill: string }> = {
   recommended: { border: "#64748b", fill: "rgba(100, 116, 139, 0.14)" },
   canonical: { border: "#38bdf8", fill: "rgba(56, 189, 248, 0.10)" },
-  case_override: { border: "#fda4af", fill: "rgba(253, 164, 175, 0.13)" }
+  case_override: { border: "#fda4af", fill: "rgba(253, 164, 175, 0.13)" },
+  internal: { border: "#fbbf24", fill: "rgba(251, 191, 36, 0.12)" }
 };
 
 export const HANDLE_PX = 10;

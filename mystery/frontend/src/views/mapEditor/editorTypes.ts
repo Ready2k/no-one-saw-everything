@@ -11,9 +11,16 @@ export interface Bounds {
 
 export interface LocationData {
   bounds: Bounds;
+  // Bounds for the internal (roofless close-up) map view; absent = inherit
+  // the external `bounds`.
+  bounds_internal?: Bounds;
   mode: string;
   notes?: string;
 }
+
+// Which of the paired town-view artworks is being edited: the external
+// (roofed overview) or the internal (roofless close-up) B2 art.
+export type MapView = "external" | "internal";
 
 export interface ObjectAnchor {
   location_id: string;
@@ -112,7 +119,7 @@ export interface Camera {
   scale: number; // screen px per world tile
 }
 
-export type LocationSource = "recommended" | "canonical" | "case_override";
+export type LocationSource = "recommended" | "canonical" | "case_override" | "internal";
 
 // --- Constants ---
 
@@ -224,9 +231,18 @@ export interface UnderlaySourceDef {
   tiles: UnderlayTilePlacement[];
 }
 
+// B2 (town centre) ships as a pair, mirroring the runtime contract in
+// town_map.py: the external roofed overview and the roofless interior the
+// game swaps to past the zoom threshold.
+export const HD_B2_EXTERNAL_URL = "/art/town/tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png";
+export const HD_B2_INTERNAL_URL = "/art/town/tiles_3x3_hd/town_overworld_B2_interior_hd.png";
+
 const HD_3X3_TILES: UnderlayTilePlacement[] = (["A", "B", "C"] as const).flatMap((row, r) =>
   ([1, 2, 3] as const).map((col, c) => ({
-    url: `/art/town/tiles_3x3_hd/town_overworld_${row}${col}_hd.png`,
+    url:
+      row === "B" && col === 2
+        ? HD_B2_EXTERNAL_URL
+        : `/art/town/tiles_3x3_hd/town_overworld_${row}${col}_hd.png`,
     x: c * 64,
     y: r * 48,
     w: 64,

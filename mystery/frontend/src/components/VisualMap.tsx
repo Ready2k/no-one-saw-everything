@@ -133,6 +133,14 @@ export default function VisualMap({
     width: Math.max((containerSize.w / grid.cols) * AGENT_TILE_SCALE, MIN_AGENT_PX / view.scale),
     height: Math.max((containerSize.h / grid.rows) * AGENT_TILE_SCALE, MIN_AGENT_PX / view.scale),
   };
+  // Past the tile-swap threshold the close-up (roofless interior) art is
+  // shown, so locations switch to their internal-view bounds when authored;
+  // unset internal bounds inherit the external ones.
+  const internalThreshold = data.map.zoom_image_tiles?.threshold ?? Infinity;
+  const internalView = view.scale >= internalThreshold;
+  const effBounds = (loc: MapReplayData["locations"][number]) =>
+    internalView && loc.map_bounds_internal ? loc.map_bounds_internal : loc.map_bounds;
+
   const drag = useRef<{ startX: number; startY: number; tx: number; ty: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
   // True while the view change came from a focus jump (dropdown selection),
@@ -196,10 +204,16 @@ export default function VisualMap({
     let cyFrac: number;
     let scale: number;
     if (loc.map_bounds) {
-      const b = loc.map_bounds;
+      let b = loc.map_bounds;
+      scale = FOCUS_FILL * Math.min(width / b.width, height / b.height);
+      // If the focus lands past the tile-swap threshold, the close-up art is
+      // shown — target the internal-view bounds instead when authored.
+      if (scale >= internalThreshold && loc.map_bounds_internal) {
+        b = loc.map_bounds_internal;
+        scale = FOCUS_FILL * Math.min(width / b.width, height / b.height);
+      }
       cxFrac = (b.x + b.width / 2) / width;
       cyFrac = (b.y + b.height / 2) / height;
-      scale = FOCUS_FILL * Math.min(width / b.width, height / b.height);
     } else if (loc.map_position) {
       cxFrac = loc.map_position.x / width;
       cyFrac = loc.map_position.y / height;
@@ -457,18 +471,27 @@ export default function VisualMap({
         {data.locations.map((loc) => {
           if (!loc.map_position) return null;
           const selected = selectedLocationId === loc.location_id;
+          const bounds = effBounds(loc);
+          // Keep the label centred on the bounds shown in the active view.
+          const labelPos =
+            internalView && loc.map_bounds_internal
+              ? {
+                  x: loc.map_bounds_internal.x + loc.map_bounds_internal.width / 2,
+                  y: loc.map_bounds_internal.y + loc.map_bounds_internal.height / 2,
+                }
+              : loc.map_position;
           return (
             <div key={loc.location_id}>
-              {loc.map_bounds && (
+              {bounds && (
                 <div
                   className={`map-loc-bounds ${selected ? "selected" : ""} ${
                     selected || hoveredLocationId === loc.location_id ? "visible" : ""
                   } layer-${loc.visual_layer ?? "exterior"}`}
                   style={{
-                    left: pct(loc.map_bounds.x, width),
-                    top: pct(loc.map_bounds.y, height),
-                    width: pct(loc.map_bounds.width, width),
-                    height: pct(loc.map_bounds.height, height),
+                    left: pct(bounds.x, width),
+                    top: pct(bounds.y, height),
+                    width: pct(bounds.width, width),
+                    height: pct(bounds.height, height),
                     borderWidth: `${Math.max(1.25 / view.scale, 0.4)}px`,
                   }}
                 />
@@ -477,8 +500,8 @@ export default function VisualMap({
                 <button
                   className={`map-loc-label ${selected ? "selected" : ""}`}
                   style={{
-                    left: pct(loc.map_position.x, width),
-                    top: pct(loc.map_position.y, height),
+                    left: pct(labelPos.x, width),
+                    top: pct(labelPos.y, height),
                     transform: `translate(-50%, -50%) scale(${1 / view.scale})`,
                   }}
                   onClick={() => onSelectLocation(loc.location_id)}

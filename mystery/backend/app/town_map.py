@@ -85,56 +85,76 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
     if not isinstance(canonical_locs, dict):
         errors.append("canonical_locations must be a JSON object")
     else:
+        def check_bounds_dict(bounds: Any, label: str) -> dict[str, Any] | None:
+            """Validate one tile-space bounds object; returns it if usable."""
+            x = bounds.get("x")
+            y = bounds.get("y")
+            w = bounds.get("w")
+            h = bounds.get("h")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
+                errors.append(f"{label} coordinates must be numbers (tile coordinates)")
+                return None
+            if w <= 0 or h <= 0:
+                errors.append(f"{label} width and height must be positive")
+            if x < 0 or y < 0 or x + w > 192 or y + h > 144:
+                errors.append(f"{label} must remain within the 192x144 grid")
+            return {"x": x, "y": y, "w": w, "h": h}
+
+        def check_overlaps(locs: dict[str, dict[str, Any]], view_label: str) -> None:
+            loc_ids = list(locs.keys())
+            for i in range(len(loc_ids)):
+                for j in range(i + 1, len(loc_ids)):
+                    idA = loc_ids[i]
+                    idB = loc_ids[j]
+                    if (idA, idB) in ALLOWED_NESTING or (idB, idA) in ALLOWED_NESTING:
+                        continue
+                    bA = locs[idA]
+                    bB = locs[idB]
+                    overlap = not (
+                        bA["x"] + bA["w"] <= bB["x"] or
+                        bB["x"] + bB["w"] <= bA["x"] or
+                        bA["y"] + bA["h"] <= bB["y"] or
+                        bB["y"] + bB["h"] <= bA["y"]
+                    )
+                    if overlap:
+                        errors.append(f"Overlap detected between top-level locations '{idA}' and '{idB}'{view_label} without allowed nesting relationship")
+
         effective_locs = {}
+        # Internal-view bounds (roofless close-up art); inherit external when unset.
+        effective_locs_internal = {}
         for loc_id, loc_data in canonical_locs.items():
             if not isinstance(loc_data, dict):
                 errors.append(f"Location data for {loc_id} must be an object")
                 continue
-            
+
             if loc_id not in valid_location_ids:
                 errors.append(f"Canonical location ID '{loc_id}' is not in the canonical contract")
-                
+
             bounds = loc_data.get("bounds")
             if not isinstance(bounds, dict):
                 errors.append(f"Location {loc_id} missing bounds object")
             else:
-                x = bounds.get("x")
-                y = bounds.get("y")
-                w = bounds.get("w")
-                h = bounds.get("h")
-                if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
-                    errors.append(f"Bounds coordinates for {loc_id} must be numbers (tile coordinates)")
+                checked = check_bounds_dict(bounds, f"Bounds for {loc_id}")
+                if checked:
+                    effective_locs[loc_id] = checked
+                    effective_locs_internal[loc_id] = checked
+
+            bounds_internal = loc_data.get("bounds_internal")
+            if bounds_internal is not None:
+                if not isinstance(bounds_internal, dict):
+                    errors.append(f"bounds_internal for {loc_id} must be an object")
                 else:
-                    if w <= 0 or h <= 0:
-                        errors.append(f"Bounds width and height for {loc_id} must be positive")
-                    if x < 0 or y < 0 or x + w > 192 or y + h > 144:
-                        errors.append(f"Bounds for {loc_id} must remain within the 192x144 grid")
-                    effective_locs[loc_id] = {"x": x, "y": y, "w": w, "h": h}
-            
+                    checked = check_bounds_dict(bounds_internal, f"Internal bounds for {loc_id}")
+                    if checked:
+                        effective_locs_internal[loc_id] = checked
+
             mode = loc_data.get("mode")
             if mode not in ("interior", "exterior"):
                 errors.append(f"Location {loc_id} has invalid mode: '{mode}'. Must be 'interior' or 'exterior'")
 
-        # Validate Overlaps with Nesting Rules
-        loc_ids = list(effective_locs.keys())
-        for i in range(len(loc_ids)):
-            for j in range(i + 1, len(loc_ids)):
-                idA = loc_ids[i]
-                idB = loc_ids[j]
-                
-                if (idA, idB) in ALLOWED_NESTING or (idB, idA) in ALLOWED_NESTING:
-                    continue
-                    
-                bA = effective_locs[idA]
-                bB = effective_locs[idB]
-                overlap = not (
-                    bA["x"] + bA["w"] <= bB["x"] or
-                    bB["x"] + bB["w"] <= bA["x"] or
-                    bA["y"] + bA["h"] <= bB["y"] or
-                    bB["y"] + bB["h"] <= bA["y"]
-                )
-                if overlap:
-                    errors.append(f"Overlap detected between top-level locations '{idA}' and '{idB}' without allowed nesting relationship")
+        # Validate overlaps with nesting rules per view
+        check_overlaps(effective_locs, "")
+        check_overlaps(effective_locs_internal, " in the internal view")
 
     # 2. Validate case overrides
     case_overrides = payload.get("case_overrides", {})
@@ -709,6 +729,22 @@ def pilot_location_visuals(location_id: str) -> tuple[dict[str, int] | None, dic
     } else "exterior"
 
 
+def pilot_location_bounds_internal(location_id: str) -> dict[str, int] | None:
+    """Pixel bounds for the internal (roofless close-up) map view, or None
+    when the location has no dedicated internal bounds and inherits the
+    external ones."""
+    layout = load_town_layout()
+    if not layout:
+        return None
+    loc_data = layout.get("canonical_locations", {}).get(location_id)
+    if not loc_data:
+        return None
+    b = loc_data.get("bounds_internal")
+    if not b:
+        return None
+    return {"x": b["x"] * 32, "y": b["y"] * 32, "width": b["w"] * 32, "height": b["h"] * 32}
+
+
 def map_config(case_id: str) -> dict[str, Any] | None:
     return CASE_MAPS.get(case_id)
 
@@ -840,6 +876,9 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
                 location["bounds"],
                 location["layer"],
             )
+        internal = pilot_location_bounds_internal(loc_id)
+        if internal and loc_id in canonical_locations_dict:
+            canonical_locations_dict[loc_id]["bounds_internal"] = internal
 
     return {
         "mode": config["mode"],

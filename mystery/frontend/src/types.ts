@@ -68,6 +68,9 @@ export type VisualEventType =
 export interface MapLocation extends LocationPublic {
   map_position: MapPosition | null;
   map_bounds: MapBounds | null;
+  // Bounds for the internal (roofless close-up) map view; null inherits
+  // map_bounds. Only canonical-overworld cases populate this.
+  map_bounds_internal?: MapBounds | null;
   visual_layer: "exterior" | "interior" | null;
 }
 
@@ -146,6 +149,7 @@ export interface MapVisualContract {
   adjacency: Record<string, string[]>;
   canonical_locations: Record<string, {
     bounds: MapBounds;
+    bounds_internal?: MapBounds;
     position: MapPosition;
     layer: "exterior" | "interior";
     display_name?: string;

@@ -12,7 +12,10 @@ import {
   CaseRef,
   FLOOD_FILL_LIMIT,
   HISTORY_LIMIT,
+  HD_B2_EXTERNAL_URL,
+  HD_B2_INTERNAL_URL,
   LocationSource,
+  MapView,
   MAX_SCALE,
   MIN_SCALE,
   PROP_EMOJIS,
@@ -109,6 +112,27 @@ function resolveAnchor(
   };
 }
 
+/**
+ * Resolve bounds for the requested map view. External behaves exactly like
+ * resolveLocation; internal uses canonical bounds_internal when authored and
+ * inherits the external effective bounds otherwise.
+ */
+function resolveLocationView(
+  layout: TownLayout,
+  recs: CanonicalRecs,
+  caseId: string,
+  locId: string,
+  view: MapView
+): EffectiveLocation & { hasInternal: boolean } {
+  const ext = resolveLocation(layout, recs, caseId, locId);
+  const internal = layout.canonical_locations[locId]?.bounds_internal;
+  if (view === "external") return { ...ext, hasInternal: !!internal };
+  if (internal) {
+    return { bounds: internal, mode: ext.mode, source: "internal", isOverridden: false, hasInternal: true };
+  }
+  return { ...ext, hasInternal: false };
+}
+
 function isLocationVisibleIn(layout: TownLayout, caseId: string, locId: string): boolean {
   if (caseId === "canonical") return true;
   const ov = layout.case_overrides[caseId];
@@ -134,6 +158,34 @@ function applyLocationBounds(
     const eff = resolveLocation(layout, recs, caseId, locId);
     layout.case_overrides[caseId].location_bounds[locId] = { ...eff.bounds, ...updates };
   }
+}
+
+/**
+ * Write bounds for the given view. Internal-view bounds live only at the
+ * canonical level (the interior art is shared by all cases); the first
+ * internal edit seeds bounds_internal from the current effective bounds.
+ */
+function applyLocationBoundsView(
+  layout: TownLayout,
+  recs: CanonicalRecs,
+  caseId: string,
+  locId: string,
+  updates: Partial<Bounds>,
+  view: MapView
+): void {
+  if (view === "external") {
+    applyLocationBounds(layout, recs, caseId, locId, updates);
+    return;
+  }
+  if (!layout.canonical_locations[locId]) {
+    const eff = resolveLocation(layout, recs, "canonical", locId);
+    layout.canonical_locations[locId] = { bounds: { ...eff.bounds }, mode: eff.mode };
+  }
+  const rec = layout.canonical_locations[locId];
+  if (!rec.bounds_internal) {
+    rec.bounds_internal = { ...resolveLocation(layout, recs, caseId, locId).bounds };
+  }
+  Object.assign(rec.bounds_internal, updates);
 }
 
 function applyAnchor(
@@ -276,6 +328,7 @@ interface MirrorState {
   selectedCaseId: string;
   activeTool: ToolId;
   selection: Selection;
+  mapView: MapView;
   previewMode: PreviewMode;
   showEvidenceAnchors: boolean;
   underlaySource: UnderlaySourceId;
@@ -324,6 +377,7 @@ export default function DevMapEditor() {
 
   const [selectedCaseId, setSelectedCaseId] = useState("canonical");
   const [selection, setSelection] = useState<Selection>(null);
+  const [mapView, setMapView] = useState<MapView>("external");
 
   const [previewMode, setPreviewMode] = useState<PreviewMode>("debug");
   const [fineAdjustment, setFineAdjustment] = useState(false);
@@ -409,8 +463,9 @@ export default function DevMapEditor() {
     const overlapping = (a: Bounds, b: Bounds) =>
       !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y);
 
-    // Canonical location entries
+    // Canonical location entries (external + internal view sets)
     const canonicalBounds: Record<string, Bounds> = {};
+    const internalBounds: Record<string, Bounds> = {};
     for (const [locId, data] of Object.entries(layout.canonical_locations || {})) {
       if (!contract.has(locId)) {
         w.push(`Canonical location "${locId}" is not in the canonical contract.`);
@@ -418,24 +473,37 @@ export default function DevMapEditor() {
       const b = data?.bounds;
       if (!b) continue;
       canonicalBounds[locId] = b;
+      internalBounds[locId] = data.bounds_internal || b;
       if (b.w <= 0 || b.h <= 0) {
         w.push(`Bounds for "${locId}" must have positive width and height.`);
       } else if (!inGrid(b)) {
         w.push(`Bounds for "${locId}" extend outside the ${gCols}×${gRows} grid.`);
       }
+      const bi = data.bounds_internal;
+      if (bi) {
+        if (bi.w <= 0 || bi.h <= 0) {
+          w.push(`Internal bounds for "${locId}" must have positive width and height.`);
+        } else if (!inGrid(bi)) {
+          w.push(`Internal bounds for "${locId}" extend outside the ${gCols}×${gRows} grid.`);
+        }
+      }
       if (data.mode !== "interior" && data.mode !== "exterior") {
         w.push(`Location "${locId}" has invalid mode "${data.mode}".`);
       }
     }
-    const cIds = Object.keys(canonicalBounds);
-    for (let i = 0; i < cIds.length; i++) {
-      for (let j = i + 1; j < cIds.length; j++) {
-        if (isNestingAllowed(cIds[i], cIds[j])) continue;
-        if (overlapping(canonicalBounds[cIds[i]], canonicalBounds[cIds[j]])) {
-          w.push(`Overlap between "${cIds[i]}" and "${cIds[j]}" without parent-child allowance.`);
+    const checkSetOverlaps = (set: Record<string, Bounds>, label: string) => {
+      const ids = Object.keys(set);
+      for (let i = 0; i < ids.length; i++) {
+        for (let j = i + 1; j < ids.length; j++) {
+          if (isNestingAllowed(ids[i], ids[j])) continue;
+          if (overlapping(set[ids[i]], set[ids[j]])) {
+            w.push(`Overlap between "${ids[i]}" and "${ids[j]}"${label} without parent-child allowance.`);
+          }
         }
       }
-    }
+    };
+    checkSetOverlaps(canonicalBounds, "");
+    checkSetOverlaps(internalBounds, " in the internal view");
 
     // Per-case overrides (every case, not just the selected scope)
     for (const c of cases) {
@@ -535,7 +603,7 @@ export default function DevMapEditor() {
     const locations: SceneLocation[] = [];
     if (st.visibleLayers["debug_bounds"]) {
       for (const l of st.activeLocations) {
-        const eff = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, l.location_id);
+        const eff = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, l.location_id, st.mapView);
         const visible = isLocationVisibleIn(lay, st.selectedCaseId, l.location_id);
         if (!visible && st.previewMode === "player_reveal") continue;
         locations.push({
@@ -614,7 +682,13 @@ export default function DevMapEditor() {
         st.underlaySource === "none"
           ? []
           : (UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource)?.tiles || [])
-              .map((t) => ({ img: underlayImgs.current[t.url], x: t.x, y: t.y, w: t.w, h: t.h }))
+              .map((t) => {
+                // Internal view swaps the paired B2 art, matching the game's
+                // zoom_image_tiles behaviour.
+                const url =
+                  st.mapView === "internal" && t.url === HD_B2_EXTERNAL_URL ? HD_B2_INTERNAL_URL : t.url;
+                return { img: underlayImgs.current[url], x: t.x, y: t.y, w: t.w, h: t.h };
+              })
               .filter((u) => !!u.img),
       underlayOpacity: st.underlayOpacity,
       solidRender: st.solidRenderView,
@@ -639,6 +713,7 @@ export default function DevMapEditor() {
       selectedCaseId,
       activeTool,
       selection,
+      mapView,
       previewMode,
       showEvidenceAnchors,
       underlaySource,
@@ -673,14 +748,14 @@ export default function DevMapEditor() {
 
   // --- Boot: preload underlays (keyed by URL) + fetch layout ---
   useEffect(() => {
-    for (const src of UNDERLAY_SOURCES) {
-      for (const t of src.tiles) {
-        if (underlayImgs.current[t.url]) continue;
-        const img = new Image();
-        img.src = t.url;
-        img.onload = () => requestRender();
-        underlayImgs.current[t.url] = img;
-      }
+    const urls = UNDERLAY_SOURCES.flatMap((src) => src.tiles.map((t) => t.url));
+    urls.push(HD_B2_INTERNAL_URL);
+    for (const url of urls) {
+      if (underlayImgs.current[url]) continue;
+      const img = new Image();
+      img.src = url;
+      img.onload = () => requestRender();
+      underlayImgs.current[url] = img;
     }
     api
       .getDevMapLayout()
@@ -1045,7 +1120,7 @@ export default function DevMapEditor() {
     if (!st || !lay) return null;
     let best: { id: string; area: number } | null = null;
     for (const l of st.activeLocations) {
-      const b = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, l.location_id).bounds;
+      const b = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, l.location_id, st.mapView).bounds;
       if (wx >= b.x && wx < b.x + b.w && wy >= b.y && wy < b.y + b.h) {
         const area = b.w * b.h;
         if (!best || area < best.area) best = { id: l.location_id, area };
@@ -1128,7 +1203,7 @@ export default function DevMapEditor() {
     const lay = layoutRef.current;
     if (!st || !lay || !st.selection) return null;
     if (st.selection.kind === "location") {
-      const b = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, st.selection.id).bounds;
+      const b = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, st.selection.id, st.mapView).bounds;
       return { x: b.x + b.w, y: b.y + b.h };
     }
     if (st.selection.kind === "prop") {
@@ -1151,7 +1226,7 @@ export default function DevMapEditor() {
       const before = lay;
       layoutRef.current = deepClone(lay);
       if (st.selection.kind === "location") {
-        const orig = resolveLocation(before, st.canonicalRecs, st.selectedCaseId, st.selection.id).bounds;
+        const orig = resolveLocationView(before, st.canonicalRecs, st.selectedCaseId, st.selection.id, st.mapView).bounds;
         gestureRef.current = { kind: "resizeLoc", before, id: st.selection.id, startW: world, orig: { ...orig }, mutated: false };
       } else if (st.selection.kind === "prop") {
         const found = findProp(before, st.selection.id)!;
@@ -1199,7 +1274,7 @@ export default function DevMapEditor() {
     if (st.visibleLayers["debug_bounds"]) {
       let best: { id: string; bounds: Bounds; area: number } | null = null;
       for (const l of st.activeLocations) {
-        const b = resolveLocation(lay, st.canonicalRecs, st.selectedCaseId, l.location_id).bounds;
+        const b = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, l.location_id, st.mapView).bounds;
         if (world.wx >= b.x && world.wx < b.x + b.w && world.wy >= b.y && world.wy < b.y + b.h) {
           const area = b.w * b.h;
           if (!best || area < best.area) best = { id: l.location_id, bounds: b, area };
@@ -1216,7 +1291,12 @@ export default function DevMapEditor() {
           startW: world,
           orig: { ...best.bounds },
           mutated: false,
-          attached: collectAttached(before, st.selectedCaseId, best.id, best.bounds)
+          // Internal-view moves are art alignment only; anchors stay put
+          // (they are validated against the external bounds).
+          attached:
+            st.mapView === "external"
+              ? collectAttached(before, st.selectedCaseId, best.id, best.bounds)
+              : []
         };
         return;
       }
@@ -1230,7 +1310,7 @@ export default function DevMapEditor() {
   // --- In-gesture mutators (layoutRef.current is a private clone here) ---
   const setLocBoundsInRef = (locId: string, updates: Partial<Bounds>) => {
     const st = stateRef.current!;
-    applyLocationBounds(layoutRef.current!, st.canonicalRecs, st.selectedCaseId, locId, updates);
+    applyLocationBoundsView(layoutRef.current!, st.canonicalRecs, st.selectedCaseId, locId, updates, st.mapView);
   };
 
   const setAnchorInRef = (objId: string, updates: Partial<{ x: number; y: number }>) => {
@@ -1511,11 +1591,11 @@ export default function DevMapEditor() {
     if (sel.kind === "location") {
       mutateLayout(
         (l) => {
-          const b = resolveLocation(l, st.canonicalRecs, st.selectedCaseId, sel.id).bounds;
+          const b = resolveLocationView(l, st.canonicalRecs, st.selectedCaseId, sel.id, st.mapView).bounds;
           const nx = clamp(b.x + mx, 0, Math.max(0, gCols - b.w));
           const ny = clamp(b.y + my, 0, Math.max(0, gRows - b.h));
-          const attached = collectAttached(l, st.selectedCaseId, sel.id, b);
-          applyLocationBounds(l, st.canonicalRecs, st.selectedCaseId, sel.id, { x: nx, y: ny });
+          const attached = st.mapView === "external" ? collectAttached(l, st.selectedCaseId, sel.id, b) : [];
+          applyLocationBoundsView(l, st.canonicalRecs, st.selectedCaseId, sel.id, { x: nx, y: ny }, st.mapView);
           applyAttached(l, attached, nx - b.x, ny - b.y, gCols, gRows);
         },
         { undoable: true }
@@ -1642,6 +1722,7 @@ export default function DevMapEditor() {
       return;
     }
     if (key === "m") setShowMinimap((v) => !v);
+    if (key === "t") setMapView((v) => (v === "external" ? "internal" : "external"));
   };
 
   keyUpRef.current = (e: KeyboardEvent) => {
@@ -1801,7 +1882,7 @@ export default function DevMapEditor() {
 
   const zoomToLocation = (locId: string) => {
     if (!layout) return;
-    zoomToBounds(resolveLocation(layout, canonicalRecs, selectedCaseId, locId).bounds);
+    zoomToBounds(resolveLocationView(layout, canonicalRecs, selectedCaseId, locId, mapView).bounds);
   };
 
   const paintedTileCount = useMemo(() => {
@@ -1850,7 +1931,7 @@ export default function DevMapEditor() {
   const selectedLocation =
     selection?.kind === "location" ? activeLocations.find((l) => l.location_id === selection.id) : null;
   const selectedLocationEff = selectedLocation
-    ? resolveLocation(layout, canonicalRecs, selectedCaseId, selectedLocation.location_id)
+    ? resolveLocationView(layout, canonicalRecs, selectedCaseId, selectedLocation.location_id, mapView)
     : null;
   const selectedObject =
     selection?.kind === "object" ? activeObjects.find((o) => o.object_id === selection.id) : null;
@@ -1932,6 +2013,32 @@ export default function DevMapEditor() {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="control-group">
+            <label className="section-title">Map View (T)</label>
+            <div className="view-toggle">
+              <button
+                className={`view-toggle-btn ${mapView === "external" ? "active" : ""}`}
+                onClick={() => setMapView("external")}
+                title="Roofed overview art — the bounds the game uses when zoomed out"
+              >
+                🏠 External
+              </button>
+              <button
+                className={`view-toggle-btn internal ${mapView === "internal" ? "active" : ""}`}
+                onClick={() => setMapView("internal")}
+                title="Roofless close-up art — the bounds the game swaps to past the zoom threshold"
+              >
+                🪑 Internal
+              </button>
+            </div>
+            {mapView === "internal" && (
+              <div className="view-note">
+                Editing internal-view bounds (canonical level, shared by all cases). Locations without
+                their own internal bounds inherit the external ones.
+              </div>
+            )}
           </div>
 
           <div className="control-group">
@@ -2105,7 +2212,7 @@ export default function DevMapEditor() {
             />
             <div className="location-list">
               {filteredLocations.map((l) => {
-                const eff = resolveLocation(layout, canonicalRecs, selectedCaseId, l.location_id);
+                const eff = resolveLocationView(layout, canonicalRecs, selectedCaseId, l.location_id, mapView);
                 const isSel = selection?.kind === "location" && selection.id === l.location_id;
                 const visible = isLocationVisibleIn(layout, selectedCaseId, l.location_id);
                 return (
@@ -2118,6 +2225,7 @@ export default function DevMapEditor() {
                   >
                     <span className={`source-dot ${eff.source}`} />
                     <span className="loc-name">{l.name}</span>
+                    {eff.hasInternal && <span className="int-dot" title="Has internal-view bounds" />}
                     {selectedCaseId !== "canonical" && (
                       <button
                         className={`eye-btn ${visible ? "on" : ""}`}
@@ -2215,11 +2323,15 @@ export default function DevMapEditor() {
                 <input type="text" value={selectedLocation.name} readOnly className="ro" />
               </div>
               <div className="control-group">
-                <label>Source</label>
+                <label>Source · {mapView === "internal" ? "Internal view" : "External view"}</label>
                 <div className={`source-tag ${selectedLocationEff.source}`}>
                   {selectedLocationEff.source.replace("_", " ").toUpperCase()}
                   {selectedLocationEff.isOverridden && " (override active)"}
+                  {mapView === "internal" && !selectedLocationEff.hasInternal && " (inherited from external)"}
                 </div>
+                {mapView === "external" && selectedLocationEff.hasInternal && (
+                  <div className="view-note">Also has internal-view bounds — press T to edit them.</div>
+                )}
               </div>
               <div className="num-grid">
                 {(["x", "y", "w", "h"] as const).map((k) => (
@@ -2234,10 +2346,13 @@ export default function DevMapEditor() {
                         if (Number.isNaN(v)) return;
                         const locId = selectedLocation.location_id;
                         mutateLayout((l) => {
-                          const b = resolveLocation(l, canonicalRecs, selectedCaseId, locId).bounds;
-                          const attached = k === "x" || k === "y" ? collectAttached(l, selectedCaseId, locId, b) : [];
-                          applyLocationBounds(l, canonicalRecs, selectedCaseId, locId, { [k]: v });
-                          if (k === "x" || k === "y") {
+                          const b = resolveLocationView(l, canonicalRecs, selectedCaseId, locId, mapView).bounds;
+                          const attached =
+                            mapView === "external" && (k === "x" || k === "y")
+                              ? collectAttached(l, selectedCaseId, locId, b)
+                              : [];
+                          applyLocationBoundsView(l, canonicalRecs, selectedCaseId, locId, { [k]: v }, mapView);
+                          if (attached.length) {
                             applyAttached(l, attached, k === "x" ? v - b.x : 0, k === "y" ? v - b.y : 0, cols, rows);
                           }
                         });
@@ -2277,21 +2392,65 @@ export default function DevMapEditor() {
                   Visible in this case override
                 </label>
               )}
-              <div className="btn-row">
-                <button className="mse-btn mse-btn-secondary" onClick={() => zoomToLocation(selectedLocation.location_id)}>
-                  ⌖ Zoom to
-                </button>
-                <button className="mse-btn mse-btn-secondary" onClick={resetToCanonicalRec}>
-                  Recommended
-                </button>
-                <button className="mse-btn mse-btn-secondary" onClick={resetToLegacyFallback}>
-                  Legacy
-                </button>
-              </div>
-              {selectedCaseId !== "canonical" && (
-                <button className="mse-btn mse-btn-secondary" onClick={promoteToCanonical}>
-                  👑 Promote bounds to canonical
-                </button>
+              {mapView === "internal" ? (
+                <div className="btn-row">
+                  <button className="mse-btn mse-btn-secondary" onClick={() => zoomToLocation(selectedLocation.location_id)}>
+                    ⌖ Zoom to
+                  </button>
+                  <button
+                    className="mse-btn mse-btn-secondary"
+                    title="Set the internal-view bounds to a copy of the current external bounds"
+                    onClick={() => {
+                      const locId = selectedLocation.location_id;
+                      mutateLayout(
+                        (l) => {
+                          const ext = resolveLocation(l, canonicalRecs, selectedCaseId, locId).bounds;
+                          applyLocationBoundsView(l, canonicalRecs, selectedCaseId, locId, { ...ext }, "internal");
+                        },
+                        { undoable: true }
+                      );
+                      showToast("Internal bounds copied from external view.", "success");
+                    }}
+                  >
+                    ⧉ Copy external
+                  </button>
+                  <button
+                    className="mse-btn mse-btn-secondary"
+                    disabled={!selectedLocationEff.hasInternal}
+                    title="Remove the internal-view bounds so this location inherits the external ones"
+                    onClick={() => {
+                      const locId = selectedLocation.location_id;
+                      mutateLayout(
+                        (l) => {
+                          if (l.canonical_locations[locId]) delete l.canonical_locations[locId].bounds_internal;
+                        },
+                        { undoable: true }
+                      );
+                      showToast("Internal bounds cleared — inheriting external view.", "info");
+                    }}
+                  >
+                    ↺ Inherit external
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="btn-row">
+                    <button className="mse-btn mse-btn-secondary" onClick={() => zoomToLocation(selectedLocation.location_id)}>
+                      ⌖ Zoom to
+                    </button>
+                    <button className="mse-btn mse-btn-secondary" onClick={resetToCanonicalRec}>
+                      Recommended
+                    </button>
+                    <button className="mse-btn mse-btn-secondary" onClick={resetToLegacyFallback}>
+                      Legacy
+                    </button>
+                  </div>
+                  {selectedCaseId !== "canonical" && (
+                    <button className="mse-btn mse-btn-secondary" onClick={promoteToCanonical}>
+                      👑 Promote bounds to canonical
+                    </button>
+                  )}
+                </>
               )}
             </div>
           ) : selectedObject && selectedObjectEff ? (
@@ -2503,6 +2662,7 @@ export default function DevMapEditor() {
         <span className="sb-tool">
           {activeToolDef.icon} {activeToolDef.label}
         </span>
+        <span className={`sb-view ${mapView}`}>{mapView === "internal" ? "🪑 Internal view" : "🏠 External view"}</span>
         <span className="sb-hint">{activeToolDef.hint}</span>
         <span className="sb-right">
           <span>
@@ -2600,6 +2760,8 @@ export default function DevMapEditor() {
               <span>Delete selected prop</span>
               <kbd>M</kbd>
               <span>Toggle minimap</span>
+              <kbd>T</kbd>
+              <span>Toggle external / internal map view</span>
               <kbd>Esc</kbd>
               <span>Cancel gesture / clear selection</span>
             </div>
@@ -2939,6 +3101,7 @@ const EDITOR_CSS = `
   .source-dot.recommended { background: #64748b; }
   .source-dot.canonical { background: #38bdf8; }
   .source-dot.case_override { background: #fda4af; }
+  .source-dot.internal { background: #fbbf24; }
   .eye-btn, .focus-btn {
     background: none;
     border: none;
@@ -3010,6 +3173,40 @@ const EDITOR_CSS = `
   .source-tag.recommended { color: #94a3b8; }
   .source-tag.canonical { color: #38bdf8; }
   .source-tag.case_override { color: #fda4af; }
+  .source-tag.internal { color: #fbbf24; }
+
+  .view-toggle { display: flex; gap: 6px; }
+  .view-toggle-btn {
+    flex: 1;
+    padding: 8px 4px;
+    background: #0a0a0d;
+    border: 1px solid #2c2c33;
+    border-radius: 8px;
+    color: #94a3b8;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.78rem;
+    transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+  }
+  .view-toggle-btn:hover { border-color: #52525b; color: #e2e8f0; }
+  .view-toggle-btn.active { background: rgba(14, 165, 233, 0.12); border-color: #0ea5e9; color: #38bdf8; }
+  .view-toggle-btn.internal.active { background: rgba(251, 191, 36, 0.12); border-color: #fbbf24; color: #fbbf24; }
+  .view-note {
+    font-size: 0.7rem;
+    color: #a1a1aa;
+    background: #1c1c21;
+    border: 1px solid #2c2c33;
+    border-radius: 6px;
+    padding: 6px 8px;
+    line-height: 1.45;
+  }
+  .int-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fbbf24;
+    flex-shrink: 0;
+  }
   .asset-tag { font-size: 0.85rem; color: #e2e8f0; display: flex; align-items: center; gap: 6px; }
 
   .hint-box {
@@ -3062,6 +3259,8 @@ const EDITOR_CSS = `
     overflow: hidden;
   }
   .sb-tool { color: #7dd3fc; font-weight: 600; flex-shrink: 0; }
+  .sb-view { flex-shrink: 0; color: #94a3b8; font-weight: 600; }
+  .sb-view.internal { color: #fbbf24; }
   .sb-hint { overflow: hidden; text-overflow: ellipsis; opacity: 0.75; flex: 1; min-width: 0; }
   .sb-right { display: flex; gap: 14px; flex-shrink: 0; }
   .mono { font-family: ui-monospace, monospace; color: #e2e8f0; }

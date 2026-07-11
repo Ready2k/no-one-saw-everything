@@ -26,12 +26,19 @@ export default function MapCrop({
   let cy: number;
   let scale: number;
   if (loc.map_bounds) {
-    const b = loc.map_bounds;
+    let b = loc.map_bounds;
+    scale = Math.max(width / (b.width * cropPad), height / (b.height * cropPad));
+    // Crops tight enough to trip the tile swap show the roofless close-up
+    // art, so frame the internal-view bounds instead when authored.
+    const threshold = data.map.zoom_image_tiles?.threshold;
+    if (threshold != null && scale >= threshold && loc.map_bounds_internal) {
+      b = loc.map_bounds_internal;
+      scale = Math.max(width / (b.width * cropPad), height / (b.height * cropPad));
+    }
     cx = b.x + b.width / 2;
     cy = b.y + b.height / 2;
     // Cover the establishing-shot frame. `min` leaves letterbox bars whenever
     // a tall location (such as the pub bounds) is shown in the wide card.
-    scale = Math.max(width / (b.width * cropPad), height / (b.height * cropPad));
   } else if (loc.map_position) {
     cx = loc.map_position.x;
     cy = loc.map_position.y;
