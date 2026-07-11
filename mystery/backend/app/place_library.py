@@ -27,6 +27,7 @@ _INTERIOR_LOCATION_PARENTS = {
 
 
 _CASE_004_SEARCH_ILLUSTRATIONS = {
+    "loc_village_square": "/art/case_004/village_square_moonlight_hd.png",
     "loc_pub": "/art/town/interiors_hd/mallet_crown_pub_full_interior_hd.png",
     "loc_ben_flat": "/art/town/interiors_hd/ben_flat_interior_hd.png",
     "loc_priya_flat": "/art/town/interiors_hd/priya_flat_interior_hd.png",
@@ -36,11 +37,22 @@ _CASE_004_SEARCH_ILLUSTRATIONS = {
 }
 
 
+_REUSABLE_SEARCH_ILLUSTRATIONS = {
+    "loc_village_square": "/art/town/places_hd/village_square_hd.png",
+    "loc_fishery": "/art/town/places_hd/fishery_hd.png",
+    "loc_lake": "/art/town/places_hd/lovers_lake_hd.png",
+    "loc_woodland": "/art/town/places_hd/whispering_woodland_hd.png",
+    "loc_meadow": "/art/town/places_hd/green_meadow_hd.png",
+}
+
+
 def location_search_illustration(location_id: str, case_id: str | None = None) -> str | None:
-    """Return high-resolution searchable place art for authored cases."""
-    if case_id != "case_004":
-        return None
-    return _CASE_004_SEARCH_ILLUSTRATIONS.get(location_id)
+    """Return high-resolution searchable place art for authored locations."""
+    if case_id == "case_004":
+        case_illustration = _CASE_004_SEARCH_ILLUSTRATIONS.get(location_id)
+        if case_illustration:
+            return case_illustration
+    return _REUSABLE_SEARCH_ILLUSTRATIONS.get(location_id)
 
 
 def location_art_asset(location_id: str, view: str = "external") -> str | None:

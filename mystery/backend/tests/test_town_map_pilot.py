@@ -41,12 +41,27 @@ def test_case_004_places_use_hd_search_illustrations():
     locations = {loc.location_id: project_map_location(loc, case.case.case_id) for loc in case.locations}
 
     assert locations["loc_fountain"]["illustration"] == "/art/case_004/fountain_closeup.png"
+    assert locations["loc_village_square"]["illustration"].endswith("/village_square_moonlight_hd.png")
     assert locations["loc_pub"]["illustration"].endswith("/mallet_crown_pub_full_interior_hd.png")
     assert locations["loc_ben_flat"]["illustration"].endswith("/ben_flat_interior_hd.png")
     assert locations["loc_priya_flat"]["illustration"].endswith("/priya_flat_interior_hd.png")
     assert locations["loc_elias_house"]["illustration"].endswith("/elias_cottage_full_interior_hd.png")
     assert locations["loc_owen_house"]["illustration"].endswith("/owen_house_workshop_yard_hd.png")
     assert locations["loc_clinic"]["illustration"].endswith("/village_clinic_full_interior_hd.png")
+    assert locations["loc_fishery"]["illustration"].endswith("/fishery_hd.png")
+    assert locations["loc_lake"]["illustration"].endswith("/lovers_lake_hd.png")
+    assert locations["loc_woodland"]["illustration"].endswith("/whispering_woodland_hd.png")
+    assert locations["loc_meadow"]["illustration"].endswith("/green_meadow_hd.png")
+
+
+def test_reusable_places_use_hd_search_illustrations_across_cases():
+    from app.place_library import location_search_illustration
+
+    assert location_search_illustration("loc_village_square", "case_005").endswith("/village_square_hd.png")
+    assert location_search_illustration("loc_fishery", "case_005").endswith("/fishery_hd.png")
+    assert location_search_illustration("loc_lake", "case_005").endswith("/lovers_lake_hd.png")
+    assert location_search_illustration("loc_woodland", "case_005").endswith("/whispering_woodland_hd.png")
+    assert location_search_illustration("loc_meadow", "case_005").endswith("/green_meadow_hd.png")
 
 
 def test_case_004_inspect_clues_have_authored_search_hotspots():
