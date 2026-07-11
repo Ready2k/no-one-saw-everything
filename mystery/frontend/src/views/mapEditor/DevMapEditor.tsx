@@ -13,8 +13,8 @@ import {
   CaseRef,
   FLOOD_FILL_LIMIT,
   HISTORY_LIMIT,
-  HD_B2_EXTERNAL_URL,
   HD_B2_INTERNAL_URL,
+  HD_TILE_CELLS,
   LocationSource,
   MapView,
   MAX_SCALE,
@@ -26,18 +26,25 @@ import {
   Selection,
   TILE_COLORS,
   TOOL_DEFS,
+  TileArtVariant,
   TileLayer,
   ToolId,
   TownLayout,
   UNDERLAY_SOURCES,
   UnderlaySourceId,
+  buildingFrontEdge,
   clamp,
   deepClone,
+  dressBuilding,
   emptyOverride,
+  hdDefaultTileUrl,
   isNestingAllowed,
+  resolveHdTileUrl,
+  rotatedFootprint,
   tileKey
 } from "./editorTypes";
 import { SnapUnderlayTile, snapBoundsToStructure } from "./snapFit";
+import { connectAllBuildings, connectBuildingToPaths } from "./pathConnect";
 import {
   HANDLE_PX,
   ROTATE_HANDLE_OFFSET_PX,
@@ -383,7 +390,8 @@ type Gesture =
   | { kind: "rotateLoc"; before: TownLayout; id: string; center: { x: number; y: number }; startAngle: number; origRot: number; mutated: boolean }
   | { kind: "moveAnchor"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
   | { kind: "moveProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
-  | { kind: "resizeProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { w: number; h: number }; mutated: boolean };
+  | { kind: "resizeProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { w: number; h: number }; mutated: boolean }
+  | { kind: "moveBuilding"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean };
 
 interface MirrorState {
   selectedCaseId: string;
@@ -403,6 +411,7 @@ interface MirrorState {
   selectedTileId: string;
   selectedPropId: string;
   selectedBuildingId: string;
+  buildingRotation: number;
   paintLayer: string;
   propLayer: string;
   brushSize: number;
@@ -434,7 +443,9 @@ export default function DevMapEditor() {
   const [selectedTileId, setSelectedTileId] = useState("tile_grass");
   const [selectedPropId, setSelectedPropId] = useState("prop_bench");
   const [selectedBuildingId, setSelectedBuildingId] = useState("cafe_small_v1");
+  const [buildingRotation, setBuildingRotation] = useState(0);
   const [buildingLibrary, setBuildingLibrary] = useState<Record<string, any>>({});
+  const buildingLibraryRef = useRef<Record<string, any>>({});
   const [paintLayer, setPaintLayer] = useState("base");
   const [propLayer, setPropLayer] = useState("props");
   const [brushSize, setBrushSize] = useState(1);
@@ -447,6 +458,7 @@ export default function DevMapEditor() {
   const [fineAdjustment, setFineAdjustment] = useState(false);
   const [showEvidenceAnchors, setShowEvidenceAnchors] = useState(true);
   const [underlaySource, setUnderlaySource] = useState<UnderlaySourceId>("town_tiles_hd");
+  const [tileArtVariants, setTileArtVariants] = useState<Record<string, TileArtVariant[]>>({});
   const [underlayOpacity, setUnderlayOpacity] = useState(0.5);
   const [solidRenderView, setSolidRenderView] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
@@ -724,8 +736,9 @@ export default function DevMapEditor() {
       });
     }
     for (const b of lay.building_instances || []) {
-      const footprint = b.footprint || { w: 1, h: 1 };
+      const footprint = rotatedFootprint(b.footprint || { w: 1, h: 1 }, b.rotation || 0);
       if (st.visibleLayers["structures"]) {
+        const artUrl = (st.mapView === "internal" ? b.interior_asset : b.exterior_asset) || b.exterior_asset;
         props.push({
           id: `building:${b.instance_id}`,
           assetId: `building:${b.asset_id}`,
@@ -734,8 +747,10 @@ export default function DevMapEditor() {
           w: footprint.w,
           h: footprint.h,
           layer: "structures",
-          selected: false,
-          kind: "building"
+          selected: st.selection?.kind === "building" && st.selection.id === b.instance_id,
+          kind: "building",
+          img: artUrl ? underlayImgs.current[artUrl] : undefined,
+          rotation: b.rotation || 0
         });
       }
     }
@@ -754,7 +769,20 @@ export default function DevMapEditor() {
       } else if (st.activeTool === "prop") {
         overlay = { kind: "propGhost", x: hov.x, y: hov.y, assetId: st.selectedPropId };
       } else if (st.activeTool === "building") {
-        overlay = { kind: "propGhost", x: hov.x, y: hov.y, assetId: `building:${st.selectedBuildingId}` };
+        const asset = buildingLibraryRef.current[st.selectedBuildingId];
+        const fp = asset ? rotatedFootprint(asset.footprint, st.buildingRotation) : { w: 1, h: 1 };
+        const ghostUrl = (st.mapView === "internal" ? asset?.interior_asset : asset?.exterior_asset) || asset?.exterior_asset;
+        overlay = {
+          kind: "propGhost",
+          x: hov.x,
+          y: hov.y,
+          assetId: `building:${st.selectedBuildingId}`,
+          w: fp.w,
+          h: fp.h,
+          front: buildingFrontEdge(st.buildingRotation),
+          img: ghostUrl ? underlayImgs.current[ghostUrl] : undefined,
+          rotation: st.buildingRotation
+        };
       }
     }
 
@@ -772,10 +800,12 @@ export default function DevMapEditor() {
           ? []
           : (UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource)?.tiles || [])
               .map((t) => {
-                // Internal view swaps the paired B2 art, matching the game's
-                // zoom_image_tiles behaviour.
-                const url =
-                  st.mapView === "internal" && t.url === HD_B2_EXTERNAL_URL ? HD_B2_INTERNAL_URL : t.url;
+                // Mosaic cells resolve per view (B2 pairs external/interior
+                // art, matching the game's zoom_image_tiles behaviour) and
+                // honour the layout's per-cell art overrides.
+                const url = t.cell
+                  ? resolveHdTileUrl(t.cell, st.mapView, lay.underlay_tile_overrides)
+                  : t.url;
                 return { img: underlayImgs.current[url], x: t.x, y: t.y, w: t.w, h: t.h };
               })
               .filter((u) => !!u.img),
@@ -816,6 +846,7 @@ export default function DevMapEditor() {
       selectedTileId,
       selectedPropId,
       selectedBuildingId,
+      buildingRotation,
       paintLayer,
       propLayer,
       brushSize,
@@ -859,7 +890,9 @@ export default function DevMapEditor() {
         setLayout(cleanLayout);
         setCases(data.cases);
         setCanonicalRecs(data.canonical_recommended_locations);
-        setBuildingLibrary(data.building_library?.buildings || {});
+        buildingLibraryRef.current = data.building_library?.buildings || {};
+        setBuildingLibrary(buildingLibraryRef.current);
+        setTileArtVariants(data.tile_art_variants || {});
         setLoading(false);
       })
       .catch((err) => {
@@ -868,6 +901,41 @@ export default function DevMapEditor() {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Preload swappable tile art (discovered variants + any saved overrides)
+  // so switching a cell's artwork renders without a blank frame.
+  useEffect(() => {
+    const urls = Object.values(tileArtVariants).flat().map((v) => v.url);
+    const overrides = layout?.underlay_tile_overrides;
+    if (overrides) {
+      for (const cells of Object.values(overrides)) {
+        urls.push(...Object.values(cells || {}));
+      }
+    }
+    for (const url of urls) {
+      if (!url || underlayImgs.current[url]) continue;
+      const img = new Image();
+      img.src = url;
+      img.onload = () => requestRender();
+      underlayImgs.current[url] = img;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tileArtVariants, layout?.underlay_tile_overrides]);
+
+  // Preload building bundle art so placed buildings and the placement ghost
+  // render as real artwork instead of placeholder boxes.
+  useEffect(() => {
+    for (const b of Object.values(buildingLibrary)) {
+      for (const url of [b.exterior_asset, b.interior_asset]) {
+        if (!url || underlayImgs.current[url]) continue;
+        const img = new Image();
+        img.src = url;
+        img.onload = () => requestRender();
+        underlayImgs.current[url] = img;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buildingLibrary]);
 
   // Unsaved-changes guard
   useEffect(() => {
@@ -1253,6 +1321,53 @@ export default function DevMapEditor() {
     requestRender();
   };
 
+  // --- Buildings ---
+  const findBuilding = (l: TownLayout, id: string): BuildingInstance | undefined =>
+    (l.building_instances || []).find((b) => b.instance_id === id);
+
+  /** Strip a building's derived dressing tiles out of the shared layers. */
+  const removeDerivedTiles = (l: TownLayout, inst: BuildingInstance) => {
+    for (const [layerName, layer] of Object.entries(inst.derived_tiles || {})) {
+      const target = l.tile_layers?.[layerName];
+      if (!target) continue;
+      const occupied = new Set(layer.tiles.map((t) => tileKey(t.x, t.y)));
+      target.tiles = target.tiles.filter((t) => !occupied.has(tileKey(t.x, t.y)));
+    }
+  };
+
+  const mergeDerivedTiles = (l: TownLayout, derived: Record<string, TileLayer>) => {
+    for (const [layerName, layer] of Object.entries(derived)) {
+      const target = ensureLayer(l, layerName);
+      const occupied = new Set(layer.tiles.map((t) => tileKey(t.x, t.y)));
+      target.tiles = target.tiles.filter((t) => !occupied.has(tileKey(t.x, t.y)));
+      target.tiles.push(...layer.tiles);
+    }
+  };
+
+  /** Move/rotate a placed building: pull its old dressing out of the shared
+   *  layers, re-dress at the new position, and merge back in. */
+  const applyBuildingPlacement = (l: TownLayout, id: string, x: number, y: number, rotation: number) => {
+    const inst = findBuilding(l, id);
+    if (!inst) return;
+    removeDerivedTiles(l, inst);
+    inst.x = x;
+    inst.y = y;
+    inst.rotation = rotation;
+    const locId = findLocationIdAtWorld(x + 0.5, y + 0.5);
+    if (locId) inst.location_id = locId;
+    const asset = buildingLibraryRef.current[inst.asset_id] || { footprint: inst.footprint || { w: 1, h: 1 } };
+    inst.derived_tiles = dressBuilding(asset, x, y, rotation);
+    mergeDerivedTiles(l, inst.derived_tiles);
+  };
+
+  const clampBuildingXY = (l: TownLayout, inst: BuildingInstance, x: number, y: number, rotation: number) => {
+    const fp = rotatedFootprint(inst.footprint || { w: 1, h: 1 }, rotation);
+    return {
+      x: clamp(x, 1, l.grid.cols - 1 - fp.w),
+      y: clamp(y, 1, l.grid.rows - 1 - fp.h)
+    };
+  };
+
   const placeBuilding = (tile: { x: number; y: number }) => {
     const st = stateRef.current!;
     const before = layoutRef.current!;
@@ -1261,8 +1376,9 @@ export default function DevMapEditor() {
       showToast("Choose a building bundle first.", "error");
       return;
     }
-    const footprint = asset.footprint;
-    if (tile.x < 1 || tile.y < 1 || tile.x + footprint.w > before.grid.cols - 1 || tile.y + footprint.h > before.grid.rows - 1) {
+    const rotation = st.buildingRotation;
+    const placed = rotatedFootprint(asset.footprint, rotation);
+    if (tile.x < 1 || tile.y < 1 || tile.x + placed.w > before.grid.cols - 1 || tile.y + placed.h > before.grid.rows - 1) {
       showToast("That building would fall outside the town grid.", "error");
       return;
     }
@@ -1272,7 +1388,8 @@ export default function DevMapEditor() {
       location_id: findLocationIdAtWorld(tile.x + 0.5, tile.y + 0.5) || "loc_village_square",
       x: tile.x,
       y: tile.y,
-      footprint,
+      rotation,
+      footprint: asset.footprint,
       exterior_asset: asset.exterior_asset,
       interior_asset: asset.interior_asset,
       entrances: asset.entrances,
@@ -1281,34 +1398,77 @@ export default function DevMapEditor() {
     const copy = deepClone(before);
     copy.building_instances = [...(copy.building_instances || []), instance];
     // The editor mirrors the backend's deterministic dressing contract.
-    const front = asset.surrounding_rules?.front;
-    const side = asset.surrounding_rules?.sides;
-    const rear = asset.surrounding_rules?.rear;
-    const rect = (x: number, y: number, w: number, h: number, tile_id: string) =>
-      Array.from({ length: w }, (_, dx) => Array.from({ length: h }, (_, dy) => ({ x: x + dx, y: y + dy, tile_id }))).flat();
-    const derived: Record<string, TileLayer> = {
-      structures: { tiles: rect(tile.x, tile.y, footprint.w, footprint.h, "tile_wall_exterior") },
-      paths: { tiles: front === "path" ? rect(tile.x, tile.y + footprint.h, footprint.w, 2, "tile_path") : [] },
-      terrain_detail: { tiles: [] }
-    };
-    if (["fence", "hedge", "flowerbed"].includes(side)) {
-      derived.terrain_detail.tiles.push(...rect(tile.x - 1, tile.y, 1, footprint.h, `tile_${side}`));
-      derived.terrain_detail.tiles.push(...rect(tile.x + footprint.w, tile.y, 1, footprint.h, `tile_${side}`));
-    }
-    if (rear === "service_path") derived.paths.tiles.push(...rect(tile.x, tile.y - 1, footprint.w, 1, "tile_path"));
+    const derived = dressBuilding(asset, tile.x, tile.y, rotation);
     instance.derived_tiles = derived;
-    for (const [layerName, layer] of Object.entries(derived)) {
-      const target = ensureLayer(copy, layerName);
-      const occupied = new Set(layer.tiles.map((t) => tileKey(t.x, t.y)));
-      target.tiles = target.tiles.filter((t) => !occupied.has(tileKey(t.x, t.y)));
-      target.tiles.push(...layer.tiles);
+    mergeDerivedTiles(copy, derived);
+    // Auto-connect the front-door stub to the nearest existing path network
+    // tile (painted roads or another building's stub).
+    const connect = connectBuildingToPaths(copy, instance);
+    let toastMsg = `${asset.display_name} placed with entrance path and boundary dressing.`;
+    if (connect.tiles.length) {
+      ensureLayer(copy, "paths").tiles.push(...connect.tiles);
+      toastMsg = `${asset.display_name} placed · path connected to the network (+${connect.tiles.length} tiles).`;
+    } else if (connect.alreadyConnected) {
+      toastMsg = `${asset.display_name} placed · entrance already touches the path network.`;
+    } else if (connect.failure === "no_network") {
+      toastMsg = `${asset.display_name} placed · nothing to connect to yet — paint a path tile on a road or drop another building, then hit Connect paths.`;
+    } else if (connect.failure === "unreachable") {
+      toastMsg = `${asset.display_name} placed · path network unreachable from here (blocked by walls/water).`;
     }
-    layoutRef.current = copy;
-    setLayout(copy);
-    setSelection(null);
-    setIsDirty(true);
-    showToast(`${asset.display_name} placed with entrance path and boundary dressing.`, "success");
+    commitLayout(copy, before);
+    setSelection({ kind: "building", id: instance.instance_id });
+    showToast(toastMsg, "success");
     requestRender();
+  };
+
+  const deleteBuilding = (instanceId: string) => {
+    mutateLayout(
+      (l) => {
+        const inst = findBuilding(l, instanceId);
+        if (!inst) return;
+        removeDerivedTiles(l, inst);
+        l.building_instances = (l.building_instances || []).filter((b) => b.instance_id !== instanceId);
+      },
+      { undoable: true }
+    );
+    setSelection(null);
+    showToast("Building removed with its dressing. Connector paths stay — erase them or re-run Connect paths.", "success");
+  };
+
+  const duplicateBuilding = (instanceId: string) => {
+    const lay = layoutRef.current;
+    const src = lay ? findBuilding(lay, instanceId) : undefined;
+    if (!lay || !src) return;
+    const copyId = `building_${src.asset_id}_${Date.now().toString().slice(-6)}`;
+    const rotation = src.rotation || 0;
+    const target = clampBuildingXY(lay, src, src.x + 2, src.y + 2, rotation);
+    mutateLayout(
+      (l) => {
+        const inst: BuildingInstance = { ...deepClone(src), instance_id: copyId, derived_tiles: {} };
+        l.building_instances = [...(l.building_instances || []), inst];
+        applyBuildingPlacement(l, copyId, target.x, target.y, rotation);
+      },
+      { undoable: true }
+    );
+    setSelection({ kind: "building", id: copyId });
+    showToast("Building duplicated.", "success");
+  };
+
+  const rotateSelectedBuilding = (dir: 1 | -1) => {
+    const st = stateRef.current;
+    const lay = layoutRef.current;
+    if (!st || !lay || st.selection?.kind !== "building") return;
+    const sel = st.selection;
+    mutateLayout(
+      (l) => {
+        const inst = findBuilding(l, sel.id);
+        if (!inst) return;
+        const rotation = ((inst.rotation || 0) + dir * 90 + 360) % 360;
+        const target = clampBuildingXY(l, inst, inst.x, inst.y, rotation);
+        applyBuildingPlacement(l, sel.id, target.x, target.y, rotation);
+      },
+      { undoable: true }
+    );
   };
 
   const deleteProp = (instanceId: string) => {
@@ -1449,6 +1609,22 @@ export default function DevMapEditor() {
         layoutRef.current = deepClone(lay);
         gestureRef.current = { kind: "moveProp", before, id: p.instance_id, startW: world, orig: { x: p.x, y: p.y }, mutated: false };
         return;
+      }
+    }
+
+    // 3.5 Buildings (after props so small props on a footprint stay clickable)
+    if (st.visibleLayers["structures"]) {
+      const buildings = lay.building_instances || [];
+      for (let i = buildings.length - 1; i >= 0; i--) {
+        const b = buildings[i];
+        const fp = rotatedFootprint(b.footprint || { w: 1, h: 1 }, b.rotation || 0);
+        if (world.wx >= b.x && world.wx < b.x + fp.w && world.wy >= b.y && world.wy < b.y + fp.h) {
+          setSelection({ kind: "building", id: b.instance_id });
+          const before = lay;
+          layoutRef.current = deepClone(lay);
+          gestureRef.current = { kind: "moveBuilding", before, id: b.instance_id, startW: world, orig: { x: b.x, y: b.y }, mutated: false };
+          return;
+        }
       }
     }
 
@@ -1675,6 +1851,20 @@ export default function DevMapEditor() {
         requestRender();
         break;
       }
+      case "moveBuilding": {
+        const dx = Math.round(world.wx - g.startW.wx);
+        const dy = Math.round(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        const l = layoutRef.current!;
+        const inst = findBuilding(l, g.id);
+        if (inst) {
+          const rotation = inst.rotation || 0;
+          const target = clampBuildingXY(l, inst, g.orig.x + dx, g.orig.y + dy, rotation);
+          applyBuildingPlacement(l, g.id, target.x, target.y, rotation);
+        }
+        requestRender();
+        break;
+      }
     }
   };
 
@@ -1829,20 +2019,54 @@ export default function DevMapEditor() {
         },
         { undoable: true }
       );
+    } else if (sel.kind === "building") {
+      mutateLayout(
+        (l) => {
+          const inst = findBuilding(l, sel.id);
+          if (!inst) return;
+          const rotation = inst.rotation || 0;
+          const target = clampBuildingXY(l, inst, inst.x + Math.round(mx), inst.y + Math.round(my), rotation);
+          applyBuildingPlacement(l, sel.id, target.x, target.y, rotation);
+        },
+        { undoable: true }
+      );
     }
   };
 
-  /** The active underlay art as placed world-rect images (B2 swapped per view). */
+  /** The active underlay art as placed world-rect images (cells resolved per view + overrides). */
   const currentUnderlayTiles = (): SnapUnderlayTile[] => {
     const st = stateRef.current;
     if (!st || st.underlaySource === "none") return [];
     const def = UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource);
     return (def?.tiles || [])
       .map((t) => {
-        const url = st.mapView === "internal" && t.url === HD_B2_EXTERNAL_URL ? HD_B2_INTERNAL_URL : t.url;
+        const url = t.cell
+          ? resolveHdTileUrl(t.cell, st.mapView, layoutRef.current?.underlay_tile_overrides)
+          : t.url;
         return { img: underlayImgs.current[url], x: t.x, y: t.y, w: t.w, h: t.h };
       })
       .filter((t) => !!t.img);
+  };
+
+  /** Swap a mosaic cell's artwork. Only B2 has paired per-view art, so other
+   * cells apply to both views; an empty url restores the default artwork. */
+  const setTileArtOverride = (cell: string, url: string) => {
+    const st = stateRef.current;
+    if (!st) return;
+    const views: MapView[] = cell === "B2" ? [st.mapView] : ["external", "internal"];
+    mutateLayout(
+      (l) => {
+        const overrides = l.underlay_tile_overrides || (l.underlay_tile_overrides = {});
+        for (const view of views) {
+          const cells = overrides[view] || (overrides[view] = {});
+          if (url && url !== hdDefaultTileUrl(cell, view)) cells[cell] = url;
+          else delete cells[cell];
+          if (!Object.keys(cells).length) delete overrides[view];
+        }
+        if (!Object.keys(overrides).length) delete l.underlay_tile_overrides;
+      },
+      { undoable: true }
+    );
   };
 
   /** Refine the selected location's rough box to hug the structure in the art. */
@@ -1936,6 +2160,9 @@ export default function DevMapEditor() {
       if (selection?.kind === "prop") {
         e.preventDefault();
         duplicateProp(selection.id);
+      } else if (selection?.kind === "building") {
+        e.preventDefault();
+        duplicateBuilding(selection.id);
       }
       return;
     }
@@ -1955,6 +2182,7 @@ export default function DevMapEditor() {
       case "Delete":
       case "Backspace":
         if (selection?.kind === "prop") deleteProp(selection.id);
+        else if (selection?.kind === "building") deleteBuilding(selection.id);
         return;
       case "[":
         setBrushSize((s) => Math.max(1, s - 1));
@@ -1992,17 +2220,32 @@ export default function DevMapEditor() {
         nudgeSelection(0, 1, e.shiftKey, e.altKey);
         return;
       case ",":
-        rotateSelection(-1);
+        if (activeTool === "building") setBuildingRotation((r) => (r + 270) % 360);
+        else if (selection?.kind === "building") rotateSelectedBuilding(-1);
+        else rotateSelection(-1);
         return;
       case "<":
         rotateSelection(-15);
         return;
       case ".":
-        rotateSelection(1);
+        if (activeTool === "building") setBuildingRotation((r) => (r + 90) % 360);
+        else if (selection?.kind === "building") rotateSelectedBuilding(1);
+        else rotateSelection(1);
         return;
       case ">":
         rotateSelection(15);
         return;
+    }
+
+    // R rotates the building ghost (placement) or the selected placed
+    // building instead of switching to the rect tool.
+    if (key === "r" && activeTool === "building") {
+      setBuildingRotation((r) => (r + 90) % 360);
+      return;
+    }
+    if (key === "r" && selection?.kind === "building") {
+      rotateSelectedBuilding(1);
+      return;
     }
 
     const tool = TOOL_DEFS.find((t) => t.key.toLowerCase() === key);
@@ -2230,6 +2473,8 @@ export default function DevMapEditor() {
     : null;
   const selectedProp =
     selection?.kind === "prop" ? activeProps.find((p) => p.instance_id === selection.id) : null;
+  const selectedBuilding =
+    selection?.kind === "building" ? (layout.building_instances || []).find((b) => b.instance_id === selection.id) : null;
 
   return (
     <div className="dev-map-root">
@@ -2426,7 +2671,7 @@ export default function DevMapEditor() {
             <div className="control-group">
               <label className="section-title">Building Library</label>
               <div className="view-note">Each bundle includes exterior and interior art references, rooms, an entrance, and automatic surrounding tiles.</div>
-              <div className="palette-grid">
+              <div className="palette-grid buildings">
                 {Object.entries(buildingLibrary).map(([id, building]) => (
                   <div
                     key={id}
@@ -2434,11 +2679,58 @@ export default function DevMapEditor() {
                     onClick={() => setSelectedBuildingId(id)}
                     title={`${building.display_name} · ${building.footprint.w}×${building.footprint.h}`}
                   >
-                    <span className="palette-emoji">🏠</span>
+                    {building.exterior_asset ? (
+                      <img className="palette-thumb" src={building.exterior_asset} alt={building.display_name} loading="lazy" />
+                    ) : (
+                      <span className="palette-emoji">🏠</span>
+                    )}
                     <span className="palette-item-text">{building.display_name}</span>
                   </div>
                 ))}
               </div>
+              <div className="inline-row">
+                <label className="mini-label">Rotation (R)</label>
+                <div className="mse-rot-group">
+                  {[0, 90, 180, 270].map((deg) => (
+                    <button
+                      key={deg}
+                      className={`mse-rot-btn ${buildingRotation === deg ? "active" : ""}`}
+                      title={`Door faces ${buildingFrontEdge(deg)}`}
+                      onClick={() => setBuildingRotation(deg)}
+                    >
+                      {deg}°
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="view-note">Door faces {buildingFrontEdge(buildingRotation)} · the entrance path and dressing rotate with it.</div>
+              <button
+                className="mse-btn mse-btn-secondary"
+                title="Carve shortest paths from every building's entrance to the nearest path network tile"
+                onClick={() => {
+                  let summary: ReturnType<typeof connectAllBuildings> | null = null;
+                  mutateLayout(
+                    (l) => {
+                      summary = connectAllBuildings(l);
+                    },
+                    { undoable: true }
+                  );
+                  if (!summary) return;
+                  const s: ReturnType<typeof connectAllBuildings> = summary;
+                  if (!s.connected && !s.alreadyConnected && !s.failed.length) {
+                    showToast("No buildings placed yet.", "error");
+                  } else if (s.failed.length) {
+                    showToast(
+                      `Connected ${s.connected}, already linked ${s.alreadyConnected}, unreachable ${s.failed.length} — paint a path tile near the stranded buildings.`,
+                      "error"
+                    );
+                  } else {
+                    showToast(`Paths connected · ${s.connected} routed (+${s.added.length} tiles), ${s.alreadyConnected} already linked.`, "success");
+                  }
+                }}
+              >
+                🔗 Connect paths
+              </button>
             </div>
           )}
 
@@ -2468,6 +2760,46 @@ export default function DevMapEditor() {
                     onChange={(e) => setUnderlayOpacity(parseFloat(e.target.value))}
                   />
                 </div>
+              )}
+              {underlaySource === "town_tiles_hd" && (
+                <details className="sidebar-section">
+                  <summary className="section-title">Tile artwork (3×3)</summary>
+                  <div className="view-note">
+                    Swap a mosaic cell's art — e.g. a blank tile to build your own
+                    buildings on. Saved with the layout and used by the game map.
+                    B2 applies to the current view ({mapView}); other cells apply
+                    to both views. Drop new PNGs in
+                    art/town/tiles_3x3_hd/ as town_overworld_&lt;cell&gt;_&lt;name&gt;_hd.png.
+                  </div>
+                  {HD_TILE_CELLS.map((cell) => {
+                    const view = cell === "B2" ? mapView : "external";
+                    const current =
+                      layout?.underlay_tile_overrides?.[view]?.[cell] || "";
+                    const options = tileArtVariants[cell] || [];
+                    return (
+                      <div className="inline-row" key={cell}>
+                        <label className="mini-label">
+                          {cell}
+                          {cell === "B2" ? ` · ${mapView}` : ""}
+                          {current ? " ●" : ""}
+                        </label>
+                        <select
+                          value={current}
+                          onChange={(e) => setTileArtOverride(cell, e.target.value)}
+                        >
+                          <option value="">Default</option>
+                          {options
+                            .filter((v) => v.url !== hdDefaultTileUrl(cell, view))
+                            .map((v) => (
+                              <option key={v.url} value={v.url}>
+                                {v.label}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    );
+                  })}
+                </details>
               )}
               <label className="check-row">
                 <input type="checkbox" checked={showGrid} onChange={(e) => setShowGrid(e.target.checked)} />
@@ -2955,6 +3287,87 @@ export default function DevMapEditor() {
                 </button>
               </div>
             </div>
+          ) : selectedBuilding ? (
+            <div className="panel-stack">
+              <div className="section-title">Selected Building</div>
+              <div className="control-group">
+                <label>Instance</label>
+                <input type="text" value={selectedBuilding.instance_id} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Bundle</label>
+                <div className="asset-tag">
+                  <span>🏠</span> {buildingLibrary[selectedBuilding.asset_id]?.display_name || selectedBuilding.asset_id}
+                </div>
+              </div>
+              <div className="num-grid">
+                {(
+                  [
+                    ["x", "Tile X"],
+                    ["y", "Tile Y"]
+                  ] as const
+                ).map(([k, label]) => (
+                  <div key={k} className="control-group">
+                    <label>{label}</label>
+                    <input
+                      type="number"
+                      value={selectedBuilding[k]}
+                      onChange={(e) => {
+                        const v = parseInt(e.target.value, 10);
+                        if (Number.isNaN(v)) return;
+                        mutateLayout(
+                          (l) => {
+                            const inst = findBuilding(l, selectedBuilding.instance_id);
+                            if (!inst) return;
+                            const rotation = inst.rotation || 0;
+                            const target = clampBuildingXY(l, inst, k === "x" ? v : inst.x, k === "y" ? v : inst.y, rotation);
+                            applyBuildingPlacement(l, inst.instance_id, target.x, target.y, rotation);
+                          },
+                          { undoable: true }
+                        );
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="inline-row">
+                <label className="mini-label">Rotation (R)</label>
+                <div className="mse-rot-group">
+                  {[0, 90, 180, 270].map((deg) => (
+                    <button
+                      key={deg}
+                      className={`mse-rot-btn ${(selectedBuilding.rotation || 0) === deg ? "active" : ""}`}
+                      title={`Door faces ${buildingFrontEdge(deg)}`}
+                      onClick={() => {
+                        mutateLayout(
+                          (l) => {
+                            const inst = findBuilding(l, selectedBuilding.instance_id);
+                            if (!inst) return;
+                            const target = clampBuildingXY(l, inst, inst.x, inst.y, deg);
+                            applyBuildingPlacement(l, inst.instance_id, target.x, target.y, deg);
+                          },
+                          { undoable: true }
+                        );
+                      }}
+                    >
+                      {deg}°
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="view-note">
+                Door faces {buildingFrontEdge(selectedBuilding.rotation || 0)} · dressing follows moves and rotation. Connector
+                paths don't move — re-run Connect paths after repositioning.
+              </div>
+              <div className="btn-row">
+                <button className="mse-btn mse-btn-secondary" onClick={() => duplicateBuilding(selectedBuilding.instance_id)}>
+                  ⧉ Duplicate
+                </button>
+                <button className="mse-btn mse-btn-danger" onClick={() => deleteBuilding(selectedBuilding.instance_id)}>
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
           ) : (
             <div className="panel-stack">
               <div className="section-title">Workspace</div>
@@ -3387,6 +3800,27 @@ const EDITOR_CSS = `
   .palette-item:hover { transform: scale(1.06); border-color: #a1a1aa; z-index: 2; }
   .palette-item.active { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45); }
   .palette-emoji { font-size: 16px; }
+  .palette-grid.buildings { grid-template-columns: repeat(3, 1fr); max-height: 320px; }
+  .mse-rot-group { display: flex; gap: 4px; flex: 1; }
+  .mse-rot-btn {
+    flex: 1;
+    padding: 3px 0;
+    font-size: 11px;
+    background: #1c1c21;
+    border: 1px solid #2c2c33;
+    border-radius: 5px;
+    color: #d4d4d8;
+    cursor: pointer;
+  }
+  .mse-rot-btn:hover { border-color: #a1a1aa; }
+  .mse-rot-btn.active { border-color: #38bdf8; color: #38bdf8; box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35); }
+  .palette-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 3px 3px 12px;
+    image-rendering: pixelated;
+  }
   .palette-item-text {
     position: absolute;
     bottom: 0;

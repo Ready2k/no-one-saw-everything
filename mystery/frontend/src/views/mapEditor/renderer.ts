@@ -41,6 +41,10 @@ export interface SceneProp {
   layer: string;
   selected: boolean;
   kind?: "prop" | "building";
+  /** Building bundle art drawn over the footprint when loaded. */
+  img?: HTMLImageElement;
+  /** Clockwise 90° steps for building art (footprint w/h are pre-swapped). */
+  rotation?: number;
 }
 
 /** One underlay image placed at a world-tile rectangle. */
@@ -55,7 +59,17 @@ export interface UnderlayDraw {
 export type ToolOverlay =
   | { kind: "brush"; cells: Array<{ x: number; y: number }>; erase: boolean }
   | { kind: "rect"; x: number; y: number; w: number; h: number; erase: boolean; tileId: string }
-  | { kind: "propGhost"; x: number; y: number; assetId: string }
+  | {
+      kind: "propGhost";
+      x: number;
+      y: number;
+      assetId: string;
+      w?: number;
+      h?: number;
+      front?: "south" | "west" | "north" | "east";
+      img?: HTMLImageElement;
+      rotation?: number;
+    }
   | null;
 
 export interface Scene {
@@ -242,6 +256,21 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
     if (px + pw < 0 || px > cssW || py + ph < 0 || py > cssH) continue;
 
     const isBuilding = p.kind === "building" || p.assetId.startsWith("building:");
+    const artReady = isBuilding && p.img && p.img.complete && p.img.naturalWidth > 0;
+    if (artReady) {
+      drawBuildingArt(ctx, p.img!, px, py, pw, ph, p.rotation || 0);
+      if (p.selected) {
+        ctx.save();
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.strokeRect(px, py, pw, ph);
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+      continue;
+    }
+
     ctx.save();
     roundRectPath(ctx, px, py, Math.max(pw, 3), Math.max(ph, 3), Math.min(4, s * 0.2));
     ctx.fillStyle = isBuilding
@@ -272,7 +301,7 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
       }
     }
 
-    if (p.selected) {
+    if (p.selected && !isBuilding) {
       drawHandle(ctx, px + pw, py + ph);
     }
   }
@@ -423,24 +452,69 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
       const px = X(ov.x);
       const py = Y(ov.y);
       const isBuilding = ov.assetId.startsWith("building:");
+      const gw = (ov.w || 1) * s;
+      const gh = (ov.h || 1) * s;
+      const ghostArt = isBuilding && ov.img && ov.img.complete && ov.img.naturalWidth > 0;
       ctx.save();
-      ctx.globalAlpha = 0.55;
-      roundRectPath(ctx, px, py, s, s, Math.min(4, s * 0.2));
-      ctx.fillStyle = isBuilding ? "rgba(30, 41, 59, 0.55)" : "rgba(245, 158, 11, 0.35)";
-      ctx.fill();
+      ctx.globalAlpha = ghostArt ? 0.7 : 0.55;
+      if (ghostArt) {
+        drawBuildingArt(ctx, ov.img!, px, py, gw, gh, ov.rotation || 0);
+      } else {
+        roundRectPath(ctx, px, py, gw, gh, Math.min(4, s * 0.2));
+        ctx.fillStyle = isBuilding ? "rgba(30, 41, 59, 0.55)" : "rgba(245, 158, 11, 0.35)";
+        ctx.fill();
+      }
+      roundRectPath(ctx, px, py, gw, gh, Math.min(4, s * 0.2));
       ctx.strokeStyle = "rgba(245, 158, 11, 0.9)";
       ctx.setLineDash([4, 3]);
       ctx.stroke();
       ctx.setLineDash([]);
-      if (s >= 10) {
+      if (ov.front) {
+        // Door marker on the front edge so rotation reads at a glance.
+        ctx.strokeStyle = "#fbbf24";
+        ctx.lineWidth = Math.max(2, s * 0.2);
+        ctx.beginPath();
+        if (ov.front === "south") { ctx.moveTo(px + gw * 0.3, py + gh); ctx.lineTo(px + gw * 0.7, py + gh); }
+        else if (ov.front === "north") { ctx.moveTo(px + gw * 0.3, py); ctx.lineTo(px + gw * 0.7, py); }
+        else if (ov.front === "west") { ctx.moveTo(px, py + gh * 0.3); ctx.lineTo(px, py + gh * 0.7); }
+        else { ctx.moveTo(px + gw, py + gh * 0.3); ctx.lineTo(px + gw, py + gh * 0.7); }
+        ctx.stroke();
+      }
+      if (s >= 10 && !ghostArt) {
         ctx.font = `${Math.min(s * 0.72, 42)}px sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(isBuilding ? "building" : (PROP_EMOJIS[ov.assetId] || "?"), px + s / 2, py + s / 2 + 1);
+        ctx.fillText(isBuilding ? "building" : (PROP_EMOJIS[ov.assetId] || "?"), px + gw / 2, py + gh / 2 + 1);
       }
       ctx.restore();
     }
   }
+}
+
+/** Draw bundle art over a screen-space footprint box, rotated in 90° steps.
+ *  The box (pw×ph) is the already-swapped rotated footprint; the image keeps
+ *  its natural aspect because footprints match the art at 32px per tile. */
+function drawBuildingArt(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  px: number,
+  py: number,
+  pw: number,
+  ph: number,
+  rotation: number
+): void {
+  const rot = ((Math.round(rotation / 90) % 4) + 4) % 4;
+  ctx.save();
+  if (rot) {
+    ctx.translate(px + pw / 2, py + ph / 2);
+    ctx.rotate((rot * Math.PI) / 2);
+    const dw = rot % 2 ? ph : pw;
+    const dh = rot % 2 ? pw : ph;
+    ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+  } else {
+    ctx.drawImage(img, px, py, pw, ph);
+  }
+  ctx.restore();
 }
 
 function drawHandle(ctx: CanvasRenderingContext2D, px: number, py: number): void {

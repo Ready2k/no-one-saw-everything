@@ -69,23 +69,43 @@ def _tiles_for_rect(x: int, y: int, w: int, h: int, tile_id: str) -> list[dict[s
     return [{"x": tx, "y": ty, "tile_id": tile_id} for tx in range(x, x + w) for ty in range(y, y + h)]
 
 
+# Buildings rotate clockwise in 90° steps; art is authored door-south, so the
+# front edge walks south → west → north → east. Mirrored by the frontend's
+# dressBuilding in editorTypes.ts — keep the two in lockstep.
+_EDGES = ["south", "west", "north", "east"]
+
+
+def _edge_strip(x: int, y: int, w: int, h: int, edge: str, depth: int, tile_id: str) -> list[dict[str, Any]]:
+    if edge == "south":
+        return _tiles_for_rect(x, y + h, w, depth, tile_id)
+    if edge == "north":
+        return _tiles_for_rect(x, y - depth, w, depth, tile_id)
+    if edge == "west":
+        return _tiles_for_rect(x - depth, y, depth, h, tile_id)
+    return _tiles_for_rect(x + w, y, depth, h, tile_id)
+
+
 def dress_building(building: dict[str, Any], x: int, y: int, rotation: int = 0) -> dict[str, list[dict[str, Any]]]:
     """Generate replaceable structure, path and boundary tiles for a placement."""
     source_w, source_h = building["footprint"]["w"], building["footprint"]["h"]
-    w, h = (source_h, source_w) if rotation % 180 else (source_w, source_h)
+    steps = (rotation // 90) % 4
+    w, h = (source_h, source_w) if steps % 2 else (source_w, source_h)
+    front, rear = _EDGES[steps], _EDGES[(steps + 2) % 4]
+    side_edges = [_EDGES[(steps + 1) % 4], _EDGES[(steps + 3) % 4]]
     rules = building.get("surrounding_rules", {})
     tiles: dict[str, list[dict[str, Any]]] = {"structures": [], "paths": [], "terrain_detail": []}
     tiles["structures"] = _tiles_for_rect(x, y, w, h, "tile_wall_exterior")
     if rules.get("front") == "path":
-        tiles["paths"] = _tiles_for_rect(x, y + h, w, 2, "tile_path")
+        tiles["paths"] = _edge_strip(x, y, w, h, front, 2, "tile_path")
     side = rules.get("sides")
     if side in {"fence", "hedge", "flowerbed"}:
-        tiles["terrain_detail"] = _tiles_for_rect(x - 1, y, 1, h, f"tile_{side}") + _tiles_for_rect(x + w, y, 1, h, f"tile_{side}")
-    rear = rules.get("rear")
-    if rear == "service_path":
-        tiles["paths"] += _tiles_for_rect(x, y - 1, w, 1, "tile_path")
-    elif rear in {"fence", "hedge", "garden"}:
-        tiles["terrain_detail"] += _tiles_for_rect(x, y - 1, w, 1, "tile_flowerbed" if rear == "garden" else f"tile_{rear}")
+        for edge in side_edges:
+            tiles["terrain_detail"] += _edge_strip(x, y, w, h, edge, 1, f"tile_{side}")
+    rear_rule = rules.get("rear")
+    if rear_rule == "service_path":
+        tiles["paths"] += _edge_strip(x, y, w, h, rear, 1, "tile_path")
+    elif rear_rule in {"fence", "hedge", "garden"}:
+        tiles["terrain_detail"] += _edge_strip(x, y, w, h, rear, 1, "tile_flowerbed" if rear_rule == "garden" else f"tile_{rear_rule}")
     return tiles
 
 

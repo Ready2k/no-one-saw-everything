@@ -337,7 +337,7 @@ def map_replay(
     accusation has been submitted (the reveal gate).
     """
     from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
-    from .town_map import CANONICAL_MAP, map_payload
+    from .town_map import canonical_map_definition, map_payload
 
     case = case_data()
     sess = session()
@@ -346,11 +346,11 @@ def map_replay(
     # temporary visual asset, while geometry and semantic layers come from
     # the reusable canonical contract. Other cases preserve legacy fallback.
     if case.case.case_id == "case_004":
-        map_asset = CANONICAL_MAP["asset"]
-        map_image = CANONICAL_MAP["image"]
-        map_width = CANONICAL_MAP["width"]
-        map_height = CANONICAL_MAP["height"]
-        map_definition = CANONICAL_MAP
+        map_definition = canonical_map_definition()
+        map_asset = map_definition["asset"]
+        map_image = map_definition["image"]
+        map_width = map_definition["width"]
+        map_height = map_definition["height"]
     else:
         map_asset = MAP_ASSET
         map_image = MAP_IMAGE
@@ -1297,7 +1297,7 @@ def get_dev_map_layout():
     if not enable_editor:
         raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
 
-    from .town_map import TOWN_LAYOUT_FILE, _BOUNDS_TILES
+    from .town_map import TOWN_LAYOUT_FILE, _BOUNDS_TILES, list_hd_tile_variants
     from .place_library import load_building_library
     from .case_store import list_all_cases, get_case
     
@@ -1366,7 +1366,8 @@ def get_dev_map_layout():
             }
             for loc_id, b in _BOUNDS_TILES.items()
         },
-        "building_library": load_building_library()
+        "building_library": load_building_library(),
+        "tile_art_variants": list_hd_tile_variants()
     }
 
 

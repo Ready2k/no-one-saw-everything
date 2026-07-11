@@ -78,6 +78,18 @@ export interface BuildingInstance {
   derived_tiles?: Record<string, { tiles: TileEntry[] }>;
 }
 
+// Visual-only per-cell art swaps for the HD overworld mosaic, keyed by view
+// then cell id (A1..C3). Value is the /art/... URL shown instead of the
+// default artwork for that cell.
+export type UnderlayTileOverrides = Partial<Record<MapView, Record<string, string>>>;
+
+// One swappable artwork file for a mosaic cell, discovered by the backend
+// from frontend/public/art/town/tiles_3x3_hd/.
+export interface TileArtVariant {
+  url: string;
+  label: string;
+}
+
 export interface TownLayout {
   version: string;
   grid: { cols: number; rows: number; tile_size: number };
@@ -86,6 +98,7 @@ export interface TownLayout {
   tile_layers: Record<string, TileLayer>;
   prop_instances: Record<string, PropInstance[]>;
   building_instances: BuildingInstance[];
+  underlay_tile_overrides?: UnderlayTileOverrides;
 }
 
 export interface CaseLocationRef {
@@ -131,6 +144,7 @@ export type Selection =
   | { kind: "location"; id: string }
   | { kind: "object"; id: string }
   | { kind: "prop"; id: string }
+  | { kind: "building"; id: string }
   | null;
 
 export interface Camera {
@@ -243,6 +257,9 @@ export interface UnderlayTilePlacement {
   y: number;
   w: number;
   h: number;
+  // Mosaic cell id (A1..C3) when the placement is one cell of the HD 3x3
+  // overworld; cells are the unit of per-view art overrides.
+  cell?: string;
 }
 
 export interface UnderlaySourceDef {
@@ -257,12 +274,29 @@ export interface UnderlaySourceDef {
 export const HD_B2_EXTERNAL_URL = "/art/town/tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png";
 export const HD_B2_INTERNAL_URL = "/art/town/tiles_3x3_hd/town_overworld_B2_interior_hd.png";
 
+export const HD_TILE_CELLS = (["A", "B", "C"] as const).flatMap((row) =>
+  ([1, 2, 3] as const).map((col) => `${row}${col}`)
+);
+
+/** The artwork a mosaic cell shows by default in the given view. */
+export function hdDefaultTileUrl(cell: string, view: MapView): string {
+  if (cell === "B2") return view === "internal" ? HD_B2_INTERNAL_URL : HD_B2_EXTERNAL_URL;
+  return `/art/town/tiles_3x3_hd/town_overworld_${cell}_hd.png`;
+}
+
+/** The artwork a mosaic cell shows in the given view, honouring layout overrides. */
+export function resolveHdTileUrl(
+  cell: string,
+  view: MapView,
+  overrides: UnderlayTileOverrides | undefined
+): string {
+  return overrides?.[view]?.[cell] || hdDefaultTileUrl(cell, view);
+}
+
 const HD_3X3_TILES: UnderlayTilePlacement[] = (["A", "B", "C"] as const).flatMap((row, r) =>
   ([1, 2, 3] as const).map((col, c) => ({
-    url:
-      row === "B" && col === 2
-        ? HD_B2_EXTERNAL_URL
-        : `/art/town/tiles_3x3_hd/town_overworld_${row}${col}_hd.png`,
+    url: hdDefaultTileUrl(`${row}${col}`, "external"),
+    cell: `${row}${col}`,
     x: c * 64,
     y: r * 48,
     w: 64,
@@ -327,7 +361,7 @@ export const TOOL_DEFS: Array<{ id: ToolId; label: string; icon: string; key: st
   { id: "fill", label: "Flood fill", icon: "🪣", key: "G", hint: "Click to flood-fill a contiguous region on the target layer" },
   { id: "picker", label: "Eyedropper", icon: "💉", key: "I", hint: "Click a painted tile to pick its tile type and layer" },
   { id: "prop", label: "Place props", icon: "🌳", key: "P", hint: "Click to place the selected prop · drag to fine-position before release" },
-  { id: "building", label: "Place buildings", icon: "🏠", key: "U", hint: "Click to drop the selected place bundle · exterior, interior and dressing tiles stay linked" }
+  { id: "building", label: "Place buildings", icon: "🏠", key: "U", hint: "Click to drop the selected place bundle · R rotates 90° · dressing and entrance path follow the door" }
 ];
 
 export function deepClone<T>(value: T): T {
@@ -344,4 +378,64 @@ export function tileKey(x: number, y: number): string {
 
 export function emptyOverride(): CaseOverride {
   return { visible_locations: [], location_bounds: {}, object_anchors: {} };
+}
+
+// --- Building rotation & dressing (mirrors backend place_library.dress_building) ---
+
+// Buildings rotate clockwise in 90° steps. Art is authored with the door on
+// the south edge, so the "front" edge walks south → west → north → east.
+export const BUILDING_EDGES = ["south", "west", "north", "east"] as const;
+export type BuildingEdge = (typeof BUILDING_EDGES)[number];
+
+const rotationSteps = (rotation: number) => ((Math.round(rotation / 90) % 4) + 4) % 4;
+
+export function rotatedFootprint(fp: { w: number; h: number }, rotation: number): { w: number; h: number } {
+  return rotationSteps(rotation) % 2 ? { w: fp.h, h: fp.w } : { w: fp.w, h: fp.h };
+}
+
+export function buildingFrontEdge(rotation: number): BuildingEdge {
+  return BUILDING_EDGES[rotationSteps(rotation)];
+}
+
+/** Cells of a strip hugging one edge of the w×h box at (x, y). */
+export function edgeStripCells(x: number, y: number, w: number, h: number, edge: BuildingEdge, depth: number): Array<{ x: number; y: number }> {
+  const rect = (rx: number, ry: number, rw: number, rh: number) =>
+    Array.from({ length: rw }, (_, dx) => Array.from({ length: rh }, (_, dy) => ({ x: rx + dx, y: ry + dy }))).flat();
+  if (edge === "south") return rect(x, y + h, w, depth);
+  if (edge === "north") return rect(x, y - depth, w, depth);
+  if (edge === "west") return rect(x - depth, y, depth, h);
+  return rect(x + w, y, depth, h);
+}
+
+/** Deterministic dressing for a building placement, honouring rotation. */
+export function dressBuilding(
+  asset: { footprint: { w: number; h: number }; surrounding_rules?: { front?: string; sides?: string; rear?: string } },
+  x: number,
+  y: number,
+  rotation: number
+): Record<string, TileLayer> {
+  const { w, h } = rotatedFootprint(asset.footprint, rotation);
+  const steps = rotationSteps(rotation);
+  const front = BUILDING_EDGES[steps];
+  const rear = BUILDING_EDGES[(steps + 2) % 4];
+  const sideEdges = [BUILDING_EDGES[(steps + 1) % 4], BUILDING_EDGES[(steps + 3) % 4]];
+  const strip = (edge: BuildingEdge, depth: number, tile_id: string): TileEntry[] =>
+    edgeStripCells(x, y, w, h, edge, depth).map((c) => ({ ...c, tile_id }));
+
+  const rules = asset.surrounding_rules || {};
+  const footprintTiles: TileEntry[] = [];
+  for (let dx = 0; dx < w; dx++) for (let dy = 0; dy < h; dy++) footprintTiles.push({ x: x + dx, y: y + dy, tile_id: "tile_wall_exterior" });
+  const derived: Record<string, TileLayer> = {
+    structures: { tiles: footprintTiles },
+    paths: { tiles: rules.front === "path" ? strip(front, 2, "tile_path") : [] },
+    terrain_detail: { tiles: [] }
+  };
+  if (["fence", "hedge", "flowerbed"].includes(rules.sides || "")) {
+    for (const edge of sideEdges) derived.terrain_detail.tiles.push(...strip(edge, 1, `tile_${rules.sides}`));
+  }
+  if (rules.rear === "service_path") derived.paths.tiles.push(...strip(rear, 1, "tile_path"));
+  else if (["fence", "hedge", "garden"].includes(rules.rear || "")) {
+    derived.terrain_detail.tiles.push(...strip(rear, 1, rules.rear === "garden" ? "tile_flowerbed" : `tile_${rules.rear}`));
+  }
+  return derived;
 }

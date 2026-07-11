@@ -202,3 +202,105 @@ def test_validate_town_layout_payload_constraints_v2():
     }
     errors = validate_town_layout_payload(bad_payload)
     assert any("lacks a linked object_id" in e.lower() for e in errors)
+
+
+def test_underlay_tile_override_validation():
+    from app.town_map import HD_TILE_CELLS
+
+    base = {
+        "version": "town_layout_editor_v2",
+        "grid": {"cols": 192, "rows": 144, "tile_size": 32},
+        "canonical_locations": {},
+        "case_overrides": {},
+        "tile_layers": {},
+        "prop_instances": {},
+    }
+    assert HD_TILE_CELLS == ["A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3"]
+
+    # Valid per-view overrides pass clean
+    ok = dict(base)
+    ok["underlay_tile_overrides"] = {
+        "external": {"B2": "/art/town/tiles_3x3_hd/town_overworld_B2_blank_hd.png"},
+        "internal": {"B2": "/art/town/tiles_3x3_hd/town_overworld_B2_blank_hd.png"},
+    }
+    assert not validate_town_layout_payload(ok)
+
+    # Unknown view
+    bad = dict(base)
+    bad["underlay_tile_overrides"] = {"sideways": {"B2": "/art/x.png"}}
+    assert any("unknown view" in e.lower() for e in validate_town_layout_payload(bad))
+
+    # Unknown cell
+    bad["underlay_tile_overrides"] = {"external": {"D4": "/art/x.png"}}
+    assert any("mosaic cell" in e.lower() for e in validate_town_layout_payload(bad))
+
+    # URL outside /art/ or not a PNG
+    bad["underlay_tile_overrides"] = {"external": {"B2": "https://evil.example/x.png"}}
+    assert any("/art/" in e for e in validate_town_layout_payload(bad))
+    bad["underlay_tile_overrides"] = {"external": {"B2": "/art/town/x.svg"}}
+    assert any("/art/" in e for e in validate_town_layout_payload(bad))
+
+
+def test_canonical_map_definition_applies_tile_overrides():
+    from app.town_map import CANONICAL_MAP, canonical_map_definition
+
+    blank = "/art/town/tiles_3x3_hd/town_overworld_B2_blank_hd.png"
+    layout = {
+        "underlay_tile_overrides": {
+            "external": {"B2": blank, "A1": "/art/town/tiles_3x3_hd/custom_A1.png"},
+            "internal": {"B2": blank},
+        }
+    }
+    definition = canonical_map_definition(layout)
+    assert definition["image_tiles"]["urls"][1][1] == blank
+    assert definition["image_tiles"]["urls"][0][0] == "/art/town/tiles_3x3_hd/custom_A1.png"
+    assert definition["zoom_image_tiles"]["urls"][1][1] == blank
+    # Untouched cells keep the defaults; CANONICAL_MAP itself is never mutated
+    assert definition["image_tiles"]["urls"][2][2] == CANONICAL_MAP["image_tiles"]["urls"][2][2]
+    assert CANONICAL_MAP["image_tiles"]["urls"][1][1].endswith("all_cases_external_hd.png")
+
+    # No overrides -> the shared definition is returned unchanged
+    assert canonical_map_definition({}) is CANONICAL_MAP
+
+
+def test_dress_building_rotation():
+    building = {
+        "footprint": {"w": 4, "h": 3},
+        "surrounding_rules": {"front": "path", "sides": "fence", "rear": "service_path"},
+    }
+    cells = lambda tiles: {(t["x"], t["y"]) for t in tiles}
+
+    r0 = dress_building(building, 20, 30)
+    assert cells(r0["structures"]) == {(20 + dx, 30 + dy) for dx in range(4) for dy in range(3)}
+    # Door faces south: 2-deep front path below, 1-deep service path above.
+    assert cells(r0["paths"]) == {(20 + dx, 33 + dy) for dx in range(4) for dy in range(2)} | {(20 + dx, 29) for dx in range(4)}
+    assert cells(r0["terrain_detail"]) == {(19, 30 + dy) for dy in range(3)} | {(24, 30 + dy) for dy in range(3)}
+
+    r90 = dress_building(building, 20, 30, rotation=90)
+    # Footprint swaps to 3x4 and the whole dressing rotates: front west, rear east, sides north/south.
+    assert cells(r90["structures"]) == {(20 + dx, 30 + dy) for dx in range(3) for dy in range(4)}
+    assert cells(r90["paths"]) == {(18 + dx, 30 + dy) for dx in range(2) for dy in range(4)} | {(23, 30 + dy) for dy in range(4)}
+    assert cells(r90["terrain_detail"]) == {(20 + dx, 29) for dx in range(3)} | {(20 + dx, 34) for dx in range(3)}
+
+    r180 = dress_building(building, 20, 30, rotation=180)
+    assert cells(r180["structures"]) == cells(r0["structures"])
+    assert cells(r180["paths"]) == {(20 + dx, 28 + dy) for dx in range(4) for dy in range(2)} | {(20 + dx, 33) for dx in range(4)}
+
+    r270 = dress_building(building, 20, 30, rotation=270)
+    assert cells(r270["paths"]) == {(23 + dx, 30 + dy) for dx in range(2) for dy in range(4)} | {(19, 30 + dy) for dy in range(4)}
+
+    assert dress_building(building, 20, 30, rotation=90) == r90
+
+
+def test_tile_art_variants_listing():
+    from app.town_map import list_hd_tile_variants
+
+    os.environ["ENABLE_DEV_MAP_EDITOR"] = "true"
+    variants = list_hd_tile_variants()
+    b2_urls = [v["url"] for v in variants["B2"]]
+    assert "/art/town/tiles_3x3_hd/town_overworld_B2_blank_hd.png" in b2_urls
+    assert all(url.startswith("/art/town/tiles_3x3_hd/") for urls in variants.values() for url in [u["url"] for u in urls])
+
+    client = TestClient(app)
+    data = client.get("/api/dev/map-editor/layout").json()
+    assert data["tile_art_variants"]["B2"] == variants["B2"]

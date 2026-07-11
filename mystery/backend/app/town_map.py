@@ -16,6 +16,15 @@ from .place_library import load_building_library
 
 TOWN_LAYOUT_FILE = Path(__file__).parent / "data" / "town" / "town_layout.json"
 
+# The HD overworld mosaic: rows A-C top->bottom, cols 1-3 left->right.
+HD_TILE_CELLS = [f"{row}{col}" for row in ("A", "B", "C") for col in (1, 2, 3)]
+HD_TILE_ART_URL_PREFIX = "/art/town/tiles_3x3_hd/"
+# Dev-only filesystem view of the same directory (Vite serves frontend/public/).
+HD_TILE_ART_DIR = (
+    Path(__file__).resolve().parents[2]
+    / "frontend" / "public" / "art" / "town" / "tiles_3x3_hd"
+)
+
 
 ALLOWED_TILES = {
     "tile_grass", "tile_mud", "tile_cobble", "tile_path", "tile_floor_wood",
@@ -493,6 +502,27 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                     if obj_id not in all_objects:
                         errors.append(f"Prop instance '{instance_id}' links to unknown object ID '{obj_id}'")
 
+    # 5. Validate underlay_tile_overrides (visual-only per-cell art swaps).
+    # URLs are format-checked but not existence-checked: the layout must stay
+    # loadable on deployments where the frontend assets live elsewhere.
+    tile_overrides = payload.get("underlay_tile_overrides")
+    if tile_overrides is not None:
+        if not isinstance(tile_overrides, dict):
+            errors.append("underlay_tile_overrides must be a JSON object")
+        else:
+            for view, cells in tile_overrides.items():
+                if view not in ("external", "internal"):
+                    errors.append(f"Unknown view '{view}' in underlay_tile_overrides (expected 'external' or 'internal')")
+                    continue
+                if not isinstance(cells, dict):
+                    errors.append(f"underlay_tile_overrides['{view}'] must be a JSON object")
+                    continue
+                for cell, url in cells.items():
+                    if cell not in HD_TILE_CELLS:
+                        errors.append(f"Unknown mosaic cell '{cell}' in underlay_tile_overrides['{view}'] (expected A1..C3)")
+                    if not isinstance(url, str) or not url.startswith("/art/") or not url.endswith(".png"):
+                        errors.append(f"Tile art override for '{cell}' in view '{view}' must be a '/art/...*.png' URL")
+
     return errors
 
 
@@ -562,6 +592,52 @@ CANONICAL_MAP: dict[str, Any] = {
     "base_palette": "neutral_daylight_soft_ambient",
     "lighting_overlay": "runtime_lightingTint",
 }
+
+
+def canonical_map_definition(layout: dict[str, Any] | None = None) -> dict[str, Any]:
+    """CANONICAL_MAP with the layout's per-cell tile art overrides applied.
+
+    External-view overrides land in `image_tiles` (zoomed-out mosaic),
+    internal-view overrides in `zoom_image_tiles` (past the zoom threshold).
+    Overrides are visual-only: they swap which artwork a mosaic cell shows and
+    never touch geometry, discovery, or case truth.
+    """
+    if layout is None:
+        layout = load_town_layout()
+    overrides = (layout or {}).get("underlay_tile_overrides") or {}
+    if not overrides:
+        return CANONICAL_MAP
+
+    definition = json.loads(json.dumps(CANONICAL_MAP))
+    for view, key in (("external", "image_tiles"), ("internal", "zoom_image_tiles")):
+        cells = overrides.get(view) or {}
+        urls = definition[key]["urls"]
+        for cell, url in cells.items():
+            if cell not in HD_TILE_CELLS or not isinstance(url, str):
+                continue
+            row = ord(cell[0]) - ord("A")
+            col = int(cell[1]) - 1
+            urls[row][col] = url
+    return definition
+
+
+def list_hd_tile_variants() -> dict[str, list[dict[str, str]]]:
+    """Available artwork files per mosaic cell, discovered from the HD tile
+    directory. Filenames follow town_overworld_<CELL>[_<variant>]_hd.png; any
+    PNG dropped in the folder shows up as a swappable variant in the editor."""
+    variants: dict[str, list[dict[str, str]]] = {cell: [] for cell in HD_TILE_CELLS}
+    if not HD_TILE_ART_DIR.is_dir():
+        return variants
+    for path in sorted(HD_TILE_ART_DIR.glob("town_overworld_*.png")):
+        stem = path.stem.removeprefix("town_overworld_").removesuffix("_hd")
+        cell, _, variant = stem.partition("_")
+        if cell not in HD_TILE_CELLS:
+            continue
+        variants[cell].append({
+            "url": f"{HD_TILE_ART_URL_PREFIX}{path.name}",
+            "label": variant.replace("_", " ") if variant else "original",
+        })
+    return variants
 
 # Canonical layout bounds from docs/canonical_town_layout.md, converted from
 # tiles to canonical map pixels. These are visual recommendations only.
