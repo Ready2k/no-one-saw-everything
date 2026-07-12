@@ -5,6 +5,7 @@ import {
   ALLOWED_LAYERS,
   Bounds,
   Camera,
+  LIGHT_ASSET_SWATCHES,
   LocationSource,
   PROP_EMOJIS,
   SAFETY_MARGIN_TILES,
@@ -28,6 +29,17 @@ export interface SceneAnchor {
   x: number;
   y: number;
   alpha: number;
+  selected: boolean;
+}
+
+export interface SceneLight {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  semanticAssetId: string;
+  opacity?: number;
   selected: boolean;
 }
 
@@ -90,6 +102,7 @@ export interface Scene {
   locations: SceneLocation[];
   anchors: SceneAnchor[];
   props: SceneProp[];
+  lights: SceneLight[];
   overlay: ToolOverlay;
 }
 
@@ -245,6 +258,42 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
       ctx.fillText("PLAYABLE BOUNDARY", X(m) + 6, Y(m) + 5);
     }
     ctx.restore();
+  }
+
+  // Lights (drawn under props/buildings, like the in-game glow sits behind
+  // interactable objects)
+  for (const lt of scene.lights) {
+    const px = X(lt.x);
+    const py = Y(lt.y);
+    const pw = (lt.width / 2) * s;
+    const ph = (lt.height / 2) * s;
+    if (px + pw < 0 || px - pw > cssW || py + ph < 0 || py - ph > cssH) continue;
+
+    const swatch = LIGHT_ASSET_SWATCHES[lt.semanticAssetId]?.color || "#ffe9a8";
+    ctx.save();
+    ctx.globalAlpha = lt.opacity ?? 0.65;
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, Math.max(pw, ph, 2));
+    grad.addColorStop(0, swatch);
+    grad.addColorStop(0.55, `${swatch}88`);
+    grad.addColorStop(1, `${swatch}00`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(px, py, Math.max(pw, 2), Math.max(ph, 2), 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    if (lt.selected) {
+      ctx.save();
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.ellipse(px, py, Math.max(pw, 2), Math.max(ph, 2), 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      drawHandle(ctx, px + pw, py + ph);
+    }
   }
 
   // Props

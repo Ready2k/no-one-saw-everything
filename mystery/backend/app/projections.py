@@ -184,14 +184,17 @@ def project_map_location(loc: Location, case_id: str | None = None) -> dict[str,
     from .map_layout import location_visuals
 
     bounds_internal = None
-    if case_id == "case_004":
-        from .town_map import pilot_location_bounds_internal, pilot_location_visuals
+    if case_id:
+        from .town_map import map_config, pilot_location_bounds_internal, pilot_location_visuals
 
-        position, bounds, layer = pilot_location_visuals(loc.location_id)
-        if position is None:
-            position, bounds, layer = location_visuals(loc)
+        if map_config(case_id):
+            position, bounds, layer = pilot_location_visuals(loc.location_id, case_id)
+            if position is None:
+                position, bounds, layer = location_visuals(loc)
+            else:
+                bounds_internal = pilot_location_bounds_internal(loc.location_id)
         else:
-            bounds_internal = pilot_location_bounds_internal(loc.location_id)
+            position, bounds, layer = location_visuals(loc)
     else:
         position, bounds, layer = location_visuals(loc)
     projected = project_location(loc, case_id)

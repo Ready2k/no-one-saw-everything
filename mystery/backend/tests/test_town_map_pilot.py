@@ -64,6 +64,93 @@ def test_reusable_places_use_hd_search_illustrations_across_cases():
     assert location_search_illustration("loc_meadow", "case_005").endswith("/green_meadow_hd.png")
 
 
+def test_case_001_places_use_hd_search_illustrations():
+    from app.projections import project_map_location
+
+    case = get_case("case_001")
+    locations = {loc.location_id: project_map_location(loc, case.case.case_id) for loc in case.locations}
+
+    assert locations["loc_village_square"]["illustration"].endswith("/village_square_dawn_hd.png")
+    assert locations["loc_hobbs_cafe"]["illustration"].endswith("/hobbs_cafe_main_hd.png")
+    assert locations["loc_cafe_kitchen"]["illustration"].endswith("/cafe_kitchen_hd.png")
+    assert locations["loc_cafe_storage"]["illustration"].endswith("/cafe_storage_room_hd.png")
+    assert locations["loc_rear_alley"]["illustration"].endswith("/rear_alley_hd.png")
+    assert locations["loc_bookshop"]["illustration"].endswith("/reed_bell_bookshop_hd.png")
+    assert locations["loc_clinic"]["illustration"].endswith("/village_clinic_hd.png")
+    assert locations["loc_marcus_house"]["illustration"].endswith("/marcus_study_hd.png")
+    assert locations["loc_owen_house"]["illustration"].endswith("/owen_house_yard_hd.png")
+    assert locations["loc_clara_flat"]["illustration"].endswith("/clara_flat_hd.png")
+    assert locations["loc_fountain"]["illustration"].endswith("/fountain_daylight_closeup_hd.png")
+    assert locations["loc_priya_flat"]["illustration"].endswith("/priya_flat_hd.png")
+    assert locations["loc_nadia_flat"]["illustration"].endswith("/nadia_flat_hd.png")
+    assert locations["loc_elias_house"]["illustration"].endswith("/elias_house_hd.png")
+
+
+def test_case_002_places_use_hd_search_illustrations():
+    from app.projections import project_map_location
+
+    case = get_case("case_002")
+    locations = {loc.location_id: project_map_location(loc, case.case.case_id) for loc in case.locations}
+
+    assert locations["loc_village_square"]["illustration"].endswith("/village_square_lunchtime_hd.png")
+    assert locations["loc_bookshop"]["illustration"].endswith("/reed_bell_bookshop_front_hd.png")
+    assert locations["loc_bookshop_back"]["illustration"].endswith("/bookshop_back_room_hd.png")
+    assert locations["loc_rear_alley"]["illustration"].endswith("/rear_alley_bookshop_hd.png")
+    assert locations["loc_hobbs_cafe"]["illustration"].endswith("/hobbs_cafe_lunchtime_hd.png")
+    assert locations["loc_clinic"]["illustration"].endswith("/village_clinic_lunchtime_hd.png")
+    assert locations["loc_owen_house"]["illustration"].endswith("/owen_house_yard_lunchtime_hd.png")
+    assert locations["loc_priya_flat"]["illustration"].endswith("/priya_flat_lunchtime_hd.png")
+    assert locations["loc_fountain"]["illustration"].endswith("/fountain_lunchtime_closeup_hd.png")
+
+
+def test_case_002_inspect_clues_have_authored_search_hotspots():
+    case = get_case("case_002")
+    expected = {
+        "clue_solicitor_letter": ("loc_bookshop_back", 49, 65, 6),
+        "clue_forged_document": ("loc_bookshop_back", 39, 40, 6),
+        "clue_scarf_thread": ("loc_bookshop_back", 53, 39, 6),
+        "clue_staged_breakin": ("loc_bookshop_back", 77, 40, 7),
+        "clue_letter_opener_wiped": ("loc_bookshop_back", 53, 63, 6),
+        "clue_invoice_discrepancy": ("loc_bookshop", 62, 64, 6),
+        "clue_owen_debt_folder": ("loc_bookshop_back", 69, 70, 7),
+        "clue_priya_scarf_missing_thread": ("loc_bookshop", 66, 37, 7),
+    }
+
+    clues = {clue.clue_id: clue for clue in case.clues}
+    for clue_id, (location_id, x, y, radius) in expected.items():
+        discoverability = clues[clue_id].discoverability
+        assert discoverability.method == "inspect"
+        assert discoverability.location_id == location_id
+        assert discoverability.x == x
+        assert discoverability.y == y
+        assert discoverability.radius == radius
+
+
+def test_case_001_and_002_use_canonical_hd_world_map_contract():
+    expected_visible = {
+        "case_001": {
+            "loc_village_square", "loc_fountain", "loc_hobbs_cafe",
+            "loc_cafe_kitchen", "loc_cafe_storage", "loc_rear_alley",
+            "loc_bookshop", "loc_clinic", "loc_marcus_house",
+            "loc_owen_house", "loc_clara_flat", "loc_priya_flat",
+            "loc_nadia_flat", "loc_elias_house",
+        },
+        "case_002": {
+            "loc_village_square", "loc_fountain", "loc_bookshop",
+            "loc_bookshop_back", "loc_rear_alley", "loc_hobbs_cafe",
+            "loc_clinic", "loc_owen_house", "loc_priya_flat",
+        },
+    }
+
+    for case_id, visible_locations in expected_visible.items():
+        payload = map_payload(get_case(case_id), set())
+
+        assert payload["mode"] == "canonical_overworld"
+        assert payload["definition_id"] == "town_canonical_v1"
+        assert set(payload["visible_location_ids"]) == visible_locations
+        assert set(payload["canonical_locations"]) == visible_locations
+
+
 def test_case_004_inspect_clues_have_authored_search_hotspots():
     case = get_case("case_004")
     expected = {
@@ -88,7 +175,7 @@ def test_case_004_inspect_clues_have_authored_search_hotspots():
 
 
 def test_unmigrated_cases_keep_legacy_visual_fallback_contract():
-    for case_id in ("case_001", "case_002", "case_003", "case_005", "case_006"):
+    for case_id in ("case_003", "case_005", "case_006"):
         # The visual contract only needs the case id. Avoid loading unrelated
         # static case truth in this regression test; those files may be under
         # separate authoring/validation work.

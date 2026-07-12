@@ -23,7 +23,10 @@ def _replay(**params):
 def test_replay_shape_and_visual_metadata():
     data = _replay()
     assert data["mode"] == "player"
-    assert data["map"]["asset"] == "the_ville"
+    assert data["map"]["asset"] == "town_canonical_v1"
+    assert data["map"]["definition_id"] == "town_canonical_v1"
+    assert data["map"]["image_tiles"]
+    assert data["visual"]["mode"] == "canonical_overworld"
     assert data["map"]["width"] > 0 and data["map"]["height"] > 0
     assert data["time_range"]["start"] < data["time_range"]["end"]
     # Every location has a usable map position (authored or fallback).

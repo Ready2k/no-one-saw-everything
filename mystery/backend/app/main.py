@@ -6,7 +6,7 @@ import hashlib
 import re
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException, Body, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import logging
@@ -337,15 +337,14 @@ def map_replay(
     accusation has been submitted (the reveal gate).
     """
     from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
-    from .town_map import canonical_map_definition, map_payload
+    from .town_map import canonical_map_definition, map_config, map_payload
 
     case = case_data()
     sess = session()
 
-    # Case 004 is the only migrated pilot. Its existing image remains a
-    # temporary visual asset, while geometry and semantic layers come from
-    # the reusable canonical contract. Other cases preserve legacy fallback.
-    if case.case.case_id == "case_004":
+    # Migrated cases use the reusable canonical HD map contract; unmigrated
+    # cases preserve the legacy fallback art and coordinates.
+    if map_config(case.case.case_id):
         map_definition = canonical_map_definition()
         map_asset = map_definition["asset"]
         map_image = map_definition["image"]
@@ -1290,6 +1289,19 @@ def delete_generated_case(case_id: str):
 # Developer Map Editor Endpoints (Dev-only)
 # ---------------------------------------------------------------------------
 
+def _layout_file_version(path) -> str:
+    """Hash of the layout file's current on-disk bytes, used as an optimistic
+    concurrency token: a save proceeds only if the client's copy was loaded
+    from this exact on-disk state, so two editors saving around the same time
+    can't silently clobber each other. Empty file == no file, so a fresh
+    editor session (nothing to conflict with) still gets a stable token."""
+    import hashlib
+
+    if not path.exists():
+        return "empty"
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 @app.get("/api/dev/map-editor/layout")
 def get_dev_map_layout():
     import json
@@ -1300,7 +1312,8 @@ def get_dev_map_layout():
     from .town_map import TOWN_LAYOUT_FILE, _BOUNDS_TILES, list_hd_tile_variants
     from .place_library import load_building_library
     from .case_store import list_all_cases, get_case
-    
+
+    layout_version = _layout_file_version(TOWN_LAYOUT_FILE)
     layout_data = {}
     if TOWN_LAYOUT_FILE.exists():
         try:
@@ -1316,7 +1329,8 @@ def get_dev_map_layout():
             "case_overrides": {},
             "tile_layers": {},
             "prop_instances": {},
-            "building_instances": []
+            "building_instances": [],
+            "lights": {}
         }
         
     cases_details = []
@@ -1354,6 +1368,7 @@ def get_dev_map_layout():
 
     return {
         "layout": layout_data,
+        "layout_version": layout_version,
         "cases": cases_details,
         "canonical_recommended_locations": {
             loc_id: {
@@ -1372,32 +1387,45 @@ def get_dev_map_layout():
 
 
 @app.post("/api/dev/map-editor/layout")
-def save_dev_map_layout(payload: dict = Body(...)):
+def save_dev_map_layout(payload: dict = Body(...), x_base_layout_version: str | None = Header(default=None)):
     import json
     enable_editor = os.getenv("ENABLE_DEV_MAP_EDITOR", "false").lower() == "true"
     if not enable_editor:
         raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
 
     from .town_map import TOWN_LAYOUT_FILE, validate_town_layout_payload
-    
+
     errors = validate_town_layout_payload(payload)
     if errors:
         raise HTTPException(status_code=400, detail={"errors": errors})
-        
+
+    # Optimistic concurrency: reject a save whose base version no longer
+    # matches what's on disk, rather than silently overwriting another
+    # editor session's more recent save (two open tabs, or a stray
+    # automated session, would otherwise clobber each other's work with no
+    # way to recover the loser's edits — only one backup slot is kept).
+    current_version = _layout_file_version(TOWN_LAYOUT_FILE)
+    if x_base_layout_version is not None and x_base_layout_version != current_version:
+        raise HTTPException(
+            status_code=409,
+            detail="The layout changed on disk since you loaded it (likely saved from another tab or session). "
+            "Reload the editor to see the latest version before saving again, or your changes will overwrite theirs.",
+        )
+
     try:
         temp_file = TOWN_LAYOUT_FILE.with_suffix(".json.tmp")
         backup_file = TOWN_LAYOUT_FILE.with_suffix(".json.bak")
-        
+
         TOWN_LAYOUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-        
+
         temp_file.write_text(json.dumps(payload, indent=2))
-        
+
         if TOWN_LAYOUT_FILE.exists():
             if backup_file.exists():
                 backup_file.unlink()
             TOWN_LAYOUT_FILE.rename(backup_file)
-            
+
         temp_file.rename(TOWN_LAYOUT_FILE)
-        return {"status": "success"}
+        return {"status": "success", "layout_version": _layout_file_version(TOWN_LAYOUT_FILE)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to persist layout: {e}")

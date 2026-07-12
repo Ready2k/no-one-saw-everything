@@ -10,7 +10,10 @@
       "ambiguity": "low",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_bookshop_back"
+        "location_id": "loc_bookshop_back",
+        "x": 49,
+        "y": 65,
+        "radius": 6
       },
       "supports_conclusion_ids": [
         "conc_priya_motive"
@@ -36,6 +39,9 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_bookshop_back",
+        "x": 39,
+        "y": 40,
+        "radius": 6,
         "required_prior_clue_ids": [
           "clue_solicitor_letter"
         ]
@@ -61,7 +67,10 @@
       "ambiguity": "low",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_bookshop_back"
+        "location_id": "loc_bookshop_back",
+        "x": 53,
+        "y": 39,
+        "radius": 6
       },
       "supports_conclusion_ids": [
         "conc_priya_opportunity"
@@ -86,7 +95,10 @@
       "ambiguity": "medium",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_bookshop_back"
+        "location_id": "loc_bookshop_back",
+        "x": 77,
+        "y": 40,
+        "radius": 7
       },
       "supports_conclusion_ids": [
         "conc_staged_scene"
@@ -108,7 +120,10 @@
       "ambiguity": "medium",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_bookshop_back"
+        "location_id": "loc_bookshop_back",
+        "x": 53,
+        "y": 63,
+        "radius": 6
       },
       "supports_conclusion_ids": [
         "conc_method",
@@ -131,7 +146,10 @@
       "ambiguity": "medium",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_bookshop"
+        "location_id": "loc_bookshop",
+        "x": 62,
+        "y": 64,
+        "radius": 6
       },
       "supports_conclusion_ids": [
         "conc_priya_opportunity"
@@ -267,7 +285,10 @@
       "ambiguity": "medium",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_bookshop_back"
+        "location_id": "loc_bookshop_back",
+        "x": 69,
+        "y": 70,
+        "radius": 7
       },
       "supports_conclusion_ids": [
         "conc_owen_red_herring"
@@ -353,6 +374,9 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_bookshop",
+        "x": 66,
+        "y": 37,
+        "radius": 7,
         "required_prior_clue_ids": [
           "clue_scarf_thread"
         ]

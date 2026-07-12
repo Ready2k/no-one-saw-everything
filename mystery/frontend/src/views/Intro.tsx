@@ -57,8 +57,17 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
           {c.scene_description || c.overview_text}
         </p>
         <div className="intro-beat intro-place">
-          {mapData && (
+          {c.discovery_location.illustration ? (
+            <img
+              className="intro-location-art"
+              src={c.discovery_location.illustration}
+              alt={c.discovery_location.name}
+              draggable={false}
+            />
+          ) : (
+            mapData && (
             <MapCrop data={mapData} locationId={c.discovery_location.location_id} />
+            )
           )}
           <p className="muted">
             Found in the <strong>{c.discovery_location.name}</strong> by{" "}

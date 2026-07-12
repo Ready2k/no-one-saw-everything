@@ -1290,6 +1290,15 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   background-repeat: no-repeat;
   max-width: 100%;
 }
+.intro-location-art {
+  width: min(520px, 82vw);
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111827;
+}
 .intro-witness-row { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
 .intro-witness { white-space: nowrap; }
 .intro-cta { font-size: 1.05rem; padding: 0.7rem 1.6rem; }

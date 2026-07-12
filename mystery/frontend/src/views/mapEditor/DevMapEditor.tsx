@@ -3,6 +3,7 @@ import { api } from "../../api";
 import { useToast } from "../../components/Toast";
 import {
   ALLOWED_LAYERS,
+  ALLOWED_LIGHT_ASSETS,
   ALLOWED_PROPS,
   ALLOWED_TILES,
   Bounds,
@@ -15,6 +16,8 @@ import {
   HISTORY_LIMIT,
   HD_B2_INTERNAL_URL,
   HD_TILE_CELLS,
+  LIGHT_ASSET_SWATCHES,
+  LightDef,
   LocationSource,
   MapView,
   MAX_SCALE,
@@ -50,6 +53,7 @@ import {
   ROTATE_HANDLE_OFFSET_PX,
   Scene,
   SceneAnchor,
+  SceneLight,
   SceneLocation,
   SceneProp,
   ToolOverlay,
@@ -255,6 +259,81 @@ function applyLocationBoundsView(
   Object.assign(rec.bounds_internal, updates);
 }
 
+interface EffectiveLight {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  semantic_asset_id: string;
+  opacity?: number;
+}
+
+function findLight(layout: TownLayout, id: string): LightDef | undefined {
+  return (layout.lights || {})[id];
+}
+
+/**
+ * Resolve a light's geometry/asset for the requested map view. Internal-view
+ * fields are optional overrides on the same record (not a separate
+ * collection) — same relationship as LocationData.bounds/bounds_internal,
+ * just flattened since a light has no nested Bounds object. Falls back to
+ * the external values field-by-field when an internal override is absent.
+ */
+function resolveLightView(light: LightDef, view: MapView): EffectiveLight & { hasInternal: boolean } {
+  const hasInternal = light.x_internal != null && light.y_internal != null;
+  if (view === "external" || !hasInternal) {
+    return {
+      x: light.x,
+      y: light.y,
+      width: light.width,
+      height: light.height,
+      semantic_asset_id: light.semantic_asset_id,
+      opacity: light.opacity,
+      hasInternal
+    };
+  }
+  return {
+    x: light.x_internal!,
+    y: light.y_internal!,
+    width: light.width_internal ?? light.width,
+    height: light.height_internal ?? light.height,
+    semantic_asset_id: light.semantic_asset_id_internal ?? light.semantic_asset_id,
+    opacity: light.opacity_internal ?? light.opacity,
+    hasInternal
+  };
+}
+
+/**
+ * Write geometry/asset updates for the given view. Internal-view edits seed
+ * the *_internal fields from the current external values on first touch
+ * (mirrors applyLocationBoundsView seeding bounds_internal from bounds), so
+ * an author who only nudges the internal position doesn't lose the rest of
+ * the external-derived defaults.
+ */
+function applyLightView(light: LightDef, updates: Partial<EffectiveLight>, view: MapView): void {
+  if (view === "external") {
+    Object.assign(light, updates);
+    return;
+  }
+  if (light.x_internal == null) light.x_internal = light.x;
+  if (light.y_internal == null) light.y_internal = light.y;
+  if (light.width_internal == null) light.width_internal = light.width;
+  if (light.height_internal == null) light.height_internal = light.height;
+  if (updates.x !== undefined) light.x_internal = updates.x;
+  if (updates.y !== undefined) light.y_internal = updates.y;
+  if (updates.width !== undefined) light.width_internal = updates.width;
+  if (updates.height !== undefined) light.height_internal = updates.height;
+  if (updates.semantic_asset_id !== undefined) light.semantic_asset_id_internal = updates.semantic_asset_id;
+  if (updates.opacity !== undefined) light.opacity_internal = updates.opacity;
+}
+
+function applyLightUpdate(layout: TownLayout, id: string, fn: (light: LightDef) => void): boolean {
+  const light = findLight(layout, id);
+  if (!light) return false;
+  fn(light);
+  return true;
+}
+
 function applyAnchor(
   layout: TownLayout,
   recs: CanonicalRecs,
@@ -391,7 +470,9 @@ type Gesture =
   | { kind: "moveAnchor"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
   | { kind: "moveProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
   | { kind: "resizeProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { w: number; h: number }; mutated: boolean }
-  | { kind: "moveBuilding"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean };
+  | { kind: "moveBuilding"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
+  | { kind: "moveLight"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
+  | { kind: "resizeLight"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { width: number; height: number }; mutated: boolean };
 
 interface MirrorState {
   selectedCaseId: string;
@@ -411,6 +492,7 @@ interface MirrorState {
   selectedTileId: string;
   selectedPropId: string;
   selectedBuildingId: string;
+  selectedLightAssetId: string;
   buildingRotation: number;
   paintLayer: string;
   propLayer: string;
@@ -437,11 +519,16 @@ export default function DevMapEditor() {
   const [history, setHistory] = useState<TownLayout[]>([]);
   const [redoStack, setRedoStack] = useState<TownLayout[]>([]);
   const [isDirty, setIsDirty] = useState(false);
+  // The layout_version this session last loaded/saved at. Sent with every
+  // save so the server can reject (409) a save based on stale data instead
+  // of silently overwriting a more recent save from another tab/session.
+  const [layoutVersion, setLayoutVersion] = useState<string | null>(null);
   const [serverErrors, setServerErrors] = useState<string[]>([]);
 
   const [activeTool, setActiveTool] = useState<ToolId>("select");
   const [selectedTileId, setSelectedTileId] = useState("tile_grass");
   const [selectedPropId, setSelectedPropId] = useState("prop_bench");
+  const [selectedLightAssetId, setSelectedLightAssetId] = useState(ALLOWED_LIGHT_ASSETS[0]);
   const [selectedBuildingId, setSelectedBuildingId] = useState("cafe_small_v1");
   const [buildingRotation, setBuildingRotation] = useState(0);
   const [buildingLibrary, setBuildingLibrary] = useState<Record<string, any>>({});
@@ -658,6 +745,34 @@ export default function DevMapEditor() {
       }
     }
 
+    // Lights (global collection; case scoping happens at read time via
+    // location_id, not by duplicating entries per case)
+    const checkLightGeometry = (x: number, y: number, width: number, height: number, label: string) => {
+      if (width <= 0 || height <= 0) w.push(`${label} width and height must be positive.`);
+      if (x < 0 || y < 0 || x > gCols || y > gRows) w.push(`${label} centre lies outside the ${gCols}×${gRows} grid.`);
+    };
+    for (const [id, light] of Object.entries(layout.lights || {})) {
+      if (!contract.has(light.location_id)) {
+        w.push(`Light "${id}" is assigned to unknown location "${light.location_id}".`);
+      }
+      if (!ALLOWED_LIGHT_ASSETS.includes(light.semantic_asset_id)) {
+        w.push(`Light "${id}" has unknown semantic_asset_id "${light.semantic_asset_id}".`);
+      }
+      checkLightGeometry(light.x, light.y, light.width, light.height, `Light "${id}"`);
+      if (light.x_internal != null && light.y_internal != null) {
+        checkLightGeometry(
+          light.x_internal,
+          light.y_internal,
+          light.width_internal ?? light.width,
+          light.height_internal ?? light.height,
+          `Light "${id}" internal-view`
+        );
+        if (light.semantic_asset_id_internal && !ALLOWED_LIGHT_ASSETS.includes(light.semantic_asset_id_internal)) {
+          w.push(`Light "${id}" has unknown semantic_asset_id_internal "${light.semantic_asset_id_internal}".`);
+        }
+      }
+    }
+
     return w;
   }, [layout, cases, canonicalRecs]);
 
@@ -715,6 +830,24 @@ export default function DevMapEditor() {
           y: eff.anchor.y,
           alpha: st.previewMode === "fog" && !locVisible ? 0.3 : 1,
           selected: st.selection?.kind === "object" && st.selection.id === o.object_id
+        });
+      }
+    }
+
+    // Lights
+    const lights: SceneLight[] = [];
+    if (st.visibleLayers["lights"]) {
+      for (const [id, light] of Object.entries(lay.lights || {})) {
+        const eff = resolveLightView(light, st.mapView);
+        lights.push({
+          id,
+          x: eff.x,
+          y: eff.y,
+          width: eff.width,
+          height: eff.height,
+          semanticAssetId: eff.semantic_asset_id,
+          opacity: eff.opacity,
+          selected: st.selection?.kind === "light" && st.selection.id === id
         });
       }
     }
@@ -817,6 +950,7 @@ export default function DevMapEditor() {
       locations,
       anchors,
       props,
+      lights,
       overlay
     };
     lastSceneRef.current = scene;
@@ -845,6 +979,7 @@ export default function DevMapEditor() {
       visibleLayers,
       selectedTileId,
       selectedPropId,
+      selectedLightAssetId,
       selectedBuildingId,
       buildingRotation,
       paintLayer,
@@ -885,9 +1020,11 @@ export default function DevMapEditor() {
           ...data.layout,
           tile_layers: data.layout.tile_layers || {},
           prop_instances: data.layout.prop_instances || {},
-          building_instances: data.layout.building_instances || []
+          building_instances: data.layout.building_instances || [],
+          lights: data.layout.lights || {}
         } as TownLayout;
         setLayout(cleanLayout);
+        setLayoutVersion(data.layout_version ?? null);
         setCases(data.cases);
         setCanonicalRecs(data.canonical_recommended_locations);
         buildingLibraryRef.current = data.building_library?.buildings || {};
@@ -1321,6 +1458,70 @@ export default function DevMapEditor() {
     requestRender();
   };
 
+  // --- Lights ---
+  const placeLight = (world: { wx: number; wy: number }) => {
+    const st = stateRef.current!;
+    const before = layoutRef.current!;
+    const copy = deepClone(before);
+    const hit = findLocationIdAtWorld(world.wx, world.wy);
+    const locId = hit && st.canonicalRecs[hit] ? hit : "loc_village_square";
+    const id = `light_${st.selectedLightAssetId.replace(/^light_/, "")}_${Date.now().toString().slice(-6)}`;
+    const light: LightDef = {
+      location_id: locId,
+      semantic_asset_id: st.selectedLightAssetId,
+      x: world.wx,
+      y: world.wy,
+      width: 2,
+      height: 2,
+      from: "19:00",
+      to: "07:00",
+      opacity: 0.65
+    };
+    if (!copy.lights) copy.lights = {};
+    copy.lights[id] = light;
+    layoutRef.current = copy;
+    setSelection({ kind: "light", id });
+    gestureRef.current = {
+      kind: "moveLight",
+      before,
+      id,
+      startW: world,
+      orig: { x: light.x, y: light.y },
+      mutated: true
+    };
+    requestRender();
+  };
+
+  const deleteLight = (id: string) => {
+    mutateLayout(
+      (l) => {
+        if (l.lights) delete l.lights[id];
+      },
+      { undoable: true }
+    );
+    setSelection(null);
+    showToast("Light deleted.", "success");
+  };
+
+  const duplicateLight = (id: string) => {
+    const lay = layoutRef.current;
+    if (!lay) return;
+    const src = findLight(lay, id);
+    if (!src) return;
+    const copyId = `light_${src.semantic_asset_id.replace(/^light_/, "")}_${Date.now().toString().slice(-6)}`;
+    mutateLayout(
+      (l) => {
+        const s = findLight(l, id);
+        if (!s) return;
+        if (!l.lights) l.lights = {};
+        l.lights[copyId] = { ...deepClone(s), x: s.x + 1, y: s.y + 1 };
+      },
+      { undoable: true }
+    );
+    setSelection({ kind: "light", id: copyId });
+    showToast("Light duplicated.", "success");
+  };
+
   // --- Buildings ---
   const findBuilding = (l: TownLayout, id: string): BuildingInstance | undefined =>
     (l.building_instances || []).find((b) => b.instance_id === id);
@@ -1522,6 +1723,12 @@ export default function DevMapEditor() {
       if (!found) return null;
       return { x: found.prop.x + (found.prop.w || 1), y: found.prop.y + (found.prop.h || 1) };
     }
+    if (st.selection.kind === "light") {
+      const found = findLight(lay, st.selection.id);
+      if (!found) return null;
+      const eff = resolveLightView(found, st.mapView);
+      return { x: eff.x + eff.width / 2, y: eff.y + eff.height / 2 };
+    }
     return null;
   };
 
@@ -1580,6 +1787,16 @@ export default function DevMapEditor() {
           orig: { w: found.prop.w || 1, h: found.prop.h || 1 },
           mutated: false
         };
+      } else if (st.selection.kind === "light") {
+        const eff = resolveLightView(findLight(before, st.selection.id)!, st.mapView);
+        gestureRef.current = {
+          kind: "resizeLight",
+          before,
+          id: st.selection.id,
+          startW: world,
+          orig: { width: eff.width, height: eff.height },
+          mutated: false
+        };
       }
       return;
     }
@@ -1593,6 +1810,23 @@ export default function DevMapEditor() {
           const before = lay;
           layoutRef.current = deepClone(lay);
           gestureRef.current = { kind: "moveAnchor", before, id: o.object_id, startW: world, orig: { ...eff.anchor }, mutated: false };
+          return;
+        }
+      }
+    }
+
+    // 2.5 Lights (radius hit-test against the glow's own extent)
+    if (st.visibleLayers["lights"]) {
+      const lightIds = Object.keys(lay.lights || {});
+      for (let i = lightIds.length - 1; i >= 0; i--) {
+        const id = lightIds[i];
+        const eff = resolveLightView(lay.lights[id], st.mapView);
+        const r = Math.max(eff.width, eff.height) / 2;
+        if (Math.hypot(world.wx - eff.x, world.wy - eff.y) <= r) {
+          setSelection({ kind: "light", id });
+          const before = lay;
+          layoutRef.current = deepClone(lay);
+          gestureRef.current = { kind: "moveLight", before, id, startW: world, orig: { x: eff.x, y: eff.y }, mutated: false };
           return;
         }
       }
@@ -1732,6 +1966,9 @@ export default function DevMapEditor() {
       case "building":
         placeBuilding(tile);
         break;
+      case "light":
+        placeLight(world);
+        break;
       default:
         beginSelectGesture(e, world);
     }
@@ -1862,6 +2099,40 @@ export default function DevMapEditor() {
           const target = clampBuildingXY(l, inst, g.orig.x + dx, g.orig.y + dy, rotation);
           applyBuildingPlacement(l, g.id, target.x, target.y, rotation);
         }
+        requestRender();
+        break;
+      }
+      case "moveLight": {
+        const st = stateRef.current!;
+        const fine = st.fineAdjustment;
+        const snap = (v: number) => (fine ? Math.round(v * 2) / 2 : Math.round(v));
+        const dx = snap(world.wx - g.startW.wx);
+        const dy = snap(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        applyLightUpdate(layoutRef.current!, g.id, (light) => {
+          applyLightView(
+            light,
+            { x: clamp(g.orig.x + dx, 0, gCols), y: clamp(g.orig.y + dy, 0, gRows) },
+            st.mapView
+          );
+        });
+        requestRender();
+        break;
+      }
+      case "resizeLight": {
+        const st = stateRef.current!;
+        const fine = st.fineAdjustment;
+        const snap = (v: number) => (fine ? Math.round(v * 2) / 2 : Math.round(v));
+        const dx = snap(world.wx - g.startW.wx);
+        const dy = snap(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        applyLightUpdate(layoutRef.current!, g.id, (light) => {
+          applyLightView(
+            light,
+            { width: Math.max(0.5, g.orig.width + 2 * dx), height: Math.max(0.5, g.orig.height + 2 * dy) },
+            st.mapView
+          );
+        });
         requestRender();
         break;
       }
@@ -2030,6 +2301,20 @@ export default function DevMapEditor() {
         },
         { undoable: true }
       );
+    } else if (sel.kind === "light") {
+      mutateLayout(
+        (l) => {
+          const light = findLight(l, sel.id);
+          if (!light) return;
+          const eff = resolveLightView(light, st.mapView);
+          applyLightView(
+            light,
+            { x: clamp(eff.x + mx, 0, gCols), y: clamp(eff.y + my, 0, gRows) },
+            st.mapView
+          );
+        },
+        { undoable: true }
+      );
     }
   };
 
@@ -2163,6 +2448,9 @@ export default function DevMapEditor() {
       } else if (selection?.kind === "building") {
         e.preventDefault();
         duplicateBuilding(selection.id);
+      } else if (selection?.kind === "light") {
+        e.preventDefault();
+        duplicateLight(selection.id);
       }
       return;
     }
@@ -2183,6 +2471,7 @@ export default function DevMapEditor() {
       case "Backspace":
         if (selection?.kind === "prop") deleteProp(selection.id);
         else if (selection?.kind === "building") deleteBuilding(selection.id);
+        else if (selection?.kind === "light") deleteLight(selection.id);
         return;
       case "[":
         setBrushSize((s) => Math.max(1, s - 1));
@@ -2347,13 +2636,26 @@ export default function DevMapEditor() {
       return;
     }
     api
-      .saveDevMapLayout(lay)
-      .then(() => {
+      .saveDevMapLayout(lay, layoutVersion ?? undefined)
+      .then((res) => {
         setIsDirty(false);
         setServerErrors([]);
+        setLayoutVersion(res.layout_version ?? null);
         showToast("Layout saved atomically with backup created.", "success");
       })
       .catch((err: Error) => {
+        if ((err as any).conflict) {
+          // Another tab/session saved since this one loaded — refuse to save
+          // over it rather than silently discarding those changes. There's
+          // no merge here; the safest recovery is to reload and redo any
+          // edits made in this tab against the newer version.
+          showToast(
+            "Not saved: someone else saved this layout more recently (another tab/session). " +
+              "Reload the editor to see their changes before re-applying yours, or you'll overwrite them.",
+            "error"
+          );
+          return;
+        }
         const msgs = String(err.message || "").split("\n").filter(Boolean);
         setServerErrors(msgs);
         showToast(
@@ -2381,7 +2683,8 @@ export default function DevMapEditor() {
           Object.assign(l, {
             ...parsed,
             tile_layers: parsed.tile_layers || {},
-            prop_instances: parsed.prop_instances || {}
+            prop_instances: parsed.prop_instances || {},
+            lights: parsed.lights || {}
           });
         },
         { undoable: true }
@@ -2475,6 +2778,8 @@ export default function DevMapEditor() {
     selection?.kind === "prop" ? activeProps.find((p) => p.instance_id === selection.id) : null;
   const selectedBuilding =
     selection?.kind === "building" ? (layout.building_instances || []).find((b) => b.instance_id === selection.id) : null;
+  const selectedLight = selection?.kind === "light" ? (layout.lights || {})[selection.id] : null;
+  const selectedLightEff = selectedLight ? resolveLightView(selectedLight, mapView) : null;
 
   return (
     <div className="dev-map-root">
@@ -2661,6 +2966,39 @@ export default function DevMapEditor() {
                   >
                     <span className="palette-emoji">{PROP_EMOJIS[pId] || "📦"}</span>
                     <span className="palette-item-text">{pId.replace("prop_", "")}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTool === "light" && (
+            <div className="control-group">
+              <label className="section-title">Light Palette</label>
+              <div className="view-note">
+                {mapView === "internal"
+                  ? "Placing sets the internal-view position/asset — the interior art is a different painted asset than the exterior one."
+                  : "Placing sets the external (day/roofed) position/asset."}
+              </div>
+              <div className="palette-grid">
+                {ALLOWED_LIGHT_ASSETS.map((aId) => (
+                  <div
+                    key={aId}
+                    className={`palette-item prop ${selectedLightAssetId === aId ? "active" : ""}`}
+                    onClick={() => setSelectedLightAssetId(aId)}
+                    title={aId}
+                  >
+                    <span
+                      className="palette-emoji"
+                      style={{
+                        display: "inline-block",
+                        width: "1.1em",
+                        height: "1.1em",
+                        borderRadius: "50%",
+                        background: LIGHT_ASSET_SWATCHES[aId]?.color || "#ffe9a8"
+                      }}
+                    />
+                    <span className="palette-item-text">{LIGHT_ASSET_SWATCHES[aId]?.label || aId.replace("light_", "")}</span>
                   </div>
                 ))}
               </div>
@@ -3283,6 +3621,135 @@ export default function DevMapEditor() {
                   ⧉ Duplicate
                 </button>
                 <button className="mse-btn mse-btn-danger" onClick={() => deleteProp(selectedProp.instance_id)}>
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
+          ) : selectedLight && selectedLightEff ? (
+            <div className="panel-stack">
+              <div className="section-title">Selected Light</div>
+              <div className="control-group">
+                <label>Instance</label>
+                <input type="text" value={selection!.id} readOnly className="ro" />
+              </div>
+              {mapView === "internal" && (
+                <div className="view-note">
+                  Editing internal-view fields{selectedLightEff.hasInternal ? "" : " (inheriting external — first edit seeds them)"}.
+                </div>
+              )}
+              <div className="control-group">
+                <label>Asset ({mapView === "internal" ? "internal" : "external"})</label>
+                <select
+                  value={selectedLightEff.semantic_asset_id}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    mutateLayout((l) => {
+                      applyLightUpdate(l, selection!.id, (light) => applyLightView(light, { semantic_asset_id: val }, mapView));
+                    });
+                  }}
+                >
+                  {ALLOWED_LIGHT_ASSETS.map((aId) => (
+                    <option key={aId} value={aId}>
+                      {LIGHT_ASSET_SWATCHES[aId]?.label || aId}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="control-group">
+                <label>Location (grouping/scoping)</label>
+                <select
+                  value={selectedLight.location_id}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    mutateLayout((l) => {
+                      applyLightUpdate(l, selection!.id, (light) => (light.location_id = val));
+                    });
+                  }}
+                >
+                  {Object.keys(canonicalRecs).map((locId) => (
+                    <option key={locId} value={locId}>
+                      {locId}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="num-grid">
+                {(
+                  [
+                    ["x", "Centre X"],
+                    ["y", "Centre Y"],
+                    ["width", "Width"],
+                    ["height", "Height"]
+                  ] as const
+                ).map(([k, label]) => (
+                  <div key={k} className="control-group">
+                    <label>{label}</label>
+                    <input
+                      type="number"
+                      step={fineAdjustment ? 0.5 : 1}
+                      value={selectedLightEff[k]}
+                      onChange={(e) => {
+                        const v = parseFloat(e.target.value);
+                        if (Number.isNaN(v)) return;
+                        mutateLayout((l) => {
+                          applyLightUpdate(l, selection!.id, (light) =>
+                            applyLightView(light, { [k]: k === "width" || k === "height" ? Math.max(0.5, v) : v }, mapView)
+                          );
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="num-grid">
+                <div className="control-group">
+                  <label>From</label>
+                  <input
+                    type="time"
+                    value={selectedLight.from}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      mutateLayout((l) => {
+                        applyLightUpdate(l, selection!.id, (light) => (light.from = val));
+                      });
+                    }}
+                  />
+                </div>
+                <div className="control-group">
+                  <label>To</label>
+                  <input
+                    type="time"
+                    value={selectedLight.to}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      mutateLayout((l) => {
+                        applyLightUpdate(l, selection!.id, (light) => (light.to = val));
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="control-group">
+                <label>Opacity ({(selectedLightEff.opacity ?? 0.65).toFixed(2)})</label>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={selectedLightEff.opacity ?? 0.65}
+                  onChange={(e) => {
+                    const v = parseFloat(e.target.value);
+                    mutateLayout((l) => {
+                      applyLightUpdate(l, selection!.id, (light) => applyLightView(light, { opacity: v }, mapView));
+                    });
+                  }}
+                />
+              </div>
+              <div className="btn-row">
+                <button className="mse-btn mse-btn-secondary" onClick={() => duplicateLight(selection!.id)}>
+                  ⧉ Duplicate
+                </button>
+                <button className="mse-btn mse-btn-danger" onClick={() => deleteLight(selection!.id)}>
                   🗑 Delete
                 </button>
               </div>

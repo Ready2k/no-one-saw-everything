@@ -8,162 +8,265 @@
   "canonical_locations": {
     "loc_village_square": {
       "bounds": {
-        "x": 83,
-        "y": 58,
-        "w": 26,
-        "h": 20
+        "x": 96.5,
+        "y": 76,
+        "w": 8.5,
+        "h": 8.5
       },
       "mode": "exterior",
-      "notes": "Central square plaza"
+      "notes": "Central square plaza",
+      "bounds_internal": {
+        "x": 96,
+        "y": 75.5,
+        "w": 9,
+        "h": 8
+      }
     },
     "loc_fountain": {
       "bounds": {
-        "x": 91,
-        "y": 62,
-        "w": 10,
-        "h": 9
+        "x": 97,
+        "y": 76,
+        "w": 7,
+        "h": 5
       },
       "mode": "exterior",
       "notes": "Fountain",
       "bounds_internal": {
-        "x": 96,
-        "y": 74,
-        "w": 10,
-        "h": 9
+        "x": 98.5,
+        "y": 76.5,
+        "w": 4.5,
+        "h": 4
       }
     },
     "loc_marcus_house": {
       "bounds": {
-        "x": 112,
-        "y": 74,
-        "w": 13,
-        "h": 19
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_marcus_study": {
-      "bounds": {
-        "x": 119,
-        "y": 74,
-        "w": 6,
-        "h": 4
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_hobbs_cafe": {
-      "bounds": {
-        "x": 91,
-        "y": 52,
-        "w": 10,
-        "h": 6
-      },
-      "mode": "exterior",
-      "notes": ""
-    },
-    "loc_cafe_kitchen": {
-      "bounds": {
-        "x": 91,
-        "y": 52,
-        "w": 5,
-        "h": 3
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_cafe_storage": {
-      "bounds": {
-        "x": 97,
-        "y": 52,
-        "w": 4,
-        "h": 2
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_clinic": {
-      "bounds": {
-        "x": 110,
-        "y": 60,
-        "w": 13,
-        "h": 10
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_clinic_dispensary": {
-      "bounds": {
-        "x": 110,
-        "y": 64,
-        "w": 6,
-        "h": 6
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_bookshop": {
-      "bounds": {
-        "x": 72,
-        "y": 56,
-        "w": 10,
-        "h": 8
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_bookshop_back": {
-      "bounds": {
-        "x": 68,
-        "y": 56,
-        "w": 4,
-        "h": 8
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_rear_alley": {
-      "bounds": {
-        "x": 86,
-        "y": 50,
-        "w": 15,
-        "h": 2
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_pub": {
-      "bounds": {
-        "x": 80,
-        "y": 78,
-        "w": 12,
-        "h": 11
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_owen_house": {
-      "bounds": {
-        "x": 128,
-        "y": 79,
-        "w": 6,
-        "h": 13
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_elias_house": {
-      "bounds": {
-        "x": 126,
-        "y": 72,
-        "w": 8,
-        "h": 7
+        "x": 104.5,
+        "y": 57,
+        "w": 6.5,
+        "h": 3,
+        "rotation": 37
       },
       "mode": "interior",
       "notes": "",
       "bounds_internal": {
-        "x": 82.1,
+        "x": 107.5,
+        "y": 57.5,
+        "w": 4,
+        "h": 4.5,
+        "rotation": -52
+      }
+    },
+    "loc_marcus_study": {
+      "bounds": {
+        "x": 106.5,
+        "y": 55.5,
+        "w": 4,
+        "h": 1.5,
+        "rotation": 36
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 109.5,
+        "y": 55.5,
+        "w": 4,
+        "h": 3,
+        "rotation": 44
+      }
+    },
+    "loc_hobbs_cafe": {
+      "bounds": {
+        "x": 92,
+        "y": 61.5,
+        "w": 4.5,
+        "h": 4.5,
+        "rotation": -42
+      },
+      "mode": "exterior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 92,
+        "y": 61.5,
+        "w": 5,
+        "h": 5,
+        "rotation": 55
+      }
+    },
+    "loc_cafe_kitchen": {
+      "bounds": {
+        "x": 89.5,
+        "y": 64.5,
+        "w": 3.5,
+        "h": 2.5,
+        "rotation": 48
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 89,
+        "y": 64,
+        "w": 3,
+        "h": 3,
+        "rotation": 54
+      }
+    },
+    "loc_cafe_storage": {
+      "bounds": {
+        "x": 88.5,
+        "y": 69.5,
+        "w": 2,
+        "h": 5,
+        "rotation": 57
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 88,
+        "y": 70.5,
+        "w": 4.5,
+        "h": 2.5,
+        "rotation": -37
+      }
+    },
+    "loc_clinic": {
+      "bounds": {
+        "x": 106,
+        "y": 72.5,
+        "w": 6,
+        "h": 5.5,
+        "rotation": 38
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 107,
+        "y": 72.5,
+        "w": 4.5,
+        "h": 6.5,
+        "rotation": 53
+      }
+    },
+    "loc_clinic_dispensary": {
+      "bounds": {
+        "x": 113.5,
+        "y": 70.5,
+        "w": 4,
+        "h": 5,
+        "rotation": 44
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 114,
+        "y": 71,
+        "w": 4,
+        "h": 3.5,
+        "rotation": -40
+      }
+    },
+    "loc_bookshop": {
+      "bounds": {
+        "x": 104.5,
+        "y": 61.5,
+        "w": 6,
+        "h": 4,
+        "rotation": 37
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 104.5,
+        "y": 62.5,
+        "w": 6,
+        "h": 3,
+        "rotation": 35
+      }
+    },
+    "loc_bookshop_back": {
+      "bounds": {
+        "x": 111.5,
+        "y": 60.5,
+        "w": 4,
+        "h": 3,
+        "rotation": 35
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 112.5,
+        "y": 60.5,
+        "w": 3.5,
+        "h": 4,
+        "rotation": 50
+      }
+    },
+    "loc_rear_alley": {
+      "bounds": {
+        "x": 86.5,
+        "y": 62,
+        "w": 9.5,
+        "h": 1,
+        "rotation": 139
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 86,
+        "y": 62,
+        "w": 10,
+        "h": 1,
+        "rotation": -35
+      }
+    },
+    "loc_pub": {
+      "bounds": {
+        "x": 96.5,
+        "y": 64,
+        "w": 10,
+        "h": 9.5,
+        "rotation": 51
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 97,
+        "y": 65,
+        "w": 8.5,
+        "h": 8.5,
+        "rotation": 50
+      }
+    },
+    "loc_owen_house": {
+      "bounds": {
+        "x": 112.5,
+        "y": 62,
+        "w": 3.5,
+        "h": 10.5,
+        "rotation": 50
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 113,
+        "y": 63,
+        "w": 3.5,
+        "h": 9.5,
+        "rotation": 52
+      }
+    },
+    "loc_elias_house": {
+      "bounds": {
+        "x": 82,
         "y": 77,
+        "w": 6,
+        "h": 4,
+        "rotation": 35
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 82.6,
+        "y": 76.5,
         "w": 6,
         "h": 4,
         "rotation": 30
@@ -171,20 +274,29 @@
     },
     "loc_clara_flat": {
       "bounds": {
-        "x": 86,
-        "y": 52,
-        "w": 5,
-        "h": 6
+        "x": 84,
+        "y": 58.5,
+        "w": 6,
+        "h": 4.5,
+        "rotation": 32
       },
       "mode": "interior",
-      "notes": ""
+      "notes": "",
+      "bounds_internal": {
+        "x": 84.5,
+        "y": 58,
+        "w": 5,
+        "h": 4.5,
+        "rotation": 36
+      }
     },
     "loc_ben_flat": {
       "bounds": {
-        "x": 66,
-        "y": 72,
-        "w": 11,
-        "h": 8
+        "x": 83,
+        "y": 64,
+        "w": 4,
+        "h": 3.5,
+        "rotation": 47
       },
       "mode": "interior",
       "notes": "",
@@ -198,10 +310,11 @@
     },
     "loc_priya_flat": {
       "bounds": {
-        "x": 66,
-        "y": 80,
-        "w": 11,
-        "h": 8
+        "x": 80.5,
+        "y": 69.5,
+        "w": 5.5,
+        "h": 4.5,
+        "rotation": -33
       },
       "mode": "interior",
       "notes": "",
@@ -215,50 +328,75 @@
     },
     "loc_nadia_flat": {
       "bounds": {
-        "x": 123,
-        "y": 60,
-        "w": 5,
-        "h": 10
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_ruth_cottage": {
-      "bounds": {
-        "x": 122,
-        "y": 48,
-        "w": 11,
-        "h": 9,
-        "rotation": 2
-      },
-      "mode": "interior",
-      "notes": ""
-    },
-    "loc_solicitors_office": {
-      "bounds": {
         "x": 96,
-        "y": 82,
-        "w": 9,
-        "h": 6
+        "y": 56,
+        "w": 6,
+        "h": 4.5,
+        "rotation": 36
       },
       "mode": "interior",
       "notes": "",
       "bounds_internal": {
-        "x": 97,
-        "y": 83,
-        "w": 9,
-        "h": 6
+        "x": 96.5,
+        "y": 54.5,
+        "w": 5.5,
+        "h": 6,
+        "rotation": 48
+      }
+    },
+    "loc_ruth_cottage": {
+      "bounds": {
+        "x": 91.5,
+        "y": 73.5,
+        "w": 3.5,
+        "h": 4,
+        "rotation": 50
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 91,
+        "y": 73,
+        "w": 4,
+        "h": 4,
+        "rotation": 50
+      }
+    },
+    "loc_solicitors_office": {
+      "bounds": {
+        "x": 125.5,
+        "y": 76,
+        "w": 6,
+        "h": 5.5,
+        "rotation": -44
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 126.5,
+        "y": 76.5,
+        "w": 5.5,
+        "h": 5,
+        "rotation": -32
       }
     },
     "loc_elias_bench": {
       "bounds": {
-        "x": 102,
-        "y": 70,
-        "w": 4,
-        "h": 2
+        "x": 93.5,
+        "y": 78,
+        "w": 3,
+        "h": 1,
+        "rotation": -33
       },
       "mode": "exterior",
-      "notes": ""
+      "notes": "",
+      "bounds_internal": {
+        "x": 94,
+        "y": 76.5,
+        "w": 3,
+        "h": 1.5,
+        "rotation": -38
+      }
     },
     "loc_fishery": {
       "bounds": {
@@ -483,33 +621,99 @@
       }
     },
     "case_001": {
-      "visible_locations": [],
-      "location_bounds": {
-        "loc_priya_flat": {
-          "x": 68,
-          "y": 87,
-          "w": 10,
-          "h": 5
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_hobbs_cafe",
+        "loc_cafe_kitchen",
+        "loc_cafe_storage",
+        "loc_rear_alley",
+        "loc_bookshop",
+        "loc_clinic",
+        "loc_marcus_house",
+        "loc_owen_house",
+        "loc_clara_flat",
+        "loc_priya_flat",
+        "loc_nadia_flat",
+        "loc_elias_house"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_isabella_note": {
+          "location_id": "loc_bookshop",
+          "anchor": {
+            "x": 109,
+            "y": 64
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
         },
-        "loc_bookshop": {
-          "x": 72,
-          "y": 66,
-          "w": 10,
-          "h": 8
+        "obj_till_weight": {
+          "location_id": "loc_hobbs_cafe",
+          "anchor": {
+            "x": 96,
+            "y": 65
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
         },
-        "loc_owen_house": {
-          "x": 117,
-          "y": 82,
-          "w": 6,
-          "h": 13
+        "obj_blue_coat": {
+          "location_id": "loc_cafe_kitchen",
+          "anchor": {
+            "x": 90.5,
+            "y": 65.5
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
         },
-        "loc_elias_house": {
-          "x": 107,
-          "y": 85,
-          "w": 8,
-          "h": 7
+        "obj_ledger_page": {
+          "location_id": "loc_marcus_house",
+          "anchor": {
+            "x": 110,
+            "y": 60.5
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_loan_ledger": {
+          "location_id": "loc_marcus_house",
+          "anchor": {
+            "x": 110,
+            "y": 59.5
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_partnership_letter": {
+          "location_id": "loc_marcus_house",
+          "anchor": {
+            "x": 108.5,
+            "y": 59.5
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
         }
-      },
+      }
+    },
+    "case_002": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_bookshop",
+        "loc_bookshop_back",
+        "loc_rear_alley",
+        "loc_hobbs_cafe",
+        "loc_clinic",
+        "loc_owen_house",
+        "loc_priya_flat"
+      ],
+      "location_bounds": {},
       "object_anchors": {}
     }
   },
@@ -519,5 +723,175 @@
     }
   },
   "prop_instances": {},
-  "building_instances": []
+  "building_instances": [],
+  "lights": {
+    "square_lamp_west": {
+      "location_id": "loc_village_square",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 93.8438,
+      "y": 80.7812,
+      "width": 2.3125,
+      "height": 2.3125,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.55
+    },
+    "square_lamp_clinic": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 113.25,
+      "y": 80.0625,
+      "width": 5,
+      "height": 5,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.5,
+      "x_internal": 122.25,
+      "y_internal": 69.5625,
+      "width_internal": 5,
+      "height_internal": 5
+    },
+    "pub_window_left": {
+      "location_id": "loc_pub",
+      "semantic_asset_id": "light_window_warm",
+      "x": 99.1875,
+      "y": 67.1562,
+      "width": 1.125,
+      "height": 1.0312000000000001,
+      "from": "17:30",
+      "to": "23:15",
+      "opacity": 0.78,
+      "x_internal": 105.5625,
+      "y_internal": 68.7812,
+      "width_internal": 3.4375,
+      "height_internal": 3.4375,
+      "semantic_asset_id_internal": "light_fireplace_glow",
+      "opacity_internal": 0.8
+    },
+    "pub_window_right": {
+      "location_id": "loc_pub",
+      "semantic_asset_id": "light_window_warm",
+      "x": 103.6875,
+      "y": 70.3438,
+      "width": 3.125,
+      "height": 2.0312,
+      "from": "17:30",
+      "to": "23:15",
+      "opacity": 0.78,
+      "x_internal": 98.0625,
+      "y_internal": 68.125,
+      "width_internal": 1.5625,
+      "height_internal": 1.4062,
+      "opacity_internal": 0.55
+    },
+    "elias_bedroom_window": {
+      "location_id": "loc_elias_house",
+      "semantic_asset_id": "light_window_warm",
+      "x": 83.125,
+      "y": 78.9062,
+      "width": 1.9687999999999999,
+      "height": 1.875,
+      "from": "22:00",
+      "to": "05:30",
+      "opacity": 0.7,
+      "x_internal": 83.4375,
+      "y_internal": 77.1562,
+      "width_internal": 2.0312,
+      "height_internal": 1.7188,
+      "opacity_internal": 0.72
+    },
+    "ben_flat_window": {
+      "location_id": "loc_ben_flat",
+      "semantic_asset_id": "light_window_warm",
+      "x": 89.5938,
+      "y": 55.8125,
+      "width": 1.8125,
+      "height": 1.8125,
+      "from": "21:30",
+      "to": "01:00",
+      "opacity": 0.65,
+      "x_internal": 85.5938,
+      "y_internal": 65.5,
+      "width_internal": 2.1875,
+      "height_internal": 1.7188,
+      "opacity_internal": 0.6
+    },
+    "priya_flat_window": {
+      "location_id": "loc_priya_flat",
+      "semantic_asset_id": "light_window_warm",
+      "x": 81.9062,
+      "y": 71.0625,
+      "width": 0.8125,
+      "height": 0.8125,
+      "from": "21:00",
+      "to": "23:30",
+      "opacity": 0.62,
+      "x_internal": 82.4375,
+      "y_internal": 71.75,
+      "width_internal": 2.1875,
+      "height_internal": 1.7188,
+      "opacity_internal": 0.6
+    },
+    "clinic_after_hours_light": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_window_cool",
+      "x": 107.0625,
+      "y": 75.25,
+      "width": 1.3437999999999999,
+      "height": 0.875,
+      "from": "18:00",
+      "to": "06:00",
+      "opacity": 0.55,
+      "x_internal": 108.2188,
+      "y_internal": 74,
+      "width_internal": 1.875,
+      "height_internal": 1.7188,
+      "opacity_internal": 0.5
+    },
+    "light_streetlamp_pool_693765": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 117.25,
+      "y": 57.0625,
+      "width": 3,
+      "height": 3,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.5,
+      "x_internal": 94.75,
+      "y_internal": 56.0625,
+      "width_internal": 5,
+      "height_internal": 5
+    },
+    "light_streetlamp_pool_699108": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 122.25,
+      "y": 69.5625,
+      "width": 5,
+      "height": 5,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.5,
+      "x_internal": 89.25,
+      "y_internal": 55.5625,
+      "width_internal": 5,
+      "height_internal": 5
+    },
+    "light_streetlamp_pool_803137": {
+      "location_id": "loc_village_square",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 94.3438,
+      "y": 55.7812,
+      "width": 2.3125,
+      "height": 2.3125,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.55,
+      "x_internal": 120.3438,
+      "y_internal": 49.2812,
+      "width_internal": 5.3125,
+      "height_internal": 5.3125
+    }
+  }
 }

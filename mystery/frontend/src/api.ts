@@ -293,16 +293,29 @@ export const api = {
     delete: (caseId: string) => request<{ status: string }>(`/api/generated_cases/${caseId}`, { method: "DELETE" }),
   },
   getDevMapLayout: () => request<any>("/api/dev/map-editor/layout"),
-  saveDevMapLayout: async (payload: any): Promise<{ status: string }> => {
+  // baseVersion is the `layout_version` the layout was last loaded/saved at;
+  // the server 409s if the file has since changed (another tab/session saved
+  // in the meantime) instead of silently overwriting those changes. Omit it
+  // to force-save regardless (used when the user explicitly accepts the
+  // overwrite after being warned).
+  saveDevMapLayout: async (payload: any, baseVersion?: string): Promise<{ status: string; layout_version: string }> => {
     const res = await fetch("/api/dev/map-editor/layout", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(baseVersion ? { "X-Base-Layout-Version": baseVersion } : {}),
+      },
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
       // Validation failures return detail as {errors: [...]} — surface each error
       const body = await res.json().catch(() => ({} as any));
       const detail = body?.detail;
+      if (res.status === 409) {
+        const err = new Error(typeof detail === "string" ? detail : "The layout changed on disk since you loaded it.");
+        (err as any).conflict = true;
+        throw err;
+      }
       if (Array.isArray(detail?.errors) && detail.errors.length) {
         throw new Error(detail.errors.join("\n"));
       }

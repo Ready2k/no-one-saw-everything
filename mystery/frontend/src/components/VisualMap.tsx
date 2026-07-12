@@ -436,13 +436,16 @@ export default function VisualMap({
           })}
 
         {currentMinutes != null &&
-          (data.visual?.light_overlays ?? []).map((light) => (
+          (data.visual?.light_overlays ?? [])
+            .filter((light) => !(light.internal_only && !internalView) && !(light.exterior_only && internalView))
+            .map((light) => (
             <MapLightOverlay
               key={light.id}
               light={light}
               width={width}
               height={height}
               currentMinutes={currentMinutes}
+              internalView={internalView}
             />
           ))}
 

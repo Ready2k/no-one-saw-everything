@@ -55,6 +55,66 @@ def test_dev_map_editor_endpoint_gating():
     assert response_get_ok.status_code == 200
 
 
+def test_save_conflict_detection(tmp_path, monkeypatch):
+    """Two sessions loading the same layout and saving around the same time
+    must not silently clobber each other — the second save should 409, not
+    overwrite the first session's change with no way to recover it."""
+    import app.town_map as town_map
+
+    layout_file = tmp_path / "town_layout.json"
+    monkeypatch.setattr(town_map, "TOWN_LAYOUT_FILE", layout_file)
+    os.environ["ENABLE_DEV_MAP_EDITOR"] = "true"
+    client = TestClient(app)
+
+    base_payload = {
+        "version": "town_layout_editor_v2",
+        "grid": {"cols": 192, "rows": 144, "tile_size": 32},
+        "canonical_locations": {},
+        "case_overrides": {},
+        "tile_layers": {},
+        "prop_instances": {},
+        "building_instances": [],
+        "lights": {},
+    }
+
+    # Both sessions load the same (nonexistent-yet) starting state.
+    v0 = client.get("/api/dev/map-editor/layout").json()["layout_version"]
+
+    # Session A saves first — should succeed, and its new version differs.
+    res_a = client.post(
+        "/api/dev/map-editor/layout",
+        json={**base_payload, "prop_instances": {"canonical": []}},
+        headers={"X-Base-Layout-Version": v0},
+    )
+    assert res_a.status_code == 200
+    v1 = res_a.json()["layout_version"]
+    assert v1 != v0
+
+    # Session B, still holding the stale v0 it loaded before A's save,
+    # attempts to save — must be rejected, not silently overwrite A's change.
+    res_b = client.post(
+        "/api/dev/map-editor/layout",
+        json={**base_payload, "building_instances": []},
+        headers={"X-Base-Layout-Version": v0},
+    )
+    assert res_b.status_code == 409
+
+    # A's change is still intact on disk.
+    assert json.loads(layout_file.read_text())["prop_instances"] == {"canonical": []}
+
+    # Session B reloads (picks up v1) and saves again — now succeeds.
+    res_b_retry = client.post(
+        "/api/dev/map-editor/layout",
+        json={**base_payload, "building_instances": []},
+        headers={"X-Base-Layout-Version": v1},
+    )
+    assert res_b_retry.status_code == 200
+
+    # Omitting the header entirely (older client, or an intentional force-save) still works.
+    res_force = client.post("/api/dev/map-editor/layout", json=base_payload)
+    assert res_force.status_code == 200
+
+
 def test_validate_town_layout_payload_constraints_v2():
     # Valid payload base structure
     valid_payload = {
@@ -290,6 +350,94 @@ def test_dress_building_rotation():
     assert cells(r270["paths"]) == {(23 + dx, 30 + dy) for dx in range(2) for dy in range(4)} | {(19, 30 + dy) for dy in range(4)}
 
     assert dress_building(building, 20, 30, rotation=90) == r90
+
+
+def test_light_validation():
+    base = {
+        "version": "town_layout_editor_v2",
+        "grid": {"cols": 192, "rows": 144, "tile_size": 32},
+        "canonical_locations": {},
+        "case_overrides": {},
+        "tile_layers": {},
+        "prop_instances": {},
+    }
+
+    valid_light = {
+        "location_id": "loc_pub",
+        "semantic_asset_id": "light_window_warm",
+        "x": 96.2, "y": 70.7, "width": 3.1, "height": 2.0,
+        "from": "17:30", "to": "23:15", "opacity": 0.78,
+        "x_internal": 105.6, "y_internal": 68.8, "width_internal": 3.4, "height_internal": 3.4,
+        "semantic_asset_id_internal": "light_fireplace_glow", "opacity_internal": 0.8,
+    }
+    ok = dict(base)
+    ok["lights"] = {"pub_window_left": valid_light}
+    assert not validate_town_layout_payload(ok), validate_town_layout_payload(ok)
+
+    # Unknown location_id
+    bad = dict(base)
+    bad["lights"] = {"x": {**valid_light, "location_id": "loc_does_not_exist"}}
+    assert any("unknown location" in e.lower() for e in validate_town_layout_payload(bad))
+
+    # Unknown semantic_asset_id
+    bad["lights"] = {"x": {**valid_light, "semantic_asset_id": "light_disco_ball"}}
+    assert any("semantic_asset_id" in e for e in validate_town_layout_payload(bad))
+
+    # Non-positive width
+    bad["lights"] = {"x": {**valid_light, "width": 0}}
+    assert any("positive" in e.lower() for e in validate_town_layout_payload(bad))
+
+    # Out-of-grid centre
+    bad["lights"] = {"x": {**valid_light, "x": 999}}
+    assert any("192x144 grid" in e for e in validate_town_layout_payload(bad))
+
+    # Bad time format
+    bad["lights"] = {"x": {**valid_light, "from": "5:30pm"}}
+    assert any("'from' time" in e for e in validate_town_layout_payload(bad))
+
+    # Opacity out of range
+    bad["lights"] = {"x": {**valid_light, "opacity": 1.5}}
+    assert any("opacity" in e.lower() for e in validate_town_layout_payload(bad))
+
+    # Bad internal semantic_asset_id
+    bad["lights"] = {"x": {**valid_light, "semantic_asset_id_internal": "light_disco_ball"}}
+    assert any("semantic_asset_id_internal" in e for e in validate_town_layout_payload(bad))
+
+
+def test_resolve_town_lights_scopes_by_visible_locations():
+    from app.town_map import resolve_town_lights
+
+    layout = {
+        "lights": {
+            "pub_glow": {
+                "location_id": "loc_pub",
+                "semantic_asset_id": "light_window_warm",
+                "x": 96, "y": 70, "width": 3, "height": 2,
+                "from": "17:30", "to": "23:15",
+            },
+            "clinic_glow": {
+                "location_id": "loc_clinic",
+                "semantic_asset_id": "light_window_cool",
+                "x": 105, "y": 74, "width": 2, "height": 2,
+                "from": "18:00", "to": "06:00",
+            },
+        }
+    }
+
+    # A case whose visible locations include the clinic but not the pub only
+    # sees the clinic's light — this is the case_001/002 cross-bleed fix.
+    resolved = resolve_town_lights(layout, {"loc_clinic"})
+    assert [l["id"] for l in resolved] == ["clinic_glow"]
+    assert resolved[0]["x"] == 105 * 32
+
+    resolved_both = resolve_town_lights(layout, {"loc_pub", "loc_clinic"})
+    assert {l["id"] for l in resolved_both} == {"pub_glow", "clinic_glow"}
+
+    # No layout at all falls back to the hardcoded default list, still scoped.
+    from app.town_map import TOWN_LIGHT_OVERLAYS
+    fallback = resolve_town_lights(None, {l["location_id"] for l in TOWN_LIGHT_OVERLAYS})
+    assert len(fallback) == len(TOWN_LIGHT_OVERLAYS)
+    assert resolve_town_lights(None, set()) == []
 
 
 def test_tile_art_variants_listing():

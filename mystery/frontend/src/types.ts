@@ -158,6 +158,18 @@ export interface MapLightOverlay {
   from: string;
   to: string;
   opacity?: number;
+  internal_only?: boolean;
+  exterior_only?: boolean;
+  // Optional overrides measured against the internal (roofless interior)
+  // mosaic tile, which is a different painted asset than the exterior one.
+  // When present and the map is zoomed past the interior threshold, these
+  // replace the exterior x/y/width/height/semantic_asset_id/opacity above.
+  x_internal?: number;
+  y_internal?: number;
+  width_internal?: number;
+  height_internal?: number;
+  semantic_asset_id_internal?: MapLightOverlay["semantic_asset_id"];
+  opacity_internal?: number;
 }
 
 export interface MapVisualContract {

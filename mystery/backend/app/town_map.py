@@ -46,7 +46,15 @@ ALLOWED_PROPS = {
 
 ALLOWED_LAYERS = {
     "base", "terrain_detail", "paths", "interior_floors", "walls", "structures",
-    "props", "case_overlays", "object_anchors", "evidence_markers", "fog", "debug_bounds"
+    "props", "case_overlays", "object_anchors", "evidence_markers", "fog", "debug_bounds",
+    "lights"
+}
+
+# Mirrors the semantic_asset_id union in frontend/src/types.ts's MapLightOverlay and
+# the CSS classes in frontend/src/styles.css (.map-light-local.*).
+ALLOWED_LIGHT_ASSETS = {
+    "light_streetlamp_pool", "light_window_warm", "light_window_cool",
+    "light_pub_window_glow", "light_fireplace_glow"
 }
 
 ALLOWED_NESTING = {
@@ -502,7 +510,75 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
                     if obj_id not in all_objects:
                         errors.append(f"Prop instance '{instance_id}' links to unknown object ID '{obj_id}'")
 
-    # 5. Validate underlay_tile_overrides (visual-only per-cell art swaps).
+    # 5. Validate lights (visual-only; never case truth). Global collection —
+    # case scoping happens at read time via `location_id` + visible_location_ids,
+    # not by duplicating entries per case (see resolve_town_lights).
+    lights = payload.get("lights", {})
+    if not isinstance(lights, dict):
+        errors.append("lights must be a JSON object")
+    else:
+        import re
+
+        time_re = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+
+        def check_light_geometry(spec: dict[str, Any], label: str) -> None:
+            x, y, w, h = spec.get("x"), spec.get("y"), spec.get("width"), spec.get("height")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
+                errors.append(f"{label} x/y/width/height must be numbers (tile coordinates)")
+                return
+            if w <= 0 or h <= 0:
+                errors.append(f"{label} width and height must be positive")
+            if x < 0 or y < 0 or x > 192 or y > 144:
+                errors.append(f"{label} centre must lie within the 192x144 grid")
+
+        for light_id, spec in lights.items():
+            if not isinstance(spec, dict):
+                errors.append(f"Light '{light_id}' must be an object")
+                continue
+
+            loc_id = spec.get("location_id")
+            if loc_id not in valid_location_ids:
+                errors.append(f"Light '{light_id}' is assigned to unknown location '{loc_id}'")
+
+            asset_id = spec.get("semantic_asset_id")
+            if asset_id not in ALLOWED_LIGHT_ASSETS:
+                errors.append(f"Light '{light_id}' has unknown semantic_asset_id '{asset_id}'")
+
+            check_light_geometry(spec, f"Light '{light_id}'")
+
+            from_t, to_t = spec.get("from"), spec.get("to")
+            if not (isinstance(from_t, str) and time_re.match(from_t)):
+                errors.append(f"Light '{light_id}' has invalid 'from' time (expected HH:MM)")
+            if not (isinstance(to_t, str) and time_re.match(to_t)):
+                errors.append(f"Light '{light_id}' has invalid 'to' time (expected HH:MM)")
+
+            opacity = spec.get("opacity")
+            if opacity is not None and (not isinstance(opacity, (int, float)) or isinstance(opacity, bool) or not 0 <= opacity <= 1):
+                errors.append(f"Light '{light_id}' opacity must be a number between 0 and 1")
+
+            has_internal = any(
+                spec.get(k) is not None for k in ("x_internal", "y_internal", "width_internal", "height_internal")
+            )
+            if has_internal:
+                check_light_geometry(
+                    {
+                        "x": spec.get("x_internal"), "y": spec.get("y_internal"),
+                        "width": spec.get("width_internal"), "height": spec.get("height_internal"),
+                    },
+                    f"Light '{light_id}' internal-view",
+                )
+
+            asset_id_internal = spec.get("semantic_asset_id_internal")
+            if asset_id_internal is not None and asset_id_internal not in ALLOWED_LIGHT_ASSETS:
+                errors.append(f"Light '{light_id}' has unknown semantic_asset_id_internal '{asset_id_internal}'")
+
+            opacity_internal = spec.get("opacity_internal")
+            if opacity_internal is not None and (
+                not isinstance(opacity_internal, (int, float)) or isinstance(opacity_internal, bool) or not 0 <= opacity_internal <= 1
+            ):
+                errors.append(f"Light '{light_id}' opacity_internal must be a number between 0 and 1")
+
+    # 6. Validate underlay_tile_overrides (visual-only per-cell art swaps).
     # URLs are format-checked but not existence-checked: the layout must stay
     # loadable on deployments where the frontend assets live elsewhere.
     tile_overrides = payload.get("underlay_tile_overrides")
@@ -798,95 +874,198 @@ OBJECT_OVERLAYS: dict[str, list[str]] = {
     "obj_mud_bootprint": ["overlay_muddy_footprint"],
 }
 
+# Light overlay coordinates are pinned to actual painted windows/lamp posts,
+# measured directly against the art rather than derived from a location's
+# `map_bounds`. A location's bounds box is a loose logical hit-region for the
+# map editor (click targeting, labels, zoom-to) — it is not a tight fit
+# around the building's pixels, so a light positioned as a fraction of that
+# box does not reliably land on a window; an earlier attempt at that produced
+# a light spanning past the pub's own walls onto its neighbours' roofs.
+#
+# The exterior x/y/width/height below are measured against
+# town_overworld_B2_all_cases_external_hd.png. The `*_internal` overrides are
+# measured separately against town_overworld_B2_interior_hd.png — the
+# roofless close-up art shown past the zoom threshold — because that is a
+# different painted asset where each building is redrawn as an isolated
+# cutaway room, not pixel-aligned with its exterior footprint. Lights without
+# an override (the two streetlamps) sit on outdoor props that are unchanged
+# between the two images, so the exterior coordinates already work in both.
+# If either piece of art is redrawn, or a location's bounds are reassigned to
+# a different building, these will need re-measuring against the new art.
 TOWN_LIGHT_OVERLAYS: list[dict[str, Any]] = [
     {
         "id": "square_lamp_west",
         "semantic_asset_id": "light_streetlamp_pool",
         "location_id": "loc_village_square",
-        "x": 2800,
-        "y": 2268,
-        "width": 360,
-        "height": 360,
+        "x": 3003,
+        "y": 2601,
+        "width": 170,
+        "height": 170,
         "from": "19:30",
         "to": "06:30",
-        "opacity": 0.72,
+        "opacity": 0.55,
     },
     {
         "id": "square_lamp_clinic",
         "semantic_asset_id": "light_streetlamp_pool",
-        "location_id": "loc_village_square",
-        "x": 3408,
-        "y": 2112,
-        "width": 340,
-        "height": 340,
+        "location_id": "loc_clinic",
+        "x": 3608,
+        "y": 2546,
+        "width": 160,
+        "height": 160,
         "from": "19:30",
         "to": "06:30",
-        "opacity": 0.66,
+        "opacity": 0.5,
     },
     {
-        "id": "pub_front_windows",
-        "semantic_asset_id": "light_pub_window_glow",
+        "id": "pub_window_left",
+        "semantic_asset_id": "light_window_warm",
         "location_id": "loc_pub",
-        "x": 2508,
-        "y": 1912,
-        "width": 460,
-        "height": 250,
+        "x": 3078,
+        "y": 2261,
+        "width": 100,
+        "height": 65,
         "from": "17:30",
         "to": "23:15",
-        "opacity": 0.82,
+        "opacity": 0.78,
+        # The pub's lit fireplace, painted directly into the interior art.
+        "semantic_asset_id_internal": "light_fireplace_glow",
+        "x_internal": 3378,
+        "y_internal": 2201,
+        "width_internal": 110,
+        "height_internal": 110,
+        "opacity_internal": 0.8,
+    },
+    {
+        "id": "pub_window_right",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_pub",
+        "x": 3318,
+        "y": 2251,
+        "width": 100,
+        "height": 65,
+        "from": "17:30",
+        "to": "23:15",
+        "opacity": 0.78,
+        # The lit candle on the barrel near the bar, interior art.
+        "x_internal": 3298,
+        "y_internal": 2148,
+        "width_internal": 50,
+        "height_internal": 45,
+        "opacity_internal": 0.55,
     },
     {
         "id": "elias_bedroom_window",
         "semantic_asset_id": "light_window_warm",
         "location_id": "loc_elias_house",
-        "x": 2976,
-        "y": 2632,
-        "width": 160,
-        "height": 105,
+        "x": 2740,
+        "y": 2541,
+        "width": 95,
+        "height": 60,
         "from": "22:00",
         "to": "05:30",
-        "opacity": 0.72,
+        "opacity": 0.7,
+        # A lit window is painted directly into the interior room art here.
+        "x_internal": 2670,
+        "y_internal": 2469,
+        "width_internal": 65,
+        "height_internal": 55,
+        "opacity_internal": 0.72,
     },
     {
         "id": "ben_flat_window",
         "semantic_asset_id": "light_window_warm",
         "location_id": "loc_ben_flat",
-        "x": 2304,
-        "y": 2388,
-        "width": 170,
-        "height": 108,
+        "x": 2643,
+        "y": 2154,
+        "width": 90,
+        "height": 58,
         "from": "21:30",
         "to": "01:00",
-        "opacity": 0.68,
+        "opacity": 0.65,
+        # Centered over the desk in the interior room art.
+        "x_internal": 2707,
+        "y_internal": 2128,
+        "width_internal": 70,
+        "height_internal": 55,
+        "opacity_internal": 0.6,
     },
     {
         "id": "priya_flat_window",
         "semantic_asset_id": "light_window_warm",
         "location_id": "loc_priya_flat",
-        "x": 2328,
-        "y": 2540,
-        "width": 165,
-        "height": 105,
+        "x": 2653,
+        "y": 2306,
+        "width": 90,
+        "height": 58,
         "from": "21:00",
         "to": "23:30",
         "opacity": 0.62,
+        # Centered over the table in the interior room art.
+        "x_internal": 2638,
+        "y_internal": 2296,
+        "width_internal": 70,
+        "height_internal": 55,
+        "opacity_internal": 0.6,
     },
     {
         "id": "clinic_after_hours_light",
         "semantic_asset_id": "light_window_cool",
         "location_id": "loc_clinic",
-        "x": 3504,
-        "y": 2200,
-        "width": 190,
-        "height": 120,
+        "x": 3378,
+        "y": 2376,
+        "width": 75,
+        "height": 60,
         "from": "18:00",
         "to": "06:00",
-        "opacity": 0.46,
+        "opacity": 0.55,
+        # By the window in the interior exam room art.
+        "x_internal": 3463,
+        "y_internal": 2368,
+        "width_internal": 60,
+        "height_internal": 55,
+        "opacity_internal": 0.5,
     },
 ]
 
 
 CASE_MAPS: dict[str, dict[str, Any]] = {
+    "case_001": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_hobbs_cafe",
+            "loc_cafe_kitchen", "loc_cafe_storage", "loc_rear_alley",
+            "loc_bookshop", "loc_clinic", "loc_marcus_house",
+            "loc_owen_house", "loc_clara_flat", "loc_priya_flat",
+            "loc_nadia_flat", "loc_elias_house",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_hobbs_cafe": 2.3,
+            "loc_bookshop": 2.3,
+            "loc_clinic": 2.4,
+        },
+    },
+    "case_002": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_bookshop",
+            "loc_bookshop_back", "loc_rear_alley", "loc_hobbs_cafe",
+            "loc_clinic", "loc_owen_house", "loc_priya_flat",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_bookshop": 2.35,
+            "loc_bookshop_back": 2.0,
+            "loc_rear_alley": 2.6,
+        },
+    },
     "case_004": {
         "mode": "canonical_overworld",
         "map": CANONICAL_MAP,
@@ -906,7 +1085,6 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
             "loc_ben_flat": 2.2,
             "loc_priya_flat": 2.2,
         },
-        "light_overlays": TOWN_LIGHT_OVERLAYS,
     }
 }
 
@@ -940,11 +1118,14 @@ def _scale_pilot_bounds(bounds: tuple[int, int, int, int]) -> dict[str, int]:
     }
 
 
-def pilot_location_visuals(location_id: str) -> tuple[dict[str, int] | None, dict[str, int] | None, str | None]:
+def pilot_location_visuals(
+    location_id: str,
+    case_id: str = "case_004",
+) -> tuple[dict[str, int] | None, dict[str, int] | None, str | None]:
     # Check if a dynamic validated layout exists
     layout = load_town_layout()
     if layout:
-        case_override = layout.get("case_overrides", {}).get("case_004", {})
+        case_override = layout.get("case_overrides", {}).get(case_id, {})
         visible_locations = case_override.get("visible_locations", [])
         if location_id in visible_locations:
             bounds_override = case_override.get("location_bounds", {}).get(location_id)
@@ -1003,6 +1184,57 @@ def pilot_location_bounds_internal(location_id: str) -> dict[str, int] | None:
     if not b:
         return None
     return _tile_bounds_to_px(b)
+
+
+def _light_tile_to_px(light: dict[str, Any]) -> dict[str, Any]:
+    """Convert one editor-authored (tile-space) light spec to the pixel-space
+    shape the frontend's light_overlays contract expects, carrying the
+    optional internal-view override fields through the same conversion."""
+    out: dict[str, Any] = {
+        "semantic_asset_id": light["semantic_asset_id"],
+        "location_id": light["location_id"],
+        "x": round(light["x"] * 32),
+        "y": round(light["y"] * 32),
+        "width": round(light["width"] * 32),
+        "height": round(light["height"] * 32),
+        "from": light["from"],
+        "to": light["to"],
+    }
+    if light.get("opacity") is not None:
+        out["opacity"] = light["opacity"]
+    if light.get("x_internal") is not None and light.get("y_internal") is not None:
+        out["x_internal"] = round(light["x_internal"] * 32)
+        out["y_internal"] = round(light["y_internal"] * 32)
+        out["width_internal"] = round((light.get("width_internal") or light["width"]) * 32)
+        out["height_internal"] = round((light.get("height_internal") or light["height"]) * 32)
+        if light.get("semantic_asset_id_internal") is not None:
+            out["semantic_asset_id_internal"] = light["semantic_asset_id_internal"]
+        if light.get("opacity_internal") is not None:
+            out["opacity_internal"] = light["opacity_internal"]
+    return out
+
+
+def resolve_town_lights(layout: dict[str, Any] | None, visible_location_ids: set[str]) -> list[dict[str, Any]]:
+    """Case-scoped, pixel-space light overlays for the active map.
+
+    Reads the editor-authored `lights` collection (tile-space, global — case
+    scoping happens here via `location_id`, not by duplicating entries per
+    case) when present; falls back to the hardcoded `TOWN_LIGHT_OVERLAYS`
+    default otherwise, same fallback-when-unauthored pattern
+    `pilot_location_visuals` uses for `canonical_locations` vs `_BOUNDS_TILES`.
+    Filtering by `visible_location_ids` keeps a case from showing another
+    case's lights (e.g. case_004's pub windows) merely because they share the
+    same canonical art.
+    """
+    lights_data = (layout or {}).get("lights") or {}
+    if lights_data:
+        resolved = [
+            {"id": light_id, **_light_tile_to_px(spec)}
+            for light_id, spec in lights_data.items()
+        ]
+    else:
+        resolved = TOWN_LIGHT_OVERLAYS
+    return [light for light in resolved if light["location_id"] in visible_location_ids]
 
 
 def map_config(case_id: str) -> dict[str, Any] | None:
@@ -1146,7 +1378,7 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
         "definition_id": config["map"]["definition_id"],
         "visible_location_ids": visible_location_ids_list,
         "overlays": config["overlays"],
-        "light_overlays": config.get("light_overlays", []),
+        "light_overlays": resolve_town_lights(layout, visible_location_ids),
         "crop_padding_by_location": config.get("crop_padding_by_location", {}),
         "object_visuals": object_visuals,
         "objects": object_visuals,

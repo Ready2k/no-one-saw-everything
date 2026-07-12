@@ -26,6 +26,37 @@ _INTERIOR_LOCATION_PARENTS = {
 }
 
 
+_CASE_001_SEARCH_ILLUSTRATIONS = {
+    "loc_village_square": "/art/case_001/village_square_dawn_hd.png",
+    "loc_hobbs_cafe": "/art/case_001/hobbs_cafe_main_hd.png",
+    "loc_cafe_kitchen": "/art/case_001/cafe_kitchen_hd.png",
+    "loc_cafe_storage": "/art/case_001/cafe_storage_room_hd.png",
+    "loc_rear_alley": "/art/case_001/rear_alley_hd.png",
+    "loc_bookshop": "/art/case_001/reed_bell_bookshop_hd.png",
+    "loc_clinic": "/art/case_001/village_clinic_hd.png",
+    "loc_marcus_house": "/art/case_001/marcus_study_hd.png",
+    "loc_owen_house": "/art/case_001/owen_house_yard_hd.png",
+    "loc_clara_flat": "/art/case_001/clara_flat_hd.png",
+    "loc_fountain": "/art/case_001/fountain_daylight_closeup_hd.png",
+    "loc_priya_flat": "/art/case_001/priya_flat_hd.png",
+    "loc_nadia_flat": "/art/case_001/nadia_flat_hd.png",
+    "loc_elias_house": "/art/case_001/elias_house_hd.png",
+}
+
+
+_CASE_002_SEARCH_ILLUSTRATIONS = {
+    "loc_village_square": "/art/case_002/village_square_lunchtime_hd.png",
+    "loc_bookshop": "/art/case_002/reed_bell_bookshop_front_hd.png",
+    "loc_bookshop_back": "/art/case_002/bookshop_back_room_hd.png",
+    "loc_rear_alley": "/art/case_002/rear_alley_bookshop_hd.png",
+    "loc_hobbs_cafe": "/art/case_002/hobbs_cafe_lunchtime_hd.png",
+    "loc_clinic": "/art/case_002/village_clinic_lunchtime_hd.png",
+    "loc_owen_house": "/art/case_002/owen_house_yard_lunchtime_hd.png",
+    "loc_priya_flat": "/art/case_002/priya_flat_lunchtime_hd.png",
+    "loc_fountain": "/art/case_002/fountain_lunchtime_closeup_hd.png",
+}
+
+
 _CASE_004_SEARCH_ILLUSTRATIONS = {
     "loc_village_square": "/art/case_004/village_square_moonlight_hd.png",
     "loc_fishery": "/art/case_004/fishery_moonlight_hd.png",
@@ -52,6 +83,14 @@ _REUSABLE_SEARCH_ILLUSTRATIONS = {
 
 def location_search_illustration(location_id: str, case_id: str | None = None) -> str | None:
     """Return high-resolution searchable place art for authored locations."""
+    if case_id == "case_001":
+        case_illustration = _CASE_001_SEARCH_ILLUSTRATIONS.get(location_id)
+        if case_illustration:
+            return case_illustration
+    if case_id == "case_002":
+        case_illustration = _CASE_002_SEARCH_ILLUSTRATIONS.get(location_id)
+        if case_illustration:
+            return case_illustration
     if case_id == "case_004":
         case_illustration = _CASE_004_SEARCH_ILLUSTRATIONS.get(location_id)
         if case_illustration:

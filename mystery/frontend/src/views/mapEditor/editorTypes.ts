@@ -64,6 +64,37 @@ export interface PropInstance {
   render_policy?: string;
 }
 
+// A light's x/y is the CENTER of the glow (unlike PropInstance, whose x/y is
+// its top-left corner) — matching the runtime contract in
+// frontend/src/types.ts's MapLightOverlay / MapLightOverlay.tsx, which
+// renders `left: pct(light.x - light.width / 2, ...)`. Moves translate the
+// centre; resizes grow width/height symmetrically around it.
+//
+// Global (not nested under CaseOverride): the art itself is case-agnostic —
+// case scoping happens by filtering on `location_id` against a case's
+// visible_location_ids at read time (backend `resolve_town_lights`), the
+// same mechanism object_anchors' containment check relies on for its own
+// location_id, not by duplicating a light per case.
+export interface LightDef {
+  location_id: string;
+  semantic_asset_id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  from: string; // "HH:MM", active window; wraps midnight when from > to
+  to: string;
+  opacity?: number;
+  // Overrides for the internal (roofless interior) art, a different painted
+  // asset than the external one — same pattern as LocationData.bounds_internal.
+  x_internal?: number;
+  y_internal?: number;
+  width_internal?: number;
+  height_internal?: number;
+  semantic_asset_id_internal?: string;
+  opacity_internal?: number;
+}
+
 export interface BuildingInstance {
   instance_id: string;
   asset_id: string;
@@ -99,6 +130,7 @@ export interface TownLayout {
   prop_instances: Record<string, PropInstance[]>;
   building_instances: BuildingInstance[];
   underlay_tile_overrides?: UnderlayTileOverrides;
+  lights: Record<string, LightDef>;
 }
 
 export interface CaseLocationRef {
@@ -136,7 +168,8 @@ export type ToolId =
   | "fill"
   | "picker"
   | "prop"
-  | "building";
+  | "building"
+  | "light";
 
 export type PreviewMode = "debug" | "player_reveal" | "fog";
 
@@ -145,6 +178,7 @@ export type Selection =
   | { kind: "object"; id: string }
   | { kind: "prop"; id: string }
   | { kind: "building"; id: string }
+  | { kind: "light"; id: string }
   | null;
 
 export interface Camera {
@@ -177,8 +211,25 @@ export const ALLOWED_PROPS = [
 
 export const ALLOWED_LAYERS = [
   "base", "terrain_detail", "paths", "interior_floors", "walls", "structures",
-  "props", "case_overlays", "object_anchors", "evidence_markers", "fog", "debug_bounds"
+  "props", "case_overlays", "object_anchors", "evidence_markers", "fog", "debug_bounds",
+  "lights"
 ];
+
+// Mirrors the semantic_asset_id union in frontend/src/types.ts's
+// MapLightOverlay and the CSS classes in frontend/src/styles.css
+// (.map-light-local.*).
+export const ALLOWED_LIGHT_ASSETS = [
+  "light_streetlamp_pool", "light_window_warm", "light_window_cool",
+  "light_pub_window_glow", "light_fireplace_glow"
+];
+
+export const LIGHT_ASSET_SWATCHES: Record<string, { label: string; color: string }> = {
+  light_streetlamp_pool: { label: "Streetlamp pool", color: "#ffe9a8" },
+  light_window_warm: { label: "Warm window", color: "#ffb366" },
+  light_window_cool: { label: "Cool window", color: "#8ec4ff" },
+  light_pub_window_glow: { label: "Pub window glow", color: "#ffcf7a" },
+  light_fireplace_glow: { label: "Fireplace glow", color: "#ff8a3d" }
+};
 
 export const TILE_COLORS: Record<string, string> = {
   tile_grass: "#166534",
@@ -361,7 +412,8 @@ export const TOOL_DEFS: Array<{ id: ToolId; label: string; icon: string; key: st
   { id: "fill", label: "Flood fill", icon: "🪣", key: "G", hint: "Click to flood-fill a contiguous region on the target layer" },
   { id: "picker", label: "Eyedropper", icon: "💉", key: "I", hint: "Click a painted tile to pick its tile type and layer" },
   { id: "prop", label: "Place props", icon: "🌳", key: "P", hint: "Click to place the selected prop · drag to fine-position before release" },
-  { id: "building", label: "Place buildings", icon: "🏠", key: "U", hint: "Click to drop the selected place bundle · R rotates 90° · dressing and entrance path follow the door" }
+  { id: "building", label: "Place buildings", icon: "🏠", key: "U", hint: "Click to drop the selected place bundle · R rotates 90° · dressing and entrance path follow the door" },
+  { id: "light", label: "Place lights", icon: "✨", key: "L", hint: "Click to place a light · drag to fine-position · corner handle resizes the glow radius" }
 ];
 
 export function deepClone<T>(value: T): T {

@@ -9,7 +9,7 @@
       "hot-tempered",
       "calculating about money"
     ],
-    "portrait": "🔨",
+    "portrait": "\ud83d\udd28",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Evening: pub until ten, then home via the square.",
@@ -41,7 +41,12 @@
     "memory_reliability": 0.7,
     "honesty_baseline": 0.4,
     "is_victim": true,
-    "sprite_asset": "Carlos_Gomez.png"
+    "sprite_asset": "Carlos_Gomez.png",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/owen_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_ben",
@@ -53,7 +58,7 @@
       "fiercely loyal to family",
       "hides pain behind humour"
     ],
-    "portrait": "📦",
+    "portrait": "\ud83d\udce6",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Evening: stays in usually. That night he went to the square after finding his father's papers.",
@@ -85,7 +90,12 @@
     "memory_reliability": 0.65,
     "honesty_baseline": 0.7,
     "gossip_tendency": 0.8,
-    "sprite_asset": "Ryan_Park.png"
+    "sprite_asset": "Ryan_Park.png",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/ben_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_elias",
@@ -97,10 +107,10 @@
       "sleepless at night",
       "early riser"
     ],
-    "portrait": "🎩",
+    "portrait": "\ud83c\udfa9",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
-    "routine_summary": "Often up at odd hours — lights on past midnight. Always the first on the bench at dawn.",
+    "routine_summary": "Often up at odd hours \u2014 lights on past midnight. Always the first on the bench at dawn.",
     "voice_card": "Talks like he's lecturing a classroom; fond of rhetorical questions and certain of every detail.",
     "relationships": [
       {
@@ -122,7 +132,12 @@
     "memory_reliability": 0.5,
     "honesty_baseline": 0.9,
     "gossip_tendency": 0.9,
-    "sprite_asset": "Adam_Smith.png"
+    "sprite_asset": "Adam_Smith.png",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/elias_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_priya",
@@ -134,7 +149,7 @@
       "fiercely protective of Ben",
       "conflict-averse"
     ],
-    "portrait": "🌸",
+    "portrait": "\ud83c\udf38",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Home by evening. That night, she and Ben were supposed to meet at ten. She lied to protect him after he cancelled.",
@@ -152,7 +167,12 @@
     "memory_reliability": 0.8,
     "honesty_baseline": 0.65,
     "conflict_avoidance": 0.85,
-    "sprite_asset": "Priya_Kapoor.png"
+    "sprite_asset": "Priya_Kapoor.png",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/priya_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_nadia",
@@ -164,7 +184,7 @@
       "practical",
       "discreet"
     ],
-    "portrait": "🩺",
+    "portrait": "\ud83e\ude7a",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
     "routine_summary": "Home by nine-thirty most evenings. Window faces the square.",
@@ -189,7 +209,12 @@
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
     "gossip_tendency": 0.2,
-    "sprite_asset": "Ayesha_Khan.png"
+    "sprite_asset": "Ayesha_Khan.png",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/nadia_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_fred",
@@ -201,7 +226,7 @@
       "sharp memory for faces",
       "hiding financial stress"
     ],
-    "portrait": "🍺",
+    "portrait": "\ud83c\udf7a",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_pub",
     "routine_summary": "Closes the pub at 23:00. Secretly owed Owen money and followed him out that night.",
@@ -226,7 +251,12 @@
     "memory_reliability": 0.8,
     "honesty_baseline": 0.8,
     "gossip_tendency": 0.5,
-    "sprite_asset": "Tom_Moreno.png"
+    "sprite_asset": "Tom_Moreno.png",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/fred_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_cole",
@@ -238,7 +268,12 @@
     "work_location_id": "loc_clinic",
     "routine_summary": "Cole keeps to a quiet window cleaner routine around the village.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/cole_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_wren",
@@ -250,7 +285,12 @@
     "work_location_id": "loc_pub",
     "routine_summary": "Wren keeps to a quiet busker routine around the village.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/wren_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_min",
@@ -262,7 +302,12 @@
     "work_location_id": "loc_clinic",
     "routine_summary": "Min keeps to a quiet baker's assistant routine around the village.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/min_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_effie",
@@ -274,7 +319,12 @@
     "work_location_id": "loc_pub",
     "routine_summary": "Effie keeps to a quiet dog walker routine around the village.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/effie_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_rosa",
@@ -286,7 +336,12 @@
     "work_location_id": "loc_clinic",
     "routine_summary": "Rosa keeps to a quiet groundskeeper routine around the village.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/rosa_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_tam",
@@ -298,7 +353,12 @@
     "work_location_id": "loc_pub",
     "routine_summary": "Tam keeps to a quiet postal carrier routine around the village.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/tam_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_dez",
@@ -310,7 +370,12 @@
     "work_location_id": "loc_clinic",
     "routine_summary": "Dez keeps to a quiet market stallholder routine around the village.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/dez_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_sal",
@@ -322,7 +387,12 @@
     "work_location_id": "loc_pub",
     "routine_summary": "Sal keeps to a quiet milkman routine around the village.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/sal_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_gus",
@@ -334,7 +404,12 @@
     "work_location_id": "loc_clinic",
     "routine_summary": "Gus keeps to a quiet newspaper seller routine around the village.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/gus_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_bg_birdie",
@@ -346,6 +421,11 @@
     "work_location_id": "loc_pub",
     "routine_summary": "Birdie keeps to a quiet street sweeper routine around the village.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/case_004/portraits/birdie_calm.jpg",
+      "defensive": null,
+      "cracking": null
+    }
   }
 ]
