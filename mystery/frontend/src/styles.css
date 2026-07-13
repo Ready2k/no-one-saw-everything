@@ -1858,6 +1858,118 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 .rw-lede { margin: 0; max-width: 560px; color: var(--muted); line-height: 1.65; font-size: 1.02rem; }
 .rw-lede.rw-accent { color: var(--accent); font-style: italic; font-size: 1.12rem; }
 
+/* Place reconstruction: exterior locks to an interior shot */
+.rw-place-reconstruct {
+  max-width: 980px;
+  gap: 0.75rem;
+}
+.rw-place-reconstruct h2 {
+  margin: 0.1rem 0 0;
+  font-size: 1.7rem;
+}
+.rw-place-frame {
+  position: relative;
+  width: min(760px, 92vw);
+  height: min(430px, 52vh);
+  min-height: 300px;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background:
+    radial-gradient(80% 80% at 50% 48%, rgba(216, 162, 74, 0.08), transparent 62%),
+    #090a0d;
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.58);
+  isolation: isolate;
+}
+.rw-place-exterior,
+.rw-place-interior {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+.rw-place-exterior {
+  padding: clamp(1rem, 3vw, 2rem);
+  filter: sepia(0.18) contrast(1.08) brightness(0.92);
+  transform-origin: 44% 54%;
+  animation: rw-exterior-enter 5.6s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.rw-place-interior {
+  object-fit: cover;
+  object-position: 38% 43%;
+  opacity: 0;
+  filter: sepia(0.16) contrast(1.06) brightness(0.9);
+  transform-origin: 38% 43%;
+  animation: rw-interior-reveal 5.6s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.rw-place-aperture {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 44% 54%, transparent 0 11%, rgba(8, 9, 12, 0.12) 17%, rgba(8, 9, 12, 0.72) 58%, rgba(8, 9, 12, 0.92) 100%);
+  mix-blend-mode: multiply;
+  animation: rw-aperture 5.6s ease forwards;
+}
+.rw-place-reticle {
+  position: absolute;
+  left: 44%;
+  top: 54%;
+  width: 116px;
+  height: 116px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(216, 162, 74, 0.75);
+  border-radius: 50%;
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.08);
+  animation: rw-reticle-lock 5.6s ease forwards;
+}
+.rw-place-reticle span {
+  position: absolute;
+  background: rgba(216, 162, 74, 0.82);
+}
+.rw-place-reticle span:nth-child(1),
+.rw-place-reticle span:nth-child(2) {
+  width: 38px;
+  height: 1px;
+  top: 50%;
+}
+.rw-place-reticle span:nth-child(1) { left: -48px; }
+.rw-place-reticle span:nth-child(2) { right: -48px; }
+.rw-place-reticle span:nth-child(3),
+.rw-place-reticle span:nth-child(4) {
+  width: 1px;
+  height: 38px;
+  left: 50%;
+}
+.rw-place-reticle span:nth-child(3) { top: -48px; }
+.rw-place-reticle span:nth-child(4) { bottom: -48px; }
+@keyframes rw-exterior-enter {
+  0% { opacity: 0; transform: scale(0.82) translateY(16px); }
+  16% { opacity: 1; transform: scale(0.92) translateY(0); }
+  58% { opacity: 1; transform: scale(1.72) translate(-4%, -3%); filter: sepia(0.22) contrast(1.14) brightness(0.86); }
+  76% { opacity: 0.18; transform: scale(2.28) translate(-7%, -5%); }
+  100% { opacity: 0; transform: scale(2.45) translate(-8%, -6%); }
+}
+@keyframes rw-interior-reveal {
+  0%, 48% { opacity: 0; transform: scale(1.16); }
+  66% { opacity: 0.74; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1.0); }
+}
+@keyframes rw-aperture {
+  0%, 48% { opacity: 0.9; transform: scale(0.82); }
+  68% { opacity: 0.42; transform: scale(1.28); }
+  100% { opacity: 0.08; transform: scale(1.7); }
+}
+@keyframes rw-reticle-lock {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(1.3); }
+  18%, 52% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  66% { opacity: 0.45; transform: translate(-50%, -50%) scale(0.72); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.55); }
+}
+
 /* Glimpse: a surveillance-style replay still */
 .rw-feed {
   display: flex;
@@ -2009,7 +2121,13 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 .rw-dot.active { background: var(--accent); transform: scale(1.25); }
 
 @media (prefers-reduced-motion: reduce) {
-  .rw-in, .rw-feed-crop, .rw-feed-scanlines, .rw-rec-dot { animation: none !important; opacity: 1; }
+  .rw-in, .rw-feed-crop, .rw-feed-scanlines, .rw-rec-dot,
+  .rw-place-exterior, .rw-place-interior, .rw-place-aperture, .rw-place-reticle {
+    animation: none !important;
+    opacity: 1;
+  }
+  .rw-place-exterior { opacity: 0.18; transform: scale(1.25); }
+  .rw-place-interior { opacity: 1; transform: none; }
 }
 
 /* ---- Rewind controls: time strip + focus chips ---- */

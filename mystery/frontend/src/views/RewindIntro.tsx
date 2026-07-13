@@ -25,11 +25,97 @@ export function clearRewindBriefingSeen(caseId: string): void {
 
 // ---------------------------------------------------------------------------
 
+interface PlaceReconstruction {
+  id: string;
+  displayName: string;
+  matchedLine: string;
+  exteriorSrc: string;
+  interiorSrc: string;
+  description: string;
+}
+
 type Beat =
   | { kind: "title" }
+  | { kind: "place-reconstruct"; place: PlaceReconstruction }
   | { kind: "glimpse"; event: EventPublic }
   | { kind: "cast" }
   | { kind: "brief" };
+
+const CASE_001_PLACES: PlaceReconstruction[] = [
+  {
+    id: "hobbs-cafe",
+    displayName: "Hobbs Cafe",
+    matchedLine: "Hobbs Cafe, matched to the room.",
+    exteriorSrc:
+      "/art/town/buildings/generated_exteriors_v1/cafe_small_v1_exterior_canonical_alpha.png",
+    interiorSrc: "/art/case_001/hobbs_cafe_main_hd.png",
+    description:
+      "Teal door. Arched window. Counter sightline. The exterior locks to the place the witnesses remember, then the reconstruction opens the room.",
+  },
+];
+
+const CASE_004_PLACES: PlaceReconstruction[] = [
+  {
+    id: "ben-flat",
+    displayName: "Ben's Flat",
+    matchedLine: "Ben's flat, above the shuttered newsagent.",
+    exteriorSrc:
+      "/art/town/buildings/generated_exteriors_v1/ben_newsagent_flat_exterior_variant_alpha.png",
+    interiorSrc: "/art/town/interiors_hd/ben_flat_interior_hd.png",
+    description:
+      "Shop dark, papers unsold. A separate stair climbs to the flat above — the only window on the square still lit past midnight.",
+  },
+  {
+    id: "mallet-crown",
+    displayName: "The Mallet & Crown",
+    matchedLine: "The Mallet & Crown, locked up for the night.",
+    exteriorSrc:
+      "/art/town/buildings/generated_exteriors_v1/pub_small_v1_exterior_canonical_alpha.png",
+    interiorSrc: "/art/town/interiors_hd/mallet_crown_pub_full_interior_hd.png",
+    description:
+      "Last orders came and went hours ago. The exterior locks to the room Fred Dunmore keeps behind the bar.",
+  },
+  {
+    id: "priya-flat",
+    displayName: "Priya's Flat",
+    matchedLine: "Priya's flat, curtains drawn.",
+    exteriorSrc:
+      "/art/town/buildings/generated_exteriors_v1/flats_two_storey_v1_exterior_canonical_alpha.png",
+    interiorSrc: "/art/town/interiors_hd/priya_flat_interior_hd.png",
+    description:
+      "Two-storey flats above the square. The reconstruction matches the stair and door witnesses described to the room behind them.",
+  },
+  {
+    id: "owen-house",
+    displayName: "Owen Price's House & Yard",
+    matchedLine: "Owen's house and workshop yard.",
+    exteriorSrc:
+      "/art/town/buildings/generated_exteriors_v1/house_yard_workshop_v1_exterior_canonical_alpha.png",
+    interiorSrc: "/art/town/interiors_hd/owen_house_workshop_yard_hd.png",
+    description:
+      "The builder's own yard, tools put away for the night. Nobody has said whether he made it home before the fountain.",
+  },
+  {
+    id: "elias-cottage",
+    displayName: "Elias's Cottage",
+    matchedLine: "Elias's cottage, bedroom window overlooking the square.",
+    exteriorSrc:
+      "/art/town/buildings/generated_exteriors_v1/cottage_small_v1_exterior_canonical_alpha.png",
+    interiorSrc: "/art/town/interiors_hd/elias_cottage_full_interior_hd.png",
+    description:
+      "The vantage point the body was found from. The exterior locks to the room with the window that looks straight onto the fountain.",
+  },
+  {
+    id: "village-clinic",
+    displayName: "Village Clinic",
+    matchedLine: "The Village Clinic, dark until the call came in.",
+    exteriorSrc:
+      "/art/town/buildings/generated_exteriors_v1/clinic_small_v1_exterior_canonical_alpha.png",
+    interiorSrc: "/art/town/interiors_hd/village_clinic_full_interior_hd.png",
+    description:
+      "Nadia Cole's clinic, shuttered for the night. The reconstruction matches the frontage to the reception and exam room within.",
+  },
+];
 
 // Auto-advance pacing (ms). Cast and brief wait for the player.
 const TITLE_HOLD = 4200;
@@ -99,13 +185,25 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
   }, [c, windowStart, windowEnd]);
 
   const beats = useMemo<Beat[]>(
-    () => [
-      { kind: "title" },
-      ...glimpses.map((event): Beat => ({ kind: "glimpse", event })),
-      { kind: "cast" },
-      { kind: "brief" },
-    ],
-    [glimpses]
+    () => {
+      const introBeats: Beat[] = [{ kind: "title" }];
+      const places =
+        c.case_id === "case_001"
+          ? CASE_001_PLACES
+          : c.case_id === "case_004"
+            ? CASE_004_PLACES
+            : [];
+      for (const place of places) {
+        introBeats.push({ kind: "place-reconstruct", place });
+      }
+      return [
+        ...introBeats,
+        ...glimpses.map((event): Beat => ({ kind: "glimpse", event })),
+        { kind: "cast" },
+        { kind: "brief" },
+      ];
+    },
+    [c.case_id, glimpses]
   );
   const beat = beats[Math.min(beatIndex, beats.length - 1)];
 
@@ -118,7 +216,12 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     if (!loaded) return;
     if (beat.kind === "cast" || beat.kind === "brief") return;
-    const hold = beat.kind === "title" ? TITLE_HOLD : GLIMPSE_HOLD;
+    const hold =
+      beat.kind === "title"
+        ? TITLE_HOLD
+        : beat.kind === "place-reconstruct"
+          ? 5600
+          : GLIMPSE_HOLD;
     const timer = setTimeout(() => setBeatIndex((i) => i + 1), hold);
     return () => clearTimeout(timer);
   }, [loaded, beatIndex, beat.kind]);
@@ -179,6 +282,10 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
           }
           agents={agents}
         />
+      )}
+
+      {beat.kind === "place-reconstruct" && (
+        <PlaceReconstructionBeat key={beat.place.id} place={beat.place} />
       )}
 
       {beat.kind === "cast" && (
@@ -253,6 +360,45 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
           <span key={i} className={i === beatIndex ? "rw-dot active" : "rw-dot"} />
         ))}
       </div>
+    </div>
+  );
+}
+
+function PlaceReconstructionBeat({ place }: { place: PlaceReconstruction }) {
+  return (
+    <div className="rw-beat rw-place-reconstruct">
+      <p className="rw-eyebrow rw-in">Evidence Reconstruction · Location Match</p>
+      <div
+        className="rw-place-frame"
+        aria-label={`${place.displayName} exterior zooming into interior`}
+      >
+        <img
+          className="rw-place-exterior"
+          src={place.exteriorSrc}
+          alt={`${place.displayName} exterior`}
+          draggable={false}
+        />
+        <img
+          className="rw-place-interior"
+          src={place.interiorSrc}
+          alt={`${place.displayName} interior reconstruction`}
+          draggable={false}
+        />
+        <div className="rw-place-aperture" />
+        <div className="rw-place-reticle">
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="rw-feed-scanlines" />
+      </div>
+      <h2 className="rw-in" style={{ animationDelay: "0.35s" }}>
+        {place.matchedLine}
+      </h2>
+      <p className="rw-lede rw-in" style={{ animationDelay: "0.8s" }}>
+        {place.description}
+      </p>
     </div>
   );
 }
