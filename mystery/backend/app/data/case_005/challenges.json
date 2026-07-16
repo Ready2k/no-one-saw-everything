@@ -1,0 +1,203 @@
+[
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_yard_alibi",
+    "evidence_clue_ids": [
+      "clue_col_cctv_arrival"
+    ],
+    "outcome": "deflect",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "hardening",
+    "response_text": "A camera on a gate. It's a cheap camera and it's pointed at a gate. It doesn't see the office and it doesn't see the lane and it doesn't see me sat at my desk with a telephone against my ear. You've a picture of an empty yard. I've a yard that's empty most of the day."
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_belt_denial",
+    "evidence_clue_ids": [
+      "clue_belt_weapon"
+    ],
+    "outcome": "deflect",
+    "pressure_delta": 0.15,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "rattled",
+    "response_text": "There's no name on it. You keep coming back to it and there's no name on it. I've got three belts and I've had them all twenty years and so has every working man in this village."
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_deed_genuine",
+    "evidence_clue_ids": [
+      "clue_whitfield_is_nobody"
+    ],
+    "outcome": "deflect",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "guarded",
+    "response_text": "Then the witness is a fiction and the solicitor's a fool and I'm a builder who signed where he was told to sign. I don't know a P. Whitfield. Neither, apparently, does anybody."
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_not_seen_clara",
+    "evidence_clue_ids": [
+      "clue_clara_called_owen"
+    ],
+    "outcome": "partial_admission",
+    "pressure_delta": 0.3,
+    "sets_claim_status": "reframed",
+    "emotional_shift": "rattled",
+    "response_text": "...She rang me. Twenty past six. Fine — she rang me, and she said she'd found something and she was taking it to the committee, and I said we should talk about it like adults.\n\nThat's a telephone call. That's not a murder. People ring each other.",
+    "new_claims": [
+      {
+        "claim_id": "claim_owen_call_only",
+        "summary": "Owen now admits Clara telephoned him at 06:20 but insists they only spoke.",
+        "claim_type": "statement",
+        "time_reference": "06:20",
+        "truthfulness": "false"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_not_in_lane",
+    "evidence_clue_ids": [
+      "clue_back_lane"
+    ],
+    "outcome": "deflect",
+    "pressure_delta": 0.25,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "hardening",
+    "response_text": "Boot prints in a lane. It's a lane, man. It's been there since before the war and it goes past the back of my yard.\n\nAnd before you go any further — ask Elias Grant whether I crossed that square. Go on. Ask him. He'll tell you I didn't, and he'll be telling you the truth."
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_not_in_lane",
+    "evidence_clue_ids": [
+      "clue_back_lane",
+      "clue_owen_ash_boots",
+      "clue_col_saw_no_belt"
+    ],
+    "outcome": "contradiction_locked",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "broken",
+    "response_text": "The lane. ...Aye. All right. The lane.\n\nYou want to know what it is to be forty-seven and have one thing. Not much of a thing — a yard, some timber, a leaking roof and four men who've stopped asking when payday is because they know I'll get to it.\n\nMarcus lent me eight thousand pounds and then Marcus died, and his estate wanted it back inside the month, and there is no month in which I have eight thousand pounds. So I put my hand to a piece of paper. A signature. That's all it was, at the start — a signature, on a building, that nobody was ever going to look at.\n\nAnd then she looked at it.\n\nShe rang me. She'd worked it out with a land registry form and a deed and two days of her own time, because that is the kind of woman she was, and she told me she was going to do it correctly.\n\nCorrectly. She used that word.\n\nI told her the alley because the alley can't be seen from the square. I want you to write that down and I want you to read it back to me, because I've been telling myself for nine hours that I didn't go down there to do it, and I chose the one place in this village where it couldn't be seen.\n\n...The belt's mine. You know it's mine. There's a mark on the hook where it's hung for twenty years.",
+    "new_claims": [
+      {
+        "claim_id": "claim_owen_confession",
+        "summary": "Owen admits he forged the mortgage to save his yard, chose the alley because it cannot be seen from the square, strangled Clara with his belt and burned the letter she gave him.",
+        "claim_type": "statement",
+        "time_reference": "07:09",
+        "location_reference_id": "loc_rear_alley",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_belt_denial",
+    "evidence_clue_ids": [
+      "clue_col_saw_no_belt",
+      "clue_belt_hook_gap"
+    ],
+    "outcome": "contradiction_locked",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "broken",
+    "response_text": "The lane. ...Aye. All right. The lane.\n\nYou want to know what it is to be forty-seven and have one thing. Not much of a thing — a yard, some timber, a leaking roof and four men who've stopped asking when payday is because they know I'll get to it.\n\nMarcus lent me eight thousand pounds and then Marcus died, and his estate wanted it back inside the month, and there is no month in which I have eight thousand pounds. So I put my hand to a piece of paper. A signature. That's all it was, at the start — a signature, on a building, that nobody was ever going to look at.\n\nAnd then she looked at it.\n\nShe rang me. She'd worked it out with a land registry form and a deed and two days of her own time, because that is the kind of woman she was, and she told me she was going to do it correctly.\n\nCorrectly. She used that word.\n\nI told her the alley because the alley can't be seen from the square. I want you to write that down and I want you to read it back to me, because I've been telling myself for nine hours that I didn't go down there to do it, and I chose the one place in this village where it couldn't be seen.\n\n...The belt's mine. You know it's mine. There's a mark on the hook where it's hung for twenty years.",
+    "new_claims": [
+      {
+        "claim_id": "claim_owen_confession",
+        "summary": "Owen admits he forged the mortgage to save his yard, chose the alley because it cannot be seen from the square, strangled Clara with his belt and burned the letter she gave him.",
+        "claim_type": "statement",
+        "time_reference": "07:09",
+        "location_reference_id": "loc_rear_alley",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_deed_genuine",
+    "evidence_clue_ids": [
+      "clue_clara_second_page"
+    ],
+    "outcome": "contradiction_locked",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "shattered",
+    "response_text": "...What second page.\n\nNo. No, she gave me the letter. She put it in my hand and I read it — 'I write to report that the property at Hobbs Cafe has been fraudulently mortgaged' — I read it standing there in front of her, and I burned it, and there was one page. One.\n\nWhat second page.\n\n...\n\nRead it to me.\n\nNo — read it to me. Read it.\n\n...'I have no wish to see the yard sold or your men put out of work.'\n\nShe said. In the alley. She said there's another page and you should read it before you say anything else, and I had the first one in my hand and the word committee in my head and I didn't— \n\nIt was on the counter. It was twelve feet away, through a wall, on the counter, the whole time.\n\nTwelve months. She was going to give me twelve months.\n\n'I would rather be paid than be right.'\n\n...She was the most exact woman in this village and she was never once wrong and she was not wrong about me either, was she. She thought I was a man who'd take the twelve months.\n\nI'd like you to take me out now. I don't want to sit in the same room as that.",
+    "new_claims": [
+      {
+        "claim_id": "claim_owen_never_read_page_two",
+        "summary": "Owen learns that Clara's letter had a second page offering him twelve months to buy the charge back — the page he never read.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_call_only",
+    "evidence_clue_ids": [
+      "clue_clara_second_page",
+      "clue_clara_committee_note"
+    ],
+    "outcome": "contradiction_locked",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "emotional_shift": "shattered",
+    "response_text": "...What second page.\n\nNo. No, she gave me the letter. She put it in my hand and I read it — 'I write to report that the property at Hobbs Cafe has been fraudulently mortgaged' — I read it standing there in front of her, and I burned it, and there was one page. One.\n\nWhat second page.\n\n...\n\nRead it to me.\n\nNo — read it to me. Read it.\n\n...'I have no wish to see the yard sold or your men put out of work.'\n\nShe said. In the alley. She said there's another page and you should read it before you say anything else, and I had the first one in my hand and the word committee in my head and I didn't— \n\nIt was on the counter. It was twelve feet away, through a wall, on the counter, the whole time.\n\nTwelve months. She was going to give me twelve months.\n\n'I would rather be paid than be right.'\n\n...She was the most exact woman in this village and she was never once wrong and she was not wrong about me either, was she. She thought I was a man who'd take the twelve months.\n\nI'd like you to take me out now. I don't want to sit in the same room as that.",
+    "new_claims": [
+      {
+        "claim_id": "claim_owen_never_read_page_two",
+        "summary": "Owen learns that Clara's letter had a second page offering him twelve months to buy the charge back — the page he never read.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_col",
+    "challenged_claim_id": "claim_col_yard_alibi",
+    "evidence_clue_ids": [
+      "clue_col_cctv_arrival"
+    ],
+    "outcome": "partial_admission",
+    "pressure_delta": 0.35,
+    "sets_claim_status": "reframed",
+    "emotional_shift": "crumbling",
+    "response_text": "...The gate camera stamps the time.\n\nI know it does. I've known it does since ten o'clock this morning and I've been sat in that cab knowing it.\n\nI came in at twenty-four past. He asked me the night before and I said yes, and I'd like to tell you it was because I was frightened of him but it wasn't. He kept me on through two winters. He stood at my dad's funeral.\n\nI said yes because he asked me to. That's all there is in it.",
+    "new_claims": [
+      {
+        "claim_id": "claim_col_admits_lie",
+        "summary": "Col admits Owen told him what to say and the camera shows he arrived at 07:24.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_late",
+    "evidence_clue_ids": [
+      "clue_ben_van_broke_down"
+    ],
+    "outcome": "reframe",
+    "pressure_delta": -0.05,
+    "sets_claim_status": "confirmed",
+    "emotional_shift": "raw",
+    "response_text": "Yes. I was due there at seven and I got there at half past and she was dead on the floor of the alley I should have been standing in.\n\nSal push-started me at twenty past, two miles out. So I couldn't have, could I. I've had that explained to me twice now.\n\nIt doesn't do the thing you think it does. Knowing I couldn't have. It doesn't do anything at all."
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_did_not_read",
+    "evidence_clue_ids": [
+      "clue_nadia_patient_anchor"
+    ],
+    "outcome": "reframe",
+    "pressure_delta": 0.0,
+    "sets_claim_status": "confirmed",
+    "emotional_shift": "steady",
+    "response_text": "I signed a document I did not read and a woman is dead in an alley, and those two facts are going to sit next to each other for the rest of my life.\n\nI was with Iris Penhale. You will find that I was. I would rather you had found that I wasn't, some mornings."
+  }
+]

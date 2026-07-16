@@ -1,0 +1,340 @@
+[
+  {
+    "agent_id": "agent_ben",
+    "default_answers": {
+      "alibi": "Home all evening. Found some old family papers, felt rubbish, went to bed early.",
+      "timeline": "Home from five. Didn't go out.",
+      "last_seen_victim": "Owen? Couple of days ago, maybe. He took a delivery from me.",
+      "relationship": "I barely knew him. He was just around the village.",
+      "evidence": "I don't know anything about that.",
+      "location": "I was home. I told you."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "I met them on my very first delivery round. They showed me exactly where to leave the parcels so they wouldn't get wet. Always precise, but fair. We had a good rhythm going.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "Owen? Big bloke, always in the pub. We didn't really talk. He took deliveries sometimes. Nothing personal.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "too_casual",
+        "claims": [
+          {
+            "claim_id": "claim_ben_barely_knew_owen",
+            "summary": "Ben downplays any relationship with Owen.",
+            "claim_type": "relationship",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "I was in my flat all evening. Found some of my dad's old stuff in a box and it hit me a bit, so I stayed in. Cancelled my plans with Priya. Went to bed around eleven. I didn't go near the square.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "flat",
+        "claims": [
+          {
+            "claim_id": "claim_ben_home_evening",
+            "summary": "Ben claims he was at home all evening and did not go to the square.",
+            "claim_type": "alibi",
+            "time_reference": "22:30",
+            "location_reference_id": "loc_ben_flat",
+            "truthfulness": "false",
+            "about_agent_id": "agent_ben",
+            "time_to": "23:45"
+          }
+        ],
+        "suggested_followups": [
+          "What was in the boxes?",
+          "Why did you cancel with Priya?"
+        ],
+        "reveals_clue_ids": [
+          "clue_ben_no_evening_alibi"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_blackmail_letters",
+        "answer_text": "Where did you get those. Those are — those are my father's private things.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "shocked",
+        "claims": [
+          {
+            "claim_id": "claim_ben_father_papers",
+            "summary": "Ben reacts to the letters with shock, acknowledging they belong to his father but not yet admitting their content.",
+            "claim_type": "statement",
+            "truthfulness": "mistaken"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_jacket_mud",
+        "answer_text": "My jacket gets muddy — I'm a delivery driver, I'm outside all day. That mud could be from anywhere.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_ben_mud_routine",
+            "summary": "Ben says the jacket mud is from ordinary work.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_bootprint",
+        "answer_text": "Lots of people wear resoled boots. That's circumstantial. I've been near the fountain dozens of times.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "tense"
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_elias",
+    "default_answers": {
+      "alibi": "Bench at dawn as always. That's when I found him.",
+      "timeline": "I don't sleep well. I'm often at the window late.",
+      "last_seen_victim": "Owen? Briefly, yesterday afternoon. He seemed preoccupied.",
+      "relationship": "Not close. We tolerated each other.",
+      "evidence": "I'll tell you what I saw.",
+      "location": "My bedroom window faces the fountain directly."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "22:00",
+        "time_to": "23:30",
+        "answer_text": "I was at my bedroom window around ten to eleven — I get up in the night, always have. I saw two figures by the fountain. Couldn't make out who, too dark. Then, a few minutes later, one figure walked away fast toward the newsagent's end.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "disturbed",
+        "claims": [
+          {
+            "claim_id": "claim_elias_night_witness",
+            "summary": "Elias saw two figures at the fountain around 22:55, and one figure leave quickly after 23:15.",
+            "claim_type": "sighting",
+            "time_reference": "23:00",
+            "location_reference_id": "loc_fountain",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_elias_two_figures",
+          "clue_elias_fleeing_figure"
+        ],
+        "suggested_followups": [
+          "Which direction did the figure go?"
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "Home from half nine. I close the clinic, go upstairs.",
+      "timeline": "Evening at home. Early start next morning.",
+      "last_seen_victim": "Owen? Not since the week before last.",
+      "relationship": "A patient occasionally. Not someone I knew well.",
+      "evidence": "If it's relevant, I'll tell you.",
+      "location": "My flat is above the clinic. I can see most of the square."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "22:00",
+        "time_to": "23:00",
+        "answer_text": "I was at home. I was drawing the curtains around half ten and I noticed Ben Carter crossing the square — heading toward the fountain end. Then around eleven, I heard raised voices from the square. A younger voice sounding angry, and then an older voice — Owen's — laughing cruelly. It gave me a chill.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "careful",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_saw_ben",
+            "summary": "Nadia saw Ben crossing the square toward the fountain at about 22:35, and later heard voices including Owen laughing.",
+            "claim_type": "sighting",
+            "time_reference": "22:35",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_ben"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_nadia_night_sighting",
+          "clue_nadia_voices"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "answer_text": "Fred? Yes — I saw him. He came out after Owen and got as far as the top of the square and stopped dead. Stood under the lamp smoking, a quarter of an hour at least. I nearly went down, he looked so wretched. Then he turned round and went back inside. He never went near the fountain, detective. Whatever that lighter is doing there, it's doing it from where he stood.",
+        "reveals_clue_ids": [
+          "clue_nadia_saw_fred_turn_back"
+        ],
+        "claims": []
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_fred",
+    "default_answers": {
+      "alibi": "Behind the bar until close. Eleven on the dot.",
+      "timeline": "Usual evening — steady trade, nothing unusual.",
+      "last_seen_victim": "Owen Price was in last night. Three pints. Left around ten to eleven.",
+      "relationship": "Regular. Known him years.",
+      "evidence": "I see most things that happen in my pub.",
+      "location": "The pub. Always."
+    },
+    "rules": [
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Owen was in from about half nine. Usual three pints, same seat. He seemed preoccupied — didn't chat much, which isn't like him. Left around ten-to-eleven. I watched him out the door. He was fine — walking straight.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "serious",
+        "claims": [
+          {
+            "claim_id": "claim_fred_owen_time",
+            "summary": "Owen was at the pub from about 21:30 and left at 22:48, in reasonable condition.",
+            "claim_type": "sighting",
+            "time_reference": "22:48",
+            "location_reference_id": "loc_pub",
+            "truthfulness": "true",
+            "about_agent_id": "agent_owen"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_left_pub"
+        ]
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Ben Carter? No, he wasn't in last night. I'd remember — he's a face you notice, always talking to someone. Last night it was just Owen and the usual quiet Tuesday crowd.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "reveals_clue_ids": [
+          "clue_fred_only_saw_owen"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_fred_lighter_found",
+        "answer_text": "Alright, look. I followed him out at ten-to-eleven. I owe him — owed him — a fortune, and he'd started saying he'd call it all in and shut me down. I went after him to beg for more time. But I lost my nerve at the top of the square, stood there like a fool having a smoke, and went back and locked the door at five-to. I never reached the fountain. I never touched him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_fred_argument",
+            "summary": "Fred admits to arguing with Owen by the fountain at 22:50 over debts, but says he returned to the pub alive at 22:55.",
+            "claim_type": "alibi",
+            "time_reference": "22:50",
+            "truthfulness": "true",
+            "about_agent_id": "agent_fred"
+          }
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "Owen? The Mallet's been going under for three years and the brewery wouldn't lend me a candle. Owen would. That's the thing about Owen — he'd always lend it, and then he owned a little more of you every month. Forty year I've pulled pints in that room and it's his name in my ledger now, not mine. So no, I didn't love the man. But you don't kill the only person who'll lend you money, detective. You just keep smiling and pouring his three pints.",
+        "reveals_clue_ids": [],
+        "claims": []
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_priya",
+    "default_answers": {
+      "alibi": "Home from seven. Ben was supposed to come over but cancelled.",
+      "timeline": "Quiet evening at home.",
+      "last_seen_victim": "Owen? Not someone I know well.",
+      "relationship": "Barely know him.",
+      "evidence": "I'm not sure how I can help.",
+      "location": "Home."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "answer_text": "Where was I? At home. On the phone to my sister in Leicester — I rang her about ten past eleven because I couldn't sit still and I couldn't have told you why. We talked for twenty minutes about her kitchen extension.\n\nCheck the line. I'd rather you checked the line than took my word for anything, at this point.",
+        "reveals_clue_ids": [
+          "clue_priya_landline_call"
+        ],
+        "claims": [],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Ben was with me. He came over around half-past ten and we stayed in watching a film. He didn't leave until well after midnight. He couldn't have done it.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_priya_false_alibi",
+            "summary": "Priya falsely claims Ben was with her all night.",
+            "claim_type": "alibi",
+            "truthfulness": "false",
+            "about_agent_id": "agent_priya"
+          }
+        ],
+        "reveals_clue_ids": []
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_cancel_text",
+        "answer_text": "Okay... okay, he wasn't with me. He cancelled at ten o'clock — said he'd found something and would explain later. I texted back and he never replied at all. I just... I wanted to protect him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "worried",
+        "claims": [
+          {
+            "claim_id": "claim_priya_ben_cancelled",
+            "summary": "Priya admits Ben cancelled their evening plans at 22:00 citing 'something he'd found', and did not reply further until morning.",
+            "claim_type": "statement",
+            "time_reference": "22:00",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_ben_cancel_text",
+          "clue_priya_false_alibi"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "...He showed me. The week he found them. He sat on my floor with them in his lap and he didn't cry, he just kept re-reading the same one, the one where his dad says please.\n\nSo yes, I knew. I knew exactly what Owen Price was. And when Ben cancelled on me at ten o'clock I told you he'd been with me all night before you'd even finished asking. Nobody made me do that. I want you to be clear that nobody made me do that.",
+        "reveals_clue_ids": [
+          "clue_priya_lied_to_police"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_priya_knew_and_lied",
+            "summary": "Priya admits she knew about the blackmail letters and volunteered a false alibi for Ben unprompted.",
+            "claim_type": "statement",
+            "truthfulness": "true",
+            "about_agent_id": "agent_priya"
+          }
+        ],
+        "topic_clue_id": "clue_blackmail_letters"
+      }
+    ]
+  }
+]

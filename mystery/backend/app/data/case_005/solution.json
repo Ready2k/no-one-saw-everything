@@ -1,0 +1,126 @@
+{
+  "killer_id": "agent_owen",
+  "motive": {
+    "canonical": "Marcus Bell's estate called in Owen Price's £8,000 debt. Owen forged a mortgage charging Hobbs Cafe — Clara's home — against it, to save his yard and the four men who work in it. Clara found the fraud and was going to report it.",
+    "concept_groups": [
+      [
+        "mortgage",
+        "charge",
+        "deed",
+        "forged",
+        "forgery",
+        "fraud",
+        "fraudulent",
+        "signature"
+      ],
+      [
+        "debt",
+        "eight thousand",
+        "8000",
+        "owed",
+        "estate",
+        "called in",
+        "loan"
+      ],
+      [
+        "yard",
+        "business",
+        "men",
+        "workers",
+        "payroll",
+        "bankrupt",
+        "ruin",
+        "livelihood"
+      ],
+      [
+        "committee",
+        "report",
+        "expose",
+        "letter",
+        "silence",
+        "stop her"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Strangled with Owen's own leather builder's belt in the rear alley, and a fire set afterwards to burn the letter.",
+    "concept_groups": [
+      [
+        "strangle",
+        "strangled",
+        "strangulation",
+        "ligature",
+        "throttled",
+        "asphyxia"
+      ],
+      [
+        "belt",
+        "buckle",
+        "leather"
+      ],
+      [
+        "fire",
+        "burn",
+        "burnt",
+        "arson",
+        "lighter fluid",
+        "accelerant"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Owen arranged the meeting himself and reached the alley by the back lane, which the village square cannot see — which is why Elias, who missed nothing, saw nothing.",
+    "concept_groups": [
+      [
+        "back lane",
+        "lane",
+        "behind the yards",
+        "service lane"
+      ],
+      [
+        "alley",
+        "rear alley",
+        "rear door",
+        "back door"
+      ],
+      [
+        "arranged",
+        "summoned",
+        "told her to",
+        "chose the place",
+        "phone call",
+        "rang her",
+        "07:00",
+        "seven"
+      ],
+      [
+        "false alibi",
+        "lied",
+        "col",
+        "yard",
+        "cctv",
+        "camera"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "key_clue_ids": [
+    "clue_yard_books",
+    "clue_clara_second_page",
+    "clue_back_lane",
+    "clue_col_saw_no_belt",
+    "clue_belt_weapon",
+    "clue_col_cctv_arrival"
+  ],
+  "explanation": "Correct. Owen Price killed Clara Wells.\n\nWhen Marcus Bell died his estate called in the eight thousand pounds Owen owed him, in full, within the month. Owen had a timber yard, a leaking roof and four men on the payroll, and no eight thousand pounds. So he forged a mortgage charging Hobbs Cafe — and the flat above it, where Clara had lived for eleven years — against the debt, with an invented witness and a capacity certificate that Nadia Cole signed without reading.\n\nClara worked it out in two days, with a Land Registry extract and a deed from the estate papers, because she was the most exact person in the village. She telephoned Owen at 06:20 and told him she was going to do it correctly. He named the alley and the hour, because the alley cannot be seen from the square, and he went by the back lane, which is why Elias Grant — who misses nothing — is entirely right that Owen never crossed his square, and why it does not matter in the least.\n\nShe handed him the letter. He burned it, and he strangled her with his belt, and he went back up the lane holding his trousers up, and told Col Hartley what to say. The fire he lit to destroy the letter went out, because the morning was damp and the crates were wet through.\n\nHe burned page one. Page two was still lying in the order book on the cafe counter, twelve feet away through a wall, where she had left it. On it, in her hand, she offered him twelve months to buy the charge back, and no one need ever hear of it. I would rather be paid than be right.\n\nHe never read it. He never knew it was there. He killed her for a letter that was going to save him.",
+  "epilogues": {
+    "agent_clara": "The letter was read out at the committee in November, both pages, by a clerk who had not been told what the second one said and who had to stop halfway down it. It took four minutes. She had been entirely correct, in every particular, including about him.",
+    "agent_owen": "He pleaded guilty and would not let his solicitor put the yard, or the four men, or the estate's letter in front of the court. He said none of that was a reason, it was only an explanation, and he had had a page in his hand that morning telling him the difference. The yard was sold in the spring. Two of the men were kept on by the buyer.",
+    "agent_col": "He told the truth about the camera and then he sat in the cab for an hour and could not start the engine. He does not drive for anybody now. He has said, to more than one person, that he would say yes again — and then, each time, that he does not know why he keeps saying that.",
+    "agent_ben": "The linen was still over his arm when he found her; he had carried it all the way down the alley. He does the round in a different order now, so that the cafe is first, and he is never late for it, and he has never once explained to anyone why.",
+    "agent_nadia": "She reported herself to the nursing council before anyone thought to ask her to. They suspended her for four months for certifying a document she had not read, and she has said she thought that was lenient. She reads everything now, twice, in front of whoever handed it to her.",
+    "agent_elias": "He was right. That is the thing he cannot get comfortable with — he was right, about the square, about every soul who crossed it, and a woman died forty yards behind his back while he was being right. He still takes the bench. He has stopped telling people that nothing gets past him."
+  }
+}
