@@ -44,14 +44,22 @@ export default function CaseLibraryModal({ onClose, activeCaseId, onDuplicate }:
     fetchCases();
   }, [sortBy, toneFilter, typeFilter, bestOfNFilter, fallbackFilter]);
 
-  const handleActivate = async (caseId: string) => {
-    if (confirm("Activate this case? Your current progress will be lost.")) {
-      try {
-        await api.generatedCases.activate(caseId);
-        location.reload();
-      } catch (err: any) {
-        alert("Failed to activate case: " + err);
-      }
+  /** Opening a case now resumes it, so there is nothing to warn about. Only a deliberate
+   *  restart destroys an investigation, and that is the one thing worth confirming. */
+  const handleActivate = async (caseId: string, restart = false) => {
+    if (
+      restart &&
+      !confirm(
+        "Start this case again from nothing? Every clue, note and interview you have will be discarded."
+      )
+    ) {
+      return;
+    }
+    try {
+      await api.activate(caseId, restart);
+      location.reload();
+    } catch (err: any) {
+      alert("Failed to open case: " + err);
     }
   };
 

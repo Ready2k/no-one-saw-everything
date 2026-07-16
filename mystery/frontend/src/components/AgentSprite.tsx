@@ -31,7 +31,13 @@ export default function AgentSprite({
   return (
     <button
       className={`map-agent ${agent.is_background ? "background-agent" : ""} ${stale ? "stale" : ""} ${agent.is_victim ? "victim" : ""}`}
-      style={{ left: x, top: y, transform: `translate(-50%, -60%) scale(${zoomCompensation})` }}
+      style={{
+        left: x,
+        top: y,
+        transform: "translate(-50%, -60%)",
+        width: size.width,
+        height: size.height,
+      }}
       title={title}
       onClick={onClick}
       data-agent-id={agent.agent_id}
@@ -46,7 +52,18 @@ export default function AgentSprite({
           backgroundPosition: `${-SPRITE_SHEET.idleCol * size.width}px ${-SPRITE_SHEET.idleRow * size.height}px`,
         }}
       />
-      <span className="map-agent-name">
+      <span
+        className="map-agent-name"
+        style={{
+          position: "absolute",
+          top: "100%",
+          left: "50%",
+          transform: `translate(-50%, 0) scale(${zoomCompensation})`,
+          transformOrigin: "top center",
+          marginTop: "2px",
+          display: "inline-block",
+        }}
+      >
         {agent.full_name.split(" ")[0]}
         {stale && lastSeen ? ` · ${lastSeen}` : ""}
       </span>

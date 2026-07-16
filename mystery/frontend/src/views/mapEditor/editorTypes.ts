@@ -95,6 +95,20 @@ export interface LightDef {
   opacity_internal?: number;
 }
 
+// Global ambient sprite overlays are authored in tile-space. x/y is the
+// top-left corner, matching prop placement, so they can be aligned against
+// water, chimneys, lamps and paths in the map editor.
+export interface AmbientSpriteDef {
+  asset_id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  opacity?: number;
+  from?: string;
+  to?: string;
+}
+
 export interface BuildingInstance {
   instance_id: string;
   asset_id: string;
@@ -131,6 +145,7 @@ export interface TownLayout {
   building_instances: BuildingInstance[];
   underlay_tile_overrides?: UnderlayTileOverrides;
   lights: Record<string, LightDef>;
+  ambient_sprites: Record<string, AmbientSpriteDef>;
 }
 
 export interface CaseLocationRef {
@@ -169,7 +184,8 @@ export type ToolId =
   | "picker"
   | "prop"
   | "building"
-  | "light";
+  | "light"
+  | "ambient";
 
 export type PreviewMode = "debug" | "player_reveal" | "fog";
 
@@ -179,6 +195,7 @@ export type Selection =
   | { kind: "prop"; id: string }
   | { kind: "building"; id: string }
   | { kind: "light"; id: string }
+  | { kind: "ambient"; id: string }
   | null;
 
 export interface Camera {
@@ -212,7 +229,7 @@ export const ALLOWED_PROPS = [
 export const ALLOWED_LAYERS = [
   "base", "terrain_detail", "paths", "interior_floors", "walls", "structures",
   "props", "case_overlays", "object_anchors", "evidence_markers", "fog", "debug_bounds",
-  "lights"
+  "lights", "ambient"
 ];
 
 // Mirrors the semantic_asset_id union in frontend/src/types.ts's
@@ -229,6 +246,21 @@ export const LIGHT_ASSET_SWATCHES: Record<string, { label: string; color: string
   light_window_cool: { label: "Cool window", color: "#8ec4ff" },
   light_pub_window_glow: { label: "Pub window glow", color: "#ffcf7a" },
   light_fireplace_glow: { label: "Fireplace glow", color: "#ff8a3d" }
+};
+
+export const ALLOWED_AMBIENT_ASSETS = [
+  "water_shimmer", "fish_ripple_loop", "chimney_smoke", "lamp_flicker",
+  "drifting_mist", "birds_crossing", "warm_motes"
+];
+
+export const AMBIENT_ASSET_SWATCHES: Record<string, { label: string; color: string; width: number; height: number; opacity: number }> = {
+  water_shimmer: { label: "Water shimmer", color: "#7dd3fc", width: 5.625, height: 2.8125, opacity: 0.55 },
+  fish_ripple_loop: { label: "Fish ripple loop", color: "#38bdf8", width: 3, height: 3, opacity: 0.72 },
+  chimney_smoke: { label: "Chimney smoke", color: "#cbd5e1", width: 3, height: 5, opacity: 0.72 },
+  lamp_flicker: { label: "Lamp flicker", color: "#fbbf24", width: 3, height: 3, opacity: 0.62 },
+  drifting_mist: { label: "Drifting mist", color: "#bae6fd", width: 12, height: 6, opacity: 0.48 },
+  birds_crossing: { label: "Birds crossing", color: "#111827", width: 7.5, height: 3.75, opacity: 0.68 },
+  warm_motes: { label: "Warm motes", color: "#fde68a", width: 6, height: 4, opacity: 0.5 }
 };
 
 export const TILE_COLORS: Record<string, string> = {
@@ -322,8 +354,20 @@ export interface UnderlaySourceDef {
 // B2 (town centre) ships as a pair, mirroring the runtime contract in
 // town_map.py: the external roofed overview and the roofless interior the
 // game swaps to past the zoom threshold.
-export const HD_B2_EXTERNAL_URL = "/art/town/tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png";
-export const HD_B2_INTERNAL_URL = "/art/town/tiles_3x3_hd/town_overworld_B2_interior_hd.png";
+export const LIVING_TOWN_REMASTER_V5_PREFIX = "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5";
+export const HD_B2_EXTERNAL_URL = `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_B2_living_town_remaster_v5_clean_generated.png`;
+export const HD_B2_INTERNAL_URL = `${LIVING_TOWN_REMASTER_V5_PREFIX}/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png`;
+export const LIVING_TOWN_V2_TILE_URLS: Partial<Record<string, string>> = {
+  A1: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_A1_living_town_remaster_v5_clean_generated.png`,
+  A2: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_A2_living_town_remaster_v5_clean_generated.png`,
+  A3: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_A3_living_town_remaster_v5_clean_generated.png`,
+  B1: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_B1_living_town_remaster_v5_clean_generated.png`,
+  B2: HD_B2_EXTERNAL_URL,
+  B3: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_B3_living_town_remaster_v5_clean_generated.png`,
+  C1: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_C1_living_town_remaster_v5_clean_generated.png`,
+  C2: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_C2_living_town_remaster_v5_clean_generated.png`,
+  C3: `${LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_C3_living_town_remaster_v5_clean_generated.png`,
+};
 
 export const HD_TILE_CELLS = (["A", "B", "C"] as const).flatMap((row) =>
   ([1, 2, 3] as const).map((col) => `${row}${col}`)
@@ -332,6 +376,8 @@ export const HD_TILE_CELLS = (["A", "B", "C"] as const).flatMap((row) =>
 /** The artwork a mosaic cell shows by default in the given view. */
 export function hdDefaultTileUrl(cell: string, view: MapView): string {
   if (cell === "B2") return view === "internal" ? HD_B2_INTERNAL_URL : HD_B2_EXTERNAL_URL;
+  const livingTownUrl = LIVING_TOWN_V2_TILE_URLS[cell];
+  if (livingTownUrl) return livingTownUrl;
   return `/art/town/tiles_3x3_hd/town_overworld_${cell}_hd.png`;
 }
 
@@ -413,7 +459,8 @@ export const TOOL_DEFS: Array<{ id: ToolId; label: string; icon: string; key: st
   { id: "picker", label: "Eyedropper", icon: "💉", key: "I", hint: "Click a painted tile to pick its tile type and layer" },
   { id: "prop", label: "Place props", icon: "🌳", key: "P", hint: "Click to place the selected prop · drag to fine-position before release" },
   { id: "building", label: "Place buildings", icon: "🏠", key: "U", hint: "Click to drop the selected place bundle · R rotates 90° · dressing and entrance path follow the door" },
-  { id: "light", label: "Place lights", icon: "✨", key: "L", hint: "Click to place a light · drag to fine-position · corner handle resizes the glow radius" }
+  { id: "light", label: "Place lights", icon: "✨", key: "L", hint: "Click to place a light · drag to fine-position · corner handle resizes the glow radius" },
+  { id: "ambient", label: "Place ambience", icon: "◌", key: "A", hint: "Click to place an ambient effect · drag to align · corner handle resizes the sprite" }
 ];
 
 export function deepClone<T>(value: T): T {

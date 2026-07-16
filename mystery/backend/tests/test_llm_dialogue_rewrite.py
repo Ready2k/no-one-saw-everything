@@ -62,7 +62,9 @@ def test_dialogue_rewrite_provider_error_fallback(monkeypatch):
     # silently repeating the deterministic line verbatim, but must still
     # contain it exactly (nothing invented, nothing dropped).
     assert result.rewritten_text.endswith("I was at the fountain.")
-    assert result.rewritten_text != "I was at the fountain."
+    # First hearing: the authored line is returned exactly as written. (A repeat is wrapped
+    # in a "you've asked me that" framing — see test_repeat_answer_is_framed_as_a_repeat.)
+    assert result.rewritten_text == "I was at the fountain."
     assert result.fallback_used is True
     assert result.fallback_reason == "provider_error"
 

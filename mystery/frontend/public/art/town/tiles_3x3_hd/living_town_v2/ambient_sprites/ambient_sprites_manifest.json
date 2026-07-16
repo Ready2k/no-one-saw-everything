@@ -1,0 +1,278 @@
+{
+  "version": "living_town_v2_ambient_sprites_v1",
+  "purpose": "Reusable transparent ambient animation spritesheets for the Living Town V2 map.",
+  "coordinate_space": {
+    "full_map_width": 6144,
+    "full_map_height": 4608,
+    "units": "pixels"
+  },
+  "format": "horizontal PNG spritesheets with equal-size frames, transparent background",
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/ambient_sprites_contact_sheet.png",
+  "assets": [
+    {
+      "id": "water_shimmer",
+      "title": "Water shimmer",
+      "description": "Short translucent shimmer strokes for lake, sea, and stream surfaces.",
+      "spritesheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/water_shimmer_spritesheet.png",
+      "preview_gif": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/water_shimmer_preview.gif",
+      "frame_width": 128,
+      "frame_height": 64,
+      "frames": 8,
+      "fps": 8,
+      "blend_mode": "screen",
+      "default_opacity": 0.55,
+      "suggested_placements": [
+        {
+          "x": 720,
+          "y": 820,
+          "width": 180,
+          "height": 90,
+          "region": "A1 lake edge"
+        },
+        {
+          "x": 1260,
+          "y": 2060,
+          "width": 180,
+          "height": 90,
+          "region": "B1 lake reeds"
+        },
+        {
+          "x": 3540,
+          "y": 4270,
+          "width": 150,
+          "height": 75,
+          "region": "C2 stream"
+        }
+      ]
+    },
+    {
+      "id": "fish_ripple_loop",
+      "title": "Fish ripple loop",
+      "description": "Expanding rings and fish glints for water tiles.",
+      "spritesheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/fish_ripple_loop_spritesheet.png",
+      "preview_gif": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/fish_ripple_loop_preview.gif",
+      "frame_width": 96,
+      "frame_height": 96,
+      "frames": 8,
+      "fps": 7,
+      "blend_mode": "screen",
+      "default_opacity": 0.72,
+      "suggested_placements": [
+        {
+          "x": 670,
+          "y": 1290,
+          "width": 96,
+          "height": 96,
+          "region": "A1 dock water"
+        },
+        {
+          "x": 1500,
+          "y": 2130,
+          "width": 96,
+          "height": 96,
+          "region": "B1 open lake"
+        },
+        {
+          "x": 190,
+          "y": 2080,
+          "width": 96,
+          "height": 96,
+          "region": "B1 reeds"
+        }
+      ]
+    },
+    {
+      "id": "chimney_smoke",
+      "title": "Chimney smoke",
+      "description": "Soft rising chimney smoke puffs for cottages and pub roofs.",
+      "spritesheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/chimney_smoke_spritesheet.png",
+      "preview_gif": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/chimney_smoke_preview.gif",
+      "frame_width": 96,
+      "frame_height": 160,
+      "frames": 10,
+      "fps": 6,
+      "blend_mode": "normal",
+      "default_opacity": 0.72,
+      "suggested_placements": [
+        {
+          "x": 2708,
+          "y": 2168,
+          "width": 96,
+          "height": 160,
+          "region": "Mallet & Crown chimney"
+        },
+        {
+          "x": 3274,
+          "y": 1858,
+          "width": 96,
+          "height": 160,
+          "region": "Hobbs Cafe chimney"
+        },
+        {
+          "x": 4180,
+          "y": 1820,
+          "width": 96,
+          "height": 160,
+          "region": "Marcus House chimney"
+        },
+        {
+          "x": 1010,
+          "y": 3430,
+          "width": 96,
+          "height": 160,
+          "region": "C1 farm chimney"
+        }
+      ]
+    },
+    {
+      "id": "lamp_flicker",
+      "title": "Lamp flicker",
+      "description": "Warm radial glow for streetlamps and lit windows at dusk/night.",
+      "spritesheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/lamp_flicker_spritesheet.png",
+      "preview_gif": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/lamp_flicker_preview.gif",
+      "frame_width": 96,
+      "frame_height": 96,
+      "frames": 6,
+      "fps": 8,
+      "blend_mode": "screen",
+      "default_opacity": 0.62,
+      "suggested_placements": [
+        {
+          "x": 3060,
+          "y": 2455,
+          "width": 96,
+          "height": 96,
+          "region": "Village square west lamp"
+        },
+        {
+          "x": 3620,
+          "y": 2415,
+          "width": 96,
+          "height": 96,
+          "region": "Clinic square lamp"
+        },
+        {
+          "x": 2760,
+          "y": 1770,
+          "width": 96,
+          "height": 96,
+          "region": "Cafe/bookshop lane lamp"
+        }
+      ]
+    },
+    {
+      "id": "drifting_mist",
+      "title": "Drifting mist",
+      "description": "Wide translucent mist bands for lake, woodland, and foggy dawn scenes.",
+      "spritesheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/drifting_mist_spritesheet.png",
+      "preview_gif": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/drifting_mist_preview.gif",
+      "frame_width": 256,
+      "frame_height": 128,
+      "frames": 12,
+      "fps": 5,
+      "blend_mode": "screen",
+      "default_opacity": 0.48,
+      "suggested_placements": [
+        {
+          "x": 1150,
+          "y": 1600,
+          "width": 360,
+          "height": 180,
+          "region": "B1 lake mist"
+        },
+        {
+          "x": 2100,
+          "y": 2850,
+          "width": 420,
+          "height": 210,
+          "region": "B2 woodland edge"
+        },
+        {
+          "x": 4450,
+          "y": 1100,
+          "width": 420,
+          "height": 210,
+          "region": "A3 ridge mist"
+        }
+      ]
+    },
+    {
+      "id": "birds_crossing",
+      "title": "Birds crossing",
+      "description": "Small dark birds crossing over the town at map scale.",
+      "spritesheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/birds_crossing_spritesheet.png",
+      "preview_gif": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/birds_crossing_preview.gif",
+      "frame_width": 160,
+      "frame_height": 80,
+      "frames": 8,
+      "fps": 9,
+      "blend_mode": "normal",
+      "default_opacity": 0.68,
+      "suggested_placements": [
+        {
+          "x": 800,
+          "y": 390,
+          "width": 240,
+          "height": 120,
+          "region": "A1 shoreline sky read"
+        },
+        {
+          "x": 3900,
+          "y": 640,
+          "width": 240,
+          "height": 120,
+          "region": "A3 ridge"
+        },
+        {
+          "x": 3200,
+          "y": 1540,
+          "width": 240,
+          "height": 120,
+          "region": "B2 north edge"
+        }
+      ]
+    },
+    {
+      "id": "warm_motes",
+      "title": "Warm motes",
+      "description": "Tiny warm glints for dusk near water, lamps, and meadow flowers.",
+      "spritesheet": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/warm_motes_spritesheet.png",
+      "preview_gif": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/previews/warm_motes_preview.gif",
+      "frame_width": 192,
+      "frame_height": 128,
+      "frames": 12,
+      "fps": 6,
+      "blend_mode": "screen",
+      "default_opacity": 0.5,
+      "suggested_placements": [
+        {
+          "x": 2800,
+          "y": 2550,
+          "width": 192,
+          "height": 128,
+          "region": "Village square dusk motes"
+        },
+        {
+          "x": 350,
+          "y": 1780,
+          "width": 192,
+          "height": 128,
+          "region": "B1 reeds"
+        },
+        {
+          "x": 3220,
+          "y": 3640,
+          "width": 192,
+          "height": 128,
+          "region": "C2 meadow"
+        }
+      ]
+    }
+  ],
+  "runtime_notes": [
+    "Render sprites as absolutely positioned overlays above map image tiles and below agent/evidence markers.",
+    "Use pointer-events:none and disable or reduce animation under prefers-reduced-motion.",
+    "For Map Replay zoom, scale sprite positions with the same full-map transform as the image mosaic.",
+    "Suggested placements are starting points only; final renderer can instantiate zero or more copies by weather/time/case mood."
+  ]
+}

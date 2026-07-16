@@ -33,7 +33,9 @@ def test_dialogue_rejects_role_labels(monkeypatch):
     # repeat of the deterministic line, but the deterministic line itself
     # must still be present verbatim and nothing rejected must leak through.
     assert result.rewritten_text.endswith("I was at the fountain.")
-    assert result.rewritten_text != "I was at the fountain."
+    # First hearing: the authored line is returned exactly as written. (A repeat is wrapped
+    # in a "you've asked me that" framing — see test_repeat_answer_is_framed_as_a_repeat.)
+    assert result.rewritten_text == "I was at the fountain."
     assert "killer" not in result.rewritten_text.lower()
     assert result.fallback_used is True
     assert result.fallback_reason == "validation_failed"
@@ -63,7 +65,9 @@ def test_dialogue_rejects_json_leak(monkeypatch):
     # repeat of the deterministic line, but the deterministic line itself
     # must still be present verbatim and nothing rejected must leak through.
     assert result.rewritten_text.endswith("I was at the fountain.")
-    assert result.rewritten_text != "I was at the fountain."
+    # First hearing: the authored line is returned exactly as written. (A repeat is wrapped
+    # in a "you've asked me that" framing — see test_repeat_answer_is_framed_as_a_repeat.)
+    assert result.rewritten_text == "I was at the fountain."
     assert "killer" not in result.rewritten_text.lower()
     assert result.fallback_used is True
     assert result.fallback_reason == "validation_failed"

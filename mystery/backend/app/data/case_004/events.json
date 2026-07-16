@@ -3,19 +3,30 @@
     "event_id": "ev_2200_ben_finds_letters",
     "time": "22:00",
     "location_id": "loc_ben_flat",
-    "agent_ids": ["agent_ben"],
+    "agent_ids": [
+      "agent_ben"
+    ],
     "event_type": "object_use",
     "truth_description": "Ben, clearing his late father's boxes, finds the bundle of blackmail letters from Owen. He reads them twice, hands shaking, then sends Priya a message cancelling their evening plan.",
     "visibility": "private",
-    "object_ids": ["obj_blackmail_letters", "obj_arson_clipping", "obj_ben_phone"],
+    "object_ids": [
+      "obj_blackmail_letters",
+      "obj_arson_clipping",
+      "obj_ben_phone"
+    ],
     "importance": 9,
-    "linked_clue_ids": ["clue_ben_cancel_text", "clue_blackmail_letters"]
+    "linked_clue_ids": [
+      "clue_ben_cancel_text",
+      "clue_blackmail_letters"
+    ]
   },
   {
     "event_id": "ev_2230_owen_pub",
     "time": "22:30",
     "location_id": "loc_pub",
-    "agent_ids": ["agent_owen"],
+    "agent_ids": [
+      "agent_owen"
+    ],
     "event_type": "routine",
     "truth_description": "Owen is at the pub, drinking steadily. He is in a dark mood — a business deal fell through today.",
     "player_description": "Owen Price is at the pub, on his third pint.",
@@ -26,55 +37,78 @@
     "event_id": "ev_2235_nadia_window",
     "time": "22:35",
     "location_id": "loc_clinic",
-    "agent_ids": ["agent_nadia"],
+    "agent_ids": [
+      "agent_nadia"
+    ],
     "event_type": "sighting",
     "truth_description": "Nadia, in her flat above the clinic, glances out the window before drawing the curtains. She notices Ben crossing the square — unusual to see him at this hour.",
     "player_description": "From an upstairs window, a light is on above the clinic — someone briefly parts the curtain and looks down at the square.",
     "visibility": "private",
     "important": 7,
-    "linked_clue_ids": ["clue_nadia_night_sighting"]
+    "linked_clue_ids": [
+      "clue_nadia_night_sighting"
+    ]
   },
   {
     "event_id": "ev_2240_ben_waits",
     "time": "22:40",
     "location_id": "loc_fountain",
-    "agent_ids": ["agent_ben"],
+    "agent_ids": [
+      "agent_ben"
+    ],
     "event_type": "movement",
     "truth_description": "Ben reaches the fountain and waits. He has the blackmail bundle in his jacket pocket. He sits on the fountain rim in the dark.",
     "visibility": "hidden",
-    "object_ids": ["obj_blackmail_letters"],
+    "object_ids": [
+      "obj_blackmail_letters"
+    ],
     "importance": 7
   },
   {
     "event_id": "ev_2248_owen_leaves_pub",
     "time": "22:48",
     "location_id": "loc_pub",
-    "agent_ids": ["agent_owen"],
+    "agent_ids": [
+      "agent_owen"
+    ],
     "event_type": "departure",
     "truth_description": "Owen pays his tab and leaves. Fred notices he is walking straight enough.",
     "player_description": "Owen Price pays and leaves the pub at about ten to eleven.",
     "visibility": "public",
-    "visible_to_agent_ids": ["agent_fred"],
-    "object_ids": ["obj_owen_pub_receipt"],
+    "visible_to_agent_ids": [
+      "agent_fred"
+    ],
+    "object_ids": [
+      "obj_owen_pub_receipt"
+    ],
     "importance": 7,
-    "linked_clue_ids": ["clue_owen_left_pub"]
+    "linked_clue_ids": [
+      "clue_owen_left_pub"
+    ]
   },
   {
     "event_id": "ev_2250_fred_argument",
     "time": "22:50",
     "location_id": "loc_fountain",
-    "agent_ids": ["agent_fred", "agent_owen"],
+    "agent_ids": [
+      "agent_fred",
+      "agent_owen"
+    ],
     "event_type": "argument",
     "truth_description": "Fred catches up to Owen near the fountain. They argue briefly but intensely about Fred's massive unpaid debts and Owen's extortion. Fred drops his engraved lighter in the mud. He leaves Owen alive.",
     "visibility": "hidden",
-    "object_ids": ["obj_fred_lighter"],
+    "object_ids": [
+      "obj_fred_lighter"
+    ],
     "importance": 8
   },
   {
     "event_id": "ev_2255_fred_returns",
     "time": "22:55",
     "location_id": "loc_pub",
-    "agent_ids": ["agent_fred"],
+    "agent_ids": [
+      "agent_fred"
+    ],
     "event_type": "movement",
     "truth_description": "Fred storms back into the pub, locking the door behind him.",
     "visibility": "private",
@@ -84,57 +118,84 @@
     "event_id": "ev_2255_elias_window",
     "time": "22:55",
     "location_id": "loc_elias_house",
-    "agent_ids": ["agent_elias"],
+    "agent_ids": [
+      "agent_elias"
+    ],
     "event_type": "sighting",
     "truth_description": "Elias, unable to sleep, sits by his bedroom window. He sees two figures near the fountain — one sitting on the rim, one arriving from the pub direction.",
     "player_description": "A light is on in the cottage facing the fountain. A silhouette moves at the window.",
     "visibility": "private",
     "important": 8,
-    "linked_clue_ids": ["clue_elias_two_figures"]
+    "linked_clue_ids": [
+      "clue_elias_two_figures"
+    ]
   },
   {
     "event_id": "ev_2300_confrontation",
     "time": "23:00",
     "location_id": "loc_fountain",
-    "agent_ids": ["agent_ben", "agent_owen"],
+    "agent_ids": [
+      "agent_ben",
+      "agent_owen"
+    ],
     "event_type": "argument",
     "truth_description": "Ben shows Owen the letters. Owen smirks — 'your dad came to me, not the other way round. He wanted protecting.' He is contemptuous and shows no remorse. Ben's voice rises.",
     "player_description": "From the direction of the fountain, two voices — a younger and an older. The older sounds dismissive.",
     "visibility": "public_partial",
-    "audible_to_agent_ids": ["agent_nadia"],
+    "audible_to_agent_ids": [
+      "agent_nadia"
+    ],
     "importance": 9,
-    "linked_clue_ids": ["clue_nadia_voices"]
+    "linked_clue_ids": [
+      "clue_nadia_voices"
+    ]
   },
   {
     "event_id": "ev_2314_murder",
     "time": "23:14",
     "location_id": "loc_fountain",
-    "agent_ids": ["agent_ben", "agent_owen"],
+    "agent_ids": [
+      "agent_ben",
+      "agent_owen"
+    ],
     "event_type": "murder",
     "truth_description": "Owen turns away, laughing. Ben seizes the loose coping stone from the fountain rim and strikes. Owen falls without crying out. Ben stands with the stone in his hand for a long moment, then drops it.",
     "visibility": "hidden",
-    "object_ids": ["obj_fountain_stone"],
+    "object_ids": [
+      "obj_fountain_stone"
+    ],
     "importance": 10
   },
   {
     "event_id": "ev_2318_ben_flees",
     "time": "23:18",
     "location_id": "loc_village_square",
-    "agent_ids": ["agent_ben"],
+    "agent_ids": [
+      "agent_ben"
+    ],
     "event_type": "departure",
     "truth_description": "Ben walks quickly back across the square toward his flat. His right cuff is smeared with mud from the flower bed. He stepped in it when he seized the stone.",
     "player_description": "A figure walks fast across the square from the direction of the fountain and disappears.",
     "visibility": "public_partial",
-    "visible_to_agent_ids": ["agent_elias"],
-    "object_ids": ["obj_ben_jacket_mud"],
+    "visible_to_agent_ids": [
+      "agent_elias"
+    ],
+    "object_ids": [
+      "obj_ben_jacket_mud"
+    ],
     "importance": 9,
-    "linked_clue_ids": ["clue_elias_fleeing_figure"]
+    "linked_clue_ids": [
+      "clue_elias_fleeing_figure"
+    ]
   },
   {
     "event_id": "ev_2345_elias_discovery",
     "time": "23:45",
     "location_id": "loc_fountain",
-    "agent_ids": ["agent_elias", "agent_owen"],
+    "agent_ids": [
+      "agent_elias",
+      "agent_owen"
+    ],
     "event_type": "body_discovery",
     "truth_description": "Elias, unable to sleep, looks out his bedroom window. He notices a dark shape slumped against the fountain base. He goes down to investigate and finds Owen.",
     "player_description": "Elias Grant looks from his window, goes down to the square, and stops in shock. Owen Price is collapsed beside the fountain. The stone coping lies nearby.",
@@ -149,7 +210,7 @@
       "agent_bg_cole"
     ],
     "event_type": "arrival",
-    "truth_description": "Cole is seen near The Mallet & Crown, carrying his ladder home.",
+    "truth_description": "Cole passes The Mallet & Crown, carrying his ladder home.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -161,7 +222,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Village Clinic, heading home after a long day.",
+    "truth_description": "Cole stops by Village Clinic, heading home after a long day.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -174,7 +235,7 @@
       "agent_bg_wren"
     ],
     "event_type": "arrival",
-    "truth_description": "Wren is seen near Village Clinic, carrying her violin case home.",
+    "truth_description": "Wren is by Village Clinic, carrying her violin case home.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -186,7 +247,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near The Mallet & Crown, humming her way home from a late set.",
+    "truth_description": "Wren is at The Mallet & Crown, humming her way home from a late set.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -199,7 +260,7 @@
       "agent_bg_min"
     ],
     "event_type": "arrival",
-    "truth_description": "Min is seen near The Mallet & Crown, heading in to start the overnight dough.",
+    "truth_description": "Min is at The Mallet & Crown, heading in to start the overnight dough.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -211,7 +272,7 @@
       "agent_bg_min"
     ],
     "event_type": "movement",
-    "truth_description": "Min is seen near Village Clinic, hauling flour in for the overnight bake.",
+    "truth_description": "Min passes Village Clinic, hauling flour in for the overnight bake.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -224,7 +285,7 @@
       "agent_bg_effie"
     ],
     "event_type": "arrival",
-    "truth_description": "Effie is seen near Village Clinic, giving the dog its late-night walk.",
+    "truth_description": "At Village Clinic, Effie is giving the dog its late-night walk.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -236,7 +297,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near The Mallet & Crown, walking the dog one last time before bed.",
+    "truth_description": "Effie is by The Mallet & Crown, walking the dog one last time before bed.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -249,7 +310,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "arrival",
-    "truth_description": "Rosa is seen near The Mallet & Crown, locking up the tool shed.",
+    "truth_description": "Rosa passes The Mallet & Crown, locking up the tool shed.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -261,7 +322,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "movement",
-    "truth_description": "Rosa is seen near Village Clinic, carrying a lantern home from the green.",
+    "truth_description": "Rosa stops by Village Clinic, carrying a lantern home from the green.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -274,7 +335,7 @@
       "agent_bg_tam"
     ],
     "event_type": "arrival",
-    "truth_description": "Tam is seen near Village Clinic, out for some late air, off duty.",
+    "truth_description": "At Village Clinic, Tam is out for some late air, off duty.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -286,7 +347,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near The Mallet & Crown, posting a letter of his own on the way home.",
+    "truth_description": "Tam is by The Mallet & Crown, posting a letter of his own on the way home.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -299,7 +360,7 @@
       "agent_bg_dez"
     ],
     "event_type": "arrival",
-    "truth_description": "Dez is seen near The Mallet & Crown, wheeling the empty stall cart home.",
+    "truth_description": "Dez stops by The Mallet & Crown, wheeling the empty stall cart home.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -311,7 +372,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Village Clinic, counting the day's takings.",
+    "truth_description": "At Village Clinic, Dez is counting the day's takings.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -324,7 +385,7 @@
       "agent_bg_sal"
     ],
     "event_type": "arrival",
-    "truth_description": "Sal is seen near Village Clinic, collecting empty bottles ahead of the dawn round.",
+    "truth_description": "Sal stops by Village Clinic, collecting empty bottles ahead of the dawn round.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -336,7 +397,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near The Mallet & Crown, readying the cart for the early round.",
+    "truth_description": "At The Mallet & Crown, Sal is readying the cart for the early round.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
@@ -349,7 +410,7 @@
       "agent_bg_gus"
     ],
     "event_type": "arrival",
-    "truth_description": "Gus is seen near The Mallet & Crown, tying up bundles for tomorrow's papers.",
+    "truth_description": "Gus is by The Mallet & Crown, tying up bundles for tomorrow's papers.",
     "importance": 2,
     "to_location_id": "loc_pub"
   },
@@ -361,7 +422,7 @@
       "agent_bg_gus"
     ],
     "event_type": "movement",
-    "truth_description": "Gus is seen near Village Clinic, shuttering the news stand.",
+    "truth_description": "Gus is at Village Clinic, shuttering the news stand.",
     "importance": 2,
     "from_location_id": "loc_pub",
     "to_location_id": "loc_clinic"
@@ -374,7 +435,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "arrival",
-    "truth_description": "Birdie is seen near Village Clinic, sweeping under the lamplight.",
+    "truth_description": "Birdie is at Village Clinic, sweeping under the lamplight.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -386,7 +447,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "movement",
-    "truth_description": "Birdie is seen near The Mallet & Crown, clearing the day's litter before turning in.",
+    "truth_description": "Birdie passes The Mallet & Crown, clearing the day's litter before turning in.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"

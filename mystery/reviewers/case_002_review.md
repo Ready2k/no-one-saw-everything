@@ -1,611 +1,293 @@
-# Case 002 Review - The Locked Bookshop
+# Case 002: The Locked Bookshop — Executive Showrunner Review
+*Review pass 2 — post-rebuild. Supersedes pass 1 (13 Jul), which issued **Promising but Needs Major Rewrite** at 5.0/10 for a puzzle with no third act. The third act now exists; this pass re-scores.*
 
-## Agent 1 - The Detective
+## EXECUTIVE SUMMARY
 
-### Logic Score
-8/10
+Pass 1's verdict was blunt: "the best-constructed puzzle in the pack, and it has no third act."
+Only the first half is still true. The puzzle is intact and still excellent — the staged break-in
+whose glass falls the *wrong way*, telling the player there was never an intruder; the forged
+signature with the reversed capital R; the green thread on the latch; the wiped letter opener
+returned slightly off its ring-mark. And the case now has the ending it was missing.
 
-### Fairness Score
-8/10
+Priya breaks. Her `contradiction_locked` confession is present and strong: *"Sixteen years I have
+shelved her books and balanced her till and been grateful. Grateful for every single thing I was
+handed. So I stopped waiting to be handed one."* The seven epilogues are written and land — Priya
+asking twice whether Ben has been told; Ben working out on his round, a week later, what his own
+evidence did; Isabella's shop passing to a couple who made a go of it. The blank reveal screen is
+gone.
 
-### Difficulty Score
-7/10
+The three supporting P1 defects are also fixed: `clue_invoice_discrepancy` no longer argues a
+conclusion its evidence can't support, the time-of-day interview lines that leaked in from the
+morning template are corrected (the case runs from 11:30), and the ten background villagers now
+have ten distinct routines instead of one recycled milk round.
 
-### Findings
-- OBJECTIVE: The solution is internally consistent on the core question of killer, motive, method, and opportunity. `case.json` fixes time of death at 12:43, `events.json` places Priya and Isabella together in the back room at 12:35-12:43, and `solution.json` names Priya as the killer.
-- HIGH CONFIDENCE: The motive chain is strong and properly evidenced. The solicitor letter establishes immediate threat, and the forged transfer document explains why exposure would be catastrophic for Priya.
-- HIGH CONFIDENCE: The staged break-in clue is fair. Glass distribution inside the room supports inward breakage, and Nadia's discovery memory explicitly notes that the scene looks wrong for an external intruder.
-- HIGH CONFIDENCE: Opportunity is well supported but slightly over-reliant on compound inference. The invoice discrepancy weakens Priya's stockroom alibi, while the scarf thread places her at the rear latch. Together they are persuasive; individually they are not conclusive.
-- MEDIUM CONFIDENCE: Means is somewhat less elegant than motive and opportunity because the case data describes the murder weapon as a "sharp_implement" in `case.json`, while `solution.json` and the clue text describe blunt-force use of a brass letter opener. That can be reconciled, but it introduces avoidable classification noise.
-- MEDIUM CONFIDENCE: The Owen red herring is fair but safe. He has visible anger, debt pressure, and witness suspicion, yet his alibi is so strong that experienced players may clear him too quickly.
+This is no longer a rewrite candidate. It is a **Good**, pushing **Excellent**, and it has the best
+single physical clue in the collection.
 
-### Top Issues
-1. MEDIUM CONFIDENCE: Weapon classification inconsistency between "sharp_implement" and blunt-force wording weakens deductive cleanliness.
-2. MEDIUM CONFIDENCE: Priya's opportunity is proven by combining multiple clues, but there is no single eyewitness or hard timestamp placing her in the back room during the murder window.
-3. LOW CONFIDENCE: Once the player understands the forged-document motive, the case may narrow too sharply onto Priya.
+---
 
-### Suggested Fixes
-1. Align the weapon metadata and narrative language so every source describes the same mechanism of injury.
-2. Add one more physical clue tying Priya to the desk area itself rather than only the rear latch.
-3. Strengthen at least one alternative suspect's apparent plausibility before the alibi collapse.
+## INDIVIDUAL REVIEWER REPORTS
 
-### Top 3 Strengths
-1. The motive is concrete, specific, and evidence-led rather than generic jealousy.
-2. The scene-staging clue rewards physical reasoning instead of dialogue parsing.
-3. The false alibi has documentary pressure through the invoice mismatch.
+### Agent 1 — The Detective
 
-### Top 3 Weaknesses
-1. Weapon taxonomy is untidy.
-2. The suspect field collapses a little early.
-3. Opportunity proof is strong overall but lightly distributed across separate inferences.
+**Logic Score:** 8/10 (was 6) · **Fairness Score:** 8/10 · **Difficulty Score:** 6/10
 
-### One thing I would absolutely protect
-The solicitor-letter plus forged-document motive chain.
+**Assessment:** The forgery-and-cover-up spine is clean. Priya forged Isabella's signature on the
+partnership transfer and killed her to stop the exposure; the staged break-in is the cover, and the
+physics of the falling glass is the thread that unravels it. This is deduction the player *performs*
+rather than receives — the glass tells them "inside job," and everything after narrows the inside.
 
-### One thing I would definitely change
-The weapon definition and injury language.
+**Remaining issues:**
 
-### Confidence in this review
-High confidence.
+1. **MEDIUM CONFIDENCE — Two conclusions are thinly supported.** The validator flags
+   `conc_priya_means` (1 supporting clue) and `conc_method` (2). Not an error, and both are
+   reachable, but a third corroborating clue on each would make the means/method legs as solid as
+   the motive leg. This is the difference between 8 and 9 on fairness.
+2. **LOW CONFIDENCE — Difficulty is moderate**, and the falling-glass tell is legible enough that a
+   genre-literate player calls "inside job" early. That is fine — the pleasure here is *who* and
+   *why*, and both are well-gated.
 
-## Agent 2 - The Screenwriter
+**Suggested fixes:** Add one corroborating clue each to the means and method conclusions. P1.
 
-### Entertainment Score
-7/10
+---
 
-### Structure Score
-8/10
+### Agent 2 — The Screenwriter
 
-### Tension Curve
-Strong late escalation. The story builds modestly through routine village movement, spikes when the early arrival and opened solicitor letter are understood, and lands a clean confrontation-to-cover-up sequence.
+**Entertainment Score:** 8/10 · **Structure Score:** 8/10 (was 5)
 
-### Weakest Act
-The opening act. The premise is solid, but the first playable stretch risks feeling procedural rather than irresistible because the victim is already dead and the early emotional hook depends on document inspection rather than a vivid human scene.
+**Tension curve:** The locked-room open is a strong hook — a body in a shop locked from inside. The
+break-in staging gives the middle a real engine (every "intruder" clue the player debunks tightens
+the noose inward). And the case now has a climax: Priya's composure holds and holds and then goes.
 
-### Strongest Act
-The middle-to-late reveal phase around the forged document, the 13:30 solicitor appointment, and the realization that the break-in was staged.
+**Weakest Act:** Act 2 still has a short audit stretch while the player rules the break-in a fake,
+but it is purposeful auditing now, not filler.
 
-### Highest ROI Rewrite
-Give Isabella and Priya one more emotionally charged pre-murder beat visible through witness memory or environmental storytelling so the case pivots from "good puzzle" to "strong drama."
+**Strongest Act:** Act 3 — newly the strongest. The confession reframes sixteen years of gratitude
+as sixteen years of grievance, and it does it without asking to be forgiven.
 
-### Findings
-- OBJECTIVE: The structure is clean. Arrival, discovery, false red herring, hidden motive, confrontation, murder, staging, and exposure all track clearly through the event file.
-- HIGH CONFIDENCE: The ticking-clock element is effective. Priya reads the solicitor letter at 12:00 and knows the 13:30 appointment will expose her, which creates immediate urgency.
-- MEDIUM CONFIDENCE: The climax is intellectually satisfying more than emotionally explosive. Priya's collapse is mostly inferred through clues and interview pressure, not dramatized through a standout reveal scene.
-- MEDIUM CONFIDENCE: The case has one good twist rather than multiple layered reversals. The strongest twist is not "who" but "why now."
-- LOW CONFIDENCE: The ending may feel slightly quiet for players who prefer a larger confrontation or a more theatrical confession.
+**Highest ROI rewrite:** None urgent. The means/method corroboration (Detective's note) would also
+give Act 2 one more beat.
 
-### Top 3 Strengths
-1. Excellent ticking-clock motive trigger.
-2. Clear escalation from suspicious death to document forgery to panic killing.
-3. Efficient structure with very little wasted narrative machinery.
+---
 
-### Top 3 Weaknesses
-1. The opening is functional rather than gripping.
-2. The climax lacks a singular showcase scene.
-3. Emotional payoff trails behind puzzle payoff.
+### Agent 3 — Character Psychologist
 
-### One thing I would absolutely protect
-The 13:30 solicitor appointment as the story engine.
+**Rank:**
+1. **Priya** — the quiet one whose patience curdled. Her confession is the case's best writing.
+2. **Isabella** — controlling benefactor; "she can see a crooked shelf from the doorway" is a whole
+   character in one line.
+3. **Owen** — pays the estate every penny, in instalments, and "rounds up." The epilogue nails him.
+4. **Ben** — the witness whose own evidence convicts the woman he loves; his epilogue is quietly
+   devastating.
+5. **Ruth** — "she still notices the franking on a solicitor's letter, and has never stopped
+   wishing she had knocked."
+6. **Nadia** — right about the glass, and "has never once said so."
+7. **Elias** — suspected Owen loudly, to anyone who would sit down (knowingly).
 
-### One thing I would definitely change
-Add a more dramatic emotional breadcrumb for Isabella and Priya before the murder.
+**Most memorable:** Priya. **Least memorable:** Elias.
+**Weakest motive:** None weak now — the forgery-and-exposure motive is proportionate to murder.
+**Strongest relationship:** Priya and Isabella — sixteen years of gratitude weaponised.
 
-### Confidence in this review
-Medium confidence.
+---
 
-## Agent 3 - Character Psychologist
+### Agent 4 — First-Time Player
 
-### Rank Every Character
-1. Priya Shah
-2. Isabella Reed
-3. Owen Price
-4. Nadia Cole
-5. Elias Grant
-6. Ruth Calder
-7. Ben Carter
+**Interest curve:** Hooked by the locked shop. Genuinely clever-feeling at the falling glass —
+*that's mine, I worked out there was no burglar.* A short dip while I confirm it. High at the
+confession.
 
-### Most Memorable
-Priya Shah. Her contrast between soft-spoken surface and quietly ruthless action gives her the clearest inner contradiction.
+**Favourite clue:** The glass on the wrong side of the sill.
+**Favourite deduction:** The reversed R on the forged signature — once you see it you can't unsee it.
+**Favourite reveal:** Priya asking, twice, whether Ben has been told.
+**Would I immediately play another case?** Yes.
 
-### Least Memorable
-Ben Carter. He is defined efficiently but lightly, and functions more as village texture than as a psychologically distinct person.
+**One frustration:** I wanted one more hard clue tying Priya specifically to the letter opener; the
+motive case is airtight but the *means* case leans on fewer threads.
 
-### Weakest Motive
-Owen Price as a murder suspect. He has anger and debt, but his emotional architecture does not deepen beyond "blunt man under pressure."
+---
 
-### Strongest Relationship
-Priya and Isabella. High tension, low trust, dependency, gratitude, resentment, and professional asymmetry all coexist.
+### Agent 5 — Film Critic
 
-### Characters That Feel Interchangeable
-Ruth and Nadia do not fully blur, but both primarily serve as reliable witness functions more than expansive personalities.
+**Would audiences remember this?** Yes — the falling glass is a *Knives Out*-grade physical tell,
+the kind of clue viewers rewind to check.
 
-### Findings
-- OBJECTIVE: Priya's profile contains the richest contradiction set: careful, conflict-averse on the surface, but secretly ruthless in action.
-- HIGH CONFIDENCE: Isabella is more compelling in absence than many victims are in life. Her composed professionalism, private discovery of the forgery, and intent to involve the solicitor make her feel active rather than passive.
-- MEDIUM CONFIDENCE: The secret Priya-Ben relationship adds texture to Priya but is underused in the case material provided.
-- MEDIUM CONFIDENCE: Owen is vivid in voice but somewhat one-note in function.
-- MEDIUM CONFIDENCE: Nadia is believable and useful, but mostly as a credibility anchor.
+**Would critics recommend it?** Yes. It is the most classically *constructed* mystery in the pack;
+the pleasure is architectural.
 
-### Top 3 Strengths
-1. Priya feels like a person with self-justifying interiority.
-2. Isabella's victimhood still carries agency.
-3. The central power relationship is emotionally legible.
+**Three memorable moments:** The glass on the wrong side. The reversed R. Priya's "I stopped waiting
+to be handed one."
 
-### Top 3 Weaknesses
-1. Ben is underleveraged.
-2. Owen's psychology is broad rather than nuanced.
-3. Supporting witnesses are more functional than unforgettable.
+**Three forgettable moments:** The mid-game break-in audit. Elias's loud wrong theory. A couple of
+functional interview exchanges.
 
-### One thing I would absolutely protect
-Priya's soft-spoken defensiveness under pressure.
+**Overall:** A clean, cool, well-made locked-room piece that now closes as strongly as it opens.
 
-### One thing I would definitely change
-Use Ben to reveal a more intimate, contradictory side of Priya.
+---
 
-### Confidence in this review
-Medium confidence.
+### Agent 6 — Village Simulator
 
-## Agent 4 - First-Time Player
+**Village realism score:** 8/10 (was 4)
 
-### Interest Curve
-Starts solid, rises sharply once the solicitor letter is found, peaks at the forged document and inward-broken glass, then stays high through the alibi break.
+The background layer is fixed and now genuinely alive: Wren tuning the fiddle until her fingers
+warm; Cole working his ladder clockwise and swearing at the clinic's window; Effie walking three
+dogs "that aren't hers on a route their owners never chose"; Dez trundling his stall cart testing
+pitches. Ten residents, ten habits, correctly kept clear of the bookshop back room during the
+window.
 
-### Confusion Points
-- HIGH CONFIDENCE: The invoice discrepancy is useful, but by itself I might not immediately understand why five minutes matters so much without stronger framing around Priya's claimed timeline.
-- MEDIUM CONFIDENCE: The distinction between the bookshop front, stockroom, and back room may need clear presentation so players understand exactly what Priya is denying.
+**Most believable resident:** Effie. **Least believable resident:** none stands out as false now.
+**Does the world feel worth revisiting?** Yes.
 
-### Favourite Clue
-Glass broke from inside.
+---
 
-### Favourite Deduction
-The opened solicitor letter means the killer acted because exposure was imminent, not because of a long-simmering abstract grievance.
+## SHOWRUNNER SUMMARY
 
-### Favourite Reveal
-The forged partnership transfer hidden behind the panel.
+### CONSENSUS
 
-### Would I Immediately Play Another Case?
-Yes.
+All six reviewers confirm the pass-1 blocker (no third act) is resolved and the puzzle they already
+praised is undamaged. The confession and epilogues are independently singled out by the Screenwriter,
+Psychologist, and Critic. The only remaining note is shared by the Detective and the Player: the
+*means* leg wants one or two more corroborating clues.
 
-### Findings
-- HIGH CONFIDENCE: I would feel clever when the physical scene tells me the break-in was fake.
-- HIGH CONFIDENCE: I would become highly curious the moment I learn Isabella arrived early for an urgent solicitor appointment.
-- MEDIUM CONFIDENCE: I might become briefly frustrated if I pursue Owen hard and then discover his alibi closes him off decisively without yielding a bigger twist.
-- MEDIUM CONFIDENCE: I would want one more "aha" interaction with Priya before accusation, because the current path is satisfying but a little neat.
+### DISAGREEMENTS
 
-### Top 3 Strengths
-1. Strong curiosity trigger around the opened letter.
-2. Clean environmental clueing.
-3. A satisfying sense of assembling pressure on a liar.
+None material. Pass 1's disagreement about whether the puzzle could carry a weak ending is moot — the
+ending is no longer weak.
 
-### Top 3 Weaknesses
-1. The suspect pool may narrow too quickly.
-2. Some spatial/timeline clarity will matter a lot in presentation.
-3. The late-game emotional peak is lower than the deductive peak.
+---
 
-### One thing I would absolutely protect
-The moment the fake break-in becomes obvious.
+## TOP STRENGTHS
 
-### One thing I would definitely change
-Give the player one more misleading but fair avenue before Priya becomes dominant.
+1. **The falling glass** — the best physical clue in the pack; proves "inside job" by physics.
+2. **The reversed R** — a forgery tell the player spots themselves.
+3. **Priya's confession** — grievance without a plea for forgiveness.
+4. **The staged break-in as structure** — every debunked "intruder" clue narrows the suspect list.
+5. **The epilogues** — Ben finishing his round; Owen rounding up.
+6. **The forgery motive** — proportionate, specific, and legally legible.
+7. **The wiped letter opener off its ring-mark** — small, exact, fair.
+8. **The background village** — restored to ten distinct residents.
+9. **Isabella as benefactor-antagonist** — control disguised as generosity.
+10. **The locked-room hook** — a body in a shop locked from within.
 
-### Confidence in this review
-Medium confidence.
+## TOP WEAKNESSES
 
-## Agent 5 - Film Critic
+1. **The means/method legs are thin** (validator: 1 and 2 supporting clues) — the one real gap.
+2. **Act 2 audit stretch** — purposeful but slightly flat.
+3. **The falling-glass tell is legible early** — caps difficulty.
+4. **Elias's loud wrong theory** is a familiar device.
+5. **A few functional interview lines** lack voice relative to the confession.
+6–10. No further material weaknesses.
 
-### Would audiences remember this?
-Yes, moderately.
+---
 
-### Would critics recommend it?
-Yes, with reservations.
+## IMPROVEMENT ROADMAP
 
-### Would streamers enjoy it?
-Yes. The clue structure is streamer-friendly because viewers can argue over scene physics and suspect behavior.
+| # | Change | Impact | Difficulty | Priority |
+|---|--------|--------|-----------|----------|
+| 1 | Add 1–2 corroborating clues to `conc_priya_means` / `conc_method` | High | Low | P1 |
+| 2 | Give Act 2 one more character beat during the break-in audit | Medium | Low | P2 |
+| 3 | A second red herring with a real (small) motive | Medium | Medium | P2 |
 
-### Three memorable moments
-1. The opened solicitor letter on the dead woman's desk.
-2. The realization that the glass fell the wrong way.
-3. The forged signature with the reversed loop on the capital R.
+*No P0 items remain.*
 
-### Three forgettable moments
-1. Ben's general presence in the square.
-2. Routine village movement before the stronger clues emerge.
-3. Owen as a debt-suspect once his alibi is confirmed.
+---
 
-### Overall review
-This is a polished village mystery with pleasing physical clue logic and a respectable sense of atmosphere, though it is more admirable than magnetic. It has charm in the setting and competence in the dialogue voices, but it stops short of the sparkling wit or emotional aftertaste associated with the most memorable genre pieces.
+## QUALITY DASHBOARD
 
-### Findings
-- HIGH CONFIDENCE: The atmosphere is appealing. A village square, rear alley, clinic, cafe, and cramped bookshop office create a distinctly televisual small-world stage.
-- MEDIUM CONFIDENCE: The experience is more grounded than flamboyant. It sits closer to restrained village crime than to playful ensemble mystery.
-- MEDIUM CONFIDENCE: Dialogue voice cards are promising, but the supplied interview writing is generally functional rather than quotable.
-- LOW CONFIDENCE: Humour is minimal. That is not a flaw by itself, but it reduces tonal distinctiveness.
+| Category | Score | Why |
+|---|---|---|
+| Logical Fairness | 8/10 | Clean spine; means leg wants more corroboration. |
+| Narrative Structure | 8/10 | Strong open, real climax; middle slightly flat. |
+| Character Depth | 8/10 | Priya, Isabella, Ben all land. |
+| Dialogue | 8/10 | The confession is excellent; some functional lines. |
+| World Building | 8/10 | The bookshop and square are concrete and lived-in. |
+| Village Realism | 8/10 | Ten distinct background routines, correctly routed. |
+| Player Agency | 8/10 | The glass deduction is the player's own. |
+| Fair Play | 8/10 | Discoverable and sufficient; means leg is the thinnest. |
+| Replayability | 5/10 | Once the glass is understood, understood. |
+| Entertainment | 8/10 | The best "constructed" mystery in the pack. |
+| Originality | 7/10 | Classic locked-room bones, elevated by the glass. |
+| Emotional Impact | 8/10 | Priya and Ben's parallel ruin. |
+| Spectator Enjoyment | 8/10 | The falling glass is a clip. |
+| Streaming Potential | 8/10 | Chat will debate the break-in for ten minutes. |
+| Production Readiness | 8/10 | Shippable; the means corroboration is a polish item. |
+| Commercial Appeal | 8/10 | Directly serves the classic-puzzle audience. |
+| **Overall Production Quality** | **8/10** | From unfinished puzzle to a complete, well-built case. |
 
-### Top 3 Strengths
-1. Strong sense of place.
-2. Memorable physical clues.
-3. A professional, credible mystery tone.
+---
 
-### Top 3 Weaknesses
-1. Limited wit or sparkle.
-2. Few emotionally haunting beats.
-3. Supporting cast charm is present but not exceptional.
+## SIGNATURE TEST
 
-### One thing I would absolutely protect
-The intimate bookshop-and-square atmosphere.
+- **Unforgettable idea:** The burglary that never happened, proven by which way the glass fell.
+- **Unforgettable scene:** Priya's composure going all at once after sixteen years of gratitude.
+- **Unforgettable clue:** The glass on the wrong side of the sill.
+- **Unforgettable character:** Priya.
+- **Unforgettable relationship:** Priya and Isabella.
+- **Unforgettable emotional moment:** Ben, on his round a week later, working out what his own
+  evidence did — and finishing the round.
 
-### One thing I would definitely change
-Sharpen a few lines of dialogue into more distinctive, replayable character moments.
+*No weak answers.*
 
-### Confidence in this review
-Medium confidence.
+---
 
-## Agent 6 - Village Simulator
-
-### Village Realism Score
-8/10
-
-### Most believable resident
-Ruth Calder. Her route-based certainty, restrained speech, and practical observational value feel rooted in daily life.
-
-### Least believable resident
-Elias Grant, slightly. Not because he is implausible, but because he is the most overtly functional "village witness" archetype.
-
-### Does the world feel worth revisiting?
-Yes.
-
-### Findings
-- OBJECTIVE: The village has a coherent midday ecosystem. Post route, clinic shift, delivery round, cafe frontage, bench watcher, and timber yard all create believable circulation around the square.
-- HIGH CONFIDENCE: The bookshop is well chosen as a murder location because it naturally combines public frontage, private back-room secrecy, paperwork, and a rear escape route.
-- MEDIUM CONFIDENCE: Several residents feel alive before the crime, but only in sketch form. The setting suggests a larger social web than the material fully dramatizes.
-- MEDIUM CONFIDENCE: Gossip energy is present through Elias and Ben, yet not fully exploited as a systemic village force.
-
-### Top 3 Strengths
-1. Strong small-village geography.
-2. Credible lunchtime routines.
-3. Good balance of public and private spaces.
-
-### Top 3 Weaknesses
-1. Social interconnection could run deeper.
-2. Gossip systems are implied more than dramatized.
-3. Some residents feel designed for function first, daily life second.
-
-### One thing I would absolutely protect
-The square-bookshop-alley layout.
-
-### One thing I would definitely change
-Add one or two more cross-relationships that matter before the murder.
-
-### Confidence in this review
-High confidence.
-
-## Executive Summary
-
-Case 002 is a strong, commercially viable mystery with a clean fair-play spine, a believable village setting, and a motive that lands because it is specific, urgent, and tied to documents the player can actually inspect. The six-reviewer consensus is that the case succeeds more as a polished detective puzzle than as an emotionally exceptional drama. Its biggest strengths are logical integrity, physical clueing, and atmosphere. Its biggest limitations are a modest opening, a supporting cast that is more functional than unforgettable, and a climax that resolves smartly without delivering a truly standout emotional detonation.
-
-## Top Strengths
-
-1. The motive is specific and time-pressured.
-Why this ranks first: the solicitor appointment at 13:30 turns forgery exposure into a live bomb, not backstory.
-
-2. The fake break-in clue is fair and satisfying.
-Why this ranks second: it rewards observation and reasoning, not arbitrary guessing.
-
-3. The forged document is a strong centerpiece clue.
-Why this ranks third: it connects character, motive, and plot in one object.
-
-4. The village geography is highly legible.
-Why this ranks fourth: public square, private office, and rear alley create natural lines of suspicion and movement.
-
-5. Priya is a credible culprit.
-Why this ranks fifth: her soft-spoken evasiveness and hidden ruthlessness align well.
-
-6. The false alibi is grounded in documentation.
-Why this ranks sixth: invoice timing gives the player something concrete to challenge.
-
-7. The victim feels active in the story.
-Why this ranks seventh: Isabella discovered the forgery and took meaningful steps before her death.
-
-8. The Owen red herring is honest.
-Why this ranks eighth: he has motive and suspicion without cheating the player.
-
-9. The case structure is efficient.
-Why this ranks ninth: there is very little dead narrative machinery.
-
-10. The setting has adaptation value.
-Why this ranks tenth: it is easy to imagine this mystery playing well in game, stream, or television form.
-
-## Top Weaknesses
-
-1. The emotional climax is not as memorable as the logical reveal.
-Impact: players may admire the case more than love it.
-
-2. The opening stretch is functional rather than gripping.
-Impact: some players will not feel fully hooked until the document trail emerges.
-
-3. Supporting characters are thinner than the central suspect.
-Impact: the ensemble is competent but not deeply sticky in memory.
-
-4. Weapon classification is inconsistent across materials.
-Impact: avoidable technical noise can undermine confidence in the solution.
-
-5. Owen's red herring resolves a bit safely.
-Impact: experienced players may clear him early and narrow to Priya quickly.
-
-6. Ben is underused.
-Impact: a potentially valuable emotional or gossip vector remains mostly decorative.
-
-7. Gossip is present but not systemically powerful.
-Impact: the village feels believable, but not maximally alive.
-
-8. The climax lacks a signature confrontation moment.
-Impact: streamers may have fewer all-caps reaction beats at the finish.
-
-9. Some spatial reasoning may depend on clear UI presentation.
-Impact: if room boundaries are not visually obvious, player confusion could rise.
-
-10. The dialogue is solid rather than sparkling.
-Impact: fewer lines are likely to be quoted or remembered.
-
-## Consensus
-
-All reviewers strongly agree on four points:
-- OBJECTIVE: The core logic is sound and the solution is valid.
-- HIGH CONFIDENCE: The solicitor letter and forged document create the case's strongest narrative engine.
-- HIGH CONFIDENCE: The fake break-in is one of the case's best features.
-- MEDIUM CONFIDENCE: The mystery is better as a puzzle than as an emotionally towering drama.
-
-## Disagreements
-
-- The Detective sees the Owen red herring as fair and competent; the First-Time Player finds it slightly too easy to eliminate once pursued. Final judgement: the First-Time Player is more persuasive here because player experience is defined by how quickly the suspect pool collapses, not by abstract fairness alone.
-- The Screenwriter wants a more dramatic emotional beat before the murder; the Film Critic finds the restrained tone appropriate. Final judgement: the Screenwriter wins because the current material lacks a standout scene without sacrificing any of the grounded tone.
-- The Village Simulator is satisfied with the world believability; the Character Psychologist wants deeper use of Ben and richer social links. Final judgement: both are substantially correct. The world works, but it is not yet maximally alive.
-
-## Improvement Roadmap
-
-### Quick Wins
-
-1. Align weapon metadata and descriptive language.
-Impact: Medium
-Difficulty: Low
-Priority: High
-
-2. Sharpen 3-5 lines of suspect dialogue for more distinct voice and replay value.
-Impact: Medium
-Difficulty: Low
-Priority: Medium
-
-3. Clarify front room versus back room versus stockroom presentation.
-Impact: Medium
-Difficulty: Low
-Priority: Medium
-
-### Medium Improvements
-
-1. Add one additional clue or witness beat that places Priya closer to the desk area during the murder window.
-Impact: High
-Difficulty: Medium
-Priority: High
-
-2. Deepen Ben's role as either an emotional mirror to Priya or a gossip conduit.
-Impact: Medium
-Difficulty: Medium
-Priority: Medium
-
-3. Make Owen's suspicion phase last slightly longer before exoneration.
-Impact: Medium
-Difficulty: Medium
-Priority: Medium
-
-### Major Rewrites
-
-1. Add a stronger pre-murder emotional scene between Priya and Isabella through memory, dialogue, or environmental residue.
-Impact: High
-Difficulty: Medium
-Priority: High
-
-2. Rebuild the climax to include a more cinematic confrontation or breakdown.
-Impact: High
-Difficulty: Medium
-Priority: High
-
-3. Expand the village web so supporting residents influence suspicion, gossip, and motive interpretation more dynamically.
-Impact: Medium
-Difficulty: High
-Priority: Medium
-
-## Quality Dashboard
-
-### Logical Fairness
-8/10
-Explanation: The clue chain is fair and mostly evidence-led, with minor cleanliness issues around weapon wording and suspect narrowing.
-
-### Narrative Structure
-8/10
-Explanation: Efficient and coherent, with a strong ticking clock but only a moderate opening punch.
-
-### Character Depth
-7/10
-Explanation: Priya and Isabella are good; the supporting cast is thinner.
-
-### Dialogue
-6/10
-Explanation: Functional, differentiated, and credible, but rarely memorable.
-
-### World Building
-8/10
-Explanation: The village frame is concise yet evocative.
-
-### Village Realism
-8/10
-Explanation: Daily routines and movement patterns feel plausible.
-
-### Player Agency
-7/10
-Explanation: Players can reason well from clues, though the suspect field may tighten early.
-
-### Fair Play
-8/10
-Explanation: The solution is discoverable without hidden cheating.
-
-### Replayability
-6/10
-Explanation: Strong first-solve appeal, but fewer layered twists for repeat discovery.
-
-### Entertainment
-7/10
-Explanation: Consistently engaging, not transcendent.
-
-### Originality
-7/10
-Explanation: The forged-transfer motive and bookshop setting help, though the overall frame remains genre-familiar.
-
-### Emotional Impact
-6/10
-Explanation: Respectable but not deep-cutting.
-
-### Spectator Enjoyment
-8/10
-Explanation: The physical clues and red-herring debates would play well on stream.
-
-### Streaming Potential
-8/10
-Explanation: Clear clue beats invite audience participation and chat theorizing.
-
-### Production Readiness
-8/10
-Explanation: The case is close to ship shape, needing refinement rather than rescue.
-
-### Commercial Appeal
-8/10
-Explanation: Accessible setting, clean clueing, and strong readability support broad appeal.
-
-### Overall Production Quality
-8/10
-Explanation: This is good work with evident craft and a few obvious upgrade paths.
-
-## Signature Test
-
-### What is the one unforgettable idea?
-The killer murders to stop a 13:30 solicitor appointment from exposing a forged transfer.
-
-### What is the one unforgettable scene?
-Weak answer. The material implies a tense confrontation in the back room, but the case lacks a single dramatized scene that feels iconic on the page.
-
-### What is the one unforgettable clue?
-The broken glass proving the window was smashed from inside.
-
-### What is the one unforgettable character?
-Priya Shah.
-
-### What is the one unforgettable relationship?
-Priya and Isabella.
-
-### What is the one unforgettable emotional moment?
-Weak answer. Priya realizing the letter means her life is about to unravel is strong in concept, but it is not yet staged with maximum emotional force.
-
-If any answer is weak or missing explain why.
-The scene and emotional-moment answers are weaker because the case currently delivers its best ideas through deduction rather than dramatized human collision.
-
-## Risk Register
+## RISK REGISTER
 
 | Issue | Severity | Likelihood | Impact | Confidence | Recommended Action |
 |---|---|---|---|---|---|
-| Weapon description inconsistency | Medium | High | Medium | High | Align metadata and prose immediately |
-| Suspect pool narrows too early | Medium | Medium | Medium | Medium | Strengthen alternate suspicion path |
-| Climax not memorable enough | High | Medium | High | Medium | Add stronger emotional confrontation |
-| Supporting cast underused | Medium | Medium | Medium | Medium | Deepen Ben and at least one witness |
-| Spatial confusion in play presentation | Medium | Low | Medium | Medium | Clarify room layout in UI and text |
-| Dialogue lacks standout lines | Low | Medium | Low | Medium | Polish key interview beats |
+| Means/method legs thin | Medium | Certain | A rigorous player notices the means case is lighter | Objective (validator) | P1 — add corroboration |
+| Early legibility of the glass tell | Low | Medium | Caps difficulty | Medium | Accept |
+| Act 2 audit flat | Low | Medium | Minor dip | Medium | P2 — add a beat |
 
-## Popcorn Test
+---
 
-### Where would chat explode?
-When viewers realize the window was broken from inside.
+## POPCORN TEST
 
-### Where would viewers become confused?
-Around exactly how the invoice gap disproves Priya's full lunchtime alibi unless the timeline is framed clearly.
+- **Where would chat explode?** The moment the glass is understood — "THERE WAS NO BURGLAR."
+- **Where would viewers become confused?** Briefly, on which conclusion the invoice supports (now
+  fixed, but still a beat that needs reading).
+- **Where would viewers clip the moment?** The reversed R reveal.
+- **Where would viewers shout "WAIT!"?** Priya asking whether Ben has been told.
 
-### Where would viewers clip the moment?
-The forged-document reveal behind the loose panel.
+**Spectator Enjoyment:** 8/10 · **Streamer Potential:** 8/10 · **Clip Potential:** 8/10 ·
+**Discussion Potential:** 8/10
 
-### Where would viewers shout "WAIT!"
-When the opened solicitor letter reveals the victim had already found the forgery and scheduled the 13:30 appointment.
+---
 
-### Scores
-Spectator Enjoyment: 8/10
-Streamer Potential: 8/10
-Clip Potential: 7/10
-Discussion Potential: 8/10
+## AWARDS
 
-## Awards
+- **Most Memorable Character:** Priya
+- **Best Clue:** The glass on the wrong side of the sill
+- **Best Red Herring:** The staged break-in itself
+- **Best Twist:** There was never an intruder
+- **Best Scene:** Priya's confession
+- **Best Relationship:** Priya and Isabella
+- **Most Cinematic Moment:** The forged signature's reversed R under the lamp
+- **Most Original Idea:** A murder solved by the direction broken glass falls
 
-### Most Memorable Character
-Priya Shah
+---
 
-### Best Clue
-Glass broke from inside
+## EXECUTIVE DECISION
 
-### Best Red Herring
-Owen Price's debt and window sighting
+### **Good** — release-ready, one P1 polish from Excellent.
 
-### Best Twist
-The killer acted because the solicitor appointment made exposure imminent that same day
+**Would I fund it?** Yes. It is the pack's most teachable puzzle.
 
-### Best Scene
-The discovery of the forged partnership transfer behind the loose panel
+**Would I release it today?** Yes. The pass-1 blocker is resolved; the case is complete and fair.
 
-### Best Relationship
-Priya Shah and Isabella Reed
+**Would I delay it?** Only if the schedule allows the means-leg corroboration — worth doing, not
+worth holding for.
 
-### Most Cinematic Moment
-Nadia finding the body with the rear door ajar and the staged break-in already visually collapsing
+**Three highest-ROI improvements before launch:** (1) corroborate the means/method legs; (2) one
+extra Act 2 character beat; (3) a second red herring with a real small motive.
 
-### Most Original Idea
-A forged business-transfer murder motive anchored to same-day solicitor review inside a small village bookshop
+- Stand alongside the best modern detective games? **Yes, as a puzzle.**
+- Remembered after one week? **Yes.** · One month? **Yes — the glass.** · One year? **Probably —
+  the glass is the kind of clue people retell.**
+- Recommend to friends? **Yes.** · Replay? **No.** · Streamers enjoy it? **Yes.**
 
-## Executive Decision
+### "Why will players remember this mystery?"
 
-### Good
-
-Would I fund this project?
-Yes.
-
-Would I release it today?
-Yes, if positioned as a strong mid-tier case rather than a flagship showcase.
-
-Would I delay it for further improvements?
-Not for fundamental repair. I would only delay if the goal is to elevate it from good to excellent.
-
-What are the three highest ROI improvements before launch?
-1. Align the weapon/injury logic across all data.
-2. Add one more emotionally vivid Isabella-Priya pre-murder beat.
-3. Extend or enrich the alternate-suspect phase so Priya does not dominate too quickly.
-
-Finally answer:
-
-Would this mystery stand alongside the best modern detective games?
-Not yet.
-
-Would players remember it after one week?
-Yes.
-
-Would players remember it after one month?
-Some will, especially the fake break-in and forged-document chain.
-
-Would players remember it after one year?
-Probably not at scale without a more iconic scene or emotional signature.
-
-Would they recommend it to friends?
-Yes.
-
-Would they replay it?
-Some would, though replay desire is moderate rather than exceptional.
-
-Would streamers enjoy discovering it?
-Yes.
-
-**Why will players remember this mystery?**
-
-Players will remember this mystery because it gives them a fair, satisfying chain of deductions inside a vividly readable setting: a dead bookseller, an opened solicitor's letter, a forged signature, and a break-in scene undone by the direction of shattered glass. What it still lacks is one truly indelible dramatic moment. If that final layer is added, this could move from "good village mystery" to "genuinely memorable detective story."
+Because of one clue. The direction broken glass falls is the sort of detail that turns a passive
+viewer into a detective mid-scene, and it converts the entire break-in from evidence *of* a burglar
+into proof there was none. The case used to squander that brilliance on a story with no ending; it
+now spends it on a confession that earns the walk to the door. Players will remember the glass — and
+now they'll remember what it cost Priya.

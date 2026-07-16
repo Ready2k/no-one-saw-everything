@@ -1,0 +1,34 @@
+{
+  "version": "living_town_v2_remaster_v5_zoom_interior_v2",
+  "purpose": "Grid-safe v5 B2 zoom/cutaway candidate. Uses a newly generated B2 interior blended into exact v5 exterior edge geography.",
+  "coordinate_space": {
+    "full_map_width": 6144,
+    "full_map_height": 4608,
+    "tile_width": 2048,
+    "tile_height": 1536,
+    "cols": 3,
+    "rows": 3
+  },
+  "source_generation": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B2_zoom_interior_v2_generated_source.png",
+  "generated_scaled_b2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B2_zoom_interior_v2_generated_scaled.png",
+  "edge_locked_b2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B2_zoom_interior_v2_edge_locked.png",
+  "edge_lock_mask": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B2_zoom_interior_v2_edge_lock_mask.png",
+  "master_preview": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_full_master_remaster_v5_zoom_interior_v2.png",
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_full_master_remaster_v5_zoom_interior_v2_contact.png",
+  "tile_urls": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_A1_living_town_remaster_v5_zoom_interior_v2.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_A2_living_town_remaster_v5_zoom_interior_v2.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_A3_living_town_remaster_v5_zoom_interior_v2.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B1_living_town_remaster_v5_zoom_interior_v2.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B2_living_town_remaster_v5_zoom_interior_v2.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B3_living_town_remaster_v5_zoom_interior_v2.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_C1_living_town_remaster_v5_zoom_interior_v2.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_C2_living_town_remaster_v5_zoom_interior_v2.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_C3_living_town_remaster_v5_zoom_interior_v2.png"
+  },
+  "qa_notes": [
+    "The outer B2 edge band is from the v5 exterior tile to keep A2/B1/B3/C2 alignment.",
+    "The centre is the new generated roofless interior/cutaway candidate.",
+    "This is a preview candidate and is not promoted into runtime until accepted."
+  ]
+}

@@ -8,11 +8,27 @@
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat", "x": 28, "y": 52, "radius": 7},
-      "supports_conclusion_ids": ["conc_ben_motive"],
-      "linked_agent_ids": ["agent_ben", "agent_owen"],
-      "linked_object_ids": ["obj_blackmail_letters", "obj_arson_clipping"],
-      "linked_event_ids": ["ev_2200_ben_finds_letters"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ben_flat",
+        "x": 28,
+        "y": 52,
+        "radius": 7
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_blackmail_letters",
+        "obj_arson_clipping"
+      ],
+      "linked_event_ids": [
+        "ev_2200_ben_finds_letters"
+      ]
     },
     {
       "clue_id": "clue_arson_clipping",
@@ -22,10 +38,26 @@
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "medium",
-      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat", "x": 46, "y": 61, "radius": 6, "required_prior_clue_ids": ["clue_blackmail_letters"]},
-      "supports_conclusion_ids": ["conc_ben_motive"],
-      "linked_agent_ids": ["agent_ben", "agent_owen"],
-      "linked_object_ids": ["obj_arson_clipping"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ben_flat",
+        "x": 46,
+        "y": 61,
+        "radius": 6,
+        "required_prior_clue_ids": [
+          "clue_blackmail_letters"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_arson_clipping"
+      ]
     },
     {
       "clue_id": "clue_ben_cancel_text",
@@ -35,11 +67,26 @@
       "strength": "medium",
       "reliability": 0.9,
       "ambiguity": "medium",
-      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat", "x": 51, "y": 57, "radius": 6},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_ben", "agent_priya"],
-      "linked_object_ids": ["obj_ben_phone"],
-      "linked_event_ids": ["ev_2200_ben_finds_letters"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ben_flat",
+        "x": 51,
+        "y": 57,
+        "radius": 6
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_priya"
+      ],
+      "linked_object_ids": [
+        "obj_ben_phone"
+      ],
+      "linked_event_ids": [
+        "ev_2200_ben_finds_letters"
+      ]
     },
     {
       "clue_id": "clue_owen_left_pub",
@@ -49,11 +96,24 @@
       "strength": "medium",
       "reliability": 0.85,
       "ambiguity": "medium",
-      "discoverability": {"method": "interview", "agent_id": "agent_fred", "question_type": "timeline"},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_owen", "agent_fred"],
-      "linked_object_ids": ["obj_owen_pub_receipt"],
-      "linked_event_ids": ["ev_2248_owen_leaves_pub"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_fred",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_owen",
+        "agent_fred"
+      ],
+      "linked_object_ids": [
+        "obj_owen_pub_receipt"
+      ],
+      "linked_event_ids": [
+        "ev_2248_owen_leaves_pub"
+      ]
     },
     {
       "clue_id": "clue_nadia_night_sighting",
@@ -63,10 +123,21 @@
       "strength": "medium",
       "reliability": 0.8,
       "ambiguity": "medium",
-      "discoverability": {"method": "interview", "agent_id": "agent_nadia", "question_type": "timeline"},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_nadia", "agent_ben"],
-      "linked_event_ids": ["ev_2235_nadia_window"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_ben"
+      ],
+      "linked_event_ids": [
+        "ev_2235_nadia_window"
+      ]
     },
     {
       "clue_id": "clue_elias_two_figures",
@@ -76,10 +147,20 @@
       "strength": "medium",
       "reliability": 0.55,
       "ambiguity": "high",
-      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline"},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_elias"],
-      "linked_event_ids": ["ev_2255_elias_window"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_elias"
+      ],
+      "linked_event_ids": [
+        "ev_2255_elias_window"
+      ]
     },
     {
       "clue_id": "clue_nadia_voices",
@@ -89,10 +170,26 @@
       "strength": "medium",
       "reliability": 0.6,
       "ambiguity": "high",
-      "discoverability": {"method": "interview", "agent_id": "agent_nadia", "question_type": "timeline", "required_prior_clue_ids": ["clue_nadia_night_sighting"]},
-      "supports_conclusion_ids": ["conc_ben_opportunity", "conc_ben_motive"],
-      "linked_agent_ids": ["agent_nadia", "agent_owen", "agent_ben"],
-      "linked_event_ids": ["ev_2300_confrontation"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "question_type": "timeline",
+        "required_prior_clue_ids": [
+          "clue_nadia_night_sighting"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity",
+        "conc_ben_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_owen",
+        "agent_ben"
+      ],
+      "linked_event_ids": [
+        "ev_2300_confrontation"
+      ]
     },
     {
       "clue_id": "clue_elias_fleeing_figure",
@@ -102,10 +199,24 @@
       "strength": "medium",
       "reliability": 0.55,
       "ambiguity": "high",
-      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline", "required_prior_clue_ids": ["clue_elias_two_figures"]},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_elias", "agent_ben"],
-      "linked_event_ids": ["ev_2318_ben_flees"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias",
+        "question_type": "timeline",
+        "required_prior_clue_ids": [
+          "clue_elias_two_figures"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_ben"
+      ],
+      "linked_event_ids": [
+        "ev_2318_ben_flees"
+      ]
     },
     {
       "clue_id": "clue_fountain_stone",
@@ -115,9 +226,19 @@
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_fountain", "x": 78, "y": 45, "radius": 7},
-      "supports_conclusion_ids": ["conc_method"],
-      "linked_object_ids": ["obj_fountain_stone"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_fountain",
+        "x": 78,
+        "y": 45,
+        "radius": 7
+      },
+      "supports_conclusion_ids": [
+        "conc_method"
+      ],
+      "linked_object_ids": [
+        "obj_fountain_stone"
+      ]
     },
     {
       "clue_id": "clue_bootprint",
@@ -127,10 +248,22 @@
       "strength": "strong",
       "reliability": 0.85,
       "ambiguity": "medium",
-      "discoverability": {"method": "inspect", "location_id": "loc_fountain", "x": 71, "y": 57, "radius": 7},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_ben"],
-      "linked_object_ids": ["obj_mud_bootprint"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_fountain",
+        "x": 71,
+        "y": 57,
+        "radius": 7
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_ben"
+      ],
+      "linked_object_ids": [
+        "obj_mud_bootprint"
+      ]
     },
     {
       "clue_id": "clue_jacket_mud",
@@ -140,10 +273,22 @@
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "medium",
-      "discoverability": {"method": "inspect", "location_id": "loc_ben_flat", "x": 16, "y": 56, "radius": 7},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_ben"],
-      "linked_object_ids": ["obj_ben_jacket_mud"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ben_flat",
+        "x": 16,
+        "y": 56,
+        "radius": 7
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_ben"
+      ],
+      "linked_object_ids": [
+        "obj_ben_jacket_mud"
+      ]
     },
     {
       "clue_id": "clue_ben_no_evening_alibi",
@@ -153,9 +298,17 @@
       "strength": "medium",
       "reliability": 0.6,
       "ambiguity": "high",
-      "discoverability": {"method": "interview", "agent_id": "agent_ben", "question_type": "alibi"},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_ben"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_ben"
+      ]
     },
     {
       "clue_id": "clue_fred_only_saw_owen",
@@ -165,9 +318,18 @@
       "strength": "medium",
       "reliability": 0.85,
       "ambiguity": "low",
-      "discoverability": {"method": "interview", "agent_id": "agent_fred", "question_type": "alibi"},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_fred", "agent_ben"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_fred",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_fred",
+        "agent_ben"
+      ]
     },
     {
       "clue_id": "clue_fred_lighter_found",
@@ -177,11 +339,25 @@
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "medium",
-      "discoverability": {"method": "inspect", "location_id": "loc_fountain", "x": 45, "y": 69, "radius": 7},
-      "supports_conclusion_ids": ["conc_fred_red_herring"],
-      "linked_agent_ids": ["agent_fred"],
-      "linked_object_ids": ["obj_fred_lighter"],
-      "linked_event_ids": ["ev_2250_fred_argument"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_fountain",
+        "x": 45,
+        "y": 69,
+        "radius": 7
+      },
+      "supports_conclusion_ids": [
+        "conc_fred_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_fred"
+      ],
+      "linked_object_ids": [
+        "obj_fred_lighter"
+      ],
+      "linked_event_ids": [
+        "ev_2250_fred_argument"
+      ]
     },
     {
       "clue_id": "clue_fred_ledger_debt",
@@ -191,10 +367,23 @@
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_pub", "x": 76, "y": 23, "radius": 7},
-      "supports_conclusion_ids": ["conc_fred_red_herring"],
-      "linked_agent_ids": ["agent_fred", "agent_owen"],
-      "linked_object_ids": ["obj_pub_ledger"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_pub",
+        "x": 76,
+        "y": 23,
+        "radius": 7
+      },
+      "supports_conclusion_ids": [
+        "conc_fred_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_fred",
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_pub_ledger"
+      ]
     },
     {
       "clue_id": "clue_priya_false_alibi",
@@ -204,9 +393,116 @@
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "low",
-      "discoverability": {"method": "interview", "agent_id": "agent_priya", "question_type": "alibi", "required_prior_clue_ids": ["clue_ben_cancel_text"]},
-      "supports_conclusion_ids": ["conc_ben_opportunity"],
-      "linked_agent_ids": ["agent_priya", "agent_ben"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_priya",
+        "question_type": "alibi",
+        "required_prior_clue_ids": [
+          "clue_ben_cancel_text"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_priya",
+        "agent_ben"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_saw_fred_turn_back",
+      "title": "Fred never reached the fountain",
+      "clue_type": "witness_statement",
+      "description": "Nadia, awake at her window, saw the pub landlord come out after Owen and stop at the top of the square. He stood under the lamp smoking for a good quarter of an hour — she remembers because she wondered whether to go down — and then he turned round and went back to the pub. He never went near the fountain. That is where his lighter came from.",
+      "strength": "strong",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia"
+      },
+      "supports_conclusion_ids": [
+        "conc_fred_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_fred",
+        "agent_nadia"
+      ],
+      "linked_location_ids": [
+        "loc_village_square"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_boots_match",
+      "title": "Ben's boots — size 9, fountain-bed soil",
+      "clue_type": "physical_evidence",
+      "description": "Ben's work boots are a size 9, and the tread matches the print pressed into the fountain flower bed. The soil worked into the welt is the same wet loam as the bed itself — and the same loam as the smear on his jacket cuff. He stood in that flower bed, close enough to reach the coping stones.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_fountain"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_means",
+        "conc_ben_opportunity",
+        "conc_ben_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_ben"
+      ],
+      "linked_object_ids": [
+        "obj_fountain_stone"
+      ],
+      "linked_location_ids": [
+        "loc_fountain"
+      ]
+    },
+    {
+      "clue_id": "clue_priya_lied_to_police",
+      "title": "Priya lied, and had a reason to",
+      "clue_type": "witness_statement",
+      "description": "Priya gave Ben a false alibi and held to it under questioning. She also knew what Owen was: Ben had told her about the letters. A woman who knows the victim tormented the man she loves, and who lies to the police the moment he is dead, is not obviously a bystander.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_priya",
+        "required_prior_clue_ids": [
+          "clue_blackmail_letters"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_priya_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_priya",
+        "agent_ben"
+      ]
+    },
+    {
+      "clue_id": "clue_priya_landline_call",
+      "title": "The 23:10 call from Priya's flat",
+      "clue_type": "document",
+      "description": "The call log for Priya's landline: an outgoing call at 23:10, lasting nineteen minutes, to her sister in Leicester. The fountain is a nine-minute walk away. Whatever Priya was doing while Owen Price was being killed, she was doing it at her own kitchen table with a phone against her ear.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_priya_flat",
+        "required_prior_clue_ids": [
+          "clue_priya_lied_to_police"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_priya_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_priya"
+      ]
     }
   ],
   "conclusions": [
@@ -216,7 +512,11 @@
       "summary": "Ben discovered that Owen had blackmailed his father for twelve years over the village hall arson. He found the letters the same evening and confronted Owen.",
       "target_agent_id": "agent_ben",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_blackmail_letters", "clue_arson_clipping", "clue_nadia_voices"]
+      "supported_by_clue_ids": [
+        "clue_blackmail_letters",
+        "clue_arson_clipping",
+        "clue_nadia_voices"
+      ]
     },
     {
       "conclusion_id": "conc_ben_opportunity",
@@ -224,14 +524,25 @@
       "summary": "Ben cancelled his evening plans at 22:00, was seen crossing the square at 22:35, had his alibi broken by a timestamped text, and carries physical traces of the fountain flower bed.",
       "target_agent_id": "agent_ben",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_ben_cancel_text", "clue_nadia_night_sighting", "clue_elias_two_figures", "clue_elias_fleeing_figure", "clue_bootprint", "clue_jacket_mud", "clue_priya_false_alibi", "clue_ben_no_evening_alibi"]
+      "supported_by_clue_ids": [
+        "clue_ben_cancel_text",
+        "clue_nadia_night_sighting",
+        "clue_elias_two_figures",
+        "clue_elias_fleeing_figure",
+        "clue_bootprint",
+        "clue_jacket_mud",
+        "clue_priya_false_alibi",
+        "clue_ben_no_evening_alibi"
+      ]
     },
     {
       "conclusion_id": "conc_method",
       "type": "method",
       "summary": "Owen was struck with a loose piece of the fountain's stone coping. The bloodied stone was found beside the body; the gap in the fountain rim is fresh.",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_fountain_stone"]
+      "supported_by_clue_ids": [
+        "clue_fountain_stone"
+      ]
     },
     {
       "conclusion_id": "conc_fred_red_herring",
@@ -239,7 +550,65 @@
       "summary": "Fred owed Owen extortionate debts and his lighter was found near the scene, but he returned to the pub by 22:55, giving him an alibi for the time of death.",
       "target_agent_id": "agent_fred",
       "required_for_solution": false,
-      "supported_by_clue_ids": ["clue_fred_lighter_found", "clue_fred_ledger_debt"]
+      "supported_by_clue_ids": [
+        "clue_fred_lighter_found",
+        "clue_fred_ledger_debt"
+      ]
+    },
+    {
+      "conclusion_id": "conc_fred_innocent",
+      "type": "innocence_anchor",
+      "summary": "Fred followed Owen out to beg for more time on the debt, lost his nerve at the top of the square, and turned back. Nadia watched him do it. His lighter fell where he stood — not at the fountain.",
+      "target_agent_id": "agent_fred",
+      "supported_by_clue_ids": [
+        "clue_nadia_saw_fred_turn_back",
+        "clue_fred_lighter_found"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_means",
+      "type": "means",
+      "summary": "The weapon was a loose coping stone from the fountain surround — picked up where Ben was standing. His size 9 boots match the print in the flower bed and the soil on his cuff.",
+      "target_agent_id": "agent_ben",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_fountain_stone",
+        "clue_bootprint",
+        "clue_ben_boots_match",
+        "clue_jacket_mud"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_false_alibi",
+      "type": "false_alibi",
+      "summary": "Ben claimed he was home all evening, and Priya backed him. She was lying to protect him: he cancelled on her at ten, and Nadia saw him crossing the square after half past.",
+      "target_agent_id": "agent_ben",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_priya_false_alibi",
+        "clue_ben_cancel_text",
+        "clue_nadia_night_sighting",
+        "clue_ben_no_evening_alibi"
+      ]
+    },
+    {
+      "conclusion_id": "conc_priya_red_herring",
+      "type": "red_herring",
+      "summary": "Priya knew what Owen had done to Ben's father, and lied to the police to cover Ben's movements on the night Owen died.",
+      "target_agent_id": "agent_priya",
+      "supported_by_clue_ids": [
+        "clue_priya_false_alibi",
+        "clue_priya_lied_to_police"
+      ]
+    },
+    {
+      "conclusion_id": "conc_priya_innocent",
+      "type": "innocence_anchor",
+      "summary": "Priya was on the phone to her sister from 23:10 for nineteen minutes, from her own flat.",
+      "target_agent_id": "agent_priya",
+      "supported_by_clue_ids": [
+        "clue_priya_landline_call"
+      ]
     }
   ]
 }

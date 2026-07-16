@@ -205,14 +205,43 @@ def test_unrelated_evidence_handled_gracefully():
     assert fountain["player_known_status"] == "claimed"
 
 
-def test_challenge_suggestions_appear_only_with_evidence():
+def test_suggestions_nudge_without_solving_the_deduction():
+    """By default the player is told a contradiction EXISTS, never which one.
+
+    Spotting that what a suspect just said cannot be true given what is in your pocket is the
+    core act of the game. The endpoint used to hand over the finished pairing (claim + the clue
+    that disproves it) unasked, which performed that deduction for the player.
+    """
     claim_id = _clara_fountain_claim()
-    # No evidence discovered yet -> no suggestion for the fountain claim.
-    sugg = client.get("/api/challenge/suggestions").json()
-    assert not any(s["challenged_claim_id"] == claim_id for s in sugg)
+
+    # No evidence yet -> nothing to contradict.
+    body = client.get("/api/challenge/suggestions").json()
+    assert body["contradiction_count"] == 0
+    assert body["suggestions"] == []
+
     _discover_ben_sighting()
-    sugg = client.get("/api/challenge/suggestions").json()
+
+    # Now the player holds a contradiction — and is told so, but not which claim or which clue.
+    body = client.get("/api/challenge/suggestions").json()
+    assert body["contradiction_count"] == 1
+    assert body["suggestions"] == [], "the pairing must not be handed over unasked"
+    assert body["revealed"] is False
+    assert body["hints_taken"] == 0
+
+
+def test_revealing_a_suggestion_is_an_explicit_counted_hint():
+    claim_id = _clara_fountain_claim()
+    _discover_ben_sighting()
+
+    body = client.get("/api/challenge/suggestions?reveal=true").json()
+    assert body["revealed"] is True
     assert any(
         s["challenged_claim_id"] == claim_id and s["evidence_clue_id"] == "clue_ben_sighting"
-        for s in sugg
+        for s in body["suggestions"]
     )
+    # The player is told they took a hint.
+    assert body["hints_taken"] == 1
+
+    # And it stays counted.
+    again = client.get("/api/challenge/suggestions?reveal=true").json()
+    assert again["hints_taken"] == 2

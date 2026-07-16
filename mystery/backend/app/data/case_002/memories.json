@@ -8,7 +8,7 @@
     "memory_type": "private_secret",
     "case_function": "killer_motive",
     "truth_status": "true",
-    "summary": "Priya forged Isabella's signature on the partnership transfer six weeks ago, after Marcus told her the expansion was hers. She did not want to wait for Isabella to agree \u2014 she feared Isabella would contest it.",
+    "summary": "Priya forged Isabella's signature on the partnership transfer six weeks ago, after Marcus told her the expansion was hers. She did not want to wait for Isabella to agree — she feared Isabella would contest it.",
     "emotional_weight": 10,
     "shareability": "will_hide",
     "discoverable_by_player": true,
@@ -141,7 +141,7 @@
     "memory_type": "observed",
     "case_function": "innocence_anchor",
     "truth_status": "true",
-    "summary": "Owen was pouring a concrete pad in his yard from 11:00 with two workers \u2014 Danny Marsh and Lee Tuck \u2014 present until gone half past one.",
+    "summary": "Owen was pouring a concrete pad in his yard from 11:00 with two workers — Danny Marsh and Lee Tuck — present until gone half past one.",
     "emotional_weight": 4,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
@@ -158,7 +158,7 @@
     "memory_type": "witness_fragment",
     "case_function": "clue_support",
     "truth_status": "true",
-    "summary": "Ruth delivered the Whittle & Cross letter sealed at 11:10. She is certain of the time \u2014 the bookshop is third on her route.",
+    "summary": "Ruth delivered the Whittle & Cross letter sealed at 11:10. She is certain of the time — the bookshop is third on her route.",
     "emotional_weight": 4,
     "confidence": 0.9,
     "shareability": "will_share_if_asked",
@@ -255,7 +255,7 @@
     "memory_type": "witness_fragment",
     "case_function": "clue_support",
     "truth_status": "true",
-    "summary": "Elias noticed Isabella arrive at 12:32 \u2014 nearly 30 minutes before her usual time. She looked purposeful rather than panicked.",
+    "summary": "Elias noticed Isabella arrive at 12:32 — nearly 30 minutes before her usual time. She looked purposeful rather than panicked.",
     "emotional_weight": 5,
     "confidence": 0.8,
     "shareability": "will_share",
@@ -273,7 +273,7 @@
     "memory_type": "witness_fragment",
     "case_function": "red_herring_motive",
     "truth_status": "true",
-    "summary": "Elias noticed Owen glaring through the bookshop window at 12:25, waving a piece of paper. He's convinced Owen did it \u2014 'the man's always two steps from the edge'.",
+    "summary": "Elias noticed Owen glaring through the bookshop window at 12:25, waving a piece of paper. He's convinced Owen did it — 'the man's always two steps from the edge'.",
     "emotional_weight": 5,
     "confidence": 0.75,
     "shareability": "will_share",
@@ -291,7 +291,7 @@
     "memory_type": "observed",
     "case_function": "clue_support",
     "truth_status": "true",
-    "summary": "Nadia found Isabella face-down behind the desk at 13:15. The rear door was ajar. A green thread was visible on the latch. The window was broken inward \u2014 Nadia's medical training tells her the glass distribution is wrong for an external break.",
+    "summary": "Nadia found Isabella face-down behind the desk at 13:15. The rear door was ajar. A green thread was visible on the latch. The window was broken inward — Nadia's medical training tells her the glass distribution is wrong for an external break.",
     "emotional_weight": 10,
     "shareability": "will_share",
     "discoverable_by_player": true,
@@ -301,6 +301,76 @@
     ],
     "linked_location_ids": [
       "loc_bookshop_back"
+    ]
+  },
+  {
+    "memory_id": "mem_priya_summons",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "When Isabella arrived early at 12:32 she went straight through to the back room and called Priya in after her. They were alone behind a closed counter door, with the shop shut and nobody due until the afternoon.",
+    "emotional_weight": 9,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ben_argument_glimpse"
+    ],
+    "linked_agent_ids": [
+      "agent_isabella"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop_back"
+    ]
+  },
+  {
+    "memory_id": "mem_ben_no_alibi",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Ben cannot account for 12:43 and knows how his glimpse into the back room looks now that people have found out he was seeing Priya. He has been dreading the question.",
+    "emotional_weight": 7,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ben_no_alibi"
+    ],
+    "linked_agent_ids": [
+      "agent_priya"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop"
+    ]
+  },
+  {
+    "memory_id": "mem_ben_anchor",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_ben"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Nadia signed for Ben's clinic delivery at 12:44 and remembers him grumbling about a mis-sorted parcel.",
+    "emotional_weight": 4,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ben_clinic_docket"
+    ],
+    "linked_agent_ids": [
+      "agent_ben"
+    ],
+    "linked_location_ids": [
+      "loc_clinic"
     ]
   }
 ]

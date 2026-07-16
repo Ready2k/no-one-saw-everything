@@ -136,6 +136,88 @@ locations, events/timeline, clue graph, seeded memories, `challenges.json`, `sol
 `case_001` is the hand-authored reference case (*The Storage Room Murder*). `templates/` holds
 generation templates. `llm_settings.json` is gitignored.
 
+#### Case invariants every case must satisfy (enforced by `validator.py`)
+
+`validate_case()` is the fairness gate, and **every case — hand-authored or generated — must pass
+it with zero errors**. Cases 002–006 once shipped invalid because nothing ran it. Beyond the
+clue-graph/timeline checks it has always had, three invariants exist because they were each
+violated in shipped content:
+
+1. **`Agent.routine_summary` must never carry case truth.** It is player-visible
+   (`projections.project_agent`, served by `GET /api/agents`) and is rendered on the Suspects
+   screen *before a single clue is discovered*. Cases 004/005/006 shipped with routines that
+   announced the killer's motive ("that night he went to the square after finding his father's
+   papers"), stated an alibi was false ("she lied to protect him"), gave away case 006's identity
+   twist ("dimly recalls Ruth's maiden name was Bell"), and even carried author notes ("his forged
+   alibi will need to be dismantled"). A routine describes what someone does on an *ordinary* day —
+   a habit, a preference, an opinion; never a plot point, a secret, or what happened on the night
+   of the murder. Guarded by `validator.py` check 14, `tests/test_routine_summary_no_leak.py`, a
+   `RoutinePlan` field validator in `llm/schemas.py`, and the timeline prompt in
+   `llm/mystery_architect.py`.
+2. **Every case needs a third act.** The killer must have at least one `contradiction_locked`
+   challenge (the confession) and `solution.epilogues` must be non-empty. Both are engine-supported
+   (`challenge.py`, `judge.py:109`) but were never authored, so in five of six cases the killer
+   never broke and the reveal screen was blank. The three `templates/*.json` now carry both.
+3. **Every red herring needs an `innocence_anchor`.** An anchor should read as information
+   *withheld* (out of pride, confidentiality, embarrassment), never as a witness *retracting* a
+   factual assertion — an innocent man holding a timed, signed docket does not first tell the
+   detective he was alone.
+
+Time-of-day matters: cases do not all happen in the morning (case_004 runs 22:00–23:45). The
+timeline prompt derives the part of day from `sim_start_time`; keep clock phrases in dialogue
+consistent with the case's actual hours.
+
+#### Challenge rule matching
+
+`challenge._find_rule` picks the **best** matching rule, not the first in file order: rules match
+on *overlapping* evidence, so a one-clue `deflect` can otherwise shadow the multi-clue confession.
+Ranking is: fully-supplied trigger first, then outcome severity, then overlap size, then file
+order. Bringing more/better evidence must never yield a weaker response. See
+`tests/test_challenge_rule_specificity.py`.
+
+#### Authoring interview rules (they fail silently)
+
+`interview._match_rule` **skips** a rule it cannot match, with no error and no log:
+
+* an `evidence` rule needs a `topic_clue_id` (or `topic_object_id`) — without one it can *never*
+  fire, no matter what the player asks;
+* a `location` rule needs a `topic_location_id`;
+* a `timeline` rule only matches a request that carries a `time_reference`.
+
+There is **no `requires_clue_ids` field on `AnswerRule`** — gating is done by the *clue's*
+`discoverability.required_prior_clue_ids` (`_prereqs_met` locks any rule that reveals a clue whose
+prerequisites are undiscovered), and by `min_ask_count` for depth. Fourteen authored rules across
+four cases were unreachable this way: valid data, passing every other check, invisible to every
+player. Guarded by `tests/test_interview_rule_reachability.py`.
+
+#### Testimony as evidence (`testimony.py`)
+
+One villager's word can be used against another's — the mechanic the title promises. A claim
+carries `about_agent_id` (whose whereabouts it settles; defaults to the speaker) and
+`asserts_presence` (False = a *denial*: "she was never at that fountain"). `find_conflict` then
+settles deterministically whether two statements can both be true:
+
+* same person, same moment, **different places** → bilocation (or self-contradiction, if the same
+  speaker said both);
+* same person, same place, **opposite polarity** → denial.
+
+It is deliberately conservative, and the tolerances are load-bearing: bilocation needs the two
+statements to be within **5 minutes** (at 15, it called Clara being in the cafe at 07:40 and the
+fountain at 07:50 a contradiction — that is a *walk*), while a denial spans 20, because a witness
+watching a place is speaking about a stretch of time. **A detector that cries wolf is worse than
+none, because the player stops believing it** — so testimony that does not conflict is rebuffed
+honestly rather than fudged into a hit. `ChallengeRule` may also script reactions via
+`evidence_claim_ids`. Guarded by `tests/test_testimony.py`.
+
+When authoring claims: annotate any claim that *places a person* — a witness statement about
+someone else is useless to the player unless `about_agent_id` says who it is about.
+
+#### The verdict must not contradict the accusation
+
+A correct accusation floors at score 45 (`judge.py`), and the 20–49 verdict band used to read
+"Wrong suspect" — so naming the right killer on thin evidence told the player they were wrong.
+`_verdict_band` now takes `killer_correct`.
+
 #### Background NPCs
 
 Ambient, non-suspect characters (`Agent.is_background = true`) wander the map for flavor via

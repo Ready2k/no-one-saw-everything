@@ -2,20 +2,29 @@
   {
     "memory_id": "mem_nadia_bequest",
     "owner_agent_id": "agent_nadia",
-    "known_by_agent_ids": ["agent_nadia", "agent_elias"],
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_elias"
+    ],
     "memory_type": "private_secret",
     "case_function": "killer_motive",
     "truth_status": "true",
-    "summary": "Two years ago Nadia helped Elias draft a letter directing his cottage estate to the clinic fund. She has built the clinic's five-year plan around this inheritance.",
+    "summary": "Two years ago Nadia helped Elias draft a letter directing his cottage estate to the clinic fund. She has built the clinic's five-year plan around this inheritance — and staked her own name on it, promising the trust and the district board a new treatment room she cannot now deliver without it.",
     "emotional_weight": 9,
     "shareability": "will_hide",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_clinic_bequest_letter", "clue_nadia_budget_notes"]
+    "linked_clue_ids": [
+      "clue_clinic_bequest_letter",
+      "clue_nadia_budget_notes"
+    ]
   },
   {
     "memory_id": "mem_nadia_elias_change",
     "owner_agent_id": "agent_nadia",
-    "known_by_agent_ids": ["agent_nadia", "agent_elias"],
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_elias"
+    ],
     "memory_type": "private_secret",
     "case_function": "killer_trigger",
     "truth_status": "true",
@@ -23,12 +32,17 @@
     "emotional_weight": 10,
     "shareability": "will_hide",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_solicitor_appointment", "clue_elias_notebook"]
+    "linked_clue_ids": [
+      "clue_solicitor_appointment",
+      "clue_elias_notebook"
+    ]
   },
   {
     "memory_id": "mem_nadia_pill_prep",
     "owner_agent_id": "agent_nadia",
-    "known_by_agent_ids": ["agent_nadia"],
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
     "memory_type": "private_secret",
     "case_function": "killer_means",
     "truth_status": "true",
@@ -36,13 +50,20 @@
     "emotional_weight": 10,
     "shareability": "will_hide",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_dispensary_log_altered", "clue_extra_capsules"],
-    "linked_location_ids": ["loc_clinic_dispensary"]
+    "linked_clue_ids": [
+      "clue_dispensary_log_altered",
+      "clue_extra_capsules"
+    ],
+    "linked_location_ids": [
+      "loc_clinic_dispensary"
+    ]
   },
   {
     "memory_id": "mem_nadia_cover_routine",
     "owner_agent_id": "agent_nadia",
-    "known_by_agent_ids": ["agent_nadia"],
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
     "memory_type": "cover_story",
     "case_function": "false_alibi_reason",
     "truth_status": "mistaken",
@@ -50,12 +71,17 @@
     "emotional_weight": 7,
     "shareability": "will_lie",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_nadia_pill_handoff"]
+    "linked_clue_ids": [
+      "clue_nadia_pill_handoff"
+    ]
   },
   {
     "memory_id": "mem_elias_will_decision",
     "owner_agent_id": "agent_elias",
-    "known_by_agent_ids": ["agent_elias", "agent_nadia"],
+    "known_by_agent_ids": [
+      "agent_elias",
+      "agent_nadia"
+    ],
     "memory_type": "private_secret",
     "case_function": "victim_trigger",
     "truth_status": "true",
@@ -63,12 +89,17 @@
     "emotional_weight": 6,
     "shareability": "will_hide",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_solicitor_appointment", "clue_elias_notebook"]
+    "linked_clue_ids": [
+      "clue_solicitor_appointment",
+      "clue_elias_notebook"
+    ]
   },
   {
     "memory_id": "mem_ruth_pill_memory",
     "owner_agent_id": "agent_ruth",
-    "known_by_agent_ids": ["agent_ruth"],
+    "known_by_agent_ids": [
+      "agent_ruth"
+    ],
     "memory_type": "witness_fragment",
     "case_function": "clue_support",
     "truth_status": "true",
@@ -77,12 +108,20 @@
     "confidence": 0.85,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_nadia_pill_handoff", "clue_ruth_pill_sighting", "clue_ruth_elias_wave"]
+    "linked_clue_ids": [
+      "clue_nadia_pill_handoff",
+      "clue_ruth_pill_sighting",
+      "clue_ruth_elias_wave"
+    ]
   },
   {
     "memory_id": "mem_ben_complaint",
     "owner_agent_id": "agent_ben",
-    "known_by_agent_ids": ["agent_ben", "agent_elias", "agent_clara"],
+    "known_by_agent_ids": [
+      "agent_ben",
+      "agent_elias",
+      "agent_clara"
+    ],
     "memory_type": "private_secret",
     "case_function": "red_herring_motive",
     "truth_status": "true",
@@ -90,12 +129,17 @@
     "emotional_weight": 8,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_ben_complaint_letter"]
+    "linked_clue_ids": [
+      "clue_ben_complaint_letter"
+    ]
   },
   {
     "memory_id": "mem_clara_ben_secret",
     "owner_agent_id": "agent_clara",
-    "known_by_agent_ids": ["agent_clara", "agent_ben"],
+    "known_by_agent_ids": [
+      "agent_clara",
+      "agent_ben"
+    ],
     "memory_type": "witness_fragment",
     "case_function": "red_herring_support",
     "truth_status": "true",
@@ -104,12 +148,17 @@
     "confidence": 0.8,
     "shareability": "will_deflect",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_clara_ben_argument", "clue_ben_clinic_delivery"]
+    "linked_clue_ids": [
+      "clue_clara_ben_argument",
+      "clue_ben_clinic_delivery"
+    ]
   },
   {
     "memory_id": "mem_ben_chest",
     "owner_agent_id": "agent_ben",
-    "known_by_agent_ids": ["agent_ben"],
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
     "memory_type": "witness_fragment",
     "case_function": "clue_support",
     "truth_status": "true",
@@ -118,12 +167,16 @@
     "confidence": 0.65,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_ben_posture"]
+    "linked_clue_ids": [
+      "clue_ben_posture"
+    ]
   },
   {
     "memory_id": "mem_clara_slumped",
     "owner_agent_id": "agent_clara",
-    "known_by_agent_ids": ["agent_clara"],
+    "known_by_agent_ids": [
+      "agent_clara"
+    ],
     "memory_type": "witness_fragment",
     "case_function": "clue_support",
     "truth_status": "true",
@@ -132,12 +185,17 @@
     "confidence": 0.7,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_clara_slumped_observation"]
+    "linked_clue_ids": [
+      "clue_clara_slumped_observation"
+    ]
   },
   {
     "memory_id": "mem_dr_haig_prescription",
     "owner_agent_id": "agent_dr_haig",
-    "known_by_agent_ids": ["agent_dr_haig", "agent_nadia"],
+    "known_by_agent_ids": [
+      "agent_dr_haig",
+      "agent_nadia"
+    ],
     "memory_type": "observed",
     "case_function": "clue_support",
     "truth_status": "true",
@@ -145,6 +203,77 @@
     "emotional_weight": 8,
     "shareability": "will_share_if_asked",
     "discoverable_by_player": true,
-    "linked_clue_ids": ["clue_dr_haig_prescription", "clue_dispensary_log_altered"]
+    "linked_clue_ids": [
+      "clue_dr_haig_prescription",
+      "clue_dispensary_log_altered"
+    ]
+  },
+  {
+    "memory_id": "mem_nadia_handoff_setup",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "Nadia is the only key-holder for the dispensary, and she carries Elias's weekly pill organiser out to his bench herself — a kindness everyone in the village has watched her do for two years, and which puts the pills in his hand with nobody thinking twice.",
+    "emotional_weight": 9,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_nadia_pill_handoff",
+      "clue_dispensary_cabinet_log"
+    ],
+    "linked_agent_ids": [
+      "agent_elias"
+    ],
+    "linked_location_ids": [
+      "loc_clinic_dispensary",
+      "loc_elias_bench"
+    ]
+  },
+  {
+    "memory_id": "mem_haig_practice",
+    "owner_agent_id": "agent_dr_haig",
+    "known_by_agent_ids": [
+      "agent_dr_haig",
+      "agent_nadia"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Haig's practice is insolvent without the Grant legacy. He knew about the bequest and had built the partnership accounts around it, and he is deeply ashamed of how that will look.",
+    "emotional_weight": 8,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_haig_practice_debt"
+    ],
+    "linked_agent_ids": [
+      "agent_elias"
+    ],
+    "linked_location_ids": [
+      "loc_clinic"
+    ]
+  },
+  {
+    "memory_id": "mem_haig_anchor",
+    "owner_agent_id": "agent_dr_haig",
+    "known_by_agent_ids": [
+      "agent_dr_haig"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Haig ran a list of eleven patients at the county surgery until 18:30 on Tuesday, forty minutes from the village.",
+    "emotional_weight": 4,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_haig_county_surgery"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
   }
 ]

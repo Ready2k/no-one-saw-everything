@@ -298,7 +298,7 @@
       "agent_marcus"
     ],
     "event_type": "movement",
-    "truth_description": "Marcus walks through the kitchen into the storage room carrying his coat, the ledger page in the pocket.",
+    "truth_description": "Marcus walks through the kitchen into the storage room carrying his coat, the ledger page in the pocket. He unlatches the rear door and leaves it on the latch — he is expecting Clara to come to it, as he told her to.",
     "player_description": "Marcus is no longer visible in the cafe front.",
     "visibility": "private",
     "object_ids": [

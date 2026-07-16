@@ -118,7 +118,8 @@
         "claim_type": "statement",
         "time_reference": "07:47",
         "location_reference_id": "loc_rear_alley",
-        "truthfulness": "true"
+        "truthfulness": "true",
+        "about_agent_id": "agent_priya"
       }
     ]
   },
@@ -132,7 +133,7 @@
       "clue_ben_priya_meeting"
     ],
     "outcome": "reveal_innocent_secret",
-    "response_text": "She told you, didn't she. Look — I wasn't shifting crates. I was with Priya. We meet in the mornings where no one's about, because if Isabella finds out she'll make Priya's life hell. That's my big secret. I heard the thud, same as her, and I bolted because I didn't want to be caught back there. That's the whole of it.",
+    "response_text": "She told you, didn't she. Look — I wasn't shifting crates. I was with Priya. We meet in the mornings where no one's about, because Priya's whole apprenticeship is Isabella's to sign off, and Isabella would fail her for less than this. That's my big secret. I heard the thud, same as her, and I bolted because I didn't want to be caught back there. That's the whole of it.",
     "emotional_shift": "sheepish",
     "pressure_delta": -0.05,
     "sets_claim_status": "resolved",

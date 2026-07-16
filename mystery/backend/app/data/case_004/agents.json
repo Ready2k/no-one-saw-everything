@@ -12,7 +12,7 @@
     "portrait": "\ud83d\udd28",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
-    "routine_summary": "Evening: pub until ten, then home via the square.",
+    "routine_summary": "Evening: the pub until closing, then home across the square.",
     "voice_card": "Blunt, short sentences, no hedging; gets louder rather than more careful when pressed.",
     "relationships": [
       {
@@ -43,10 +43,11 @@
     "is_victim": true,
     "sprite_asset": "Carlos_Gomez.png",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/owen_calm.jpg",
+      "calm": "/art/portraits/owen_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_id": "sprite_carlos_gomez"
   },
   {
     "agent_id": "agent_ben",
@@ -61,7 +62,7 @@
     "portrait": "\ud83d\udce6",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
-    "routine_summary": "Evening: stays in usually. That night he went to the square after finding his father's papers.",
+    "routine_summary": "Evening: usually stays in. Keeps his father's old things in boxes he hasn't got round to sorting.",
     "voice_card": "Rambles cheerfully, over-explains when nervous, and tends to answer a question you didn't ask.",
     "relationships": [
       {
@@ -92,10 +93,11 @@
     "gossip_tendency": 0.8,
     "sprite_asset": "Ryan_Park.png",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/ben_calm.jpg",
+      "calm": "/art/portraits/ben_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_id": "sprite_ryan_park"
   },
   {
     "agent_id": "agent_elias",
@@ -110,7 +112,7 @@
     "portrait": "\ud83c\udfa9",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
-    "routine_summary": "Often up at odd hours \u2014 lights on past midnight. Always the first on the bench at dawn.",
+    "routine_summary": "Sleeps badly; often up at odd hours with the lights on. First on the bench at dawn.",
     "voice_card": "Talks like he's lecturing a classroom; fond of rhetorical questions and certain of every detail.",
     "relationships": [
       {
@@ -134,10 +136,11 @@
     "gossip_tendency": 0.9,
     "sprite_asset": "Adam_Smith.png",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/elias_calm.jpg",
+      "calm": "/art/portraits/elias_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_id": "sprite_adam_smith"
   },
   {
     "agent_id": "agent_priya",
@@ -152,7 +155,7 @@
     "portrait": "\ud83c\udf38",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Home by evening. That night, she and Ben were supposed to meet at ten. She lied to protect him after he cancelled.",
+    "routine_summary": "Home by evening. Reads late. Keeps her private life private, and would rather not be asked about it.",
     "voice_card": "Soft-spoken and apologetic; qualifies everything ('I think', 'maybe') and trails off under pressure.",
     "relationships": [
       {
@@ -169,10 +172,11 @@
     "conflict_avoidance": 0.85,
     "sprite_asset": "Priya_Kapoor.png",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/priya_calm.jpg",
+      "calm": "/art/portraits/priya_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_id": "sprite_priya_kapoor"
   },
   {
     "agent_id": "agent_nadia",
@@ -187,7 +191,7 @@
     "portrait": "\ud83e\ude7a",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Home by nine-thirty most evenings. Window faces the square.",
+    "routine_summary": "Home by nine-thirty most evenings. Her front window looks out over the square.",
     "voice_card": "Calm, clinical phrasing; states observations like chart notes and avoids speculation.",
     "relationships": [
       {
@@ -211,10 +215,11 @@
     "gossip_tendency": 0.2,
     "sprite_asset": "Ayesha_Khan.png",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/nadia_calm.jpg",
+      "calm": "/art/portraits/nadia_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_id": "sprite_ayesha_khan"
   },
   {
     "agent_id": "agent_fred",
@@ -229,7 +234,7 @@
     "portrait": "\ud83c\udf7a",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_pub",
-    "routine_summary": "Closes the pub at 23:00. Secretly owed Owen money and followed him out that night.",
+    "routine_summary": "Runs the Mallet & Crown. Calls last orders at half ten and closes up at eleven. Knows every face that comes through the door.",
     "voice_card": "Warm and talkative about faces and comings-and-goings, but goes vague the moment a question turns personal.",
     "relationships": [
       {
@@ -253,129 +258,144 @@
     "gossip_tendency": 0.5,
     "sprite_asset": "Tom_Moreno.png",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/fred_calm.jpg",
+      "calm": "/art/portraits/fred_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_id": "sprite_tom_moreno"
   },
   {
     "agent_id": "agent_bg_cole",
     "full_name": "Cole Byrne",
-    "age": 44,
+    "age": 26,
     "occupation": "Window cleaner",
     "portrait": "\ud83e\ude9f",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Cole keeps to a quiet window cleaner routine around the village.",
+    "routine_summary": "Works his ladder clockwise around the square; swears the clinic's windows are the only ones anyone ever thanks him for.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/cole_calm.jpg",
+      "calm": "/art/portraits/cole_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Eddy_Lin.png",
+    "sprite_id": "sprite_eddy_lin"
   },
   {
     "agent_id": "agent_bg_wren",
     "full_name": "Wren Ashby",
-    "age": 58,
+    "age": 61,
     "occupation": "Busker",
     "portrait": "\ud83c\udfbb",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_pub",
-    "routine_summary": "Wren keeps to a quiet busker routine around the village.",
+    "routine_summary": "Tunes the fiddle by the square until her fingers warm up, then follows the smell of coffee to the cafe pitch.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/wren_calm.jpg",
+      "calm": "/art/portraits/wren_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Latoya_Williams.png",
+    "sprite_id": "sprite_latoya_williams"
   },
   {
     "agent_id": "agent_bg_min",
     "full_name": "Min Okafor",
-    "age": 38,
+    "age": 22,
     "occupation": "Baker's assistant",
     "portrait": "\ud83e\udd56",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Min keeps to a quiet baker's assistant routine around the village.",
+    "routine_summary": "Up before the ovens, delivers the morning loaves to the cafe and the bookshop, and always keeps the misshapen one back for herself.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/min_calm.jpg",
+      "calm": "/art/portraits/min_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Mei_Lin.png",
+    "sprite_id": "sprite_mei_lin"
   },
   {
     "agent_id": "agent_bg_effie",
     "full_name": "Effie Marsh",
-    "age": 63,
+    "age": 46,
     "occupation": "Dog walker",
     "portrait": "\ud83d\udc15",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_pub",
-    "routine_summary": "Effie keeps to a quiet dog walker routine around the village.",
+    "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; the terrier decides when they stop, and it always stops at the fountain.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/effie_calm.jpg",
+      "calm": "/art/portraits/effie_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Hailey_Johnson.png",
+    "sprite_id": "sprite_hailey_johnson"
   },
   {
     "agent_id": "agent_bg_rosa",
     "full_name": "Rosa Fenn",
-    "age": 40,
+    "age": 54,
     "occupation": "Groundskeeper",
     "portrait": "\ud83c\udf3f",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Rosa keeps to a quiet groundskeeper routine around the village.",
+    "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear paths before the village wakes properly.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/rosa_calm.jpg",
+      "calm": "/art/portraits/rosa_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Carmen_Ortiz.png",
+    "sprite_id": "sprite_carmen_ortiz"
   },
   {
     "agent_id": "agent_bg_tam",
     "full_name": "Tam Doyle",
-    "age": 46,
+    "age": 47,
     "occupation": "Postal carrier",
     "portrait": "\ud83d\udce8",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_pub",
-    "routine_summary": "Tam keeps to a quiet postal carrier routine around the village.",
+    "routine_summary": "Does the post round through the square, the bookshop and the clinic before most doors have even opened.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/tam_calm.jpg",
+      "calm": "/art/portraits/tam_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Arthur_Burton.png",
+    "sprite_id": "sprite_arthur_burton"
   },
   {
     "agent_id": "agent_bg_dez",
     "full_name": "Dez Holt",
-    "age": 25,
+    "age": 61,
     "occupation": "Market stallholder",
     "portrait": "\ud83e\uddfa",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Dez keeps to a quiet market stallholder routine around the village.",
+    "routine_summary": "Trundles his stall cart around the village testing pitches; has moved 'the perfect spot' four times this year and defends each one loudly.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/dez_calm.jpg",
+      "calm": "/art/portraits/dez_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Francisco_Lopez.png",
+    "sprite_id": "sprite_francisco_lopez"
   },
   {
     "agent_id": "agent_bg_sal",
@@ -385,47 +405,53 @@
     "portrait": "\ud83e\udd5b",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_pub",
-    "routine_summary": "Sal keeps to a quiet milkman routine around the village.",
+    "routine_summary": "Runs the milk round in strict order \u2014 cafe first, bookshop second \u2014 and rates every doorstep in the village by how promptly they bring the empties back.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/sal_calm.jpg",
+      "calm": "/art/portraits/sal_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "John_Lin.png",
+    "sprite_id": "sprite_john_lin"
   },
   {
     "agent_id": "agent_bg_gus",
     "full_name": "Gus Farrow",
-    "age": 64,
+    "age": 51,
     "occupation": "Newspaper seller",
     "portrait": "\ud83d\udcf0",
     "home_location_id": "loc_pub",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Gus keeps to a quiet newspaper seller routine around the village.",
+    "routine_summary": "Sets the papers out from the fountain to the cafe and reads every front page aloud to whoever stands still long enough.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/gus_calm.jpg",
+      "calm": "/art/portraits/gus_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Rajiv_Patel.png",
+    "sprite_id": "sprite_rajiv_patel"
   },
   {
     "agent_id": "agent_bg_birdie",
     "full_name": "Birdie Voss",
-    "age": 48,
+    "age": 66,
     "occupation": "Street sweeper",
     "portrait": "\ud83e\uddf9",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_pub",
-    "routine_summary": "Birdie keeps to a quiet street sweeper routine around the village.",
+    "routine_summary": "Sweeps the shopfronts in the order the village wakes \u2014 cafe, bookshop, clinic \u2014 and knows everyone's doormat better than they do.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
-      "calm": "/art/case_004/portraits/birdie_calm.jpg",
+      "calm": "/art/portraits/birdie_calm.png",
       "defensive": null,
       "cracking": null
-    }
+    },
+    "sprite_asset": "Jane_Moreno.png",
+    "sprite_id": "sprite_jane_moreno"
   }
 ]

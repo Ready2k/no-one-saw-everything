@@ -302,7 +302,13 @@ def test_underlay_tile_override_validation():
 
 
 def test_canonical_map_definition_applies_tile_overrides():
-    from app.town_map import CANONICAL_MAP, canonical_map_definition
+    from app.town_map import (
+        B2_LIVING_TOWN_V2_EXTERNAL_URL,
+        B2_LIVING_TOWN_V2_INTERNAL_URL,
+        CANONICAL_MAP,
+        LIVING_TOWN_V2_TILE_URLS,
+        canonical_map_definition,
+    )
 
     blank = "/art/town/tiles_3x3_hd/town_overworld_B2_blank_hd.png"
     layout = {
@@ -317,7 +323,9 @@ def test_canonical_map_definition_applies_tile_overrides():
     assert definition["zoom_image_tiles"]["urls"][1][1] == blank
     # Untouched cells keep the defaults; CANONICAL_MAP itself is never mutated
     assert definition["image_tiles"]["urls"][2][2] == CANONICAL_MAP["image_tiles"]["urls"][2][2]
-    assert CANONICAL_MAP["image_tiles"]["urls"][1][1].endswith("all_cases_external_hd.png")
+    assert CANONICAL_MAP["image_tiles"]["urls"][0][0] == LIVING_TOWN_V2_TILE_URLS["A1"]
+    assert CANONICAL_MAP["image_tiles"]["urls"][1][1] == B2_LIVING_TOWN_V2_EXTERNAL_URL
+    assert CANONICAL_MAP["zoom_image_tiles"]["urls"][1][1] == B2_LIVING_TOWN_V2_INTERNAL_URL
 
     # No overrides -> the shared definition is returned unchanged
     assert canonical_map_definition({}) is CANONICAL_MAP

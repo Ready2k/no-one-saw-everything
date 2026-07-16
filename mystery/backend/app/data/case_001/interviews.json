@@ -11,6 +11,37 @@
     },
     "rules": [
       {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "How we met? I answered a card in his window fifteen years ago — waitress, five mornings a week. He watched me cash up my first till and then recounted it in front of everyone. I stayed anyway. You don't forget who gave you your start — or who never let you forget it, either.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "wistful",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "He was exacting. Checked everything twice, trusted no one to do it right. But he gave me the manager's job when nobody else would, so we made it work.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "controlled",
+        "claims": [
+          {
+            "claim_id": "claim_clara_relationship",
+            "summary": "Clara describes her relationship with Marcus as strict but workable, and says he 'trusted no one'.",
+            "claim_type": "relationship",
+            "truthfulness": "mistaken"
+          }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
         "question_type": "alibi",
         "answer_text": "I was at the fountain from about a quarter to eight until just before opening. I needed air — Marcus had been on edge all morning and it gets to you. Then I opened up at eight.",
         "answer_type": "claim",
@@ -21,9 +52,11 @@
             "claim_id": "claim_clara_fountain",
             "summary": "Clara claims she was at the fountain from about 07:45 until just before 08:00.",
             "claim_type": "alibi",
-            "time_reference": "07:50",
+            "time_reference": "07:45",
             "location_reference_id": "loc_fountain",
-            "truthfulness": "false"
+            "truthfulness": "false",
+            "time_to": "08:00",
+            "about_agent_id": "agent_clara"
           }
         ],
         "suggested_followups": [
@@ -44,9 +77,11 @@
             "claim_id": "claim_clara_fountain",
             "summary": "Clara claims she was at the fountain from about 07:45 until just before 08:00.",
             "claim_type": "alibi",
-            "time_reference": "07:50",
+            "time_reference": "07:45",
             "location_reference_id": "loc_fountain",
-            "truthfulness": "false"
+            "truthfulness": "false",
+            "time_to": "08:00",
+            "about_agent_id": "agent_clara"
           }
         ],
         "suggested_followups": [
@@ -89,36 +124,6 @@
         ],
         "suggested_followups": [
           "What did he need to sort in the back?"
-        ]
-      },
-      {
-        "question_type": "relationship",
-        "min_ask_count": 1,
-        "answer_text": "How we met? I answered a card in his window fifteen years ago — waitress, five mornings a week. He watched me cash up my first till and then recounted it in front of everyone. I stayed anyway. You don't forget who gave you your start — or who never let you forget it, either.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "wistful",
-        "claims": [],
-        "reveals_clue_ids": [],
-        "reveals_memory_ids": [],
-        "suggested_followups": []
-      },
-      {
-        "question_type": "relationship",
-        "answer_text": "He was exacting. Checked everything twice, trusted no one to do it right. But he gave me the manager's job when nobody else would, so we made it work.",
-        "answer_type": "claim",
-        "truthfulness": "mistaken",
-        "emotional_shift": "controlled",
-        "claims": [
-          {
-            "claim_id": "claim_clara_relationship",
-            "summary": "Clara describes her relationship with Marcus as strict but workable, and says he 'trusted no one'.",
-            "claim_type": "relationship",
-            "truthfulness": "mistaken"
-          }
-        ],
-        "suggested_followups": [
-          "How did you two first meet?"
         ]
       },
       {
@@ -201,80 +206,6 @@
     },
     "rules": [
       {
-        "question_type": "alibi",
-        "answer_text": "I was around the square and the back lane doing deliveries. Look, I was near the alley for a bit, alright? Just... sorting crates. Then I heard the scream same as everyone.",
-        "answer_type": "claim",
-        "truthfulness": "mistaken",
-        "emotional_shift": "shifty",
-        "claims": [
-          {
-            "claim_id": "claim_ben_crates",
-            "summary": "Ben admits being near the rear alley during the murder window but says he was 'sorting crates'.",
-            "claim_type": "alibi",
-            "time_reference": "07:50",
-            "location_reference_id": "loc_rear_alley",
-            "truthfulness": "mistaken"
-          }
-        ],
-        "suggested_followups": [
-          "What were you really doing in the alley?",
-          "What did you see from there?"
-        ]
-      },
-      {
-        "question_type": "timeline",
-        "time_from": "07:40",
-        "time_to": "08:00",
-        "answer_text": "Right, so — I was down the alley end around then. Saw someone in a blue coat come in from the square about a quarter to... no, closer to ten-to. Went towards the cafe's back door. Didn't see the face but — that's Clara's coat, everyone knows it. And later there was this thud from inside. Dull, like a sack of flour going over. I didn't think anything of it. You don't, do you.",
-        "answer_type": "claim",
-        "truthfulness": "mistaken",
-        "emotional_shift": "uneasy",
-        "claims": [
-          {
-            "claim_id": "claim_ben_blue_coat",
-            "summary": "Ben says he saw someone in a blue coat — he assumes Clara — enter the alley at about 07:47 and head for the cafe's rear door.",
-            "claim_type": "sighting",
-            "time_reference": "07:47",
-            "location_reference_id": "loc_rear_alley",
-            "truthfulness": "mistaken"
-          },
-          {
-            "claim_id": "claim_ben_thud",
-            "summary": "Ben says he heard a dull thud from the cafe's back rooms while he was in the alley, around 07:56.",
-            "claim_type": "sighting",
-            "time_reference": "07:56",
-            "location_reference_id": "loc_cafe_storage",
-            "truthfulness": "true"
-          }
-        ],
-        "reveals_clue_ids": [
-          "clue_ben_sighting",
-          "clue_storage_sound"
-        ],
-        "suggested_followups": [
-          "Why were you in the alley at that time?",
-          "Did the figure see you?"
-        ]
-      },
-      {
-        "question_type": "location",
-        "topic_location_id": "loc_rear_alley",
-        "answer_text": "Crates. I told you. There's a stack behind the bookshop needs shifting most mornings. Why's everyone so interested in the alley all of a sudden?",
-        "answer_type": "denial",
-        "truthfulness": "false",
-        "emotional_shift": "defensive",
-        "claims": [
-          {
-            "claim_id": "claim_ben_crates",
-            "summary": "Ben admits being near the rear alley during the murder window but says he was 'sorting crates'.",
-            "claim_type": "alibi",
-            "time_reference": "07:50",
-            "location_reference_id": "loc_rear_alley",
-            "truthfulness": "mistaken"
-          }
-        ]
-      },
-      {
         "question_type": "relationship",
         "min_ask_count": 1,
         "answer_text": "First met him on my first delivery round, must be six years back now. He signed for the flour, then told me I'd stacked it wrong and showed me exactly how he wanted it. Every week since — same time, same nod. You get to know a man by his routines.",
@@ -301,6 +232,86 @@
         ],
         "suggested_followups": [
           "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "I was around the square and the back lane doing deliveries. Look, I was near the alley for a bit, alright? Just... sorting crates. Then I heard the scream same as everyone.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "shifty",
+        "claims": [
+          {
+            "claim_id": "claim_ben_crates",
+            "summary": "Ben admits being near the rear alley during the murder window but says he was 'sorting crates'.",
+            "claim_type": "alibi",
+            "time_reference": "07:50",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "mistaken",
+            "about_agent_id": "agent_ben"
+          }
+        ],
+        "suggested_followups": [
+          "What were you really doing in the alley?",
+          "What did you see from there?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "07:40",
+        "time_to": "07:52",
+        "answer_text": "Around then? I was down the alley end. Saw someone in a blue coat come in from the square — quarter to, no, closer to ten-to. Went towards the cafe's back door. Didn't see the face, just the coat, and the way they were walking, like they didn't want to be walking.",
+        "reveals_clue_ids": [
+          "clue_ben_sighting"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_ben_blue_coat",
+            "summary": "Ben says he saw someone in a blue coat — he assumes Clara — enter the alley at about 07:47 and head for the cafe's rear door.",
+            "claim_type": "sighting",
+            "time_reference": "07:47",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "mistaken"
+          }
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "07:53",
+        "time_to": "08:05",
+        "answer_text": "Bit later than that, I heard a thud from inside the cafe. Dull, like a sack of flour going over. I didn't think anything of it at the time — you don't, do you. Then I was off round the front for the scream.",
+        "reveals_clue_ids": [
+          "clue_storage_sound"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_ben_thud",
+            "summary": "Ben says he heard a dull thud from the cafe's back rooms while he was in the alley, around 07:56.",
+            "claim_type": "sighting",
+            "time_reference": "07:56",
+            "location_reference_id": "loc_cafe_storage",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_rear_alley",
+        "answer_text": "Crates. I told you. There's a stack behind the bookshop needs shifting most mornings. Why's everyone so interested in the alley all of a sudden?",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_ben_crates",
+            "summary": "Ben admits being near the rear alley during the murder window but says he was 'sorting crates'.",
+            "claim_type": "alibi",
+            "time_reference": "07:50",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "mistaken",
+            "about_agent_id": "agent_ben"
+          }
         ]
       },
       {
@@ -323,50 +334,6 @@
       "location": "I know the village as well as anyone. What of it?"
     },
     "rules": [
-      {
-        "question_type": "alibi",
-        "answer_text": "From about twenty to eight I was at the clinic. Nadia had another patient, so she left me in the waiting room until eight. I was wound up about the meeting. I left just after eight, waited here at a table, and at ten past I went looking for him myself. I found him.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "shaken",
-        "claims": [
-          {
-            "claim_id": "claim_isabella_clinic",
-            "summary": "Isabella says she was waiting alone at the clinic from about 07:40 to 08:00, then waited in the cafe.",
-            "claim_type": "alibi",
-            "time_reference": "07:50",
-            "location_reference_id": "loc_clinic",
-            "truthfulness": "true"
-          }
-        ],
-        "reveals_clue_ids": [
-          "clue_isabella_clinic"
-        ],
-        "suggested_followups": [
-          "What was the meeting about?",
-          "Why were you so wound up?"
-        ]
-      },
-      {
-        "question_type": "last_seen_victim",
-        "answer_text": "Twenty past seven. I handed him a note confirming we'd settle things at eight. He didn't even look at me. That was Marcus all over — decisions first, people later.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "bitter",
-        "claims": [
-          {
-            "claim_id": "claim_isabella_note_handoff",
-            "summary": "Isabella admits handing Marcus a note at 07:20 arranging to 'settle things' at 08:00.",
-            "claim_type": "statement",
-            "time_reference": "07:20",
-            "location_reference_id": "loc_hobbs_cafe",
-            "truthfulness": "true"
-          }
-        ],
-        "suggested_followups": [
-          "What needed settling?"
-        ]
-      },
       {
         "question_type": "relationship",
         "min_ask_count": 1,
@@ -395,6 +362,53 @@
         ],
         "suggested_followups": [
           "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "From about twenty to eight I was at the clinic. Nadia had another patient, so she left me in the waiting room until eight. I was wound up about the meeting. I left just after eight, waited here at a table, and at ten past I went looking for him myself. I found him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "shaken",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_clinic",
+            "summary": "Isabella says she was waiting alone at the clinic from about 07:40 to 08:00, then waited in the cafe.",
+            "claim_type": "alibi",
+            "time_reference": "07:40",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true",
+            "about_agent_id": "agent_isabella",
+            "time_to": "08:00"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_isabella_clinic"
+        ],
+        "suggested_followups": [
+          "What was the meeting about?",
+          "Why were you so wound up?"
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Twenty past seven. I handed him a note confirming we'd settle things at eight. He didn't even look at me. That was Marcus all over — decisions first, people later.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "bitter",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_note_handoff",
+            "summary": "Isabella admits handing Marcus a note at 07:20 arranging to 'settle things' at 08:00.",
+            "claim_type": "statement",
+            "time_reference": "07:20",
+            "location_reference_id": "loc_hobbs_cafe",
+            "truthfulness": "true"
+          }
+        ],
+        "suggested_followups": [
+          "What needed settling?"
         ]
       },
       {
@@ -439,7 +453,8 @@
             "claim_type": "sighting",
             "time_reference": "08:05",
             "location_reference_id": "loc_hobbs_cafe",
-            "truthfulness": "true"
+            "truthfulness": "true",
+            "about_agent_id": "agent_clara"
           }
         ]
       }
@@ -456,46 +471,6 @@
       "location": "What about it?"
     },
     "rules": [
-      {
-        "question_type": "alibi",
-        "answer_text": "From a quarter past seven I was in my yard waiting for a timber delivery. The driver, Col Hartley, didn't turn up until five past eight. I was alone the whole time. If you think I used that time to kill Marcus, you'll have to prove it.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "bristling",
-        "claims": [
-          {
-            "claim_id": "claim_owen_yard",
-            "summary": "Owen says he was alone in his yard from 07:15 until the late delivery arrived at 08:05.",
-            "claim_type": "alibi",
-            "time_reference": "07:45",
-            "location_reference_id": "loc_owen_house",
-            "truthfulness": "true"
-          }
-        ],
-        "reveals_clue_ids": [
-          "clue_owen_delayed_delivery"
-        ],
-        "suggested_followups": [
-          "What were you and Marcus arguing about at 07:05?"
-        ]
-      },
-      {
-        "question_type": "last_seen_victim",
-        "answer_text": "Five past seven, outside his cafe, both of us shouting. Half the square heard, so you'll hear about it anyway. He was going to name me at the committee over money. I told him what I thought of that. Then I went back to my yard and got on with my work.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "grim",
-        "claims": [
-          {
-            "claim_id": "claim_owen_argument",
-            "summary": "Owen admits the 07:05 argument and that Marcus threatened to name him at the committee over money.",
-            "claim_type": "statement",
-            "time_reference": "07:05",
-            "location_reference_id": "loc_village_square",
-            "truthfulness": "true"
-          }
-        ]
-      },
       {
         "question_type": "relationship",
         "min_ask_count": 1,
@@ -524,12 +499,55 @@
         ],
         "suggested_followups": [
           "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "From a quarter past seven I was in my yard. The timber didn't finish going in until five past eight — Col Hartley didn't sign off till then. And no, I'll not stand here and beg you to check up on me. If you think I used that morning to kill Marcus, prove it.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "bristling",
+        "claims": [
+          {
+            "claim_id": "claim_owen_yard",
+            "summary": "Owen says he was alone in his yard from 07:15 until the late delivery arrived at 08:05.",
+            "claim_type": "alibi",
+            "time_reference": "07:15",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "true",
+            "about_agent_id": "agent_owen",
+            "time_to": "08:05"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_delayed_delivery"
+        ],
+        "suggested_followups": [
+          "What were you and Marcus arguing about at 07:05?"
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Five past seven, outside his cafe, both of us shouting. Half the square heard, so you'll hear about it anyway. He was going to name me at the committee over money. I told him what I thought of that. Then I went back to my yard and got on with my work.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "grim",
+        "claims": [
+          {
+            "claim_id": "claim_owen_argument",
+            "summary": "Owen admits the 07:05 argument and that Marcus threatened to name him at the committee over money.",
+            "claim_type": "statement",
+            "time_reference": "07:05",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
         ]
       },
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_loan_book",
-        "answer_text": "Eight thousand. There, I've said the number. He'd have ruined me by lunchtime and called it principle. I was in my yard when it happened. I don't have an alibi because of that damned late delivery, but I didn't kill him.",
+        "answer_text": "Eight thousand. There, I've said the number. He'd have ruined me by lunchtime and called it principle. I was in my yard when it happened, and I'll not hide behind anybody to prove it. A man shouldn't need a witness to be innocent.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "weary",
@@ -540,7 +558,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_owen_delayed_delivery",
-        "answer_text": "Alone the whole time — no, hang on, that's not fair to Col. He signed in at quarter past seven and didn't finish up until five past eight; he was there stacking timber with me the entire window, he just hadn't signed off yet when you'd call it 'arrived'. I said it wrong before. Ask him. Our signatures are both on the docket, timed.",
+        "answer_text": "You've been to see Col, then.\n\n...Aye. He was there. Quarter past seven till five past eight, stacking the order with me, the pair of us. Both our names are on the docket and it's timed.\n\nWhy didn't I lead with it? Because I've been a builder in this village thirty years and I'll not have it said Owen Price needed a delivery driver to vouch for him. You asked me where I was. I told you where I was. I'm not in the habit of producing witnesses like a man with something to hide.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "defensive",
@@ -549,9 +567,11 @@
             "claim_id": "claim_owen_driver_present",
             "summary": "Owen revises his account: the delivery driver was present in the yard from 07:15 to 08:05, covering the entire murder window.",
             "claim_type": "alibi",
-            "time_reference": "07:45",
+            "time_reference": "07:15",
             "location_reference_id": "loc_owen_house",
-            "truthfulness": "true"
+            "truthfulness": "true",
+            "about_agent_id": "agent_owen",
+            "time_to": "08:05"
           }
         ],
         "reveals_clue_ids": [
@@ -571,55 +591,6 @@
       "location": "I mostly go between home and the shop."
     },
     "rules": [
-      {
-        "question_type": "alibi",
-        "answer_text": "I was in the stockroom from seven. Alone, sorting the delivery. I know that's not much of an answer but it's the truth.",
-        "answer_type": "claim",
-        "truthfulness": "false",
-        "emotional_shift": "quiet",
-        "claims": [
-          {
-            "claim_id": "claim_priya_stockroom",
-            "summary": "Priya claims she was alone in the bookshop stockroom through the murder window.",
-            "claim_type": "alibi",
-            "time_reference": "07:50",
-            "location_reference_id": "loc_bookshop",
-            "truthfulness": "false"
-          }
-        ]
-      },
-      {
-        "question_type": "location",
-        "topic_location_id": "loc_rear_alley",
-        "answer_text": "...Alright. Please don't take this the wrong way. I was in the alley, for a few minutes, around a quarter to eight. With Ben. We've been seeing each other — Isabella doesn't approve of that kind of thing at the shop, so we keep it quiet. We stood by the back door and talked, that's all. We heard a sort of thud from the cafe side and then a door, and we got nervous someone would see us, so we left. Ben went to his van. I went inside. That's everything, I promise.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "ashamed",
-        "claims": [
-          {
-            "claim_id": "claim_priya_confession",
-            "summary": "Priya admits she and Ben were secretly meeting in the alley from about 07:45 to just before 08:00, and heard a thud and a door from the cafe side.",
-            "claim_type": "statement",
-            "time_reference": "07:47",
-            "location_reference_id": "loc_rear_alley",
-            "truthfulness": "true"
-          }
-        ],
-        "reveals_clue_ids": [
-          "clue_ben_priya_meeting"
-        ],
-        "suggested_followups": [
-          "What exactly did you hear from the cafe?",
-          "Did you see who came out of the rear door?"
-        ]
-      },
-      {
-        "question_type": "location",
-        "topic_location_id": "loc_bookshop",
-        "answer_text": "I was in and out of the stockroom all morning. The back door sticks, so I mostly keep it shut.",
-        "answer_type": "claim",
-        "truthfulness": "mistaken"
-      },
       {
         "question_type": "relationship",
         "min_ask_count": 1,
@@ -648,7 +619,60 @@
         ],
         "suggested_followups": [
           "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "I was in the stockroom from seven. Alone, sorting the delivery. I know that's not much of an answer but it's the truth.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "quiet",
+        "claims": [
+          {
+            "claim_id": "claim_priya_stockroom",
+            "summary": "Priya claims she was alone in the bookshop stockroom through the murder window.",
+            "claim_type": "alibi",
+            "time_reference": "07:00",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "false",
+            "about_agent_id": "agent_priya",
+            "time_to": "08:00"
+          }
         ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_rear_alley",
+        "answer_text": "...Alright. Please don't take this the wrong way. I was in the alley, for a few minutes, around a quarter to eight. With Ben. We've been seeing each other — and my apprenticeship is Isabella's to sign off, so if she had a reason to think me careless she'd fail me and there goes everything. So we keep it quiet. We stood by the back door and talked, that's all. We heard a sort of thud from the cafe side and then a door, and we got nervous someone would see us, so we left. Ben went to his van. I went inside. That's everything, I promise.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "ashamed",
+        "claims": [
+          {
+            "claim_id": "claim_priya_confession",
+            "summary": "Priya admits she and Ben were secretly meeting in the alley from about 07:45 to just before 08:00, and heard a thud and a door from the cafe side.",
+            "claim_type": "statement",
+            "time_reference": "07:47",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "true",
+            "about_agent_id": "agent_priya"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_ben_priya_meeting"
+        ],
+        "suggested_followups": [
+          "What exactly did you hear from the cafe?",
+          "Did you see who came out of the rear door?"
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_bookshop",
+        "answer_text": "I was in and out of the stockroom all morning. The back door sticks, so I mostly keep it shut.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken"
       },
       {
         "question_type": "evidence",
@@ -680,6 +704,29 @@
     },
     "rules": [
       {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "We met the week I moved here — he brought a cake to the clinic and a list of complaints about the parking. That was him all over: generous and impossible in the same breath. Twenty years of fences and favours since.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "amused",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "We were neighbours twenty years. If you're asking who'd want him dead — he held this village's debts and secrets, and lately he'd been tightening his grip on both. That's not gossip, that's arithmetic.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "level",
+        "suggested_followups": [
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
         "question_type": "evidence",
         "topic_clue_id": "clue_ledger_page",
         "answer_text": "That page... Sit down a moment. There's something I promised to keep, and I'm going to break the promise because a man is dead. Clara's mother was my patient — her last two years were at the Fernlea home, and Fernlea does not come cheap. Clara sat in my clinic one winter evening and wept over a final-notice letter, and made me swear it stayed between us. So if money went missing from that till, I can tell you what it was for. What you do with that is your work, not mine.",
@@ -707,7 +754,7 @@
       },
       {
         "question_type": "alibi",
-        "answer_text": "Clinic, from ten to seven onwards. And before you ask — Isabella Reed arrived about twenty to eight. I had an emergency, so I left her in the waiting room until eight. She was strung tight over some meeting, but she claims she didn't leave.",
+        "answer_text": "Clinic, from ten to seven onwards. And before you ask — Isabella Reed arrived about twenty to eight and was in that waiting room until eight. Whether she stayed put I couldn't swear to, and I'll not guess. What she was there for is her business, and I'd rather leave it there.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "steady",
@@ -716,9 +763,11 @@
             "claim_id": "claim_nadia_isabella_alibi",
             "summary": "Nadia confirms Isabella was waiting alone in the clinic waiting room from about 07:40 to 08:00.",
             "claim_type": "alibi",
-            "time_reference": "07:50",
+            "time_reference": "07:40",
             "location_reference_id": "loc_clinic",
-            "truthfulness": "true"
+            "truthfulness": "true",
+            "about_agent_id": "agent_isabella",
+            "time_to": "08:00"
           }
         ],
         "reveals_clue_ids": [
@@ -728,7 +777,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_isabella_clinic",
-        "answer_text": "Alone? No — I said she was left in the waiting room, I didn't say I wasn't in and out of it. I took her blood pressure myself, twenty to eight until eight, hovering the whole time because she was so wound up about that meeting. She didn't have a spare minute to herself, let alone to go anywhere.",
+        "answer_text": "You're asking me to put a woman's medical business in your notebook, and I've spent twenty years not doing that.\n\n...But you're not asking idly, are you.\n\nVery well. She wasn't sitting in that waiting room alone — she was with me. I had a cuff on her arm from twenty to eight until eight, because she came in with her heart going like a bird's over that meeting, and I would not leave her. She didn't have a spare minute to herself, let alone to go anywhere.\n\nI didn't offer it because it wasn't mine to offer. It still isn't. Write down that I said so.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "clarifying",
@@ -737,9 +786,11 @@
             "claim_id": "claim_nadia_isabella_bp_check",
             "summary": "Nadia clarifies she was attending to Isabella's blood pressure check throughout the murder window, so Isabella was never actually alone.",
             "claim_type": "alibi",
-            "time_reference": "07:50",
+            "time_reference": "07:40",
             "location_reference_id": "loc_clinic",
-            "truthfulness": "true"
+            "truthfulness": "true",
+            "about_agent_id": "agent_isabella",
+            "time_to": "08:00"
           }
         ],
         "reveals_clue_ids": [
@@ -788,28 +839,6 @@
             "truthfulness": "true"
           }
         ]
-      },
-      {
-        "question_type": "relationship",
-        "min_ask_count": 1,
-        "answer_text": "We met the week I moved here — he brought a cake to the clinic and a list of complaints about the parking. That was him all over: generous and impossible in the same breath. Twenty years of fences and favours since.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "amused",
-        "claims": [],
-        "reveals_clue_ids": [],
-        "reveals_memory_ids": [],
-        "suggested_followups": []
-      },
-      {
-        "question_type": "relationship",
-        "answer_text": "We were neighbours twenty years. If you're asking who'd want him dead — he held this village's debts and secrets, and lately he'd been tightening his grip on both. That's not gossip, that's arithmetic.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "level",
-        "suggested_followups": [
-          "How did you two first meet?"
-        ]
       }
     ]
   },
@@ -838,14 +867,14 @@
       },
       {
         "question_type": "relationship",
-        "answer_text": "Forty years I knew him. And I'll tell you something for nothing: last week, in the cafe, I heard him say to somebody — quiet, but furious, the way he got — 'You have until tomorrow.' Never saw who. Kitchen doorway, my back was to it. But Marcus didn't threaten people for sport. Somebody in this village was living on borrowed time, and I'd say the loan came due.",
+        "answer_text": "Forty years I knew him. And I'll tell you something for nothing: yesterday morning, in the cafe, I heard him say to somebody — quiet, but furious, the way he got — 'You have until tomorrow.' Never saw who. Kitchen doorway, my back was to it. But Marcus didn't threaten people for sport. Somebody in this village was living on borrowed time, and I'd say the loan came due.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "grave",
         "claims": [
           {
             "claim_id": "claim_elias_threat",
-            "summary": "Elias heard Marcus tell someone 'You have until tomorrow' in the cafe last week, but didn't see who.",
+            "summary": "Elias heard Marcus tell someone 'You have until tomorrow' in the cafe yesterday morning, but didn't see who.",
             "claim_type": "sighting",
             "truthfulness": "true"
           }
@@ -856,7 +885,8 @@
         "suggested_followups": [
           "Could it have been a member of staff he was talking to?",
           "How did you two first meet?"
-        ]
+        ],
+        "min_ask_count": 0
       },
       {
         "question_type": "alibi",
@@ -892,9 +922,12 @@
             "claim_id": "claim_elias_no_fountain",
             "summary": "Elias, who faces the fountain from his bench, does not recall seeing Clara at the fountain between 07:45 and 08:00 — though he admits his attention was on his crossword.",
             "claim_type": "sighting",
-            "time_reference": "07:50",
+            "time_reference": "07:45",
             "location_reference_id": "loc_fountain",
-            "truthfulness": "true"
+            "truthfulness": "true",
+            "about_agent_id": "agent_clara",
+            "asserts_presence": false,
+            "time_to": "08:00"
           },
           {
             "claim_id": "claim_elias_owen_accusation",

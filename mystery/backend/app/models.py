@@ -146,11 +146,13 @@ class PortraitState(BaseModel):
 
     Any state may be absent; the frontend falls back through
     cracking > defensive > calm > the legacy emoji `portrait`.
+    `deceased` is used only by the post-mortem view.
     """
 
     calm: Optional[str] = None
     defensive: Optional[str] = None
     cracking: Optional[str] = None
+    deceased: Optional[str] = None
 
 
 class Agent(BaseModel):
@@ -337,8 +339,19 @@ class AnswerClaim(BaseModel):
     summary: str
     claim_type: str = "statement"  # alibi / sighting / relationship / statement
     time_reference: Optional[str] = None
+    # An alibi is a SPAN, not an instant: "I was home all evening" covers hours, and a witness
+    # who saw you elsewhere inside those hours disproves it. Without this, an alibi could only
+    # be contradicted at the single minute it happened to be tagged with.
+    time_to: Optional[str] = None
     location_reference_id: Optional[str] = None
     truthfulness: TruthStatus = "true"
+    # Whose whereabouts this claim places. Defaults to the speaker ("I was at the fountain");
+    # set it when a witness speaks about someone else ("she was never at that fountain").
+    about_agent_id: Optional[str] = None
+    # False makes this a DENIAL of presence. Elias saying he watched the fountain and never saw
+    # Clara there is about_agent_id=agent_clara, location=loc_fountain, asserts_presence=False —
+    # which is what lets the engine see that it cannot both be true and Clara's alibi be true.
+    asserts_presence: bool = True
 
 
 class AnswerRule(BaseModel):
@@ -382,6 +395,8 @@ class ChallengeRule(BaseModel):
     target_agent_id: str
     challenged_claim_id: str
     evidence_clue_ids: list[str] = []
+    # A scripted reaction to being confronted with someone else's testimony.
+    evidence_claim_ids: list[str] = []
     match_mode: Literal["any", "all"] = "any"
     required_prior_clue_ids: list[str] = []
     outcome: ChallengeOutcome
@@ -462,9 +477,14 @@ class Claim(BaseModel):
     claim_text: str
     claim_type: str = "statement"
     time_reference: Optional[str] = None
+    time_to: Optional[str] = None
     location_reference_id: Optional[str] = None
     truthfulness: TruthStatus = "unknown"  # hidden from player until reveal
     player_known_status: ClaimStatus = "claimed"
+    # See AnswerClaim: who this statement places, and whether it puts them there or insists they
+    # were not. These are what make one person's word usable as evidence against another's.
+    about_agent_id: Optional[str] = None
+    asserts_presence: bool = True
 
 
 class InterviewMessage(BaseModel):
@@ -630,6 +650,9 @@ class ChallengeRequest(BaseModel):
     target_agent_id: str
     challenged_claim_id: str
     evidence_clue_ids: list[str] = []
+    # Another person's word, used as evidence. The game is called No One Saw Everything: the
+    # player must be able to put Elias's statement in front of Clara, not only a physical clue.
+    evidence_claim_ids: list[str] = []
     player_statement: Optional[str] = None
 
 
@@ -642,10 +665,14 @@ class ChallengeRecord(BaseModel):
     target_agent_id: str
     challenged_claim_id: str
     evidence_clue_ids: list[str] = []
+    evidence_claim_ids: list[str] = []
     player_statement: Optional[str] = None
     outcome: ChallengeOutcome
     deterministic_response_text: str
     display_response_text: str
+    # Set when the player caught two statements that cannot both be true. Shown to the player as
+    # the reason the confrontation bit, so the deduction is theirs and they can see it land.
+    testimony_conflict: Optional[str] = None
     emotional_shift: Optional[str] = None
     new_claim_ids: list[str] = []
     revealed_memory_ids: list[str] = []
@@ -705,6 +732,10 @@ class AccusationResult(BaseModel):
     evidence_score: float
     missed_key_clues: list[str] = []
     false_assumptions: list[str] = []
+    # How many times the player asked the game to show them which clue disproved which claim,
+    # and what that cost them. Surfaced, not hidden: taking a hint is a choice, not a secret.
+    hints_taken: int = 0
+    hint_penalty: int = 0
     explanation: str
     verdict: str
     # Truth reveal — only ever returned by the accuse/reveal endpoints:

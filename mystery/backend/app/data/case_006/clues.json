@@ -1,425 +1,501 @@
 {
-    "clues": [
-        {
-            "clue_id": "clue_cocoa_residue",
-            "title": "Green residue in the cocoa mug",
-            "clue_type": "physical_evidence",
-            "description": "Marcus's fireside mug has a greenish residue inside the rim. The mug still smells faintly of something herbal beneath the cocoa. The residue is not chocolate \u2014 it is a plant extract.",
-            "strength": "strong",
-            "reliability": 0.9,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_marcus_house",
-                "reveal_on": [
-                    "examine_body"
-                ]
-            },
-            "supports_conclusion_ids": [
-                "conc_method",
-                "conc_ruth_means"
-            ],
-            "linked_agent_ids": [
-                "agent_marcus"
-            ],
-            "linked_object_ids": [
-                "obj_cocoa_mug"
-            ]
-        },
-        {
-            "clue_id": "clue_vial_in_ash",
-            "title": "Glass vial in the ash of Ruth's fireplace",
-            "clue_type": "physical_evidence",
-            "description": "In the ash of Ruth's cottage fireplace: a heat-cracked small glass vial. Forensic analysis of the residue inside confirms a plant-based cardiac glycoside \u2014 consistent with foxglove extract. Ruth attempted to burn it but glass does not fully destroy in a domestic hearth.",
-            "strength": "strong",
-            "reliability": 0.95,
-            "ambiguity": "low",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_ruth_cottage",
-                "required_prior_clue_ids": [
-                    "clue_cocoa_residue"
-                ]
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_means",
-                "conc_method"
-            ],
-            "linked_agent_ids": [
-                "agent_ruth"
-            ],
-            "linked_object_ids": [
-                "obj_digitalis_vial"
-            ]
-        },
-        {
-            "clue_id": "clue_foxglove_harvest",
-            "title": "Recently harvested foxglove in Ruth's garden",
-            "clue_type": "physical_evidence",
-            "description": "Ruth's cottage garden: a stand of foxglove with fresh cut marks on several stems. The cuts are clean and recent \u2014 within the last day or two. Foxglove is the primary plant source of digitalis cardiac glycosides.",
-            "strength": "strong",
-            "reliability": 0.9,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_ruth_cottage"
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_means"
-            ],
-            "linked_agent_ids": [
-                "agent_ruth"
-            ],
-            "linked_object_ids": [
-                "obj_foxglove_garden"
-            ]
-        },
-        {
-            "clue_id": "clue_pharmacy_book",
-            "title": "Herbal pharmacy text \u2014 foxglove extract bookmarked",
-            "clue_type": "document",
-            "description": "A well-worn herbal pharmacy reference found on Ruth's bookshelf. The chapter on digitalis purpurea extraction is dog-eared and heavily annotated. Dates of the annotations are consistent with the last few weeks.",
-            "strength": "strong",
-            "reliability": 0.9,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_ruth_cottage"
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_means"
-            ],
-            "linked_agent_ids": [
-                "agent_ruth"
-            ],
-            "linked_object_ids": []
-        },
-        {
-            "clue_id": "clue_birth_certificate",
-            "title": "Ruth's birth certificate \u2014 father: Henry Bell",
-            "clue_type": "document",
-            "description": "Found hidden in the binding of a book in Marcus's study: Ruth Margaret Bell, born 1973, father Henry Bell \u2014 the same father as Marcus Bell. Ruth is Marcus's illegitimate half-sister. She was never acknowledged by the Bell family.",
-            "strength": "strong",
-            "reliability": 0.95,
-            "ambiguity": "low",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_marcus_study"
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_motive"
-            ],
-            "linked_agent_ids": [
-                "agent_ruth",
-                "agent_marcus"
-            ],
-            "linked_object_ids": [
-                "obj_birth_certificate"
-            ]
-        },
-        {
-            "clue_id": "clue_burnt_document",
-            "title": "Burnt document with '...Calder...' and '...Bell, 19...'",
-            "clue_type": "physical_evidence",
-            "description": "In the ash of Marcus's study fireplace: a charred fragment bearing '...Calder...' and '...Bell, 19...' \u2014 the remains of a birth record. Someone burnt a document in this room last night. Marcus's household help says the fireplace was not used by Marcus recently.",
-            "strength": "medium",
-            "reliability": 0.8,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_marcus_study"
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_motive",
-                "conc_ruth_opportunity"
-            ],
-            "linked_agent_ids": [
-                "agent_ruth"
-            ],
-            "linked_object_ids": [
-                "obj_burnt_document"
-            ]
-        },
-        {
-            "clue_id": "clue_revised_will",
-            "title": "Marcus's revised will \u2014 'if R. contests'",
-            "clue_type": "document",
-            "description": "In Marcus's study: the draft revised will, removing Isabella and the clinic and naming nephew Thomas. At the bottom, in Marcus's handwriting: 'if R. contests, she may have legal standing.' Marcus knew Ruth could claim as a half-sibling.",
-            "strength": "strong",
-            "reliability": 0.95,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_marcus_study"
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_motive"
-            ],
-            "linked_agent_ids": [
-                "agent_marcus",
-                "agent_ruth"
-            ],
-            "linked_object_ids": [
-                "obj_revised_will"
-            ]
-        },
-        {
-            "clue_id": "clue_whittle_Ruth_reference",
-            "title": "Solicitor confirms 'R.' is Ruth Calder",
-            "clue_type": "witness_statement",
-            "description": "Mr. Whittle, questioned under necessity, confirms that Marcus's handwritten note about 'R.' was explained to him as referring to 'Ruth Calder, the postwoman \u2014 an old family matter.' Whittle had no further details.",
-            "strength": "strong",
-            "reliability": 0.9,
-            "ambiguity": "low",
-            "discoverability": {
-                "method": "interview",
-                "agent_id": "agent_solicitor",
-                "question_type": "evidence",
-                "required_prior_clue_ids": [
-                    "clue_revised_will"
-                ]
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_motive"
-            ],
-            "linked_agent_ids": [
-                "agent_solicitor",
-                "agent_ruth",
-                "agent_marcus"
-            ]
-        },
-        {
-            "clue_id": "clue_ruth_key",
-            "title": "Ruth holds a spare key to Marcus's house",
-            "clue_type": "witness_statement",
-            "description": "Marcus gave Ruth a spare key several years ago for registered post delivery when he was away. Ruth does not mention this key. The household help is unaware of it. There are no signs of forced entry.",
-            "strength": "strong",
-            "reliability": 0.9,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "inspect",
-                "location_id": "loc_ruth_cottage"
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_opportunity"
-            ],
-            "linked_agent_ids": [
-                "agent_ruth",
-                "agent_marcus"
-            ],
-            "linked_object_ids": [
-                "obj_ruth_key"
-            ]
-        },
-        {
-            "clue_id": "clue_ruth_visit_evening",
-            "title": "Ruth was seen leaving Marcus's house at 18:30",
-            "clue_type": "witness_statement",
-            "description": "Elias noticed Ruth stepping out of Marcus's front door at about 18:30 \u2014 he noticed because it was unusual. He thought she had a delivery.",
-            "strength": "medium",
-            "reliability": 0.6,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "interview",
-                "agent_id": "agent_elias",
-                "question_type": "timeline"
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_opportunity"
-            ],
-            "linked_agent_ids": [
-                "agent_elias",
-                "agent_ruth"
-            ],
-            "linked_event_ids": [
-                "ev_1800_ruth_confronts"
-            ]
-        },
-        {
-            "clue_id": "clue_elias_bell_girl",
-            "title": "Elias recalls a 'Bell girl' from decades ago",
-            "clue_type": "witness_statement",
-            "description": "Elias, if asked carefully about the Bell family history, recalls a rumour from the 1970s: Henry Bell fathered an illegitimate daughter with a woman on the south lane named Doris Calder. The child was sent away. He thinks her name might have been Ruth.",
-            "strength": "medium",
-            "reliability": 0.55,
-            "ambiguity": "high",
-            "discoverability": {
-                "method": "interview",
-                "agent_id": "agent_elias",
-                "question_type": "relationship",
-                "required_prior_clue_ids": [
-                    "clue_revised_will"
-                ]
-            },
-            "supports_conclusion_ids": [
-                "conc_ruth_motive"
-            ],
-            "linked_agent_ids": [
-                "agent_elias",
-                "agent_ruth",
-                "agent_marcus"
-            ]
-        },
-        {
-            "clue_id": "clue_nadia_cardiac_glycoside",
-            "title": "Nadia identifies the cause of death",
-            "clue_type": "witness_statement",
-            "description": "Nadia, shown the mug residue and foxglove evidence, confirms: digitalis glycoside poisoning in a cardiac patient at effective dose would cause fatal arrhythmia within 90 minutes of ingestion, with no visible signs distinguishable from natural cardiac arrest without a targeted toxicology screen.",
-            "strength": "strong",
-            "reliability": 0.95,
-            "ambiguity": "low",
-            "discoverability": {
-                "method": "interview",
-                "agent_id": "agent_nadia",
-                "question_type": "evidence"
-            },
-            "supports_conclusion_ids": [
-                "conc_method",
-                "conc_ruth_means"
-            ],
-            "linked_agent_ids": [
-                "agent_nadia"
-            ]
-        },
-        {
-            "clue_id": "clue_isabella_argument",
-            "title": "Isabella and Marcus argued at 19:00",
-            "clue_type": "witness_statement",
-            "description": "Elias heard raised voices from Marcus's house at around 19:00, and saw Isabella leave at about 20:00, white-faced. Isabella was not invited \u2014 she came to confront Marcus about the will.",
-            "strength": "medium",
-            "reliability": 0.75,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "interview",
-                "agent_id": "agent_elias",
-                "question_type": "timeline"
-            },
-            "supports_conclusion_ids": [
-                "conc_isabella_red_herring"
-            ],
-            "linked_agent_ids": [
-                "agent_elias",
-                "agent_isabella"
-            ],
-            "linked_event_ids": [
-                "ev_1900_isabella_visits"
-            ]
-        },
-        {
-            "clue_id": "clue_priya_sees_isabella",
-            "title": "Priya saw Isabella leave in fury at 20:00",
-            "clue_type": "witness_statement",
-            "description": "Priya confirms she saw Isabella exit Marcus's house at 20:00, looking furious. This places Isabella at the scene \u2014 and then confirms she left two hours before the murder window.",
-            "strength": "medium",
-            "reliability": 0.85,
-            "ambiguity": "medium",
-            "discoverability": {
-                "method": "interview",
-                "agent_id": "agent_priya",
-                "question_type": "timeline"
-            },
-            "supports_conclusion_ids": [
-                "conc_isabella_red_herring",
-                "conc_isabella_innocent"
-            ],
-            "linked_agent_ids": [
-                "agent_priya",
-                "agent_isabella"
-            ]
-        },
-        {
-            "clue_id": "clue_isabella_alibi",
-            "title": "Isabella was seen at the bookshop until midnight",
-            "clue_type": "witness_statement",
-            "description": "Isabella's neighbour confirms Isabella's flat lights were on and music was audible until past midnight. Isabella herself confirms she was home from 20:00 \u2014 she was too angry to sleep.",
-            "strength": "strong",
-            "reliability": 0.85,
-            "ambiguity": "low",
-            "discoverability": {
-                "method": "interview",
-                "agent_id": "agent_isabella",
-                "question_type": "alibi"
-            },
-            "supports_conclusion_ids": [
-                "conc_isabella_innocent"
-            ],
-            "linked_agent_ids": [
-                "agent_isabella"
-            ]
-        }
-    ],
-    "conclusions": [
-        {
-            "conclusion_id": "conc_ruth_motive",
-            "type": "motive",
-            "summary": "Ruth is Marcus's illegitimate half-sister, cut out of the Bell estate her whole life. Marcus was changing his will and had a note suggesting Ruth might have legal standing to contest. Ruth had nothing to gain if Marcus died before she contested \u2014 but she could not contest a living Marcus who would fight it. A dead Marcus, and she could claim as next-of-kin.",
-            "target_agent_id": "agent_ruth",
-            "required_for_solution": true,
-            "supported_by_clue_ids": [
-                "clue_birth_certificate",
-                "clue_revised_will",
-                "clue_whittle_Ruth_reference",
-                "clue_elias_bell_girl",
-                "clue_burnt_document"
-            ]
-        },
-        {
-            "conclusion_id": "conc_ruth_means",
-            "type": "means",
-            "summary": "Ruth extracted digitalis from the foxglove in her garden and added it to Marcus's pre-prepared cocoa. She had studied the extraction method and knew the lethal dose for a cardiac patient.",
-            "target_agent_id": "agent_ruth",
-            "required_for_solution": true,
-            "supported_by_clue_ids": [
-                "clue_vial_in_ash",
-                "clue_foxglove_harvest",
-                "clue_pharmacy_book",
-                "clue_cocoa_residue",
-                "clue_nadia_cardiac_glycoside"
-            ]
-        },
-        {
-            "conclusion_id": "conc_ruth_opportunity",
-            "type": "opportunity",
-            "summary": "Ruth had a spare key to Marcus's house and used it to enter at 21:00. She burnt a copy of the birth certificate in the study fireplace. She was seen leaving Marcus's house at 18:30 that evening.",
-            "target_agent_id": "agent_ruth",
-            "required_for_solution": true,
-            "supported_by_clue_ids": [
-                "clue_ruth_key",
-                "clue_burnt_document",
-                "clue_ruth_visit_evening"
-            ]
-        },
-        {
-            "conclusion_id": "conc_method",
-            "type": "method",
-            "summary": "Marcus died of digitalis glycoside poisoning at 22:40. The poison was added to his cocoa. Death would have appeared indistinguishable from natural cardiac arrest without targeted toxicology.",
-            "required_for_solution": true,
-            "supported_by_clue_ids": [
-                "clue_cocoa_residue",
-                "clue_vial_in_ash",
-                "clue_nadia_cardiac_glycoside"
-            ]
-        },
-        {
-            "conclusion_id": "conc_isabella_red_herring",
-            "type": "red_herring",
-            "summary": "Isabella had a strong motive \u2014 she was cut out of the will \u2014 and was at Marcus's house that evening arguing with him.",
-            "target_agent_id": "agent_isabella",
-            "supported_by_clue_ids": [
-                "clue_isabella_argument",
-                "clue_priya_sees_isabella",
-                "clue_revised_will"
-            ]
-        },
-        {
-            "conclusion_id": "conc_isabella_innocent",
-            "type": "innocence_anchor",
-            "summary": "Isabella was home from 20:00 and has a neighbour alibi. She also had no means \u2014 no medical knowledge, no access to the house after leaving.",
-            "target_agent_id": "agent_isabella",
-            "supported_by_clue_ids": [
-                "clue_isabella_alibi",
-                "clue_priya_sees_isabella"
-            ]
-        }
-    ]
+  "clues": [
+    {
+      "clue_id": "clue_cocoa_residue",
+      "title": "Green residue in the cocoa mug",
+      "clue_type": "physical_evidence",
+      "description": "Marcus's fireside mug has a greenish residue inside the rim. The mug still smells faintly of something herbal beneath the cocoa. The residue is not chocolate — it is a plant extract.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_house",
+        "reveal_on": [
+          "examine_body"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_method",
+        "conc_ruth_means"
+      ],
+      "linked_agent_ids": [
+        "agent_marcus"
+      ],
+      "linked_object_ids": [
+        "obj_cocoa_mug"
+      ]
+    },
+    {
+      "clue_id": "clue_vial_in_ash",
+      "title": "Glass vial in the ash of Ruth's fireplace",
+      "clue_type": "physical_evidence",
+      "description": "In the ash of Ruth's cottage fireplace: a heat-cracked small glass vial. Forensic analysis of the residue inside confirms a plant-based cardiac glycoside — consistent with foxglove extract. Ruth attempted to burn it but glass does not fully destroy in a domestic hearth.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ruth_cottage",
+        "required_prior_clue_ids": [
+          "clue_cocoa_residue"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_means",
+        "conc_method"
+      ],
+      "linked_agent_ids": [
+        "agent_ruth"
+      ],
+      "linked_object_ids": [
+        "obj_digitalis_vial"
+      ]
+    },
+    {
+      "clue_id": "clue_foxglove_harvest",
+      "title": "Recently harvested foxglove in Ruth's garden",
+      "clue_type": "physical_evidence",
+      "description": "Ruth's cottage garden: a stand of foxglove with fresh cut marks on several stems. The cuts are clean and recent — within the last day or two. Foxglove is the primary plant source of digitalis cardiac glycosides.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ruth_cottage"
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_means"
+      ],
+      "linked_agent_ids": [
+        "agent_ruth"
+      ],
+      "linked_object_ids": [
+        "obj_foxglove_garden"
+      ]
+    },
+    {
+      "clue_id": "clue_pharmacy_book",
+      "title": "Herbal pharmacy text — foxglove extract bookmarked",
+      "clue_type": "document",
+      "description": "A well-worn herbal pharmacy reference found on Ruth's bookshelf. The chapter on digitalis purpurea extraction is dog-eared and heavily annotated. Dates of the annotations are consistent with the last few weeks.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ruth_cottage"
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_means"
+      ],
+      "linked_agent_ids": [
+        "agent_ruth"
+      ],
+      "linked_object_ids": []
+    },
+    {
+      "clue_id": "clue_birth_certificate",
+      "title": "Ruth's birth certificate — father: Henry Bell",
+      "clue_type": "document",
+      "description": "Found hidden in the binding of a book in Marcus's study: Ruth Margaret Bell, born 1973, father Henry Bell — the same father as Marcus Bell. Ruth is Marcus's illegitimate half-sister. She was never acknowledged by the Bell family.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_study"
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_ruth",
+        "agent_marcus"
+      ],
+      "linked_object_ids": [
+        "obj_birth_certificate"
+      ]
+    },
+    {
+      "clue_id": "clue_burnt_document",
+      "title": "Burnt document with '...Calder...' and '...Bell, 19...'",
+      "clue_type": "physical_evidence",
+      "description": "In the ash of Marcus's study fireplace: a charred fragment bearing '...Calder...' and '...Bell, 19...' — the remains of a birth record. Someone burnt a document in this room last night. Marcus's household help says the fireplace was not used by Marcus recently.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_study"
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_motive",
+        "conc_ruth_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_ruth"
+      ],
+      "linked_object_ids": [
+        "obj_burnt_document"
+      ]
+    },
+    {
+      "clue_id": "clue_revised_will",
+      "title": "Marcus's revised will — 'if R. contests'",
+      "clue_type": "document",
+      "description": "In Marcus's study: the draft revised will, removing Isabella and the clinic and naming nephew Thomas. At the bottom, in Marcus's handwriting: 'if R. contests, she may have legal standing.' Marcus knew Ruth could claim as a half-sibling.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_study"
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_marcus",
+        "agent_ruth"
+      ],
+      "linked_object_ids": [
+        "obj_revised_will"
+      ]
+    },
+    {
+      "clue_id": "clue_whittle_Ruth_reference",
+      "title": "Solicitor confirms 'R.' is Ruth Calder",
+      "clue_type": "witness_statement",
+      "description": "Mr. Whittle, questioned under necessity, confirms that Marcus's handwritten note about 'R.' was explained to him as referring to 'Ruth Calder, the postwoman — an old family matter.' Whittle had no further details.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_solicitor",
+        "question_type": "evidence",
+        "required_prior_clue_ids": [
+          "clue_revised_will"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_solicitor",
+        "agent_ruth",
+        "agent_marcus"
+      ]
+    },
+    {
+      "clue_id": "clue_ruth_key",
+      "title": "Ruth holds a spare key to Marcus's house",
+      "clue_type": "witness_statement",
+      "description": "Marcus gave Ruth a spare key several years ago for registered post delivery when he was away. Ruth does not mention this key. The household help is unaware of it. There are no signs of forced entry.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_ruth_cottage"
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_ruth",
+        "agent_marcus"
+      ],
+      "linked_object_ids": [
+        "obj_ruth_key"
+      ]
+    },
+    {
+      "clue_id": "clue_ruth_visit_evening",
+      "title": "Ruth was seen leaving Marcus's house at 18:30",
+      "clue_type": "witness_statement",
+      "description": "Elias noticed Ruth stepping out of Marcus's front door at about 18:30 — he noticed because it was unusual. He thought she had a delivery.",
+      "strength": "medium",
+      "reliability": 0.6,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_ruth"
+      ],
+      "linked_event_ids": [
+        "ev_1800_ruth_confronts"
+      ]
+    },
+    {
+      "clue_id": "clue_elias_bell_girl",
+      "title": "Elias recalls a 'Bell girl' from decades ago",
+      "clue_type": "witness_statement",
+      "description": "Elias, if asked carefully about the Bell family history, recalls a rumour from the 1970s: Henry Bell fathered an illegitimate daughter with a woman on the south lane named Doris Calder. The child was sent away. He thinks her name might have been Ruth.",
+      "strength": "medium",
+      "reliability": 0.55,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias",
+        "question_type": "relationship",
+        "required_prior_clue_ids": [
+          "clue_revised_will"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ruth_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_ruth",
+        "agent_marcus"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_cardiac_glycoside",
+      "title": "Nadia identifies the cause of death",
+      "clue_type": "witness_statement",
+      "description": "Nadia, shown the mug residue and foxglove evidence, confirms: digitalis glycoside poisoning in a cardiac patient at effective dose would cause fatal arrhythmia within 90 minutes of ingestion, with no visible signs distinguishable from natural cardiac arrest without a targeted toxicology screen.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "question_type": "evidence"
+      },
+      "supports_conclusion_ids": [
+        "conc_method",
+        "conc_ruth_means"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ]
+    },
+    {
+      "clue_id": "clue_isabella_argument",
+      "title": "Isabella and Marcus argued at 19:00",
+      "clue_type": "witness_statement",
+      "description": "Elias heard raised voices from Marcus's house at around 19:00, and saw Isabella leave at about 20:00, white-faced. Isabella was not invited — she came to confront Marcus about the will.",
+      "strength": "medium",
+      "reliability": 0.75,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_isabella"
+      ],
+      "linked_event_ids": [
+        "ev_1900_isabella_visits"
+      ]
+    },
+    {
+      "clue_id": "clue_priya_sees_isabella",
+      "title": "Priya saw Isabella leave in fury at 20:00",
+      "clue_type": "witness_statement",
+      "description": "Priya confirms she saw Isabella exit Marcus's house at 20:00, looking furious. This places Isabella at the scene — and then confirms she left two hours before the murder window.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_priya",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring",
+        "conc_isabella_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_priya",
+        "agent_isabella"
+      ]
+    },
+    {
+      "clue_id": "clue_isabella_alibi",
+      "title": "Isabella was seen at the bookshop until midnight",
+      "clue_type": "witness_statement",
+      "description": "Isabella's neighbour confirms Isabella's flat lights were on and music was audible until past midnight. Isabella herself confirms she was home from 20:00 — she was too angry to sleep.",
+      "strength": "strong",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_isabella",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_isabella"
+      ]
+    },
+    {
+      "clue_id": "clue_clinic_lost_legacy",
+      "title": "The clinic loses its legacy too",
+      "clue_type": "document",
+      "description": "The superseded will left a share of the Bell estate to the village clinic fund. The revision signed on the day Marcus died strikes it out. Nadia had sat with him over that bequest, and she is the one person in this village who could tell you, without opening a book, exactly what a foxglove does to a failing heart.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_location_ids": [
+        "loc_marcus_house"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_night_call",
+      "title": "Nadia was on a call-out",
+      "clue_type": "witness_statement",
+      "description": "The clinic's on-call book: Nadia was called out at 20:40 to a confinement at Bracken Farm, six miles out, and did not get back to the village until gone one in the morning. The farmer, his wife, and a midwife from the county all put her there. She was nowhere near Marcus Bell's fireside.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "required_prior_clue_ids": [
+          "clue_clinic_lost_legacy"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ]
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "conc_ruth_motive",
+      "type": "motive",
+      "summary": "Ruth is Marcus's illegitimate half-sister, cut out of the Bell estate her whole life. Marcus was changing his will and had a note suggesting Ruth might have legal standing to contest. Ruth had nothing to gain if Marcus died before she contested — but she could not contest a living Marcus who would fight it. A dead Marcus, and she could claim as next-of-kin.",
+      "target_agent_id": "agent_ruth",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_birth_certificate",
+        "clue_revised_will",
+        "clue_whittle_Ruth_reference",
+        "clue_elias_bell_girl",
+        "clue_burnt_document"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ruth_means",
+      "type": "means",
+      "summary": "Ruth extracted digitalis from the foxglove in her garden and added it to Marcus's pre-prepared cocoa. She had studied the extraction method and knew the lethal dose for a cardiac patient.",
+      "target_agent_id": "agent_ruth",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_vial_in_ash",
+        "clue_foxglove_harvest",
+        "clue_pharmacy_book",
+        "clue_cocoa_residue",
+        "clue_nadia_cardiac_glycoside"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ruth_opportunity",
+      "type": "opportunity",
+      "summary": "Ruth had a spare key to Marcus's house and used it to enter at 21:00. She burnt a copy of the birth certificate in the study fireplace. She was seen leaving Marcus's house at 18:30 that evening.",
+      "target_agent_id": "agent_ruth",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ruth_key",
+        "clue_burnt_document",
+        "clue_ruth_visit_evening"
+      ]
+    },
+    {
+      "conclusion_id": "conc_method",
+      "type": "method",
+      "summary": "Marcus died of digitalis glycoside poisoning at 22:40. The poison was added to his cocoa. Death would have appeared indistinguishable from natural cardiac arrest without targeted toxicology.",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_cocoa_residue",
+        "clue_vial_in_ash",
+        "clue_nadia_cardiac_glycoside"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_red_herring",
+      "type": "red_herring",
+      "summary": "Isabella had a strong motive — she was cut out of the will — and was at Marcus's house that evening arguing with him.",
+      "target_agent_id": "agent_isabella",
+      "supported_by_clue_ids": [
+        "clue_isabella_argument",
+        "clue_priya_sees_isabella",
+        "clue_revised_will"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_innocent",
+      "type": "innocence_anchor",
+      "summary": "Isabella was home from 20:00 and has a neighbour alibi. She also had no means — no medical knowledge, no access to the house after leaving.",
+      "target_agent_id": "agent_isabella",
+      "supported_by_clue_ids": [
+        "clue_isabella_alibi",
+        "clue_priya_sees_isabella"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ruth_false_alibi",
+      "type": "false_alibi",
+      "summary": "Ruth says she was home in her garden all evening. But she let herself into Marcus's house with her own key, was seen leaving it at 18:30, and burned the evidence in her own grate that night.",
+      "target_agent_id": "agent_ruth",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ruth_key",
+        "clue_ruth_visit_evening",
+        "clue_vial_in_ash",
+        "clue_burnt_document"
+      ]
+    },
+    {
+      "conclusion_id": "conc_nadia_red_herring",
+      "type": "red_herring",
+      "summary": "The revised will cut the clinic out of the Bell estate, and Nadia — who helped Marcus draft the original bequest — is the one person in the village who would know what foxglove does to a weak heart.",
+      "target_agent_id": "agent_nadia",
+      "supported_by_clue_ids": [
+        "clue_clinic_lost_legacy",
+        "clue_nadia_cardiac_glycoside"
+      ]
+    },
+    {
+      "conclusion_id": "conc_nadia_innocent",
+      "type": "innocence_anchor",
+      "summary": "Nadia was called out to a confinement at Bracken Farm from 20:40 until after one in the morning, six miles from the village, with three witnesses.",
+      "target_agent_id": "agent_nadia",
+      "supported_by_clue_ids": [
+        "clue_nadia_night_call"
+      ]
+    }
+  ]
 }

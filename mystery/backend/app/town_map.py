@@ -19,11 +19,39 @@ TOWN_LAYOUT_FILE = Path(__file__).parent / "data" / "town" / "town_layout.json"
 # The HD overworld mosaic: rows A-C top->bottom, cols 1-3 left->right.
 HD_TILE_CELLS = [f"{row}{col}" for row in ("A", "B", "C") for col in (1, 2, 3)]
 HD_TILE_ART_URL_PREFIX = "/art/town/tiles_3x3_hd/"
+LIVING_TOWN_REMASTER_V5_PREFIX = "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5"
+B2_LIVING_TOWN_V2_EXTERNAL_URL = (
+    f"{LIVING_TOWN_REMASTER_V5_PREFIX}/"
+    "town_overworld_B2_living_town_remaster_v5_clean_generated.png"
+)
+B2_LIVING_TOWN_V2_INTERNAL_URL = (
+    f"{LIVING_TOWN_REMASTER_V5_PREFIX}/zoom_interior_v8_hobbs_cafe/"
+    "town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png"
+)
+LIVING_TOWN_V2_TILE_URLS = {
+    "A1": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_A1_living_town_remaster_v5_clean_generated.png",
+    "A2": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_A2_living_town_remaster_v5_clean_generated.png",
+    "A3": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_A3_living_town_remaster_v5_clean_generated.png",
+    "B1": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_B1_living_town_remaster_v5_clean_generated.png",
+    "B2": B2_LIVING_TOWN_V2_EXTERNAL_URL,
+    "B3": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_B3_living_town_remaster_v5_clean_generated.png",
+    "C1": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_C1_living_town_remaster_v5_clean_generated.png",
+    "C2": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_C2_living_town_remaster_v5_clean_generated.png",
+    "C3": f"{LIVING_TOWN_REMASTER_V5_PREFIX}/town_overworld_C3_living_town_remaster_v5_clean_generated.png",
+}
 # Dev-only filesystem view of the same directory (Vite serves frontend/public/).
 HD_TILE_ART_DIR = (
     Path(__file__).resolve().parents[2]
     / "frontend" / "public" / "art" / "town" / "tiles_3x3_hd"
 )
+
+
+def hd_tile_url(cell: str) -> str:
+    """Default exterior artwork for one HD mosaic cell."""
+    return LIVING_TOWN_V2_TILE_URLS.get(
+        cell,
+        f"/art/town/tiles_3x3_hd/town_overworld_{cell}_hd.png",
+    )
 
 
 ALLOWED_TILES = {
@@ -47,7 +75,7 @@ ALLOWED_PROPS = {
 ALLOWED_LAYERS = {
     "base", "terrain_detail", "paths", "interior_floors", "walls", "structures",
     "props", "case_overlays", "object_anchors", "evidence_markers", "fog", "debug_bounds",
-    "lights"
+    "lights", "ambient"
 }
 
 # Mirrors the semantic_asset_id union in frontend/src/types.ts's MapLightOverlay and
@@ -55,6 +83,11 @@ ALLOWED_LAYERS = {
 ALLOWED_LIGHT_ASSETS = {
     "light_streetlamp_pool", "light_window_warm", "light_window_cool",
     "light_pub_window_glow", "light_fireplace_glow"
+}
+
+ALLOWED_AMBIENT_ASSETS = {
+    "water_shimmer", "fish_ripple_loop", "chimney_smoke", "lamp_flicker",
+    "drifting_mist", "birds_crossing", "warm_motes"
 }
 
 ALLOWED_NESTING = {
@@ -578,7 +611,38 @@ def validate_town_layout_payload(payload: Any) -> list[str]:
             ):
                 errors.append(f"Light '{light_id}' opacity_internal must be a number between 0 and 1")
 
-    # 6. Validate underlay_tile_overrides (visual-only per-cell art swaps).
+    # 6. Validate ambient_sprites (visual-only ambient animation placements).
+    ambient_sprites = payload.get("ambient_sprites", {})
+    if not isinstance(ambient_sprites, dict):
+        errors.append("ambient_sprites must be a JSON object")
+    else:
+        import re
+
+        time_re = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+        for sprite_id, spec in ambient_sprites.items():
+            if not isinstance(spec, dict):
+                errors.append(f"Ambient sprite '{sprite_id}' must be an object")
+                continue
+            asset_id = spec.get("asset_id")
+            if asset_id not in ALLOWED_AMBIENT_ASSETS:
+                errors.append(f"Ambient sprite '{sprite_id}' has unknown asset_id '{asset_id}'")
+            x, y, w, h = spec.get("x"), spec.get("y"), spec.get("width"), spec.get("height")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
+                errors.append(f"Ambient sprite '{sprite_id}' x/y/width/height must be numbers (tile coordinates)")
+            else:
+                if w <= 0 or h <= 0:
+                    errors.append(f"Ambient sprite '{sprite_id}' width and height must be positive")
+                if x < 0 or y < 0 or x > 192 or y > 144:
+                    errors.append(f"Ambient sprite '{sprite_id}' position must lie within the 192x144 grid")
+            opacity = spec.get("opacity")
+            if opacity is not None and (not isinstance(opacity, (int, float)) or isinstance(opacity, bool) or not 0 <= opacity <= 1):
+                errors.append(f"Ambient sprite '{sprite_id}' opacity must be a number between 0 and 1")
+            for key in ("from", "to"):
+                value = spec.get(key)
+                if value is not None and not (isinstance(value, str) and time_re.match(value)):
+                    errors.append(f"Ambient sprite '{sprite_id}' has invalid '{key}' time (expected HH:MM)")
+
+    # 7. Validate underlay_tile_overrides (visual-only per-cell art swaps).
     # URLs are format-checked but not existence-checked: the layout must stay
     # loadable on deployments where the frontend assets live elsewhere.
     tile_overrides = payload.get("underlay_tile_overrides")
@@ -624,7 +688,10 @@ def load_town_layout() -> dict[str, Any] | None:
 CANONICAL_MAP: dict[str, Any] = {
     "definition_id": "town_canonical_v1",
     "asset": "town_canonical_v1",
-    "image": "/art/town/town_canonical_v2_overworld_day.png",
+    "image": (
+        f"{LIVING_TOWN_REMASTER_V5_PREFIX}/"
+        "town_overworld_full_master_remaster_v5_clean_generated_master.png"
+    ),
     # HD overworld sliced into a 3x3 mosaic (rows A-C top->bottom, cols 1-3
     # left->right; B2 is the town centre). Each cell is 2048x1536 = 64x48
     # tiles. Clients that understand image_tiles should prefer it over the
@@ -634,11 +701,7 @@ CANONICAL_MAP: dict[str, Any] = {
         "rows": 3,
         "urls": [
             [
-                (
-                    "/art/town/tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png"
-                    if row == "B" and col == 2
-                    else f"/art/town/tiles_3x3_hd/town_overworld_{row}{col}_hd.png"
-                )
+                hd_tile_url(f"{row}{col}")
                 for col in (1, 2, 3)
             ]
             for row in ("A", "B", "C")
@@ -651,9 +714,9 @@ CANONICAL_MAP: dict[str, Any] = {
         "urls": [
             [
                 (
-                    "/art/town/tiles_3x3_hd/town_overworld_B2_interior_hd.png"
+                    B2_LIVING_TOWN_V2_INTERNAL_URL
                     if row == "B" and col == 2
-                    else f"/art/town/tiles_3x3_hd/town_overworld_{row}{col}_hd.png"
+                    else hd_tile_url(f"{row}{col}")
                 )
                 for col in (1, 2, 3)
             ]
@@ -883,8 +946,8 @@ OBJECT_OVERLAYS: dict[str, list[str]] = {
 # a light spanning past the pub's own walls onto its neighbours' roofs.
 #
 # The exterior x/y/width/height below are measured against
-# town_overworld_B2_all_cases_external_hd.png. The `*_internal` overrides are
-# measured separately against town_overworld_B2_interior_hd.png — the
+# the current B2 external remaster. The `*_internal` overrides are
+# measured separately against the current zoom_interior_v7 B2 image — the
 # roofless close-up art shown past the zoom threshold — because that is a
 # different painted asset where each building is redrawn as an isolated
 # cutaway room, not pixel-aligned with its exterior footprint. Lights without
@@ -1237,6 +1300,29 @@ def resolve_town_lights(layout: dict[str, Any] | None, visible_location_ids: set
     return [light for light in resolved if light["location_id"] in visible_location_ids]
 
 
+def _ambient_tile_to_px(sprite: dict[str, Any]) -> dict[str, Any]:
+    out: dict[str, Any] = {
+        "asset_id": sprite["asset_id"],
+        "x": round(sprite["x"] * 32),
+        "y": round(sprite["y"] * 32),
+        "width": round(sprite["width"] * 32),
+        "height": round(sprite["height"] * 32),
+    }
+    if sprite.get("opacity") is not None:
+        out["opacity"] = sprite["opacity"]
+    if sprite.get("from") is not None:
+        out["from"] = sprite["from"]
+    if sprite.get("to") is not None:
+        out["to"] = sprite["to"]
+    return out
+
+
+def resolve_town_ambient_sprites(layout: dict[str, Any] | None) -> list[dict[str, Any]]:
+    """Pixel-space ambient sprite placements authored in the Map Editor."""
+    sprites = (layout or {}).get("ambient_sprites") or {}
+    return [{"id": sprite_id, **_ambient_tile_to_px(spec)} for sprite_id, spec in sprites.items()]
+
+
 def map_config(case_id: str) -> dict[str, Any] | None:
     return CASE_MAPS.get(case_id)
 
@@ -1341,6 +1427,7 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
             "visible_location_ids": None,
             "overlays": [],
             "light_overlays": [],
+            "ambient_sprites": [],
             "objects": [],
             "adjacency": {},
             "canonical_locations": {},
@@ -1379,6 +1466,7 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
         "visible_location_ids": visible_location_ids_list,
         "overlays": config["overlays"],
         "light_overlays": resolve_town_lights(layout, visible_location_ids),
+        "ambient_sprites": resolve_town_ambient_sprites(layout),
         "crop_padding_by_location": config.get("crop_padding_by_location", {}),
         "object_visuals": object_visuals,
         "objects": object_visuals,

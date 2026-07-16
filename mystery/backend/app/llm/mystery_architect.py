@@ -21,6 +21,26 @@ PROMPTS_DIR = Path(__file__).parent / "prompts"
 def load_prompt(name: str) -> str:
     return (PROMPTS_DIR / f"{name}.txt").read_text()
 
+def _part_of_day(hhmm: str) -> str:
+    """Which part of the day a case runs in, from its sim_start_time.
+
+    Cases are not all mornings: case_004 starts at 22:00, case_006 at 18:00. The timeline
+    prompt is written around this so the LLM stops authoring breakfast beats into a midnight
+    case (and witnesses stop saying "this morning" after a murder at 23:14).
+    """
+    try:
+        hour = int(hhmm.split(":")[0])
+    except (ValueError, IndexError):
+        return "morning"
+    if 5 <= hour < 12:
+        return "morning"
+    if 12 <= hour < 17:
+        return "afternoon"
+    if 17 <= hour < 21:
+        return "evening"
+    return "night"
+
+
 def _condensed_plot_summary(plot_plan: PlotOutlinePlan) -> dict:
     """Trimmed recap of the plot phase to carry into later prompts.
     Drops scene_description (long narrative prose not needed for
@@ -351,9 +371,13 @@ Format the output strictly as a JSON object matching the required schema."""}
             f"  {r} = {roles.get(r + '_NAME', roles.get('{' + r.strip('{}') + '_NAME}', ''))}"
             for r in allowed_roles
         )
+        # Cases do not all happen in the morning (case_004 runs 22:00-23:45, case_006 18:00-23:00).
+        # The prompt used to hardcode "MORNING", which is how generated cases ended up with
+        # witnesses saying "twenty to nine" at lunchtime and "this morning" at midnight.
+        part_of_day = _part_of_day(bc.sim_start_time)
         timeline_messages = [
             {"role": "system", "content": "You are a creative murder mystery architect writing a case for a detective game."},
-            {"role": "user", "content": f"""Author the MORNING TIMELINE for this mystery — the ordinary comings and goings the player watches when they rewind the day. Plot recap:
+            {"role": "user", "content": f"""Author the {part_of_day.upper()} TIMELINE for this mystery — the ordinary comings and goings the player watches when they rewind the day. Plot recap:
 {json.dumps(_condensed_plot_summary(plot_plan))}
 
 Cast (role = name):
@@ -361,9 +385,19 @@ Cast (role = name):
 
 Fixed timing (do not contradict): the day starts at {bc.sim_start_time}; the murder happens between {bc.murder_window[0]} and {bc.murder_window[1]}; the body is found at {bc.discovery_time}. DO NOT author the murder itself or the discovery of the body — those are handled for you. Author only the ordinary/suspicious activity BEFORE roughly {bc.murder_window[0]}.
 
+TIME OF DAY — this case takes place in the {part_of_day}, starting at {bc.sim_start_time}. Every beat and every routine must make sense at that hour. Do not write breakfast, opening-up or milk-round activity into an evening case, or pub closing-time into a morning one. Never use a clock phrase that contradicts the hours above (no "this morning" in a case that happens at night).
+
 Produce:
 1. beats: a list of short story beats. Each beat: role (from the list above), location_role (one of: "public", "victim_home", "killer_home", "role_home", "witness_spot"), action_summary (what they do), public_summary (what a passer-by would see, or null if unobserved), visibility ("public", "public_partial", or "private"), beat_kind ("routine", "approach", "suspicious", "sighting", or "cover"), order_hint (integer ordering, low = earlier). Give every listed role at least one beat so the village feels alive. Do NOT reveal who the killer is or state that a murder occurred.
-2. routines: for EACH role, a one-sentence routine_summary describing that character's normal morning habits.
+2. routines: for EACH role, a one-sentence routine_summary describing what that character does on an ORDINARY {part_of_day} — their standing habits, not the events of the day of the murder.
+
+CRITICAL — routine_summary is shown to the player on the Suspects screen BEFORE they have discovered a single clue. It is not a private author note. A routine_summary MUST NOT:
+  * say what the character did on the night/day of the murder ("that night he went to the square...")
+  * reveal any secret, lie or motive ("secretly owed him money", "she lied to protect him")
+  * state that an alibi is false, or that anything "will be" discovered, proven or dismantled
+  * disclose another character's secret ("dimly recalls her maiden name was Bell")
+  * hint at what the player is supposed to deduce ("will have seen something crucial")
+Write it as a neighbour would describe them: "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs." Give it a habit, a preference or an opinion — never a plot point.
 
 Format the output strictly as a JSON object matching the required schema."""}
         ]

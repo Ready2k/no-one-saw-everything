@@ -3,26 +3,79 @@
   "motive": {
     "canonical": "Nadia killed Elias to prevent him changing his will at 18:30 away from the clinic bequest she had built her plans around.",
     "concept_groups": [
-      ["will", "estate", "bequest", "inheritance", "solicitor", "legacy"],
-      ["clinic", "fund", "budget", "equipment", "renovation"],
-      ["change", "amend", "remove", "redirect", "nephew", "reconsidered"]
+      [
+        "will",
+        "estate",
+        "bequest",
+        "inheritance",
+        "solicitor",
+        "legacy"
+      ],
+      [
+        "clinic",
+        "fund",
+        "budget",
+        "equipment",
+        "renovation"
+      ],
+      [
+        "change",
+        "amend",
+        "remove",
+        "redirect",
+        "nephew",
+        "reconsidered"
+      ]
     ],
     "min_groups": 2
   },
   "method": {
     "canonical": "Poison — digoxin overdose administered in Elias's afternoon pill organiser.",
     "concept_groups": [
-      ["poison", "poisoned", "overdose", "medication", "digoxin", "pills", "capsules"],
-      ["pill organiser", "organiser", "pills", "afternoon medication", "tablets"]
+      [
+        "poison",
+        "poisoned",
+        "overdose",
+        "medication",
+        "digoxin",
+        "pills",
+        "capsules"
+      ],
+      [
+        "pill organiser",
+        "organiser",
+        "pills",
+        "afternoon medication",
+        "tablets"
+      ]
     ],
     "min_groups": 2
   },
   "opportunity": {
     "canonical": "Nadia prepared the pill organiser unsupervised and delivered it directly to Elias at 17:05. Ruth witnessed the handoff. Elias was healthy at 17:00 and dead by 17:21.",
     "concept_groups": [
-      ["pill organiser", "gave him", "handoff", "delivered", "17:05", "routine"],
-      ["dispensary", "log", "altered", "falsified", "different ink", "correction"],
-      ["alone", "unsupervised", "only one", "prepared"]
+      [
+        "pill organiser",
+        "gave him",
+        "handoff",
+        "delivered",
+        "17:05",
+        "routine"
+      ],
+      [
+        "dispensary",
+        "log",
+        "altered",
+        "falsified",
+        "different ink",
+        "correction"
+      ],
+      [
+        "alone",
+        "unsupervised",
+        "only one",
+        "prepared"
+      ]
     ],
     "min_groups": 1
   },
@@ -34,5 +87,14 @@
     "clue_nadia_pill_handoff",
     "clue_nadia_budget_notes"
   ],
-  "explanation": "Correct. Nadia Cole killed Elias Grant. Elias had promised his cottage estate to the clinic two years ago — an arrangement Nadia had shepherded and planned around in detail. When Elias told her on Monday he was removing the clinic from his will at an 18:30 solicitor appointment, Nadia spent the night making her decision. At 16:30 she added two 0.25mg digoxin capsules to his Tuesday pill compartment — four times his safe dose — and altered the dispensary log to mask the draw. At 17:05 she delivered the organiser in person, as she always did, and watched him take the pills. Given Elias's arrhythmia and reduced renal function, the overdose could plausibly collapse him within twenty minutes; he was dead by 17:21. Ben had a real conflict with Elias and a suspicious clinic-frontage delivery, but the clinic manifest and dispensary sign-in clear him from the locked medication area. The altered log, the extra capsules, Ruth's eyewitness testimony of the handoff, and Nadia's private budget projections together build the case. The death initially appeared natural, but the spilled flask, open organiser, and dispensary records reveal the truth."
+  "explanation": "Correct. Nadia Cole killed Elias Grant. Elias had promised his cottage estate to the clinic two years ago — an arrangement Nadia had shepherded and planned around in detail. When Elias told her on Monday he was removing the clinic from his will at an 18:30 solicitor appointment, Nadia spent the night making her decision. At 16:30 she added two 0.25mg digoxin capsules to his Tuesday pill compartment — four times his safe dose — and altered the dispensary log to mask the draw. At 17:05 she delivered the organiser in person, as she always did, and watched him take the pills. Given Elias's arrhythmia and reduced renal function, the overdose could plausibly collapse him within twenty minutes; he was dead by 17:21. Ben had a real conflict with Elias and a suspicious clinic-frontage delivery, but the clinic manifest and dispensary sign-in clear him from the locked medication area. The altered log, the extra capsules, Ruth's eyewitness testimony of the handoff, and Nadia's private budget projections together build the case. The death initially appeared natural, but the spilled flask, open organiser, and dispensary records reveal the truth.",
+  "epilogues": {
+    "agent_nadia": "She was struck off in the spring. She has asked, from prison, to be told when the clinic finally gets its treatment room, and the committee has not decided whether to tell her.",
+    "agent_elias": "The estate went to the nephew, who sold the cottage within the year and did not come to the funeral. The clinic received nothing. This is the fact everyone in the village finds hardest to hold.",
+    "agent_dr_haig": "He resigned the following month. He had signed off her dispensing records every fortnight for eleven years, and he says he would sign them again, and that this is the whole problem.",
+    "agent_ben": "The complaint was never sent — it was still in Elias's coat pocket, unposted, in his own handwriting. Ben keeps his delivery signatures scrupulously now. He has never told anyone why.",
+    "agent_clara": "She saw him slumped on the bench at half past five from the cafe window and thought he had nodded off. She has gone over that window, and that thought, more times than she will say.",
+    "agent_owen": "He still crosses the square at six. He still looks at the bench. He has stopped saying good afternoon to it, but it took him a while.",
+    "agent_ruth": "She thought it was routine and lovely. She said so in her statement, and then she asked the detective to strike the word lovely, and then she asked him to put it back."
+  }
 }

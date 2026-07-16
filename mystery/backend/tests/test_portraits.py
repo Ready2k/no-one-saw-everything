@@ -21,7 +21,8 @@ def test_agents_expose_portrait_art_with_null_default():
     assert agents, "case must have agents"
     for agent in agents:
         assert "portrait_art" in agent
-        assert agent["portrait_art"] is None  # case_001 ships no art assets
+        assert agent["portrait_art"] is not None  # now all cases have art assets
+        assert "calm" in agent["portrait_art"]
         assert agent["portrait"] is not None  # emoji fallback still present
 
 

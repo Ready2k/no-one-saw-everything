@@ -130,23 +130,56 @@ def _voice_card(agent: Agent) -> str:
     return agent.voice_card or "No particular mannerisms."
 
 
-def _diegetic_fallback(deterministic_text: str, pressure_level: float) -> str:
-    """Frames a fallback-to-deterministic-text as the character deliberately
-    clamming up, rather than an invisible swap back to the exact same line
-    the player may have already seen — so a rejected/unavailable rewrite
-    reads as an interview beat, not a broken feature. Pressure-tiered so it
-    isn't the same single stock phrase every time.
-    
-    At low pressure, we return the text unadorned so that if the LLM is
-    entirely disconnected, regular conversation doesn't become repetitive."""
-    if pressure_level >= 0.6:
-        opener = "I'm not saying anything more than this:"
-        return f"{opener} {deterministic_text}"
-    elif pressure_level >= 0.3:
-        opener = "That's all I'll say about that:"
-        return f"{opener} {deterministic_text}"
-    
-    return deterministic_text
+# Said when the agent is about to repeat a line the player has already heard. Rotated so a long
+# interrogation doesn't hear the same stock phrase twice, and tiered by how hard the player is
+# pressing.
+_REPEAT_OPENERS_CALM = [
+    "I've told you this already.",
+    "As I said before.",
+    "You've asked me that.",
+    "Same answer as last time.",
+]
+_REPEAT_OPENERS_PRESSED = [
+    "I'm not going to say it differently just because you ask it twice.",
+    "You can keep asking. It doesn't change.",
+    "Asking again won't make it a different morning.",
+    "I've given you my answer. I'll give it to you again, word for word, if that helps.",
+]
+
+
+def _diegetic_fallback(
+    deterministic_text: str,
+    pressure_level: float,
+    outcome: str | None = None,
+    is_repeat: bool = False,
+) -> str:
+    """Return the authored line, framed as an interview beat only when that is what is happening.
+
+    This wrapper used to fire on PRESSURE: once an agent was pressed past 0.3, every subsequent
+    answer was prefixed "That's all I'll say about that:" — the same phrase, every time, whether
+    or not the line was new. Because the wrapper also fires whenever the LLM rewrite is simply
+    unavailable (and the default config points at a host that may not exist), that is what the
+    game actually did out of the box:
+
+        Q(relationship):     "That's all I'll say about that: He was exacting..."
+        Q(last_seen_victim): "That's all I'll say about that: About twenty to eight..."
+        Q(alibi):            "That's all I'll say about that: I was at the fountain..."
+
+    Three identical prefixes in a row, several of them contradicting the line they introduce.
+
+    The wrapper's real job is to stop a REPEATED line reading as a broken feature — so it now
+    fires on repetition, not on pressure. A first-time answer is new information and is returned
+    exactly as authored. A `contradiction_locked` outcome is the killer breaking, and is never
+    adorned.
+    """
+    if outcome == "contradiction_locked":
+        return deterministic_text
+    if not is_repeat:
+        return deterministic_text
+
+    pool = _REPEAT_OPENERS_PRESSED if pressure_level >= 0.4 else _REPEAT_OPENERS_CALM
+    opener = pool[hash(deterministic_text) % len(pool)]
+    return f"{opener} {deterministic_text}"
 
 
 def rewrite_interview_answer(
@@ -159,6 +192,7 @@ def rewrite_interview_answer(
     recent_exchange: Optional[list[str]] = None,
     emotion: str = "neutral",
     world_state: Optional[list[str]] = None,
+    is_repeat: bool = False,
 ) -> RewriteResult:
 
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
@@ -200,7 +234,7 @@ def rewrite_interview_answer(
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
             return RewriteResult(
-                rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
+                rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, is_repeat=is_repeat),
                 fallback_used=True,
                 fallback_reason="validation_failed"
             )
@@ -213,7 +247,7 @@ def rewrite_interview_answer(
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
         return RewriteResult(
-            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
+            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, is_repeat=is_repeat),
             fallback_used=True,
             fallback_reason="provider_error"
         )
@@ -276,7 +310,7 @@ def rewrite_challenge_response(
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
             return RewriteResult(
-                rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
+                rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, outcome),
                 fallback_used=True,
                 fallback_reason="validation_failed"
             )
@@ -289,7 +323,7 @@ def rewrite_challenge_response(
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
         return RewriteResult(
-            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level),
+            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, outcome),
             fallback_used=True,
             fallback_reason="provider_error"
         )

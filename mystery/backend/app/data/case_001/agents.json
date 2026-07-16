@@ -9,7 +9,7 @@
       "proud",
       "fair but unforgiving"
     ],
-    "portrait": "☕",
+    "portrait": "\u2615",
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Up at six, reviews the books in his study, at the cafe by a quarter to seven to oversee opening.",
@@ -43,7 +43,13 @@
     "is_victim": true,
     "sprite_asset": "Marcus_Chen.png",
     "sprite_id": "sprite_marcus_chen",
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/marcus_calm.png",
+      "defensive": null,
+      "cracking": null,
+      "deceased": "/art/portraits/marcus_deceased.png"
+    }
   },
   {
     "agent_id": "agent_clara",
@@ -55,7 +61,7 @@
       "proud",
       "guarded"
     ],
-    "portrait": "🧣",
+    "portrait": "\ud83e\udde3",
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Lives above the cafe. Down by half six to prep, opens the doors at eight sharp.",
@@ -82,7 +88,12 @@
     "conflict_avoidance": 0.6,
     "sprite_asset": "Abigail_Chen.png",
     "sprite_id": "sprite_abigail_chen",
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/clara_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_ben",
@@ -94,7 +105,7 @@
       "chatty",
       "bad at secrets"
     ],
-    "portrait": "📦",
+    "portrait": "\ud83d\udce6",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Morning delivery round through the square and rear alley; usually cadges a coffee when the cafe opens.",
@@ -121,7 +132,12 @@
     "gossip_tendency": 0.8,
     "sprite_asset": "Ryan_Park.png",
     "sprite_id": "sprite_ryan_park",
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/ben_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_isabella",
@@ -133,7 +149,7 @@
       "wounded",
       "composed"
     ],
-    "portrait": "📚",
+    "portrait": "\ud83d\udcda",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
@@ -159,7 +175,12 @@
     "honesty_baseline": 0.6,
     "sprite_asset": "Isabella_Rodriguez.png",
     "sprite_id": "sprite_isabella_rodriguez",
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/isabella_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_owen",
@@ -171,7 +192,7 @@
       "hot-tempered",
       "proud"
     ],
-    "portrait": "🔨",
+    "portrait": "\ud83d\udd28",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
@@ -191,7 +212,12 @@
     "conflict_avoidance": 0.2,
     "sprite_asset": "Carlos_Gomez.png",
     "sprite_id": "sprite_carlos_gomez",
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/owen_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_priya",
@@ -203,7 +229,7 @@
       "kind",
       "conflict-averse"
     ],
-    "portrait": "🌸",
+    "portrait": "\ud83c\udf38",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
@@ -237,7 +263,12 @@
     "conflict_avoidance": 0.85,
     "sprite_asset": "Priya_Kapoor.png",
     "sprite_id": "sprite_priya_kapoor",
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/priya_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_nadia",
@@ -249,7 +280,7 @@
       "practical",
       "discreet"
     ],
-    "portrait": "🩺",
+    "portrait": "\ud83e\ude7a",
     "home_location_id": "loc_nadia_flat",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
@@ -269,7 +300,12 @@
     "gossip_tendency": 0.2,
     "sprite_asset": "Ayesha_Khan.png",
     "sprite_id": "sprite_ayesha_khan",
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/nadia_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_elias",
@@ -281,7 +317,7 @@
       "certain of himself",
       "harmless"
     ],
-    "portrait": "🎩",
+    "portrait": "\ud83c\udfa9",
     "home_location_id": "loc_elias_house",
     "work_location_id": "loc_village_square",
     "routine_summary": "First on the square bench every morning with a flask and opinions.",
@@ -308,7 +344,12 @@
     "gossip_tendency": 0.9,
     "sprite_asset": "Adam_Smith.png",
     "sprite_id": "sprite_adam_smith",
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/elias_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
   },
   {
     "agent_id": "agent_rosa",
@@ -319,13 +360,20 @@
       "quiet",
       "early riser"
     ],
-    "portrait": "🌿",
+    "portrait": "\ud83c\udf3f",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_fountain",
     "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear alley before the village wakes properly.",
     "relationships": [],
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/rosa_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Carmen_Ortiz.png",
+    "sprite_id": "sprite_carmen_ortiz"
   },
   {
     "agent_id": "agent_tam",
@@ -336,108 +384,171 @@
       "brisk",
       "punctual"
     ],
-    "portrait": "📨",
+    "portrait": "\ud83d\udce8",
     "home_location_id": "loc_rear_alley",
     "work_location_id": "loc_village_square",
     "routine_summary": "Does the morning post round through the square, the bookshop and the clinic before most doors have even opened.",
     "relationships": [],
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/tam_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Arthur_Burton.png",
+    "sprite_id": "sprite_arthur_burton"
   },
   {
     "agent_id": "agent_bg_min",
     "full_name": "Min Okafor",
     "age": 22,
     "occupation": "Baker's assistant",
-    "portrait": "🥖",
+    "portrait": "\ud83e\udd56",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Up before the ovens, delivers the morning loaves to the cafe and the bookshop, and always keeps the misshapen one back for herself.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/min_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Mei_Lin.png",
+    "sprite_id": "sprite_mei_lin"
   },
   {
     "agent_id": "agent_bg_sal",
     "full_name": "Sal Ibori",
     "age": 54,
     "occupation": "Milkman",
-    "portrait": "🥛",
+    "portrait": "\ud83e\udd5b",
     "home_location_id": "loc_hobbs_cafe",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Runs the milk round in strict order — cafe first, bookshop second — and rates every doorstep in the village by how promptly they bring the empties back.",
+    "routine_summary": "Runs the milk round in strict order \u2014 cafe first, bookshop second \u2014 and rates every doorstep in the village by how promptly they bring the empties back.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/sal_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "John_Lin.png",
+    "sprite_id": "sprite_john_lin"
   },
   {
     "agent_id": "agent_bg_cole",
     "full_name": "Cole Byrne",
     "age": 26,
     "occupation": "Window cleaner",
-    "portrait": "🪟",
+    "portrait": "\ud83e\ude9f",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_clinic",
     "routine_summary": "Works his ladder clockwise around the square; swears the clinic's windows are the only ones anyone ever thanks him for.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/cole_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Eddy_Lin.png",
+    "sprite_id": "sprite_eddy_lin"
   },
   {
     "agent_id": "agent_bg_dez",
     "full_name": "Dez Holt",
     "age": 61,
     "occupation": "Market stallholder",
-    "portrait": "🧺",
+    "portrait": "\ud83e\uddfa",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Trundles his stall cart around the village testing pitches; has moved 'the perfect spot' four times this year and defends each one loudly.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/dez_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Francisco_Lopez.png",
+    "sprite_id": "sprite_francisco_lopez"
   },
   {
     "agent_id": "agent_bg_effie",
     "full_name": "Effie Marsh",
     "age": 46,
     "occupation": "Dog walker",
-    "portrait": "🐕",
+    "portrait": "\ud83d\udc15",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_fountain",
     "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; the terrier decides when they stop, and it always stops at the fountain.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/effie_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Hailey_Johnson.png",
+    "sprite_id": "sprite_hailey_johnson"
   },
   {
     "agent_id": "agent_bg_gus",
     "full_name": "Gus Farrow",
     "age": 51,
     "occupation": "Newspaper seller",
-    "portrait": "📰",
+    "portrait": "\ud83d\udcf0",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_village_square",
     "routine_summary": "Sets the papers out from the fountain to the cafe and reads every front page aloud to whoever stands still long enough.",
     "is_background": true,
-    "pronoun": "he"
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/gus_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Rajiv_Patel.png",
+    "sprite_id": "sprite_rajiv_patel"
   },
   {
     "agent_id": "agent_bg_wren",
     "full_name": "Wren Ashby",
     "age": 61,
     "occupation": "Busker",
-    "portrait": "🎻",
+    "portrait": "\ud83c\udfbb",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Tunes the fiddle by the square until her fingers warm up, then follows the smell of coffee to the cafe pitch.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/wren_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Latoya_Williams.png",
+    "sprite_id": "sprite_latoya_williams"
   },
   {
     "agent_id": "agent_bg_birdie",
     "full_name": "Birdie Voss",
     "age": 66,
     "occupation": "Street sweeper",
-    "portrait": "🧹",
+    "portrait": "\ud83e\uddf9",
     "home_location_id": "loc_hobbs_cafe",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Sweeps the shopfronts in the order the village wakes — cafe, bookshop, clinic — and knows everyone's doormat better than they do.",
+    "routine_summary": "Sweeps the shopfronts in the order the village wakes \u2014 cafe, bookshop, clinic \u2014 and knows everyone's doormat better than they do.",
     "is_background": true,
-    "pronoun": "she"
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/birdie_calm.png",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Jane_Moreno.png",
+    "sprite_id": "sprite_jane_moreno"
   }
 ]

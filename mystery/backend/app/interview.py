@@ -154,6 +154,11 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
                 time_reference=ac.time_reference,
                 location_reference_id=ac.location_reference_id,
                 truthfulness=ac.truthfulness,
+                # Who the statement places, and whether it puts them there — without these the
+                # testimony engine cannot tell "Elias, at the fountain" from "Elias says CLARA
+                # was never at the fountain", and one person's word can never disprove another's.
+                about_agent_id=ac.about_agent_id,
+                asserts_presence=ac.asserts_presence,
             )
             session.record_claim(claim)
             new_claims.append(claim)
@@ -189,6 +194,13 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         # continuity with their own opening.
         recent_exchange = build_conversation_context(session, agent)
 
+        # Has this agent already given the player this exact line? Only then is a
+        # "you've asked me that" framing honest — see _diegetic_fallback.
+        is_repeat = any(
+            m.speaker == "agent" and m.deterministic_text == deterministic_answer
+            for m in session.transcript_for(req.agent_id).messages
+        )
+
         rewrite_result = rewrite_interview_answer(
             case=case,
             agent=agent,
@@ -199,6 +211,7 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
             recent_exchange=recent_exchange or None,
             emotion=emotional_shift or "neutral",
             world_state=build_world_state_digest(case, session, req.agent_id) or None,
+            is_repeat=is_repeat,
         )
         display_answer = rewrite_result.rewritten_text
         llm_rewrite_used = True

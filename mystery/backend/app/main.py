@@ -6,7 +6,7 @@ import hashlib
 import re
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Body, Header
+from fastapi import FastAPI, HTTPException, Body, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import logging
@@ -41,7 +41,7 @@ from .projections import (
     visible_map_events,
     build_playtest_export,
 )
-from .session import get_session, reset_session
+from .session import get_session, reset_session, save_session, has_saved_session
 from .case_store import get_case as fetch_case
 from .telemetry import log_telemetry_event
 
@@ -58,6 +58,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def persist_session_after_writes(request: Request, call_next):
+    """Save the active investigation after anything that could have changed it.
+
+    An investigation is hours of work and used to live only in this process — restarting the
+    backend threw away every clue, claim, note and transcript. Doing this in middleware rather
+    than at each call site means a new mutating endpoint cannot forget to save.
+    """
+    response = await call_next(request)
+    if request.method in ("POST", "PATCH", "PUT", "DELETE") and response.status_code < 400:
+        try:
+            save_session(get_session(ACTIVE_CASE_ID))
+        except Exception:
+            logging.getLogger(__name__).exception("Session autosave failed")
+    return response
+
 
 MYSTERY_PLAYTEST_MODE = os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "true"
 
@@ -249,8 +267,16 @@ def get_case():
 
 @app.get("/api/cases")
 def get_cases():
+    """Every case, annotated with whether an investigation is already under way in it, so the
+    library can offer 'Resume' rather than silently restarting."""
     from .case_store import list_all_cases
-    return list_all_cases()
+    from .session import load_session_summary
+
+    cases = list_all_cases()
+    for c in cases:
+        c["progress"] = load_session_summary(c["case_id"])
+        c["is_active"] = c["case_id"] == ACTIVE_CASE_ID
+    return cases
 
 
 @app.get("/api/agents")
@@ -653,10 +679,19 @@ def claims(agent_id: Optional[str] = None):
 # ---------------------------------------------------------------------------
 
 @app.get("/api/challenge/suggestions")
-def challenge_suggestions(agent_id: Optional[str] = None):
-    """Claims for which the player already holds evidence a challenge can use.
-    Drives the 'Challenge' affordance without exposing the full rule set or
-    any hidden truth — only heard claims and discovered clues are referenced."""
+def challenge_suggestions(agent_id: Optional[str] = None, reveal: bool = False):
+    """Contradictions the player is *holding* — but not, by default, which is which.
+
+    This endpoint used to walk the authored challenge rules and hand the player the finished
+    deduction: "this claim is contradicted by this clue → [Challenge]". Noticing that what a
+    suspect just said cannot be true given what is in your pocket is the single most satisfying
+    act in a detective game, and the UI was performing it on the player's behalf.
+
+    Default (`reveal=False`) returns only a COUNT, so nobody gets stranded — the game will tell
+    you that Clara has said two things you can disprove, and leave you to work out which two.
+    `reveal=True` is an explicit, counted hint: it returns the pairings and is recorded on the
+    session so the player knows they took it.
+    """
     case = case_data()
     sess = session()
     clue_title = {c.clue_id: c.title for c in case.clues}
@@ -678,10 +713,6 @@ def challenge_suggestions(agent_id: Optional[str] = None):
                 continue
             seen.add(key)
             claim = sess.claims[rule.challenged_claim_id]
-            # Log each suggestion once per session; the UI polls this endpoint.
-            if key not in sess.logged_suggestion_keys:
-                sess.logged_suggestion_keys.add(key)
-                log_telemetry_event(sess, "challenge_suggested", {"target_agent_id": rule.target_agent_id, "challenged_claim_id": rule.challenged_claim_id})
             out.append(
                 {
                     "target_agent_id": rule.target_agent_id,
@@ -692,7 +723,37 @@ def challenge_suggestions(agent_id: Optional[str] = None):
                     "evidence_title": clue_title.get(clue_id, clue_id),
                 }
             )
-    return out
+
+    # The nudge: how many of this suspect's statements you can disprove, and how many of their
+    # statements you have heard at all. Enough to know there is something to find; not enough to
+    # find it for you.
+    contradicted_claims = {s["challenged_claim_id"] for s in out}
+    payload = {
+        "contradiction_count": len(contradicted_claims),
+        "revealed": reveal,
+        "hints_taken": sess.hint_count,
+        "suggestions": [],
+    }
+    if not reveal:
+        return payload
+
+    # An explicit hint. Record it — the player should know they took it.
+    sess.hint_count += 1
+    # This is a GET that mutates state, so the autosave middleware (writes only) will not catch
+    # it: persist here or the hint is forgotten on restart and comes back free.
+    save_session(sess)
+    for s in out:
+        key = (s["challenged_claim_id"], s["evidence_clue_id"])
+        if key not in sess.logged_suggestion_keys:
+            sess.logged_suggestion_keys.add(key)
+            log_telemetry_event(
+                sess,
+                "challenge_hint_revealed",
+                {"target_agent_id": s["target_agent_id"], "challenged_claim_id": s["challenged_claim_id"]},
+            )
+    payload["suggestions"] = out
+    payload["hints_taken"] = sess.hint_count
+    return payload
 
 
 @app.post("/api/challenge")
@@ -1068,6 +1129,10 @@ def generate(req: GenerateCaseRequest):
 
 class ActivateCaseRequest(BaseModel):
     case_id: str
+    # Default: pick the investigation back up where it was left. Pass restart=True to bin it and
+    # start the case again from nothing.
+    restart: bool = False
+
 
 @app.post("/api/cases/activate")
 def activate_case(req: ActivateCaseRequest):
@@ -1083,9 +1148,22 @@ def activate_case(req: ActivateCaseRequest):
             
     ACTIVE_CASE_ID = req.case_id
     set_active_start_time(fetch_case(ACTIVE_CASE_ID).case.sim_start_time)
-    reset_session(ACTIVE_CASE_ID)
-    
-    return {"active_session_id": ACTIVE_CASE_ID}
+
+    # Opening a case RESUMES it. This used to call reset_session() unconditionally, so switching
+    # cases — or coming back to one tomorrow — silently destroyed the investigation, which is why
+    # the case library had to warn "your current progress will be lost". Starting over is now an
+    # explicit choice.
+    if req.restart:
+        sess = reset_session(ACTIVE_CASE_ID)
+    else:
+        sess = get_session(ACTIVE_CASE_ID)
+
+    return {
+        "active_session_id": ACTIVE_CASE_ID,
+        "resumed": bool(sess.discovered_clue_ids or sess.claims or sess.notes),
+        "discovered_clue_count": len(sess.discovered_clue_ids),
+        "accused": sess.accusation is not None,
+    }
 
 
 @app.get("/api/generated_cases")
@@ -1330,7 +1408,8 @@ def get_dev_map_layout():
             "tile_layers": {},
             "prop_instances": {},
             "building_instances": [],
-            "lights": {}
+            "lights": {},
+            "ambient_sprites": {}
         }
         
     cases_details = []

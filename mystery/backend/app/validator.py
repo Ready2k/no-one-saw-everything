@@ -2,11 +2,28 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from . import case_store
 from .case_store import minutes
 from .models import CaseData
+
+# Author-facing scaffolding, or naked case truth, that must never reach the player-visible
+# Agent.routine_summary shown on the Suspects screen. See check 14 in _validate_case_inner.
+ROUTINE_LEAK_PATTERNS = [
+    r"\bthat night\b",
+    r"\bwill need to be\b",
+    r"\bwill matter\b",
+    r"\bwill have seen\b",
+    r"\bwill recognise\b",
+    r"\b(?:forged|false) alibi\b",
+    r"\b(?:he|she|they) lied\b",
+    r"\bsecretly (?:owed|killed|poisoned|followed|paid)\b",
+    r"\bthe (?:killer|murderer)\b",
+    r"\bif anyone asked\b",
+    r"\bmaiden name\b",
+]
 
 
 def validate_case(case: CaseData) -> dict[str, Any]:
@@ -182,6 +199,59 @@ def _validate_case_inner(case: CaseData) -> dict[str, Any]:
     for pack in case.interview_packs:
         if pack.agent_id not in agents_in_events and pack.agent_id != case.case.victim_id:
             warnings.append(f"Suspect {pack.agent_id} appears in no events (empty rewind)")
+
+    # 13. The third act. Cases 002-006 all shipped with no way for the killer to break and no
+    # epilogues, so a player who solved the case correctly was met with a shrug and a blank
+    # reveal screen. Both are engine-supported (challenge.py resolves `contradiction_locked`;
+    # judge.py renders `solution.epilogues`) — they were simply never authored.
+    killer_confessions = [
+        ch for ch in case.challenge_rules
+        if ch.target_agent_id == killer and ch.outcome == "contradiction_locked"
+    ]
+    if not killer_confessions:
+        errors.append(
+            f"Killer {killer} has no 'contradiction_locked' challenge — there is no way for the "
+            "player to break them, so the case has no climax."
+        )
+    if not case.solution.epilogues:
+        errors.append(
+            "Solution has no epilogues — the post-accusation reveal screen will be empty."
+        )
+
+    # 13b. Testimony as evidence. A claim can only be used to break another person's story if it
+    # says WHOSE whereabouts it settles (`about_agent_id`). Claims that name nobody are inert —
+    # so a case where no claim is annotated has the mechanic the game is named after switched off.
+    agent_ids = {a.agent_id for a in case.agents}
+    annotated = 0
+    for pack in case.interview_packs:
+        for rule in pack.rules:
+            for c in rule.claims:
+                if not c.about_agent_id:
+                    continue
+                annotated += 1
+                # An alibi claim about someone OTHER than the speaker is not a mistake — it is a
+                # witness vouching for them (Nadia putting Isabella in the clinic, Col putting
+                # Owen in the yard). Corroboration is a first-class move; only a dangling
+                # reference is an error.
+                if c.about_agent_id not in agent_ids:
+                    errors.append(
+                        f"Claim {c.claim_id} is about unknown agent '{c.about_agent_id}'"
+                    )
+    if annotated == 0:
+        warnings.append(
+            "No claim carries about_agent_id — no testimony can contradict any other, so one "
+            "person's word can never be used against another's."
+        )
+
+    # 14. routine_summary is player-visible (projections.project_agent) and shown on the Suspects
+    # screen before any clue is discovered. It must never carry case truth.
+    for agent in case.agents:
+        leaks = [p for p in ROUTINE_LEAK_PATTERNS if re.search(p, agent.routine_summary or "", re.I)]
+        if leaks:
+            errors.append(
+                f"Agent {agent.agent_id} routine_summary leaks case truth to the Suspects screen "
+                f"(matched {leaks}): {agent.routine_summary!r}"
+            )
 
     score = 1.0 - (len(warnings) * 0.1) - (len(errors) * 0.5)
     score = max(0.0, score)

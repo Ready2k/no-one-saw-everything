@@ -63,8 +63,12 @@ export function MagnifyingSearch({
   const isDragging = useRef(false);
   const lastClientPos = useRef<{x: number, y: number} | null>(null);
   const dragDist = useRef(0);
-  const imageClassName = isIllustration ? "place-search-image fountain-lit" : "";
-  const imageRendering = isIllustration ? "auto" : "pixelated";
+  const imageClassName = [
+    isIllustration ? "place-search-image fountain-lit" : "",
+    isPortrait ? "post-mortem-portrait" : "",
+  ].filter(Boolean).join(" ");
+  const imageRendering = isIllustration || isPortrait ? "auto" : "pixelated";
+  const useSpritePortrait = isPortrait && spriteAsset && !imageUrl;
 
   const ZOOM = 2.5;
   // Lens scales with the search area so it reads as a hand magnifier over the
@@ -265,37 +269,41 @@ export function MagnifyingSearch({
       onMouseUp={handlePointerUp}
       onClick={handleClick}
     >
-      <div className="pan-controls" style={{
-        position: "absolute", top: 10, left: 10, zIndex: 20,
-        display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4,
-        background: "rgba(0,0,0,0.6)", padding: 4, borderRadius: 6, border: "1px solid rgba(255,255,255,0.2)"
-      }}>
-        <div />
-        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, -1); }}>↑</button>
-        <div />
-        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(-1, 0); }}>←</button>
-        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); setPanOffset({x:0, y:0}); }}>◎</button>
-        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(1, 0); }}>→</button>
-        <div />
-        <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, 1); }}>↓</button>
-        <div />
-      </div>
-      
-      <div className="zoom-controls">
-        <button 
-          onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.max(1, zoomLevel - 0.5)); }}
-          disabled={zoomLevel <= 1}
-        >
-          -
-        </button>
-        <div className="zoom-level">{zoomLevel.toFixed(1)}x</div>
-        <button 
-          onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.min(3, zoomLevel + 0.5)); }}
-          disabled={zoomLevel >= 3}
-        >
-          +
-        </button>
-      </div>
+      {!isPortrait && (
+        <>
+          <div className="pan-controls" style={{
+            position: "absolute", top: 10, left: 10, zIndex: 20,
+            display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4,
+            background: "rgba(0,0,0,0.6)", padding: 4, borderRadius: 6, border: "1px solid rgba(255,255,255,0.2)"
+          }}>
+            <div />
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, -1); }}>↑</button>
+            <div />
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(-1, 0); }}>←</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); setPanOffset({x:0, y:0}); }}>◎</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(1, 0); }}>→</button>
+            <div />
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, 1); }}>↓</button>
+            <div />
+          </div>
+
+          <div className="zoom-controls">
+            <button
+              onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.max(1, zoomLevel - 0.5)); }}
+              disabled={zoomLevel <= 1}
+            >
+              -
+            </button>
+            <div className="zoom-level">{zoomLevel.toFixed(1)}x</div>
+            <button
+              onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.min(3, zoomLevel + 0.5)); }}
+              disabled={zoomLevel >= 3}
+            >
+              +
+            </button>
+          </div>
+        </>
+      )}
 
       <div className={`magnifying-crop ${isPortrait ? "deceased-portrait" : ""}`}>
         <div style={{
@@ -307,7 +315,7 @@ export function MagnifyingSearch({
            top: 0,
            left: 0
         }}>
-          {spriteAsset ? (
+          {useSpritePortrait ? (
             <div style={{
               width: "100%",
               height: "100%",
@@ -391,7 +399,7 @@ export function MagnifyingSearch({
                          top: 0,
                          left: 0
                       }}>
-                        {spriteAsset ? (
+                        {useSpritePortrait ? (
                           <div style={{
                             width: "100%",
                             height: "100%",

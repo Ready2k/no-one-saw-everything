@@ -3,8 +3,12 @@
   "purpose": "Painted B2 town exterior tile fitting cases 001-006 on one living town map. Uses v1 geography as canonical bounds while replacing the wilderness/composite look with an integrated village base.",
   "base": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_clean.png",
   "outputs": {
-    "clean": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_clean.png",
-    "annotated": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_annotated.png"
+    "clean": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+    "annotated": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_annotated.png",
+    "interior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior.png",
+    "interior_annotated": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior_annotated.png",
+    "clean_without_fauna": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_clean.png",
+    "fauna": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png"
   },
   "tile_size": 32,
   "grid": {
@@ -290,6 +294,52 @@
     "V2 is the preferred exterior visual direction: painted as a compact town tile, not buildings stamped onto the blank countryside tile.",
     "Town square, fountain, rear alley, fishery, lake edge, woodland, meadow/gardens, yards, lanes, lamps, fences, and thresholds are integrated into one painted pass.",
     "Location bounds remain canonical grid targets for runtime hints, click/zoom regions, and the future B2 interior/cutaway tile; exact roof silhouettes may vary slightly from these boxes.",
-    "V2 bounds were adjusted from the v1 blueprint to match the integrated painted tile more closely."
-  ]
+    "V2 bounds were adjusted from the v1 blueprint to match the integrated painted tile more closely.",
+    "Interior V2 is a matched open-roof/cutaway tile at the same camera distance as the exterior, intended for zoom-image swaps rather than per-room HD inspection.",
+    "Surrounding building-bearing tiles A1, A2, A3, B3, C1, and C3 were repainted as V2 siblings to match the centre tile art style, apparent scale, and building treatment. B1 and C2 remain the original landscape tiles for now.",
+    "Fauna pass adds subtle map-scale fish, ridge goats/sheep, and small forest animals. The fauna exterior set is now the default runtime mosaic; non-fauna V2 files remain available as clean baselines."
+  ],
+  "mosaic_v2_tiles": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A1_living_town_v2_fauna.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A2_living_town_v2_fauna.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A3_living_town_v2_fauna.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B1_living_town_v2_fauna.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B3_living_town_v2_fauna.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C1_living_town_v2_fauna.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C2_living_town_v2_fauna.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C3_living_town_v2_fauna.png"
+  },
+  "source_reference_interior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior_generated_source.png",
+  "zoom_pair": {
+    "exterior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+    "interior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior.png",
+    "camera": "same 2048x1536 B2 tile framing, same isometric distance, matching location bounds",
+    "intended_runtime_use": "Map Replay/evidence reconstruction zoom-image counterpart for B2 exterior."
+  },
+  "mosaic_v2_tiles_without_fauna": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A1_living_town_v2.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A2_living_town_v2.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A3_living_town_v2.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B1_living_town_v2_fauna.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_clean.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B3_living_town_v2.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C1_living_town_v2.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C2_living_town_v2_fauna.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C3_living_town_v2.png"
+  },
+  "fauna_pass": {
+    "purpose": "Add living-town wildlife details without changing map geometry.",
+    "details": [
+      "fish glints and ripple rings in sea/lake/stream tiles",
+      "mountain sheep/goats on rocky ridge and cliff tiles",
+      "small deer, foxes, rabbits, and birds in forest/meadow edges"
+    ],
+    "contact_sheet": "/art/town/tiles_3x3_hd/planning/town_overworld_3x3_living_town_v2_fauna_contact.png"
+  },
+  "time_of_day_manifest": "/art/town/tiles_3x3_hd/living_town_v2/time_of_day/time_of_day_manifest.json",
+  "case_state_overlays_manifest": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/case_state_overlays_manifest.json",
+  "ambient_sprites_manifest": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/ambient_sprites_manifest.json",
+  "remastered_master_manifest": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_manifest.json",
+  "remastered_zoom_manifest": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_full_master_remaster_v5_zoom_interior_v8_hobbs_cafe_manifest.json"
 }

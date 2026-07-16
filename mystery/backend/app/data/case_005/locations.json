@@ -3,7 +3,13 @@
     "location_id": "loc_village_square",
     "name": "Village Square",
     "description": "The open heart of the village. The cafe fronts the square. The rear alley entrance is visible from the bench.",
-    "connected_location_ids": ["loc_hobbs_cafe", "loc_rear_alley", "loc_clinic", "loc_owen_house", "loc_fountain"],
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_rear_alley",
+      "loc_clinic",
+      "loc_owen_house",
+      "loc_fountain"
+    ],
     "visibility_type": "public",
     "camera_coverage": false
   },
@@ -11,53 +17,101 @@
     "location_id": "loc_rear_alley",
     "name": "Rear Alley",
     "description": "The narrow service alley behind the cafe and bookshop. Bins, crates, a linen delivery bay. The alley is where Clara is found. A small fire was set near the bins — it scorched the crate stack and a section of wall before dying out.",
-    "connected_location_ids": ["loc_village_square", "loc_hobbs_cafe", "loc_bookshop"],
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_hobbs_cafe",
+      "loc_bookshop",
+      "loc_back_lane"
+    ],
     "visibility_type": "public",
-    "audible_from_location_ids": ["loc_village_square"],
+    "audible_from_location_ids": [
+      "loc_village_square"
+    ],
     "murder_suitable": true
   },
   {
     "location_id": "loc_hobbs_cafe",
     "name": "Hobbs Cafe",
     "description": "The village cafe. Clara's workplace. The rear door opens onto the alley.",
-    "connected_location_ids": ["loc_village_square", "loc_rear_alley"],
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_rear_alley"
+    ],
     "visibility_type": "public"
   },
   {
     "location_id": "loc_clara_flat",
     "name": "Flat above Hobbs Cafe",
     "description": "Clara's flat above the cafe. Found to contain documents about the property title.",
-    "connected_location_ids": ["loc_hobbs_cafe"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "private"
   },
   {
     "location_id": "loc_owen_house",
     "name": "Owen Price's House & Yard",
     "description": "Owen's house and builder's yard. His supposed alibi location.",
-    "connected_location_ids": ["loc_village_square"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_back_lane"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "public"
   },
   {
     "location_id": "loc_clinic",
     "name": "Village Clinic",
     "description": "Nadia's workplace. She crosses between the square and clinic at 07:00.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public"
   },
   {
     "location_id": "loc_bookshop",
     "name": "Reed & Bell Bookshop",
     "description": "The bookshop, adjacent to the rear alley.",
-    "connected_location_ids": ["loc_village_square", "loc_rear_alley"],
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_rear_alley"
+    ],
     "visibility_type": "public"
   },
   {
     "location_id": "loc_fountain",
     "name": "Fountain",
     "description": "The stone fountain in the square.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_back_lane",
+    "name": "The Back Lane",
+    "description": "A rutted service lane running behind the yards and the cafe's rear wall. No windows overlook it. It is the one way across the village that the square cannot see, and half the village has forgotten it is there.",
+    "connected_location_ids": [
+      "loc_owen_house",
+      "loc_rear_alley"
+    ],
+    "visibility_type": "public",
+    "camera_coverage": false,
+    "map_position": {
+      "x": 300,
+      "y": 40
+    },
+    "map_bounds": {
+      "x": 230,
+      "y": 34,
+      "width": 190,
+      "height": 10
+    },
+    "visual_layer": "exterior"
   }
 ]

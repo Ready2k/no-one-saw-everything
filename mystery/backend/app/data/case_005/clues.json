@@ -8,10 +8,20 @@
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
-      "supports_conclusion_ids": ["conc_owen_motive"],
-      "linked_agent_ids": ["agent_owen", "agent_clara"],
-      "linked_object_ids": ["obj_mortgage_deed"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clara_flat"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_owen",
+        "agent_clara"
+      ],
+      "linked_object_ids": [
+        "obj_mortgage_deed"
+      ]
     },
     {
       "clue_id": "clue_property_register",
@@ -21,23 +31,42 @@
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
-      "supports_conclusion_ids": ["conc_owen_motive"],
-      "linked_agent_ids": ["agent_owen", "agent_clara"],
-      "linked_object_ids": ["obj_property_register"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clara_flat"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_owen",
+        "agent_clara"
+      ],
+      "linked_object_ids": [
+        "obj_property_register"
+      ]
     },
     {
       "clue_id": "clue_clara_committee_note",
-      "title": "Clara's unfinished letter to the committee",
+      "title": "The letter, scorched at one corner",
       "clue_type": "document",
-      "description": "On Clara's kitchen table: a draft letter beginning 'I write to report that the property at Hobbs Cafe has been fraudulently mortgaged...' It was never sent. This was why Clara went to the alley.",
+      "description": "Pulled out of the crate ash, charred along one edge but legible: 'I write to report that the property at Hobbs Cafe has been fraudulently mortgaged...' It is a single sheet, and it ends mid-sentence at the foot of the page. Somebody went to a great deal of trouble to burn this. They burned page one.",
       "strength": "medium",
       "reliability": 0.95,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
-      "supports_conclusion_ids": ["conc_owen_motive"],
-      "linked_agent_ids": ["agent_clara"],
-      "linked_object_ids": ["obj_clara_note"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_rear_alley"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_clara"
+      ],
+      "linked_object_ids": [
+        "obj_clara_note"
+      ]
     },
     {
       "clue_id": "clue_clara_called_owen",
@@ -47,22 +76,41 @@
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_clara_flat"},
-      "supports_conclusion_ids": ["conc_owen_opportunity", "conc_owen_motive"],
-      "linked_agent_ids": ["agent_clara", "agent_owen"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clara_flat"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_opportunity",
+        "conc_owen_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_owen"
+      ]
     },
     {
       "clue_id": "clue_belt_weapon",
-      "title": "Belt found behind the bins",
+      "title": "The belt behind the bins",
       "clue_type": "physical_evidence",
-      "description": "A wide brown leather belt partially covered by scorched crate debris behind the bins in the rear alley. One buckle end has a blood smear and an impression consistent with the mark on Clara's neck. The inner face of the keeper loop is stamped 'O.P.' — a monogram.",
+      "description": "A wide brown builder's belt with a rectangular brass buckle, shoved behind the bins under scorched crate debris. Blood on the buckle end, and the buckle's oblong print matches the mark on Clara's neck exactly. There is no name on it. It is worn pale on the left, where a man's hand has gone to it ten thousand times.",
       "strength": "strong",
       "reliability": 0.95,
-      "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_rear_alley"},
-      "supports_conclusion_ids": ["conc_owen_means", "conc_method"],
-      "linked_agent_ids": ["agent_owen"],
-      "linked_object_ids": ["obj_owen_belt"]
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_rear_alley"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_means",
+        "conc_method"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_owen_belt"
+      ]
     },
     {
       "clue_id": "clue_staged_fire",
@@ -72,36 +120,67 @@
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "medium",
-      "discoverability": {"method": "inspect", "location_id": "loc_rear_alley"},
-      "supports_conclusion_ids": ["conc_owen_opportunity", "conc_staged_fire"],
-      "linked_agent_ids": ["agent_owen"],
-      "linked_object_ids": ["obj_burn_accelerant"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_rear_alley"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_opportunity",
+        "conc_staged_fire"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_burn_accelerant"
+      ]
     },
     {
       "clue_id": "clue_nadia_sees_owen_alley",
       "title": "Nadia saw Owen entering the rear alley at 07:00",
       "clue_type": "witness_statement",
-      "description": "Nadia walked past the alley entrance at 07:00 and saw a large figure in a grey work jacket turning into the alley. She recognised the build and jacket as Owen's but assumed it was a delivery. This places Owen at the murder scene during the murder window.",
+      "description": "Nadia crossed the square at seven and glanced down the alley. A big man in a grey work jacket was turning in at the far end — the lane end, not the square end. She took him for a delivery and thought no more about it. She is certain of the jacket. She will not swear to the face.",
       "strength": "strong",
       "reliability": 0.85,
       "ambiguity": "medium",
-      "discoverability": {"method": "interview", "agent_id": "agent_nadia", "question_type": "timeline"},
-      "supports_conclusion_ids": ["conc_owen_opportunity"],
-      "linked_agent_ids": ["agent_nadia", "agent_owen"],
-      "linked_event_ids": ["ev_0700_nadia_crosses"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_opportunity",
+        "conc_back_lane"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_owen"
+      ],
+      "linked_event_ids": []
     },
     {
       "clue_id": "clue_owen_ash_boots",
-      "title": "Charred ash on Owen's boot soles",
+      "title": "Ash on Owen's boots — and lane mud in the welt",
       "clue_type": "physical_evidence",
-      "description": "Owen's work boots, examined at his yard: a layer of fine charred ash on the soles, matching the burnt crate debris in the rear alley. The yard has no ash — it is a timber yard with swept concrete.",
+      "description": "Owen's work boots: fine charred ash across the soles, matching the burnt crates. His yard is swept concrete and has no ash in it. Worked into the welt, underneath the ash, is the rutted orange clay you only get in one place in this village — the back lane.",
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "medium",
-      "discoverability": {"method": "inspect", "location_id": "loc_owen_house"},
-      "supports_conclusion_ids": ["conc_owen_opportunity"],
-      "linked_agent_ids": ["agent_owen"],
-      "linked_object_ids": ["obj_owen_boot_mud"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_owen_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_opportunity",
+        "conc_owen_false_alibi",
+        "conc_back_lane"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_owen_boot_mud"
+      ]
     },
     {
       "clue_id": "clue_col_false_alibi",
@@ -111,23 +190,25 @@
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "medium",
-      "discoverability": {"method": "interview", "agent_id": "agent_col", "question_type": "alibi"},
-      "supports_conclusion_ids": ["conc_owen_opportunity", "conc_col_false_alibi"],
-      "linked_agent_ids": ["agent_col", "agent_owen"],
-      "linked_object_ids": ["obj_col_log"]
-    },
-    {
-      "clue_id": "clue_elias_fire_smoke",
-      "title": "Elias smelled smoke before 07:30",
-      "clue_type": "observation",
-      "description": "Elias noticed a faint burnt smell from the direction of the alley at around 07:20 — well before Ben raised the alarm. He thought it was a breakfast mishap.",
-      "strength": "weak",
-      "reliability": 0.6,
-      "ambiguity": "high",
-      "discoverability": {"method": "interview", "agent_id": "agent_elias", "question_type": "timeline"},
-      "supports_conclusion_ids": ["conc_staged_fire"],
-      "linked_agent_ids": ["agent_elias"],
-      "linked_event_ids": ["ev_0720_fire_contained"]
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_col",
+        "question_type": "alibi",
+        "required_prior_clue_ids": [
+          "clue_col_cctv_arrival"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_opportunity",
+        "conc_col_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_col",
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_col_log"
+      ]
     },
     {
       "clue_id": "clue_strangulation_mark",
@@ -137,57 +218,513 @@
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
-      "discoverability": {"method": "inspect", "location_id": "loc_rear_alley"},
-      "supports_conclusion_ids": ["conc_method"],
-      "linked_object_ids": ["obj_owen_belt"]
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_rear_alley"
+      },
+      "supports_conclusion_ids": [
+        "conc_method"
+      ],
+      "linked_object_ids": [
+        "obj_owen_belt"
+      ]
+    },
+    {
+      "clue_id": "clue_whitfield_is_nobody",
+      "title": "P. Whitfield does not exist",
+      "clue_type": "document",
+      "description": "The Land Registry has no P. Whitfield. Nor does the electoral roll, the parish record, or the county's list of practising witnesses. The signature is written in the same confident downstroke as the forged 'Marcus Bell' above it. Whoever forged the deed invented its witness — which means they could not risk asking a real one.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clara_flat"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_mortgage_deed"
+      ],
+      "linked_location_ids": [
+        "loc_clara_flat"
+      ]
+    },
+    {
+      "clue_id": "clue_capacity_certificate",
+      "title": "Capacity certificate — signed 'N. Cole, RN'",
+      "clue_type": "document",
+      "description": "Stapled behind the deed: a certificate of mental capacity, required before a charge can be registered against the property of a man of Marcus Bell's age. The witness signature is invented. This one is not. It reads 'N. Cole, RN', and it is dated three weeks before Marcus died. Without this certificate the mortgage could not have completed at all.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clara_flat"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_mortgage_deed"
+      ],
+      "linked_location_ids": [
+        "loc_clara_flat"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_struck_off",
+      "title": "What the letter would have cost Nadia",
+      "clue_type": "witness_statement",
+      "description": "Nadia signed the capacity certificate. She says Owen brought it to the clinic with the top sheet folded over, told her it was a formality for a care assessment, and that Marcus had asked. She did not read it. If Clara's letter had reached the committee, Nadia would have been referred to the nursing council for certifying a document that stole a man's building — and she knows exactly what that means.",
+      "strength": "strong",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "required_prior_clue_ids": [
+          "clue_capacity_certificate"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_patient_anchor",
+      "title": "Nadia was with a patient",
+      "clue_type": "witness_statement",
+      "description": "The clinic's appointment book: 07:00, Mrs Iris Penhale, dressings. Nadia unlocked the clinic at 07:02 and Mrs Penhale was already waiting on the step. The dressing took until twenty-five past — both women say so, and the clinic's own notes are timed and initialled at each stage. Nadia was in that room, with a witness, for the whole of the murder window.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "required_prior_clue_ids": [
+          "clue_nadia_struck_off"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_location_ids": [
+        "loc_clinic"
+      ]
+    },
+    {
+      "clue_id": "clue_col_carried_the_deed",
+      "title": "Col registered the deed",
+      "clue_type": "document",
+      "description": "The Land Registry's lodgement slip for the charge on Hobbs Cafe is signed for by hand at the county office: 'C. Hartley'. Owen did not file the fraudulent mortgage himself. He sent his driver — the same driver who has just lied to you about where Owen was this morning.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_owen_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_col_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_col",
+        "agent_owen"
+      ],
+      "linked_location_ids": [
+        "loc_owen_house"
+      ]
+    },
+    {
+      "clue_id": "clue_col_cctv_arrival",
+      "title": "The gate camera timestamps Col at 07:24",
+      "clue_type": "physical_evidence",
+      "description": "The fixed camera on Owen's yard gate is a cheap one, but it stamps the time. Col Hartley's van turns in at 07:24 — fifteen minutes after Clara died, from the direction of the county road, not the village. Whatever Col has lied about, he was not in that alley at 07:09. And the same tape shows the yard standing empty from 06:00, which is the answer to a different question entirely.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_owen_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_col_innocent",
+        "conc_owen_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_col",
+        "agent_owen"
+      ],
+      "linked_location_ids": [
+        "loc_owen_house"
+      ]
+    },
+    {
+      "clue_id": "clue_elias_certain",
+      "title": "Elias is certain nobody crossed the square",
+      "clue_type": "witness_statement",
+      "description": "Elias took his bench at twenty to seven and did not move. He is emphatic, and he is not wrong: Owen Price did not cross the village square that morning. Elias would stake his pension on it, and offers to. He considers this to settle the matter entirely.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias"
+      },
+      "supports_conclusion_ids": [
+        "conc_back_lane"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_owen"
+      ],
+      "linked_location_ids": [
+        "loc_village_square"
+      ]
+    },
+    {
+      "clue_id": "clue_back_lane",
+      "title": "The lane the square cannot see",
+      "clue_type": "observation",
+      "description": "Behind the yards and the cafe's rear wall runs a rutted service lane. It has no windows over it, it does not touch the square, and it joins Owen Price's yard to the rear alley in under four minutes' walk. There are fresh boot prints in the orange clay, going both ways. Elias is quite right that nobody crossed his square. It simply does not matter.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_back_lane"
+      },
+      "supports_conclusion_ids": [
+        "conc_back_lane",
+        "conc_owen_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_location_ids": [
+        "loc_back_lane",
+        "loc_owen_house",
+        "loc_rear_alley"
+      ]
+    },
+    {
+      "clue_id": "clue_elias_belt_anecdote",
+      "title": "Elias on the belt",
+      "clue_type": "witness_statement",
+      "description": "Elias, unprompted, on the subject of Owen Price: the man has worn the same belt since he was a lad — brown, brass buckle, a builder's belt — and Elias once taught him and can tell you that Owen hitches it with his left hand when he is thinking. He mentions this as character, not evidence. He does not connect it to anything.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_means"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_owen"
+      ]
+    },
+    {
+      "clue_id": "clue_col_saw_no_belt",
+      "title": "He came back holding his trousers up",
+      "clue_type": "witness_statement",
+      "description": "Col, asked what he saw that morning and not what he was told to say: Owen came into the yard from the lane at about twenty-five past seven, breathing hard, holding his trousers up with one hand. No belt. Col thought nothing of it at all — a man loses a belt, it is not a thing you think about. He has been thinking about it since.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_col",
+        "required_prior_clue_ids": [
+          "clue_col_false_alibi"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_means",
+        "conc_owen_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_col",
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_owen_belt"
+      ]
+    },
+    {
+      "clue_id": "clue_belt_hook_gap",
+      "title": "The empty hook in the yard office",
+      "clue_type": "physical_evidence",
+      "description": "A row of hooks inside the door of Owen's yard office: waterproofs, a tape measure, a hard hat. On the third hook, nothing — and a clean pale ring in twenty years of dust, exactly the width of a belt.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_owen_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_means"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_owen_belt"
+      ]
+    },
+    {
+      "clue_id": "clue_yard_books",
+      "title": "The yard's books, and the estate's letter",
+      "clue_type": "document",
+      "description": "Owen Price's account books, open on the desk. Four men on the payroll — Col Hartley eleven years, Danny Marsh nine. On top of them, a solicitor's letter dated the week Marcus Bell died: the estate is calling in the eight thousand pounds, in full, within the month. Underneath, in pencil, in Owen's hand, a column of figures that does not reach the bottom of the page.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_owen_house"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_owen",
+        "agent_col"
+      ],
+      "linked_object_ids": [
+        "obj_yard_books"
+      ],
+      "linked_location_ids": [
+        "loc_owen_house"
+      ]
+    },
+    {
+      "clue_id": "clue_clara_second_page",
+      "title": "The second page",
+      "clue_type": "document",
+      "description": "The cafe's order book, left on the counter. The last four pages are drafts of the same letter, written and crossed out and written again. The final draft runs to a second page — and the second page was never sent, never carried out to the alley, and never burned, because it was lying here on the counter the whole time.\n\nIt reads: 'I have no wish to see the yard sold or your men put out of work. If the charge on this property is bought back within twelve months I will take this no further and no one need ever hear of it. I would rather be paid than be right. — C.W.'\n\nHe burned page one. Page two was the way out.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_hobbs_cafe",
+        "required_prior_clue_ids": [
+          "clue_clara_committee_note"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_clara_notebook"
+      ],
+      "linked_location_ids": [
+        "loc_hobbs_cafe"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_due_at_seven",
+      "title": "Ben was due in that alley at seven",
+      "clue_type": "witness_statement",
+      "description": "The cafe's standing order: the linen comes to the rear door at seven, and Clara signs for it herself, every morning. The man who brings it is Ben Carter. He was due at the murder scene at the murder hour, he arrived at 07:31, he cannot prove where the intervening half hour went — and he is the man who 'found' her.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_clara"
+      ],
+      "linked_location_ids": [
+        "loc_rear_alley"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_van_broke_down",
+      "title": "The van on the county road",
+      "clue_type": "witness_statement",
+      "description": "Ben's van died on the county road at ten to seven with the cafe's linen in the back. Sal, on the milk round, found him trying to bump-start it on the slope and gave him a push at twenty past — and Sal, who rates this village by its doorsteps, is quite certain of the time, because Ben made him late. Ben was two miles away, in full view of a milk float, while Clara died.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "required_prior_clue_ids": [
+          "clue_ben_due_at_seven"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_ben"
+      ]
     }
   ],
   "conclusions": [
     {
       "conclusion_id": "conc_owen_motive",
       "type": "motive",
-      "summary": "Clara had discovered the fraudulent mortgage that gave Owen control of her cafe and flat. She was about to go to the committee. Owen killed her to stop it.",
       "target_agent_id": "agent_owen",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_mortgage_deed", "clue_property_register", "clue_clara_committee_note", "clue_clara_called_owen"]
-    },
-    {
-      "conclusion_id": "conc_owen_opportunity",
-      "type": "opportunity",
-      "summary": "Owen arranged the meeting in the alley, was seen entering the alley at 07:00, and his fabricated alibi collapses on inspection. His boots carry ash from the alley fire.",
-      "target_agent_id": "agent_owen",
-      "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_nadia_sees_owen_alley", "clue_owen_ash_boots", "clue_col_false_alibi", "clue_clara_called_owen"]
+      "summary": "Marcus's estate called in Owen's eight thousand pounds the week Marcus died. Owen forged a mortgage against the cafe to save the yard and the four men in it. Clara found out and would not look away.",
+      "supported_by_clue_ids": [
+        "clue_yard_books",
+        "clue_mortgage_deed",
+        "clue_property_register",
+        "clue_clara_committee_note",
+        "clue_clara_second_page"
+      ]
     },
     {
       "conclusion_id": "conc_owen_means",
       "type": "means",
-      "summary": "The belt with Owen's monogram was used as the ligature. He took it with him and discarded it behind the bins.",
       "target_agent_id": "agent_owen",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_belt_weapon", "clue_strangulation_mark"]
+      "summary": "The weapon is a builder's belt. Owen has worn one for twenty years, there is a belt-shaped gap on his office hook, and Col saw him come back to the yard holding his trousers up.",
+      "supported_by_clue_ids": [
+        "clue_belt_weapon",
+        "clue_strangulation_mark",
+        "clue_col_saw_no_belt",
+        "clue_belt_hook_gap",
+        "clue_elias_belt_anecdote"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_opportunity",
+      "type": "opportunity",
+      "target_agent_id": "agent_owen",
+      "required_for_solution": true,
+      "summary": "Owen arranged the meeting himself, reached the alley by the back lane at seven, and was seen turning in at the lane end.",
+      "supported_by_clue_ids": [
+        "clue_clara_called_owen",
+        "clue_back_lane",
+        "clue_nadia_sees_owen_alley",
+        "clue_owen_ash_boots"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_false_alibi",
+      "type": "false_alibi",
+      "target_agent_id": "agent_owen",
+      "required_for_solution": true,
+      "summary": "Owen says he was in the yard from a quarter to seven. The gate camera shows the yard empty until 07:24, and he told Col what to say the moment he got back.",
+      "supported_by_clue_ids": [
+        "clue_col_false_alibi",
+        "clue_col_cctv_arrival",
+        "clue_col_saw_no_belt",
+        "clue_owen_ash_boots"
+      ]
     },
     {
       "conclusion_id": "conc_method",
       "type": "method",
-      "summary": "Clara was strangled with a leather belt in the rear alley at 07:09. The fire was set afterwards to destroy evidence — it failed.",
       "required_for_solution": true,
-      "supported_by_clue_ids": ["clue_belt_weapon", "clue_strangulation_mark", "clue_staged_fire"]
+      "summary": "Clara was strangled with a belt in the rear alley at about 07:09, and a fire was set afterwards to burn the letter she was carrying.",
+      "supported_by_clue_ids": [
+        "clue_strangulation_mark",
+        "clue_belt_weapon",
+        "clue_staged_fire"
+      ]
     },
     {
-      "conclusion_id": "conc_staged_fire",
-      "type": "staged_scene",
-      "summary": "The fire was deliberately set with lighter fluid to obscure cause of death and destroy the mortgage documents. The damp conditions defeated the plan.",
-      "required_for_solution": false,
-      "supported_by_clue_ids": ["clue_staged_fire", "clue_elias_fire_smoke"]
+      "conclusion_id": "conc_back_lane",
+      "type": "opportunity",
+      "target_agent_id": "agent_owen",
+      "summary": "Elias is certain — and correct — that Owen never crossed the square. It is meaningless: the back lane joins Owen's yard to the alley without touching it.",
+      "supported_by_clue_ids": [
+        "clue_elias_certain",
+        "clue_back_lane",
+        "clue_owen_ash_boots",
+        "clue_nadia_sees_owen_alley"
+      ]
     },
     {
-      "conclusion_id": "conc_col_false_alibi",
-      "type": "false_alibi",
-      "summary": "Col Hartley was instructed by Owen the night before to claim he was at the yard from 06:45. The delivery log, yard gate camera, and Col's own admission disprove it.",
+      "conclusion_id": "conc_ben_red_herring",
+      "type": "red_herring",
+      "target_agent_id": "agent_ben",
+      "summary": "Ben was due at the rear door at seven, arrived at 07:31, cannot account for the half hour, and is the man who found the body.",
+      "supported_by_clue_ids": [
+        "clue_ben_due_at_seven"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_innocent",
+      "type": "innocence_anchor",
+      "target_agent_id": "agent_ben",
+      "summary": "Ben's van died on the county road at 06:50 and Sal push-started it at 07:20. He was two miles away when Clara died.",
+      "supported_by_clue_ids": [
+        "clue_ben_van_broke_down"
+      ]
+    },
+    {
+      "conclusion_id": "conc_nadia_red_herring",
+      "type": "red_herring",
+      "target_agent_id": "agent_nadia",
+      "summary": "Nadia signed the capacity certificate without reading it — the one document that made the fraudulent mortgage possible. Clara's letter would have ended her career.",
+      "supported_by_clue_ids": [
+        "clue_capacity_certificate",
+        "clue_nadia_struck_off"
+      ]
+    },
+    {
+      "conclusion_id": "conc_nadia_innocent",
+      "type": "innocence_anchor",
+      "target_agent_id": "agent_nadia",
+      "summary": "Nadia was dressing Iris Penhale's leg at the clinic, with the patient present and the notes timed, across the whole murder window.",
+      "supported_by_clue_ids": [
+        "clue_nadia_patient_anchor"
+      ]
+    },
+    {
+      "conclusion_id": "conc_col_red_herring",
+      "type": "red_herring",
       "target_agent_id": "agent_col",
-      "required_for_solution": false,
-      "supported_by_clue_ids": ["clue_col_false_alibi"]
+      "summary": "Col lodged the forged deed at the Land Registry in his own name and lied to the police about his employer's movements.",
+      "supported_by_clue_ids": [
+        "clue_col_carried_the_deed",
+        "clue_col_false_alibi"
+      ]
+    },
+    {
+      "conclusion_id": "conc_col_innocent",
+      "type": "innocence_anchor",
+      "target_agent_id": "agent_col",
+      "summary": "The yard gate camera timestamps Col's van arriving at 07:24, off the county road — fifteen minutes after Clara died.",
+      "supported_by_clue_ids": [
+        "clue_col_cctv_arrival"
+      ]
     }
   ]
 }

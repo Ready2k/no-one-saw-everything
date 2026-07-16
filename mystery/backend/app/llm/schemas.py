@@ -1,7 +1,27 @@
 """Pydantic schemas for LLM mystery generation."""
 
+import re
 from typing import Dict, List, Literal, Any
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+
+# `Agent.routine_summary` is player-visible (projections.project_agent) and is rendered on the
+# Suspects screen before a single clue has been discovered. Cases 004/005/006 shipped with
+# routines that stated the killer's motive, announced that an alibi was false, and gave away
+# case 006's identity twist. The prompt now forbids this; this is the belt-and-braces check for
+# when the model ignores the prompt anyway.
+_ROUTINE_LEAK_PATTERNS = [
+    r"\bthat night\b",
+    r"\bwill need to be\b",
+    r"\bwill matter\b",
+    r"\bwill have seen\b",
+    r"\bwill recognise\b",
+    r"\b(?:forged|false) alibi\b",
+    r"\b(?:he|she|they) lied\b",
+    r"\bsecretly (?:owed|killed|poisoned|followed|paid)\b",
+    r"\bthe (?:killer|murderer)\b",
+    r"\bif anyone asked\b",
+    r"\bmaiden name\b",
+]
 
 
 class SeededMemoryPlan(BaseModel):
@@ -51,6 +71,17 @@ class BeatPlan(BaseModel):
 class RoutinePlan(BaseModel):
     role: str
     routine_summary: str
+
+    @field_validator("routine_summary")
+    @classmethod
+    def _no_truth_leak(cls, v: str) -> str:
+        hits = [p for p in _ROUTINE_LEAK_PATTERNS if re.search(p, v, re.IGNORECASE)]
+        if hits:
+            raise ValueError(
+                "routine_summary is shown to the player before any clue is discovered and must "
+                f"describe ordinary habits only — it must not carry case truth (matched: {hits})"
+            )
+        return v
 
 
 class TimelinePlan(BaseModel):

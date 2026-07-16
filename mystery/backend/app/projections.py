@@ -293,6 +293,9 @@ def project_clue(clue: Clue) -> dict[str, Any]:
 
 
 def project_claim(claim: Claim) -> dict[str, Any]:
+    # `truthfulness` is deliberately absent: whether a statement is a lie is case truth, and the
+    # player earns it. `about_agent_id`/`asserts_presence` are safe — they are just what the
+    # player heard the person say, and they are what lets the notebook file testimony by subject.
     return {
         "claim_id": claim.claim_id,
         "speaker_agent_id": claim.speaker_agent_id,
@@ -301,6 +304,8 @@ def project_claim(claim: Claim) -> dict[str, Any]:
         "time_reference": claim.time_reference,
         "location_reference_id": claim.location_reference_id,
         "player_known_status": claim.player_known_status,
+        "about_agent_id": claim.about_agent_id or claim.speaker_agent_id,
+        "asserts_presence": claim.asserts_presence,
     }
 
 

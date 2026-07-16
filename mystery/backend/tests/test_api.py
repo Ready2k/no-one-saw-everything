@@ -73,17 +73,23 @@ def test_clara_alibi_is_a_lie_but_lie_flag_not_leaked():
     assert claim["player_known_status"] == "claimed"
 
 
-def test_ben_timeline_reveals_sighting_and_sound():
-    r = client.post(
+def test_ben_timeline_splits_sighting_and_sound_by_when_asked():
+    # These used to spill from a single question — two of five key clues in one breath. They are
+    # now separate discoveries: the coat when you ask about ~07:47, the thud about ~07:56.
+    coat = client.post(
         "/api/interview/ask",
-        json={
-            "agent_id": "agent_ben",
-            "question_type": "timeline",
-            "time_reference": "07:47",
-        },
+        json={"agent_id": "agent_ben", "question_type": "timeline", "time_reference": "07:47"},
     ).json()
-    revealed = {c["clue_id"] for c in r["revealed_clues"]}
-    assert {"clue_ben_sighting", "clue_storage_sound"} <= revealed
+    coat_clues = {c["clue_id"] for c in coat["revealed_clues"]}
+    assert "clue_ben_sighting" in coat_clues
+    assert "clue_storage_sound" not in coat_clues
+
+    thud = client.post(
+        "/api/interview/ask",
+        json={"agent_id": "agent_ben", "question_type": "timeline", "time_reference": "07:56"},
+    ).json()
+    thud_clues = {c["clue_id"] for c in thud["revealed_clues"]}
+    assert "clue_storage_sound" in thud_clues
 
 
 def test_priya_confession_gated_on_ben_sighting():

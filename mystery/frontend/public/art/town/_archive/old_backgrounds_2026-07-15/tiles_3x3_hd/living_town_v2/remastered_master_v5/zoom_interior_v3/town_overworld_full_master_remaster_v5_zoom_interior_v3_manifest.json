@@ -1,0 +1,43 @@
+{
+  "version": "living_town_v2_remaster_v5_zoom_interior_v3",
+  "created_from": [
+    "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v2/town_overworld_B2_zoom_interior_v2_generated_scaled.png",
+    "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.png"
+  ],
+  "tile_size": {
+    "width": 2048,
+    "height": 1536
+  },
+  "grid": {
+    "columns": 3,
+    "rows": 3,
+    "order": [
+      "A1",
+      "A2",
+      "A3",
+      "B1",
+      "B2",
+      "B3",
+      "C1",
+      "C2",
+      "C3"
+    ]
+  },
+  "purpose": "Zoom/interior B2 tile set with narrow seam lock only; removes v2 wide exterior ghosting while preserving outer edge pixels.",
+  "source_generation": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_B2_zoom_interior_v3_generated_scaled_source.png",
+  "seam_locked_b2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_B2_zoom_interior_v3_seam_locked.png",
+  "seam_mask": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_B2_zoom_interior_v3_seam_mask.png",
+  "master_preview": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_full_master_remaster_v5_zoom_interior_v3.png",
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_full_master_remaster_v5_zoom_interior_v3_contact.png",
+  "tiles": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_A1_living_town_remaster_v5_zoom_interior_v3.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_A2_living_town_remaster_v5_zoom_interior_v3.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_A3_living_town_remaster_v5_zoom_interior_v3.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_B1_living_town_remaster_v5_zoom_interior_v3.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_B2_living_town_remaster_v5_zoom_interior_v3.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_B3_living_town_remaster_v5_zoom_interior_v3.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_C1_living_town_remaster_v5_zoom_interior_v3.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_C2_living_town_remaster_v5_zoom_interior_v3.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v3/town_overworld_C3_living_town_remaster_v5_zoom_interior_v3.png"
+  }
+}

@@ -47,16 +47,25 @@ def _evidence_score(
     return covered / len(required)
 
 
-def _verdict_band(score: int) -> str:
+def _verdict_band(score: int, killer_correct: bool = True) -> str:
+    """The verdict must never contradict the accusation.
+
+    A correct accusation floors at 45 (see the scoring below), and the 20-49 band read "Wrong
+    suspect, though you found some real threads" — so a player who named the right killer on thin
+    reasoning was told they had named the wrong one.
+    """
+    if not killer_correct:
+        if score >= 20:
+            return "Wrong suspect, though you found some real threads."
+        return "An accusation the evidence doesn't support."
+
     if score >= 90:
         return "Case closed — a clean solve."
     if score >= 70:
         return "Right killer, but your reasoning had gaps."
     if score >= 50:
         return "Partly there, but you missed major pieces."
-    if score >= 20:
-        return "Wrong suspect, though you found some real threads."
-    return "An accusation the evidence doesn't support."
+    return "The right name, but you cannot yet show your working."
 
 
 def _detective_rating(score: int) -> str:
@@ -169,7 +178,12 @@ def judge_accusation(
             f"You named {_name(case, req.accused_agent_id)}, but the evidence points elsewhere.",
         )
 
-    score = max(0, min(100, score - invalid_penalty))
+    # Hints cost you. Asking the game to show you which clue disproves which claim is asking it to
+    # do the deduction for you — always available, never free, and capped so a stuck player who
+    # leans on it a few times is docked a grade rather than wiped out.
+    hint_penalty = min(10, 2 * getattr(session, "hint_count", 0))
+
+    score = max(0, min(100, score - invalid_penalty - hint_penalty))
 
     # Key-clue reasoning gaps and discovery gaps.
     key_ids = sol.key_clue_ids
@@ -208,8 +222,10 @@ def judge_accusation(
         evidence_score=round(evidence_score, 2),
         missed_key_clues=missed_key_clues,
         false_assumptions=false_assumptions,
+        hints_taken=getattr(session, "hint_count", 0),
+        hint_penalty=hint_penalty,
         explanation=explanation,
-        verdict=_verdict_band(score),
+        verdict=_verdict_band(score, killer_correct),
         true_killer_id=sol.killer_id if killer_correct else "",
         true_killer_name=_name(case, sol.killer_id) if killer_correct else "",
         true_motive=sol.motive.canonical if killer_correct else "",

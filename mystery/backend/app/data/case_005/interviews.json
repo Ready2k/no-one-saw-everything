@@ -2,251 +2,335 @@
   {
     "agent_id": "agent_owen",
     "default_answers": {
-      "alibi": "My yard. From quarter to seven. Col was with me.",
-      "timeline": "Yard all morning. Nothing to do with that fire.",
-      "last_seen_victim": "Clara? Days ago. She came to the yard with a question about the cafe lease. Normal enough.",
-      "relationship": "Professional. She rented a building connected to the Bell estate. I had an interest.",
-      "evidence": "You'd need to be specific.",
-      "location": "My yard. Ask Col."
+      "alibi": "The yard. Where I am every morning of my life.",
+      "timeline": "Books at six, supplier call at quarter to seven, then the day starts. Same as always.",
+      "last_seen_victim": "Clara Wells? Not for days. We didn't move in the same hours.",
+      "relationship": "She ran the cafe. I run a yard. We had no business with each other.",
+      "evidence": "You'd have to be more specific.",
+      "location": "I've no reason to be down that end."
     },
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "I was in my yard from quarter to seven. Col Hartley arrived not long after \u2014 we had timber to sort through. I was there all morning.",
-        "answer_type": "claim",
-        "truthfulness": "false",
-        "emotional_shift": "flat",
+        "answer_text": "From quarter to seven I was in the yard office on the telephone to a supplier, and Col Hartley was in the yard with me. He'll tell you. He was there from quarter to.",
+        "reveals_clue_ids": [],
         "claims": [
           {
             "claim_id": "claim_owen_yard_alibi",
-            "summary": "Owen claims he was at his yard from 06:45, corroborated by Col Hartley.",
+            "summary": "Owen claims he was in the yard office from 06:45 with Col Hartley present.",
             "claim_type": "alibi",
-            "time_reference": "07:09",
+            "truthfulness": "false",
+            "time_reference": "06:45",
             "location_reference_id": "loc_owen_house",
-            "truthfulness": "false"
+            "about_agent_id": "agent_owen",
+            "time_to": "07:30"
           }
-        ],
-        "suggested_followups": [
-          "What time did Col arrive?",
-          "Was anyone else there?"
         ]
       },
       {
         "question_type": "relationship",
-        "min_ask_count": 1,
-        "answer_text": "We first met over a job. The roof was leaking and I came to patch it. We shook hands on a fair price, and that was the start of a long working relationship. It's a shame how things turned out.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "reflective",
-        "claims": [],
+        "answer_text": "I've known Clara Wells twenty years and I've had maybe four conversations with her. She kept a till straight and she kept herself to herself and she was the most exact person in this village. If she told you a thing was so, it was so.\n\nThat's the trouble with her, if you want it. She was never once wrong.",
         "reveals_clue_ids": [],
-        "reveals_memory_ids": [],
-        "suggested_followups": []
+        "claims": []
       },
       {
-        "question_type": "relationship",
-        "answer_text": "She had a lease arrangement on the cafe building through the Bell estate. I was one of the creditors. There was nothing personal.",
-        "answer_type": "claim",
-        "truthfulness": "mistaken",
-        "emotional_shift": "controlled",
+        "question_type": "last_seen_victim",
+        "answer_text": "Days ago. Across the square. I raised a hand and she didn't see me.",
+        "reveals_clue_ids": [],
         "claims": [
           {
-            "claim_id": "claim_owen_nothing_personal",
-            "summary": "Owen downplays the relationship as a routine creditor arrangement.",
-            "claim_type": "relationship",
-            "truthfulness": "mistaken"
+            "claim_id": "claim_owen_not_seen_clara",
+            "summary": "Owen claims he had not seen or spoken to Clara for days.",
+            "claim_type": "statement",
+            "truthfulness": "false"
           }
-        ],
-        "suggested_followups": [
-          "How did you two first meet?"
         ]
       },
       {
         "question_type": "evidence",
-        "topic_clue_id": "clue_belt_weapon",
-        "answer_text": "That's not mine. Lost that belt weeks ago. Anyone could have picked it up.",
-        "answer_type": "denial",
-        "truthfulness": "false",
-        "emotional_shift": "hard",
+        "answer_text": "That deed's got Marcus Bell's signature on it. Marcus Bell's dead. Take it up with him.",
+        "reveals_clue_ids": [],
+        "claims": [
+          {
+            "claim_id": "claim_owen_deed_genuine",
+            "summary": "Owen insists the mortgage deed is genuine and signed by Marcus Bell.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ],
+        "topic_clue_id": "clue_mortgage_deed"
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "A belt. Behind some bins. Half the men in this village wear a belt like that and the other half wish they could afford one. There's no name on it, is there. I notice there's no name on it.",
+        "reveals_clue_ids": [],
         "claims": [
           {
             "claim_id": "claim_owen_belt_denial",
-            "summary": "Owen denies the belt is his, claiming he lost it weeks ago.",
+            "summary": "Owen denies the belt is his and points out it carries no name.",
             "claim_type": "statement",
             "truthfulness": "false"
           }
-        ]
+        ],
+        "topic_clue_id": "clue_belt_weapon"
       },
       {
-        "question_type": "evidence",
-        "topic_clue_id": "clue_mortgage_deed",
-        "answer_text": "That document was a legitimate security arrangement. Marcus agreed to it. It was all done properly.",
-        "answer_type": "denial",
-        "truthfulness": "false",
-        "emotional_shift": "controlled",
+        "question_type": "location",
+        "answer_text": "The lane? Nobody uses the lane. It's ruts and nettles.",
+        "reveals_clue_ids": [],
         "claims": [
           {
-            "claim_id": "claim_owen_mortgage_legitimate",
-            "summary": "Owen claims the mortgage deed was a legitimate arrangement that Marcus agreed to.",
-            "claim_type": "statement",
-            "truthfulness": "false"
+            "claim_id": "claim_owen_not_in_lane",
+            "summary": "Owen claims nobody uses the back lane, including him.",
+            "claim_type": "alibi",
+            "truthfulness": "false",
+            "time_reference": "06:55",
+            "location_reference_id": "loc_back_lane",
+            "about_agent_id": "agent_owen",
+            "asserts_presence": false
           }
-        ]
+        ],
+        "topic_location_id": "loc_back_lane"
       },
       {
-        "question_type": "evidence",
-        "topic_clue_id": "clue_owen_ash_boots",
-        "answer_text": "Ash on my boots? I burn waste timber in the yard. Ash gets everywhere.",
-        "answer_type": "denial",
-        "truthfulness": "false",
-        "emotional_shift": "dismissive"
-      },
-      {
-        "question_type": "evidence",
-        "topic_clue_id": "clue_nadia_sees_owen_alley",
-        "answer_text": "Nadia saw someone in a grey jacket \u2014 that could be half the village. She's mistaken.",
-        "answer_type": "denial",
-        "truthfulness": "false",
-        "emotional_shift": "hard"
+        "question_type": "timeline",
+        "answer_text": "Books at six. I'll not pretend they were good reading. Then the call, then Col came in with the load.",
+        "reveals_clue_ids": [],
+        "claims": []
       }
     ]
   },
   {
     "agent_id": "agent_col",
     "default_answers": {
-      "alibi": "I was at Owen's yard from quarter to seven. We sorted timber.",
-      "timeline": "Owen's yard. Same as I said.",
-      "last_seen_victim": "Don't really know Clara.",
-      "relationship": "I work for Owen. Nothing else.",
-      "evidence": "Can't help you there.",
-      "location": "Owen's yard."
+      "alibi": "The county road, then the yard. I drive. That's the whole of my morning.",
+      "timeline": "Load on at six, county road, into the yard. I couldn't tell you the minutes.",
+      "last_seen_victim": "Clara? Not that morning. Not for a while.",
+      "relationship": "He's been good to me. Eleven years. He's been good to me.",
+      "evidence": "I don't know about that.",
+      "location": "I'm in the cab or I'm in the yard."
     },
     "rules": [
       {
         "question_type": "alibi",
-        "answer_text": "Quarter to seven, Owen's yard. We sorted the week's timber orders. Nothing unusual.",
-        "answer_type": "claim",
-        "truthfulness": "false",
-        "emotional_shift": "uncomfortable",
+        "answer_text": "I was at the yard from quarter to seven. Owen was in the office on the phone. I was there. Quarter to seven.\n\n...I was there from quarter to seven.",
+        "reveals_clue_ids": [],
         "claims": [
           {
             "claim_id": "claim_col_yard_alibi",
-            "summary": "Col claims he was at Owen's yard from 06:45.",
+            "summary": "Col claims he was at the yard from 06:45 and that Owen was in the office.",
             "claim_type": "alibi",
-            "time_reference": "07:09",
+            "truthfulness": "false",
+            "time_reference": "06:45",
             "location_reference_id": "loc_owen_house",
-            "truthfulness": "false"
+            "about_agent_id": "agent_owen",
+            "time_to": "07:30"
           }
         ]
       },
       {
-        "question_type": "alibi",
-        "topic_clue_id": "clue_col_false_alibi",
-        "answer_text": "...Look. Owen texted me last night. Said if anyone asked I should say I was there from quarter to seven. I showed up at half seven, more like. There was no timber job. I went along with it because he's my main client and I \u2014 I didn't ask why.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "guilty_relief",
-        "claims": [
-          {
-            "claim_id": "claim_col_admits_false_alibi",
-            "summary": "Col admits Owen asked him to provide a false alibi the night before, and that he was actually at the yard at 07:30, not 06:45.",
-            "claim_type": "alibi",
-            "truthfulness": "true"
-          }
-        ],
+        "question_type": "relationship",
+        "answer_text": "He kept me on through two winters when there was no work and no reason to. He stood at my father's funeral in the rain in a suit he'd borrowed.\n\nI've got a boy at school. I want that in there as well, whatever else goes in.",
+        "reveals_clue_ids": [],
+        "claims": []
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "...That camera stamps the time, doesn't it. On the gate.\n\nI came in at twenty-four minutes past seven, off the county road. And the yard behind me is empty. It's empty all morning, on that tape, and I've known that since about ten o'clock this morning and I've been sat here with it.\n\nHe asked me the night before. He said if anyone asks, quarter to seven. And I said yes, because — because I said yes.",
         "reveals_clue_ids": [
           "clue_col_false_alibi"
-        ]
-      }
-    ]
-  },
-  {
-    "agent_id": "agent_nadia",
-    "default_answers": {
-      "alibi": "Clinic from seven.",
-      "timeline": "Crossed the square at seven on my way in.",
-      "last_seen_victim": "Clara? Yesterday, briefly, at the cafe.",
-      "relationship": "Acquaintance. She made good coffee.",
-      "evidence": "What specifically?",
-      "location": "I pass the square every morning."
-    },
-    "rules": [
-      {
-        "question_type": "timeline",
-        "time_from": "07:00",
-        "time_to": "07:10",
-        "answer_text": "At seven exactly I crossed the square on my way to the clinic. I glanced down the rear alley \u2014 I always do, habit. I saw a big man in a grey work jacket turning into the alley. I thought he had a delivery. Now I'm thinking differently.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "disturbed",
-        "reveals_clue_ids": [
-          "clue_nadia_sees_owen_alley"
         ],
         "claims": [
           {
-            "claim_id": "claim_nadia_alley_sighting",
-            "summary": "Nadia saw a large figure in a grey jacket entering the rear alley at 07:00.",
-            "claim_type": "sighting",
-            "time_reference": "07:00",
-            "location_reference_id": "loc_rear_alley",
+            "claim_id": "claim_col_admits_lie",
+            "summary": "Col admits Owen told him what to say and that the gate camera shows the yard empty until 07:24.",
+            "claim_type": "statement",
             "truthfulness": "true"
           }
-        ]
-      }
-    ]
-  },
-  {
-    "agent_id": "agent_elias",
-    "default_answers": {
-      "alibi": "Bench from six-forty. Discovered the fuss at seven-thirty.",
-      "timeline": "Usual morning. Something smelt off around twenty past.",
-      "last_seen_victim": "Clara through the cafe window about six-fifty, setting up inside.",
-      "relationship": "She made a decent pot of tea.",
-      "evidence": "I notice things.",
-      "location": "The bench. Best vantage point in the village."
-    },
-    "rules": [
+        ],
+        "topic_clue_id": "clue_col_cctv_arrival"
+      },
       {
-        "question_type": "timeline",
-        "time_from": "07:15",
-        "time_to": "07:30",
-        "answer_text": "Around twenty past I caught a smell \u2014 burning, faint, from the alley direction. Thought it was toast or something from the cafe kitchen. Then Ben came running out at half seven and everything changed.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "troubled",
+        "question_type": "evidence",
+        "answer_text": "You're asking me what I saw, not what I was told to say. All right.\n\nHe came in from the lane about twenty-five past. Breathing like he'd run it. And he had one hand holding his trousers up, because his belt was gone.\n\nI didn't think anything of it. Why would you? A man's lost his belt. You don't think— \n\nYou don't, do you. You don't think anything of it at the time.",
         "reveals_clue_ids": [
-          "clue_elias_fire_smoke"
-        ]
+          "clue_col_saw_no_belt"
+        ],
+        "claims": [],
+        "topic_clue_id": "clue_col_false_alibi"
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "I drove the deed to the county office and I signed the slip, because he said it was yard paperwork and I've signed a hundred bits of yard paperwork.\n\nI wondered. I'll not stand here and say I didn't wonder. And then I thought about the mortgage on my own house, and I stopped wondering. You can write that down.",
+        "reveals_clue_ids": [],
+        "claims": [
+          {
+            "claim_id": "claim_col_just_paperwork",
+            "summary": "Col admits lodging the deed but says he believed it was ordinary yard paperwork.",
+            "claim_type": "statement",
+            "truthfulness": "mistaken"
+          }
+        ],
+        "topic_clue_id": "clue_col_carried_the_deed"
       }
     ]
   },
   {
     "agent_id": "agent_ben",
     "default_answers": {
-      "alibi": "My round. Found the fire at half seven.",
-      "timeline": "Square, deliveries, round the back at seven-thirty.",
-      "last_seen_victim": "I saw Clara through the cafe window around seven. She looked tense.",
-      "relationship": "She was sound. Good customer.",
-      "evidence": "I can tell you what I found.",
-      "location": "Everywhere on the round."
+      "alibi": "On the round. Van, crates, square, same as any morning.",
+      "timeline": "Round, mostly. It blurs.",
+      "last_seen_victim": "This morning. In the alley. I'd rather not.",
+      "relationship": "Clara was all right. She'd have your coffee poured before you'd got the door shut.",
+      "evidence": "Couldn't tell you.",
+      "location": "I'm all over the village of a morning."
     },
     "rules": [
       {
-        "question_type": "last_seen_victim",
-        "answer_text": "I passed the cafe window at about five past seven. Clara was inside, by the counter. She looked stressed \u2014 hands busy, not her usual early calm. Then at half seven I came round the back and found her.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "shaken",
+        "question_type": "timeline",
+        "answer_text": "The linen goes to the cafe's back door at seven. Every morning, seven, and Clara signs for it herself — she'd not let anyone else sign for it, she was funny like that, everything just so.\n\nI got there at half past.\n\nHalf past. Twenty-one minutes late. I've been doing that round three years and I'm late about one morning in five and I've always thought it was funny.",
+        "reveals_clue_ids": [
+          "clue_ben_due_at_seven"
+        ],
         "claims": [
           {
-            "claim_id": "claim_ben_clara_tense",
-            "summary": "Ben saw Clara inside the cafe at 07:05, looking tense.",
-            "claim_type": "sighting",
-            "time_reference": "07:05",
-            "location_reference_id": "loc_hobbs_cafe",
-            "truthfulness": "true"
+            "claim_id": "claim_ben_late",
+            "summary": "Ben admits he was due at the rear door at 07:00 and did not arrive until 07:31.",
+            "claim_type": "alibi",
+            "truthfulness": "true",
+            "time_reference": "07:00",
+            "location_reference_id": "loc_rear_alley",
+            "about_agent_id": "agent_ben",
+            "time_to": "07:31"
           }
         ]
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "The van died on the county road. Ten to seven, up the hill by the reservoir, just went.\n\nAnd I was stood there rolling it back down the slope trying to bump it, and Sal come along on the float and give me a shove and it caught, and that was — twenty past? He'll tell you. He'll tell you at length, because I made him late and he's not going to let that go while there's breath in him.\n\nSo I was two miles away with a milkman watching me. That's my alibi. That's the thing that's supposed to make me feel better.",
+        "reveals_clue_ids": [
+          "clue_ben_van_broke_down"
+        ],
+        "claims": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "She always had my coffee poured before I'd got the door shut. Three years. Never once had to ask.\n\nI keep thinking — if the van had started. If I'd not stopped for the paper. Twenty-one minutes. She'd have been standing at that door with her clipboard telling me I was late.\n\nI'd give a lot to be told I was late.",
+        "reveals_clue_ids": [],
+        "claims": []
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "The smoke. I smelled it before I saw her. I thought somebody'd let a fry-up go.",
+        "reveals_clue_ids": [],
+        "claims": [],
+        "topic_clue_id": "clue_staged_fire"
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_elias",
+    "default_answers": {
+      "alibi": "My bench. Twenty to seven. Nothing crosses that square without my knowing.",
+      "timeline": "I can give you the square, minute by minute, and I shall.",
+      "last_seen_victim": "Clara? Opening up, before seven. Papers under her arm.",
+      "relationship": "A most exact young woman. Taught her. Taught most of them.",
+      "evidence": "Ask me something specific.",
+      "location": "From that bench I see the cafe, the clinic, the fountain and the square. That is the village."
+    },
+    "rules": [
+      {
+        "question_type": "alibi",
+        "answer_text": "Twenty to seven until the shouting. And I will tell you now, before you waste an afternoon on it: Owen Price did not cross that square. Not once. Not that morning.\n\nI know what you're thinking. You're thinking an old man on a bench with a flask. I taught in this village for forty years and I have watched that square for twenty more and I will stake my pension on it. Owen Price did not cross my square.\n\nSo whatever you have got against him, you may as well put it down.",
+        "reveals_clue_ids": [
+          "clue_elias_certain"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_elias_square_certain",
+            "summary": "Elias insists, correctly, that Owen never crossed the village square that morning.",
+            "claim_type": "statement",
+            "truthfulness": "true",
+            "time_reference": "06:40",
+            "location_reference_id": "loc_village_square",
+            "about_agent_id": "agent_owen",
+            "asserts_presence": false,
+            "time_to": "07:31"
+          }
+        ]
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "I taught Owen Price when he was nine and he was a plodder and a trier and he has worn the same belt since he was twenty — brown, brass buckle, a builder's belt. Hitches it with his left hand when he's thinking. Always has.\n\nWhy do you look at me like that? It's character, man. You asked me about the boy and I'm telling you about the boy.",
+        "reveals_clue_ids": [
+          "clue_elias_belt_anecdote"
+        ],
+        "claims": []
+      },
+      {
+        "question_type": "location",
+        "answer_text": "The lane? Behind the yards?\n\n...Well. Nobody goes down there. Ruts and nettles and not a window on it. I couldn't tell you the last time I saw a living soul on that lane.\n\nAh.\n\nNo, I see. I see what you're saying. I couldn't tell you the last time I saw a living soul on that lane, could I. That is rather the point of it.\n\n...I have been sitting on that bench for twenty years being certain, detective. Do sit down. I find I would like to be certain about rather less than I was this morning.",
+        "reveals_clue_ids": [],
+        "claims": [],
+        "topic_location_id": "loc_back_lane"
+      },
+      {
+        "question_type": "timeline",
+        "answer_text": "Clara came down before seven with her papers. Nadia crossed at seven to the clinic. The delivery boy came through late, well after, in a fluster as usual. And nobody — nobody — went from the yards to the alley across my square.",
+        "reveals_clue_ids": [],
+        "claims": []
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "The clinic. I opened at two minutes past seven and I had a patient with me.",
+      "timeline": "I crossed the square a little before seven and I opened the clinic.",
+      "last_seen_victim": "Clara? Not this morning. Through the window yesterday, perhaps.",
+      "relationship": "We were neighbourly. She was precise. I liked that about her.",
+      "evidence": "Tell me what you're looking at and I'll tell you what I know.",
+      "location": "I go from my door to the clinic and back. That's my geography."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "answer_text": "I crossed the square at seven. I glanced down the alley as I passed — one does — and there was a big man in a grey work jacket turning in at the far end. The lane end, not the square end.\n\nI took him for a delivery and I thought nothing more about it for four hours. I am not going to swear to a face I did not see. I will swear to the jacket.",
+        "reveals_clue_ids": [
+          "clue_nadia_sees_owen_alley"
+        ],
+        "claims": []
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "...That is my signature, yes.\n\nHe brought it into the clinic with the top sheet folded back and said it was a capacity form, and that Marcus had asked for it. I signed it on the reception desk between patients. I did not read it.\n\nTwenty-two years, and I did not read it. If Clara had sent that letter I would have been in front of the council by Christmas and I would have deserved to be.\n\nSo ask me the question. Ask it properly.",
+        "reveals_clue_ids": [
+          "clue_nadia_struck_off"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_nadia_did_not_read",
+            "summary": "Nadia admits signing the capacity certificate but says Owen misrepresented it and she never read it.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ],
+        "topic_clue_id": "clue_capacity_certificate"
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Then let me answer it. I opened the clinic at two minutes past seven and Iris Penhale was on the step with her leg, as she is every Tuesday. I dressed it until twenty-five past. The notes are timed and initialled at every stage, because that is how I was trained, and Iris will tell you what we discussed, which was her grandson.\n\nI had every reason to want that letter unsent. I was in a treatment room with a seventy-nine-year-old woman while it happened.",
+        "reveals_clue_ids": [
+          "clue_nadia_patient_anchor"
+        ],
+        "claims": []
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "The mark on her neck has a rectangular impression at one end. That is a buckle. It is a belt, and it was pulled from behind, and it would have been over in under a minute. I am sorry to be plain. You asked.",
+        "reveals_clue_ids": [],
+        "claims": [],
+        "topic_clue_id": "clue_strangulation_mark"
       }
     ]
   }

@@ -32,26 +32,26 @@
     "width": 6144,
     "height": 4608,
     "cells": {
-      "north_west": "tiles_3x3_hd/town_overworld_A1_hd.png",
-      "north": "tiles_3x3_hd/town_overworld_A2_hd.png",
-      "north_east": "tiles_3x3_hd/town_overworld_A3_hd.png",
-      "west": "tiles_3x3_hd/town_overworld_B1_hd.png",
-      "center": "tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png",
-      "east": "tiles_3x3_hd/town_overworld_B3_hd.png",
-      "south_west": "tiles_3x3_hd/town_overworld_C1_hd.png",
-      "south": "tiles_3x3_hd/town_overworld_C2_hd.png",
-      "south_east": "tiles_3x3_hd/town_overworld_C3_hd.png"
+      "north_west": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A1_living_town_remaster_v5_clean_generated.png",
+      "north": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A2_living_town_remaster_v5_clean_generated.png",
+      "north_east": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A3_living_town_remaster_v5_clean_generated.png",
+      "west": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B1_living_town_remaster_v5_clean_generated.png",
+      "center": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.png",
+      "east": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B3_living_town_remaster_v5_clean_generated.png",
+      "south_west": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C1_living_town_remaster_v5_clean_generated.png",
+      "south": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C2_living_town_remaster_v5_clean_generated.png",
+      "south_east": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C3_living_town_remaster_v5_clean_generated.png"
     },
     "settlement_cells": ["north_west", "north_east", "south_west"],
     "landscape_cells": ["north", "west", "east", "south", "south_east"],
     "interior_variants": {
-      "center_all_cases": "tiles_3x3_hd/town_overworld_B2_all_cases_interior_hd.png",
-      "center_current": "tiles_3x3_hd/town_overworld_B2_interior_hd.png"
+      "center_all_cases": "tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png",
+      "center_current": "tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png"
     },
     "zoom_swap": {
       "threshold": 3.2,
-      "center_zoomed_out": "tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png",
-      "center_zoomed_in": "tiles_3x3_hd/town_overworld_B2_interior_hd.png"
+      "center_zoomed_out": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.png",
+      "center_zoomed_in": "tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png"
     },
     "settlement_policy": "Only three of the eight surrounding cells contain external-view settlements; no surrounding cell uses cutaway interiors."
   },

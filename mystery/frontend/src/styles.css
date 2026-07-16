@@ -825,6 +825,75 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 .challenge-btn { border-color: var(--danger); color: var(--danger); }
 .challenge-btn:hover:not(:disabled) { background: var(--danger); color: #1a0d0a; }
 
+/* Confrontation builder — the player assembles the contradiction themselves.
+   The game says how MANY of a suspect's statements it can disprove, never which. */
+.contradiction-nudge { color: var(--danger); }
+.confront-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0.75rem 0;
+}
+@media (max-width: 720px) {
+  .confront-columns { grid-template-columns: 1fr; }
+}
+.confront-col {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  max-height: 15rem;
+  overflow-y: auto;
+}
+.confront-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+.confront-option {
+  display: flex;
+  gap: 0.45rem;
+  align-items: baseline;
+  padding: 0.35rem 0;
+  font-size: 0.87rem;
+  line-height: 1.35;
+  cursor: pointer;
+  border-top: 1px solid var(--line);
+}
+.confront-col > .confront-option:first-of-type { border-top: none; }
+.confront-option:hover { color: var(--text); }
+.confront-option input { margin-top: 0.2rem; flex-shrink: 0; }
+.confront-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.hint-button { opacity: 0.75; }
+.hint-button:hover:not(:disabled) { opacity: 1; }
+.hint-revealed {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--line);
+}
+
+/* Testimony as evidence — one villager's word against another's. */
+.confront-columns { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 1000px) {
+  .confront-columns { grid-template-columns: 1fr; }
+}
+.testimony-speaker { color: var(--accent-2); }
+.testimony-conflict {
+  margin: 0.5rem 0;
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid var(--danger);
+  background: rgba(200, 60, 50, 0.08);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 /* Accusation */
 .accuse { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.2rem; align-items: start; }
 .accuse-form { display: flex; flex-direction: column; gap: 0.8rem; }
@@ -1385,6 +1454,13 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 
 .place-search-image.fountain-lit {
   filter: saturate(0.82) brightness(0.84) contrast(1.08) sepia(0.12);
+}
+
+.post-mortem-portrait {
+  display: block;
+  object-fit: contain;
+  object-position: 50% 5%;
+  filter: grayscale(0.7) saturate(0.48) brightness(0.68) contrast(1.08) sepia(0.08) hue-rotate(165deg);
 }
 
 .magnifying-lens {
@@ -2469,11 +2545,21 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 }
 .autopsy-slab .magnifying-container {
   margin-bottom: 0;
-  background: linear-gradient(180deg, #444b57, #3a404b);
+  background:
+    radial-gradient(70% 55% at 50% 30%, rgba(177, 205, 214, 0.18), transparent 70%),
+    linear-gradient(180deg, #444b57, #3a404b);
   border: 1px solid rgba(0, 0, 0, 0.4);
   box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.45);
 }
 .autopsy-slab .lens-content { background: #3f4550; }
+.autopsy-slab .post-mortem-portrait {
+  width: 100%;
+  height: 100%;
+  padding: 3% 4% 0;
+}
+.autopsy-slab .lens-content .post-mortem-portrait {
+  padding: 0;
+}
 
 .slab-foot {
   display: flex;
@@ -3519,6 +3605,8 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 .hub-archive-name { color: var(--text); font-size: 0.95rem; }
 .hub-archive-meta { font-size: 0.74rem; color: var(--muted); }
 .hub-archive-active { color: var(--confirm); }
+/* Investigations persist per case, so the archive can say what is still open. */
+.hub-archive-progress { color: var(--accent-2); }
 .hub-archive-empty {
   margin: 0;
   padding: 1.1rem 1rem;
@@ -3896,6 +3984,67 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   text-overflow: ellipsis;
 }
 
+/* Composure meter — a suspect's demeanour, made legible. The bar drains as pressure rises. */
+.composure-meter {
+  margin: 0.6rem 0 0.2rem;
+  --composure-tone: var(--confirm);
+}
+.composure-meter.level-guarded  { --composure-tone: #b9a04e; }
+.composure-meter.level-rattled  { --composure-tone: #cf8a3a; }
+.composure-meter.level-cornered { --composure-tone: #c8503c; }
+.composure-meter.level-breaking { --composure-tone: #d64232; }
+.composure-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 3px;
+}
+.composure-label {
+  font-family: var(--font-typewriter, monospace);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--composure-tone);
+  transition: color 0.4s ease;
+}
+.composure-track {
+  height: 7px;
+  border-radius: 4px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.composure-fill {
+  height: 100%;
+  background: var(--composure-tone);
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease;
+}
+.composure-hint {
+  margin: 3px 0 0;
+  font-style: italic;
+}
+/* A hit: the meter flashes as composure drops, so it registers even off-screen. */
+.composure-hit .composure-track {
+  animation: composure-flash 0.9s ease-out;
+}
+@keyframes composure-flash {
+  0% { box-shadow: 0 0 0 0 var(--composure-tone); }
+  30% { box-shadow: 0 0 8px 2px var(--composure-tone); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+/* Once they are breaking, the bar breathes to signal "press again". */
+.composure-meter.level-breaking .composure-fill {
+  animation: composure-pulse 1.8s ease-in-out infinite;
+}
+@keyframes composure-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .composure-fill,
+  .composure-hit .composure-track,
+  .composure-meter.level-breaking .composure-fill { animation: none; transition: none; }
+}
+
 /* Roster: the selected suspect card reads as pulled from the stack */
 .suspect { transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease; }
 .suspect.active {
@@ -3976,4 +4125,261 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   background: rgba(255, 255, 255, 0.08);
   border-color: transparent;
   box-shadow: inset 2px 0 0 var(--accent);
+}
+
+/* Living Town ambient sprite preview */
+.ambient-town-page {
+  min-height: 100vh;
+  padding: 18px;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 18% 8%, rgba(210, 175, 105, 0.14), transparent 28%),
+    linear-gradient(180deg, #13161a, #0b0d10 62%, #090a0c);
+}
+.ambient-town-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+  max-width: 1680px;
+  margin: 0 auto 14px;
+}
+.ambient-town-header h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 2.4vw, 2.8rem);
+  letter-spacing: 0;
+}
+.ambient-town-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.ambient-town-controls button {
+  min-height: 34px;
+  border-radius: 6px;
+  border: 1px solid rgba(220, 205, 170, 0.26);
+  background: rgba(25, 27, 30, 0.88);
+  color: var(--text);
+  padding: 6px 12px;
+}
+.ambient-town-controls button:hover,
+.ambient-town-controls button.active {
+  border-color: rgba(230, 188, 105, 0.7);
+  background: rgba(78, 65, 42, 0.82);
+}
+.ambient-town-controls .segmented {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid rgba(220, 205, 170, 0.18);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+}
+.ambient-town-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 14px;
+  align-items: start;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+.ambient-town-map-wrap {
+  min-width: 0;
+  border: 1px solid rgba(216, 198, 160, 0.22);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #101419;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.46);
+}
+.ambient-town-map {
+  position: relative;
+  width: 100%;
+  max-height: calc(100vh - 110px);
+  margin: 0 auto;
+  overflow: hidden;
+  background: #0f1714;
+}
+.ambient-town-tiles,
+.ambient-town-tint,
+.ambient-town-sprites,
+.ambient-town-building-labels,
+.ambient-town-labels {
+  position: absolute;
+  inset: 0;
+}
+.ambient-town-cohesive-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  filter: saturate(1.01) brightness(1.02);
+  pointer-events: none;
+}
+.ambient-town-tiles img {
+  position: absolute;
+  display: block;
+  object-fit: fill;
+  filter: saturate(0.98) brightness(1.02);
+  pointer-events: none;
+}
+.ambient-town-tint {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease, background 0.25s ease;
+}
+.mood-dusk .ambient-town-tint {
+  opacity: 0.28;
+  background: linear-gradient(180deg, rgba(58, 47, 82, 0.28), rgba(197, 121, 52, 0.2));
+  mix-blend-mode: multiply;
+}
+.mood-mist .ambient-town-tint {
+  opacity: 0.34;
+  background:
+    radial-gradient(circle at 20% 35%, rgba(225, 236, 220, 0.26), transparent 28%),
+    linear-gradient(180deg, rgba(182, 199, 191, 0.16), rgba(78, 95, 88, 0.25));
+  mix-blend-mode: screen;
+}
+.mood-night .ambient-town-tiles img,
+.mood-night .ambient-town-cohesive-image {
+  filter: saturate(0.86) brightness(0.82) contrast(1.06);
+}
+.mood-night .ambient-town-tint {
+  opacity: 0.48;
+  background:
+    radial-gradient(circle at 52% 45%, rgba(116, 145, 190, 0.2), transparent 34%),
+    linear-gradient(180deg, rgba(15, 25, 58, 0.42), rgba(5, 10, 24, 0.66));
+  mix-blend-mode: multiply;
+}
+.mood-night .ambient-sprite-lamp_flicker {
+  filter: saturate(1.55) brightness(1.38);
+  opacity: 0.95 !important;
+}
+.mood-night .ambient-sprite-warm_motes {
+  filter: saturate(1.32) brightness(1.18);
+}
+.mood-night .ambient-sprite-water_shimmer,
+.mood-night .ambient-sprite-fish_ripple_loop {
+  filter: hue-rotate(8deg) saturate(0.86) brightness(0.82);
+}
+.ambient-town-sprites {
+  pointer-events: none;
+  z-index: 2;
+}
+.ambient-sprite {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: calc(var(--sprite-frames) * 100%) 100%;
+  background-position: 0 0;
+  animation-name: ambient-sprite-frames;
+  animation-iteration-count: infinite;
+}
+.ambient-town-sprites.paused .ambient-sprite {
+  animation-play-state: paused;
+}
+.ambient-sprite-chimney_smoke {
+  filter: blur(0.2px);
+}
+.ambient-sprite-lamp_flicker {
+  filter: saturate(1.22);
+}
+.ambient-sprite-birds_crossing {
+  filter: blur(0.1px);
+}
+.ambient-town-labels {
+  z-index: 3;
+  pointer-events: none;
+}
+.ambient-town-building-labels {
+  z-index: 4;
+  pointer-events: none;
+}
+.ambient-town-labels span {
+  position: absolute;
+  transform: translate(-50%, 4px);
+  max-width: 130px;
+  padding: 3px 6px;
+  border: 1px solid rgba(255, 232, 170, 0.24);
+  border-radius: 5px;
+  background: rgba(10, 11, 12, 0.72);
+  color: rgba(255, 244, 218, 0.9);
+  font-size: 0.72rem;
+  line-height: 1.1;
+  text-align: center;
+  white-space: normal;
+}
+.ambient-town-building-labels span {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  max-width: 118px;
+  padding: 3px 7px 4px;
+  border: 1px solid rgba(255, 239, 194, 0.34);
+  border-radius: 4px;
+  background: rgba(7, 8, 9, 0.72);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.34);
+  color: rgba(255, 246, 222, 0.95);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+}
+.ambient-town-building-labels span.civic {
+  border-color: rgba(167, 218, 255, 0.34);
+  background: rgba(6, 17, 24, 0.68);
+  color: rgba(223, 243, 255, 0.96);
+}
+.mood-night .ambient-town-building-labels span {
+  background: rgba(3, 5, 10, 0.76);
+  border-color: rgba(255, 226, 161, 0.42);
+}
+.ambient-town-panel {
+  border: 1px solid rgba(216, 198, 160, 0.18);
+  border-radius: 8px;
+  background: rgba(17, 19, 22, 0.86);
+  padding: 12px;
+}
+.ambient-town-count {
+  margin: 0 0 10px;
+  color: var(--accent-2);
+  font-weight: 700;
+}
+.ambient-town-asset {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-top: 1px solid rgba(216, 198, 160, 0.12);
+}
+.ambient-town-asset span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+@keyframes ambient-sprite-frames {
+  from { background-position-x: 0; }
+  to { background-position-x: 100%; }
+}
+@media (max-width: 960px) {
+  .ambient-town-header,
+  .ambient-town-shell {
+    grid-template-columns: 1fr;
+  }
+  .ambient-town-header {
+    align-items: start;
+    flex-direction: column;
+  }
+  .ambient-town-controls {
+    justify-content: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient-sprite {
+    animation: none;
+  }
 }

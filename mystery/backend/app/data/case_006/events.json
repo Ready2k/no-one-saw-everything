@@ -3,122 +3,190 @@
     "event_id": "ev_1700_will_revision",
     "time": "17:00",
     "location_id": "loc_solicitors_office",
-    "agent_ids": ["agent_marcus", "agent_solicitor"],
+    "agent_ids": [
+      "agent_marcus",
+      "agent_solicitor"
+    ],
     "event_type": "document",
     "truth_description": "Marcus signs the draft of his revised will at Whittle & Cross, removing Isabella and the clinic and naming his nephew Thomas. Whittle notes Marcus's handwritten addendum: 'if R. contests, she may have legal standing.' Whittle asks; Marcus says Ruth Calder — the postwoman. He says no more.",
     "player_description": "The solicitor's office shows a recent appointment for Marcus Bell.",
     "visibility": "public",
-    "object_ids": ["obj_revised_will"],
+    "object_ids": [
+      "obj_revised_will"
+    ],
     "importance": 9,
-    "linked_clue_ids": ["clue_revised_will", "clue_whittle_Ruth_reference"]
+    "linked_clue_ids": [
+      "clue_revised_will",
+      "clue_whittle_Ruth_reference"
+    ]
   },
   {
     "event_id": "ev_1800_ruth_confronts",
     "time": "18:00",
     "location_id": "loc_marcus_house",
-    "agent_ids": ["agent_ruth", "agent_marcus"],
+    "agent_ids": [
+      "agent_ruth",
+      "agent_marcus"
+    ],
     "event_type": "conversation",
-    "truth_description": "Ruth arrives at Marcus's house with an envelope — the original copy of her birth certificate, which she has been holding for thirty years. She confronts him: he has always known and never acknowledged her. He tells her the will revision is not about her — the money goes to Thomas. She can contest if she likes, but she will lose.",
+    "truth_description": "Ruth comes to Marcus's door at six with an envelope she has carried for thirty years: her own birth certificate, Henry Bell named as her father. He answers in his dressing gown — 'Evening, Mrs Calder' — and takes it for the post. She makes him read it, and tells him plainly what it means: that they are brother and sister. He is not cruel about it. He is barely interested. He says the will goes to Thomas, that she may contest it and lose, and that it is late. Then he thanks her, by her married name, and shuts the door.",
     "visibility": "hidden",
-    "object_ids": ["obj_birth_certificate"],
+    "object_ids": [
+      "obj_birth_certificate"
+    ],
     "importance": 9,
-    "linked_clue_ids": ["clue_ruth_visit_evening"]
+    "linked_clue_ids": [
+      "clue_ruth_visit_evening"
+    ]
   },
   {
     "event_id": "ev_1845_ruth_decides",
     "time": "18:45",
     "location_id": "loc_ruth_cottage",
-    "agent_ids": ["agent_ruth"],
+    "agent_ids": [
+      "agent_ruth"
+    ],
     "event_type": "hidden_action",
     "truth_description": "Ruth returns home and goes to her garden. She cuts the foxglove stems she has been preparing for three days and extracts the glycoside into a small vial on her kitchen range. She has read about cardiac glycosides in an old pharmacy text — she knows the right amount.",
     "visibility": "hidden",
-    "object_ids": ["obj_foxglove_garden", "obj_digitalis_vial"],
+    "object_ids": [
+      "obj_foxglove_garden",
+      "obj_digitalis_vial"
+    ],
     "importance": 10,
-    "linked_clue_ids": ["clue_foxglove_harvest", "clue_pharmacy_book"]
+    "linked_clue_ids": [
+      "clue_foxglove_harvest",
+      "clue_pharmacy_book"
+    ]
   },
   {
     "event_id": "ev_1900_isabella_visits",
     "time": "19:00",
     "location_id": "loc_marcus_house",
-    "agent_ids": ["agent_isabella", "agent_marcus"],
+    "agent_ids": [
+      "agent_isabella",
+      "agent_marcus"
+    ],
     "event_type": "argument",
     "truth_description": "Isabella learns of the revised will from a second draft copy left on Marcus's study desk. There is a fierce argument. Isabella leaves at 20:00, furious.",
     "player_description": "A heated conversation behind closed shutters at Marcus's house in the early evening.",
     "visibility": "public_partial",
-    "visible_to_agent_ids": ["agent_elias"],
-    "audible_to_agent_ids": ["agent_elias"],
+    "visible_to_agent_ids": [
+      "agent_elias"
+    ],
+    "audible_to_agent_ids": [
+      "agent_elias"
+    ],
     "importance": 8,
-    "linked_clue_ids": ["clue_isabella_argument"]
+    "linked_clue_ids": [
+      "clue_isabella_argument"
+    ]
   },
   {
     "event_id": "ev_2000_priya_passes",
     "time": "20:00",
     "location_id": "loc_village_square",
-    "agent_ids": ["agent_priya"],
+    "agent_ids": [
+      "agent_priya"
+    ],
     "event_type": "sighting",
     "truth_description": "Priya passes the square at 20:00 and sees Isabella exit Marcus's house looking white with anger. Priya notes the time — she has a 07:00 appointment with Marcus tomorrow.",
     "player_description": "Priya passes the square and notices Isabella leaving Marcus's house.",
     "visibility": "public",
-    "visible_to_agent_ids": ["agent_priya"],
+    "visible_to_agent_ids": [
+      "agent_priya"
+    ],
     "importance": 7,
-    "linked_clue_ids": ["clue_priya_sees_isabella"]
+    "linked_clue_ids": [
+      "clue_priya_sees_isabella"
+    ]
   },
   {
     "event_id": "ev_2100_ruth_returns",
     "time": "21:00",
     "location_id": "loc_marcus_house",
-    "agent_ids": ["agent_ruth"],
+    "agent_ids": [
+      "agent_ruth"
+    ],
     "event_type": "hidden_action",
     "truth_description": "Ruth lets herself in with her spare key. She goes to the kitchen and adds the digitalis extract to Marcus's evening cocoa — already prepared on the sideboard, as always, ready to be heated. She places the birth certificate copy from the study into the fireplace and burns it.",
     "visibility": "hidden",
-    "object_ids": ["obj_cocoa_mug", "obj_digitalis_vial", "obj_ruth_key", "obj_burnt_document"],
+    "object_ids": [
+      "obj_cocoa_mug",
+      "obj_digitalis_vial",
+      "obj_ruth_key",
+      "obj_burnt_document"
+    ],
     "importance": 10,
-    "linked_clue_ids": ["clue_burnt_document", "clue_cocoa_residue", "clue_ruth_key"]
+    "linked_clue_ids": [
+      "clue_burnt_document",
+      "clue_cocoa_residue",
+      "clue_ruth_key"
+    ]
   },
   {
     "event_id": "ev_2110_marcus_cocoa",
     "time": "21:10",
     "location_id": "loc_marcus_house",
-    "agent_ids": ["agent_marcus"],
+    "agent_ids": [
+      "agent_marcus"
+    ],
     "event_type": "routine",
     "truth_description": "Marcus heats his cocoa and carries it to the fireside armchair. He takes up his book.",
     "visibility": "hidden",
-    "object_ids": ["obj_cocoa_mug"],
+    "object_ids": [
+      "obj_cocoa_mug"
+    ],
     "importance": 7
   },
   {
     "event_id": "ev_2240_death",
     "time": "22:40",
     "location_id": "loc_marcus_house",
-    "agent_ids": ["agent_marcus"],
+    "agent_ids": [
+      "agent_marcus"
+    ],
     "event_type": "murder",
     "truth_description": "Marcus dies in his chair of cardiac arrest induced by digitalis glycoside poisoning. He does not cry out. His book slides to the floor.",
     "visibility": "hidden",
-    "object_ids": ["obj_cocoa_mug"],
+    "object_ids": [
+      "obj_cocoa_mug"
+    ],
     "importance": 10
   },
   {
     "event_id": "ev_2300_ruth_destroys_vial",
     "time": "23:00",
     "location_id": "loc_ruth_cottage",
-    "agent_ids": ["agent_ruth"],
+    "agent_ids": [
+      "agent_ruth"
+    ],
     "event_type": "hidden_action",
     "truth_description": "Ruth places the digitalis vial in her fireplace. She sits and reads until midnight.",
     "visibility": "hidden",
-    "object_ids": ["obj_digitalis_vial"],
+    "object_ids": [
+      "obj_digitalis_vial"
+    ],
     "importance": 8,
-    "linked_clue_ids": ["clue_vial_in_ash"]
+    "linked_clue_ids": [
+      "clue_vial_in_ash"
+    ]
   },
   {
     "event_id": "ev_0715_priya_discovery",
     "time": "07:15",
     "location_id": "loc_marcus_house",
-    "agent_ids": ["agent_priya", "agent_marcus"],
+    "agent_ids": [
+      "agent_priya",
+      "agent_marcus"
+    ],
     "event_type": "body_discovery",
     "truth_description": "Priya arrives for the 07:00 appointment and, getting no answer, finds the spare key under the mat. She discovers Marcus dead in his armchair, book on the floor, mug on the table. She calls for help.",
     "player_description": "Priya Shah finds Marcus Bell dead in his fireside chair. His cocoa mug sits on the table beside him. He appears to have died peacefully.",
     "visibility": "public",
-    "object_ids": ["obj_cocoa_mug"],
+    "object_ids": [
+      "obj_cocoa_mug"
+    ],
     "importance": 10
   },
   {
@@ -129,7 +197,7 @@
       "agent_bg_sal"
     ],
     "event_type": "arrival",
-    "truth_description": "Sal is seen near Village Square, loading crates for tomorrow's round.",
+    "truth_description": "Sal stops by Village Square, loading crates for tomorrow's round.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -141,7 +209,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near Reed & Bell Bookshop, wheeling the milk cart back to the yard.",
+    "truth_description": "At Reed & Bell Bookshop, Sal is wheeling the milk cart back to the yard.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -154,7 +222,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near Village Clinic, loading crates for tomorrow's round.",
+    "truth_description": "Sal is by Village Clinic, loading crates for tomorrow's round.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -167,7 +235,7 @@
       "agent_bg_gus"
     ],
     "event_type": "arrival",
-    "truth_description": "Gus is seen near Reed & Bell Bookshop, selling off the last of the evening edition.",
+    "truth_description": "Gus is by Reed & Bell Bookshop, selling off the last of the evening edition.",
     "importance": 2,
     "to_location_id": "loc_bookshop"
   },
@@ -179,7 +247,7 @@
       "agent_bg_gus"
     ],
     "event_type": "movement",
-    "truth_description": "Gus is seen near Village Clinic, bundling unsold papers.",
+    "truth_description": "Gus is at Village Clinic, bundling unsold papers.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -192,7 +260,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "arrival",
-    "truth_description": "Rosa is seen near Village Clinic, packing away her garden tools.",
+    "truth_description": "Rosa passes Village Clinic, packing away her garden tools.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -204,7 +272,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "movement",
-    "truth_description": "Rosa is seen near Whittle & Cross Solicitors, doing a last sweep of the green.",
+    "truth_description": "Rosa stops by Whittle & Cross Solicitors, doing a last sweep of the green.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_solicitors_office"
@@ -217,7 +285,7 @@
       "agent_bg_wren"
     ],
     "event_type": "arrival",
-    "truth_description": "Wren is seen near Whittle & Cross Solicitors, playing a last tune for the evening.",
+    "truth_description": "Wren is by Whittle & Cross Solicitors, playing a last tune for the evening.",
     "importance": 2,
     "to_location_id": "loc_solicitors_office"
   },
@@ -229,7 +297,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near Village Square, counting the coins from her case.",
+    "truth_description": "Wren is at Village Square, counting the coins from her case.",
     "importance": 2,
     "from_location_id": "loc_solicitors_office",
     "to_location_id": "loc_village_square"
@@ -242,7 +310,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near Reed & Bell Bookshop, playing a last tune for the evening.",
+    "truth_description": "Wren passes Reed & Bell Bookshop, playing a last tune for the evening.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -255,7 +323,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "arrival",
-    "truth_description": "Birdie is seen near Village Square, sweeping up after the day's foot traffic.",
+    "truth_description": "Birdie is at Village Square, sweeping up after the day's foot traffic.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -267,7 +335,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "movement",
-    "truth_description": "Birdie is seen near Reed & Bell Bookshop, stacking her brooms on the cart.",
+    "truth_description": "Birdie passes Reed & Bell Bookshop, stacking her brooms on the cart.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -280,7 +348,7 @@
       "agent_bg_tam"
     ],
     "event_type": "arrival",
-    "truth_description": "Tam is seen near Reed & Bell Bookshop, heading home with an empty mailbag.",
+    "truth_description": "At Reed & Bell Bookshop, Tam is heading home with an empty mailbag.",
     "importance": 2,
     "to_location_id": "loc_bookshop"
   },
@@ -292,7 +360,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near Village Clinic, dropping off one last parcel.",
+    "truth_description": "Tam is by Village Clinic, dropping off one last parcel.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -305,7 +373,7 @@
       "agent_bg_dez"
     ],
     "event_type": "arrival",
-    "truth_description": "Dez is seen near Village Clinic, packing up the stall.",
+    "truth_description": "Dez stops by Village Clinic, packing up the stall.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -317,7 +385,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Whittle & Cross Solicitors, selling off the day's leftovers cheap.",
+    "truth_description": "At Whittle & Cross Solicitors, Dez is selling off the day's leftovers cheap.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_solicitors_office"
@@ -330,7 +398,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Village Square, packing up the stall.",
+    "truth_description": "Dez is by Village Square, packing up the stall.",
     "importance": 2,
     "from_location_id": "loc_solicitors_office",
     "to_location_id": "loc_village_square"
@@ -343,7 +411,7 @@
       "agent_bg_effie"
     ],
     "event_type": "arrival",
-    "truth_description": "Effie is seen near Whittle & Cross Solicitors, taking the dog for its evening walk.",
+    "truth_description": "At Whittle & Cross Solicitors, Effie is taking the dog for its evening walk.",
     "importance": 2,
     "to_location_id": "loc_solicitors_office"
   },
@@ -355,7 +423,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near Village Square, coaxing the dog along home.",
+    "truth_description": "Effie is by Village Square, coaxing the dog along home.",
     "importance": 2,
     "from_location_id": "loc_solicitors_office",
     "to_location_id": "loc_village_square"
@@ -368,7 +436,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near Reed & Bell Bookshop, taking the dog for its evening walk.",
+    "truth_description": "Effie is at Reed & Bell Bookshop, taking the dog for its evening walk.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -381,7 +449,7 @@
       "agent_bg_min"
     ],
     "event_type": "arrival",
-    "truth_description": "Min is seen near Village Square, scrubbing down the bakery trays.",
+    "truth_description": "Min is at Village Square, scrubbing down the bakery trays.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -393,7 +461,7 @@
       "agent_bg_min"
     ],
     "event_type": "movement",
-    "truth_description": "Min is seen near Reed & Bell Bookshop, carrying home the day's unsold bread.",
+    "truth_description": "Min passes Reed & Bell Bookshop, carrying home the day's unsold bread.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_bookshop"
@@ -406,7 +474,7 @@
       "agent_bg_cole"
     ],
     "event_type": "arrival",
-    "truth_description": "Cole is seen near Reed & Bell Bookshop, packing up his ladder and bucket.",
+    "truth_description": "Cole passes Reed & Bell Bookshop, packing up his ladder and bucket.",
     "importance": 2,
     "to_location_id": "loc_bookshop"
   },
@@ -418,7 +486,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Village Clinic, collecting payment for the day's work.",
+    "truth_description": "Cole stops by Village Clinic, collecting payment for the day's work.",
     "importance": 2,
     "from_location_id": "loc_bookshop",
     "to_location_id": "loc_clinic"
@@ -431,7 +499,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Whittle & Cross Solicitors, packing up his ladder and bucket.",
+    "truth_description": "At Whittle & Cross Solicitors, Cole is packing up his ladder and bucket.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_solicitors_office"

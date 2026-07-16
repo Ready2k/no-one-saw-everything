@@ -4,15 +4,38 @@
     "default_answers": {
       "alibi": "Clinic from before five. I checked on Elias at five past five, as I always do. Returned to the clinic. Heard Owen shout at six.",
       "timeline": "My routine, as every afternoon. Nothing unusual.",
-      "last_seen_victim": "At five past five. He was fine. He seemed \u2014 pleased about something.",
+      "last_seen_victim": "At five past five. He was fine. He seemed — pleased about something.",
       "relationship": "I've looked after Elias for six years. This is devastating.",
       "evidence": "You'll need to be specific.",
       "location": "The clinic, the square, back to the clinic. That's all."
     },
     "rules": [
       {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "We met shortly after I moved to the village and started at the clinic. They brought over a tin of biscuits as a welcome gift. We've been neighbors and friends ever since, sharing quiet moments when the village got too loud.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "Elias was my patient for six years. I administered his medication, monitored his heart, sat with him through two scares. I cared for him. People can care for someone and still find them difficult.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "careful",
+        "suggested_followups": [
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
         "question_type": "alibi",
-        "answer_text": "I opened the clinic at ten to five. I prepared the afternoon medications \u2014 routine. At five past five I walked over to give Elias his pill organiser, as I do every Tuesday when he can't collect it himself. He was well. Cheerful, actually. I went back to the clinic. At six I heard Owen.",
+        "answer_text": "I opened the clinic at ten to five. I prepared the afternoon medications — routine. At five past five I walked over to give Elias his pill organiser, as I do every Tuesday when he can't collect it himself. He was well. Cheerful, actually. I went back to the clinic. At six I heard Owen.",
         "answer_type": "claim",
         "truthfulness": "mistaken",
         "emotional_shift": "composed",
@@ -23,7 +46,9 @@
             "claim_type": "alibi",
             "time_reference": "17:05",
             "location_reference_id": "loc_elias_bench",
-            "truthfulness": "mistaken"
+            "truthfulness": "mistaken",
+            "about_agent_id": "agent_nadia",
+            "time_to": "17:10"
           }
         ],
         "suggested_followups": [
@@ -34,7 +59,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_extra_capsules",
-        "answer_text": "Those capsules \u2014 I cannot explain that. Someone must have interfered with the organiser between when I prepared it and when I gave it to him. Ben was in and out with a clinic pouch before opening, wasn't he? This building is not Fort Knox.",
+        "answer_text": "Those capsules — I cannot explain that. Someone must have interfered with the organiser between when I prepared it and when I gave it to him. Ben was in and out with a clinic pouch before opening, wasn't he? This building is not Fort Knox.",
         "answer_type": "denial",
         "truthfulness": "false",
         "emotional_shift": "rattled",
@@ -66,7 +91,7 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_nadia_budget_notes",
-        "answer_text": "...Those are private notes. That notebook is locked. How did you \u2014",
+        "answer_text": "...Those are private notes. That notebook is locked. How did you —",
         "answer_type": "claim",
         "truthfulness": "mistaken",
         "emotional_shift": "shaken",
@@ -80,31 +105,9 @@
         ]
       },
       {
-        "question_type": "relationship",
-        "min_ask_count": 1,
-        "answer_text": "We met shortly after I moved to the village and started at the clinic. They brought over a tin of biscuits as a welcome gift. We've been neighbors and friends ever since, sharing quiet moments when the village got too loud.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "reflective",
-        "claims": [],
-        "reveals_clue_ids": [],
-        "reveals_memory_ids": [],
-        "suggested_followups": []
-      },
-      {
-        "question_type": "relationship",
-        "answer_text": "Elias was my patient for six years. I administered his medication, monitored his heart, sat with him through two scares. I cared for him. People can care for someone and still find them difficult.",
-        "answer_type": "claim",
-        "truthfulness": "mistaken",
-        "emotional_shift": "careful",
-        "suggested_followups": [
-          "How did you two first meet?"
-        ]
-      },
-      {
         "question_type": "evidence",
         "topic_clue_id": "clue_elias_notebook",
-        "answer_text": "He told me on Monday he was reconsidering. I told him it was his decision. I was... hurt. Of course I was. Two years of planning. But I accepted it. I would not \u2014",
+        "answer_text": "He told me on Monday he was reconsidering. I told him it was his decision. I was... hurt. Of course I was. Two years of planning. But I accepted it. I would not —",
         "answer_type": "claim",
         "truthfulness": "false",
         "emotional_shift": "near_breaking",
@@ -134,7 +137,7 @@
         "question_type": "timeline",
         "time_from": "17:00",
         "time_to": "17:15",
-        "answer_text": "At five exactly I passed Elias \u2014 he waved his flask, same as always. Then at five past, Nadia came out of the clinic and went to him. She gave him something \u2014 small, like a little box \u2014 and he took some pills with his tea. I watched for a moment because it was sweet, really, her caring for him like that. Then I moved on.",
+        "answer_text": "At five exactly I passed Elias — he waved his flask, same as always. Then at five past, Nadia came out of the clinic and went to him. She gave him something — small, like a little box — and he took some pills with his tea. I watched for a moment because it was sweet, really, her caring for him like that. Then I moved on.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "troubled_now",
@@ -145,7 +148,8 @@
             "claim_type": "sighting",
             "time_reference": "17:05",
             "location_reference_id": "loc_elias_bench",
-            "truthfulness": "true"
+            "truthfulness": "true",
+            "about_agent_id": "agent_nadia"
           }
         ],
         "reveals_clue_ids": [
@@ -175,7 +179,7 @@
         "question_type": "timeline",
         "time_from": "17:10",
         "time_to": "17:20",
-        "answer_text": "I went through the square at about quarter past. Elias was still on the bench but he looked \u2014 odd. Hand on his chest, slumped forward slightly. I thought it was the evening chill getting to him \u2014 he's always complaining about drafts. I didn't stop. I wish I had.",
+        "answer_text": "I went through the square at about quarter past. Elias was still on the bench but he looked — odd. Hand on his chest, slumped forward slightly. I thought it was the evening chill getting to him — he's always complaining about drafts. I didn't stop. I wish I had.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "guilty",
@@ -221,21 +225,6 @@
     },
     "rules": [
       {
-        "question_type": "last_seen_victim",
-        "answer_text": "Yesterday evening at the pub. He said he'd sorted some family business, something about a nephew. Seemed lighter than he'd been in a while. I thought it was good, whatever it was. I didn't think it would be the last time I'd talk to him.",
-        "answer_type": "claim",
-        "truthfulness": "true",
-        "emotional_shift": "grief",
-        "claims": [
-          {
-            "claim_id": "claim_owen_pub",
-            "summary": "Owen last saw Elias at the pub the previous evening. Elias mentioned 'sorting family business' and seemed relieved.",
-            "claim_type": "sighting",
-            "truthfulness": "true"
-          }
-        ]
-      },
-      {
         "question_type": "relationship",
         "min_ask_count": 1,
         "answer_text": "We first met over a job. The roof was leaking and I came to patch it. We shook hands on a fair price, and that was the start of a long working relationship. It's a shame how things turned out.",
@@ -255,6 +244,22 @@
         "emotional_shift": "subdued",
         "suggested_followups": [
           "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Yesterday evening at the pub. He said he'd sorted some family business, something about a nephew. Seemed lighter than he'd been in a while. I thought it was good, whatever it was. I didn't think it would be the last time I'd talk to him.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "grief",
+        "claims": [
+          {
+            "claim_id": "claim_owen_pub",
+            "summary": "Owen last saw Elias at the pub the previous evening. Elias mentioned 'sorting family business' and seemed relieved.",
+            "claim_type": "sighting",
+            "truthfulness": "true"
+          }
         ]
       }
     ]
@@ -272,7 +277,7 @@
     "rules": [
       {
         "question_type": "last_seen_victim",
-        "answer_text": "Half five, maybe a bit before. He was on his bench, slumped to one side. I thought he was asleep \u2014 he does that sometimes in the warm months. I should have gone to check. I keep thinking I should have gone to check.",
+        "answer_text": "Half five, maybe a bit before. He was on his bench, slumped to one side. I thought he was asleep — he does that sometimes in the warm months. I should have gone to check. I keep thinking I should have gone to check.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "guilty",
@@ -295,7 +300,8 @@
             "claim_type": "sighting",
             "time_reference": "16:44",
             "location_reference_id": "loc_elias_bench",
-            "truthfulness": "true"
+            "truthfulness": "true",
+            "about_agent_id": "agent_ben"
           }
         ],
         "reveals_clue_ids": [
@@ -325,6 +331,16 @@
     "rules": [
       {
         "question_type": "evidence",
+        "answer_text": "The dispensing log is one book. The cabinet is another — and that one I cannot amend, and neither can she, because every opening is signed and timed against the key. If you want to know what actually left that cabinet on Tuesday, fetch me the cabinet book. ...I would rather you fetched it than I did.",
+        "reveals_clue_ids": [
+          "clue_dispensary_cabinet_log"
+        ],
+        "claims": [],
+        "topic_clue_id": "clue_dispensary_log_altered",
+        "min_ask_count": 1
+      },
+      {
+        "question_type": "evidence",
         "topic_clue_id": "clue_extra_capsules",
         "answer_text": "Two 0.25mg capsules? His prescription is 0.125mg once daily. Two of those would be four times his therapeutic dose. Given his arrhythmia, reduced renal function, and the fact he took them with hot tea on an empty stomach... yes, that could kill him unusually fast. A collapse inside twenty minutes is medically credible.",
         "answer_type": "claim",
@@ -345,13 +361,35 @@
       {
         "question_type": "evidence",
         "topic_clue_id": "clue_dispensary_log_altered",
-        "answer_text": "I sign off Nadia's dispensing records weekly. I trusted her completely \u2014 she is meticulous. If you're telling me this entry has been altered... show me. I want to see it myself.",
+        "answer_text": "I sign off Nadia's dispensing records weekly. I trusted her completely — she is meticulous. If you're telling me this entry has been altered... show me. I want to see it myself.",
         "answer_type": "claim",
         "truthfulness": "true",
         "emotional_shift": "disbelieving",
         "reveals_clue_ids": [
           "clue_dispensary_log_altered"
         ]
+      },
+      {
+        "question_type": "evidence",
+        "answer_text": "You have found the accounts, then. Yes. The practice does not stand up without that legacy, and I am a partner, not an employee, and I knew the bequest existed because I countersigned the letter.\n\nI am aware of the shape of what you are holding. I would ask you to hold it a little longer before you decide what it is.",
+        "reveals_clue_ids": [],
+        "claims": [
+          {
+            "claim_id": "claim_haig_knew_bequest",
+            "summary": "Haig admits the practice depends on the Grant legacy and that he knew about the bequest.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ],
+        "topic_clue_id": "clue_haig_practice_debt"
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Tuesday afternoon I was at the county surgery, which is forty minutes from here on a good road. I saw eleven patients between two and half past six. Every one of them is timed and initialled in my hand, and every one of them was looking at me while I did it.\n\nI attend this clinic at seven, twice a week. I was not in the village when Elias Grant died, and I have spent every hour since wishing I had been.",
+        "reveals_clue_ids": [
+          "clue_haig_county_surgery"
+        ],
+        "claims": []
       }
     ]
   }

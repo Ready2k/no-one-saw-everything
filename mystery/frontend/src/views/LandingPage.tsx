@@ -55,19 +55,22 @@ export default function LandingPage({
     onContinue();
   };
 
-  const handleOpenCase = async (newCaseId: string, caseTitle: string) => {
+  /** Opening a case resumes it, and leaving one no longer destroys it — investigations are saved
+   *  per case, so there is nothing to warn about and nothing to lose. */
+  const handleOpenCase = async (newCaseId: string) => {
     if (activeCase && newCaseId === activeCase.case_id) {
       onContinue();
       return;
     }
 
-    if (confirm(`Switch to ${caseTitle}? Your current progress on the active case will be lost.`)) {
-      await api.activate(newCaseId);
+    const { resumed } = await api.activate(newCaseId);
+    // A resumed case should drop the player back into the investigation, not replay the intro.
+    if (!resumed) {
       localStorage.removeItem(introSeenKey(newCaseId));
       clearRewindBriefingSeen(newCaseId);
       clearCaseStarted(newCaseId);
-      location.reload();
     }
+    location.reload();
   };
 
   return (
@@ -150,12 +153,21 @@ export default function LandingPage({
                 <button
                   key={c.case_id}
                   className="hub-archive-row"
-                  onClick={() => handleOpenCase(c.case_id, c.title)}
+                  onClick={() => handleOpenCase(c.case_id)}
                   title={`Open ${c.title}`}
                 >
                   <span className="hub-archive-name">{c.title}</span>
                   <span className="hub-archive-meta">
                     {c.case_type}
+                    {c.progress?.accused ? (
+                      <span className="hub-archive-progress"> • closed</span>
+                    ) : c.progress && c.progress.clues_found > 0 ? (
+                      <span className="hub-archive-progress">
+                        {" "}
+                        • in progress: {c.progress.clues_found}{" "}
+                        {c.progress.clues_found === 1 ? "clue" : "clues"}
+                      </span>
+                    ) : null}
                     {activeCase?.case_id === c.case_id && (
                       <span className="hub-archive-active"> • Active</span>
                     )}

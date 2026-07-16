@@ -21,6 +21,7 @@ import Portrait, {
   expressionForPressure,
 } from "../components/Portrait";
 import ContradictionBeat from "../components/ContradictionBeat";
+import ComposureMeter from "../components/ComposureMeter";
 import NotebookNotification from "../components/NotebookNotification";
 import { audioManager } from "../audio";
 import { cinematicsEnabled } from "../settings";
@@ -169,7 +170,18 @@ function InterviewPanel({
   const [clues, setClues] = useState<CluePublic[]>([]);
   const [claims, setClaims] = useState<ClaimPublic[]>([]);
   const [suspicion, setSuspicion] = useState<SuspicionLevel>("unknown");
+  // The game tells you HOW MANY of this suspect's statements you can disprove — never which.
+  // Working that out is the game. `suggestions` stays empty unless the player asks for a hint.
+  const [contradictionCount, setContradictionCount] = useState(0);
+  const [hintsTaken, setHintsTaken] = useState(0);
   const [suggestions, setSuggestions] = useState<ChallengeSuggestion[]>([]);
+  // The confrontation the player is building: one claim, and the evidence they think disproves
+  // it — physical clues, other people's testimony, or both.
+  const [confrontClaim, setConfrontClaim] = useState("");
+  const [confrontEvidence, setConfrontEvidence] = useState<string[]>([]);
+  const [confrontTestimony, setConfrontTestimony] = useState<string[]>([]);
+  // Everything anyone has told the player. What OTHERS said is usable against this suspect.
+  const [allClaims, setAllClaims] = useState<ClaimPublic[]>([]);
   const [lastChallenge, setLastChallenge] = useState<ChallengeResult | null>(null);
   const [beat, setBeat] = useState<BeatData | null>(null);
   const [busy, setBusy] = useState(false);
@@ -191,10 +203,16 @@ function InterviewPanel({
     ? `Examine body (e.g. search pockets, check wounds, cause of death…)`
     : `Ask ${firstName} about ${victimName}, the timeline, a place, or discovered evidence…`;
 
-  const contradicted =
-    suggestions.length > 0 ||
-    claims.some((c) => c.player_known_status === "disputed");
-  const state = interviewState(transcript.length, suspicion, pressure, contradicted);
+  // Testimony usable AGAINST this suspect: everything the player has heard from anyone else.
+  // Their own statements are already listed as the thing being challenged.
+  const otherTestimony = allClaims.filter((c) => c.speaker_agent_id !== agentId);
+
+  // "Contradicted" is a fact about HER — a claim of hers that a challenge has actually disputed —
+  // not about what the player is holding. Merely holding an unused contradiction
+  // (contradictionCount > 0) is a prompt to act, surfaced in the "Put it to …" panel below; it
+  // must not brand a 100%-composed, un-challenged suspect as already caught.
+  const caughtInContradiction = claims.some((c) => c.player_known_status === "disputed");
+  const state = interviewState(transcript.length, suspicion, pressure, caughtInContradiction);
 
   const refresh = useCallback(() => {
     api.transcript(agentId).then((t) => {
@@ -202,7 +220,12 @@ function InterviewPanel({
       setPendingQuestion(null);
     });
     api.clues().then(setClues);
-    api.challengeSuggestions(agentId).then(setSuggestions);
+    api.claims().then(setAllClaims);
+    api.challengeSuggestions(agentId).then((r) => {
+      setContradictionCount(r.contradiction_count);
+      setHintsTaken(r.hints_taken);
+      setSuggestions([]); // a fresh look never re-reveals a hint the player already spent
+    });
     api.board().then((b) => {
       const me = b.suspects.find((s) => s.agent.agent_id === agentId);
       if (me) {
@@ -335,7 +358,54 @@ function InterviewPanel({
     );
   };
 
-  const runChallenge = async (s: ChallengeSuggestion) => {
+  const revealHint = async () => {
+    setBusy(true);
+    try {
+      const r = await api.challengeSuggestions(agentId, true);
+      setSuggestions(r.suggestions);
+      setHintsTaken(r.hints_taken);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  /** The player has assembled a confrontation themselves: a statement they heard, and what they
+   *  think disproves it — a clue, someone else's word, or both. They may well be wrong; the
+   *  engine answers either way. */
+  const putItToThem = async () => {
+    const claim = claims.find((c) => c.claim_id === confrontClaim);
+    if (!claim || (confrontEvidence.length === 0 && confrontTestimony.length === 0)) return;
+    const titles = [
+      ...confrontEvidence.map((id) => clues.find((c) => c.clue_id === id)?.title ?? id),
+      ...confrontTestimony.map((id) => {
+        const t = allClaims.find((c) => c.claim_id === id);
+        const who = agents.find((a) => a.agent_id === t?.speaker_agent_id)?.full_name.split(" ")[0];
+        return t ? `${who} says: “${t.claim_text}”` : id;
+      }),
+    ].join("; ");
+    await runChallenge(
+      {
+        target_agent_id: agentId,
+        challenged_claim_id: claim.claim_id,
+        claim_text: claim.claim_text,
+        claim_status: claim.player_known_status,
+        evidence_clue_id: confrontEvidence[0] ?? "",
+        evidence_title: titles,
+      },
+      confrontEvidence,
+      confrontTestimony
+    );
+    setConfrontEvidence([]);
+    setConfrontTestimony([]);
+  };
+
+  const runChallenge = async (
+    s: ChallengeSuggestion,
+    evidenceIds?: string[],
+    testimonyIds?: string[]
+  ) => {
     setBusy(true);
     setError(null);
     setFallbackMsg(null);
@@ -343,7 +413,8 @@ function InterviewPanel({
       const result = await api.challenge({
         target_agent_id: agentId,
         challenged_claim_id: s.challenged_claim_id,
-        evidence_clue_ids: [s.evidence_clue_id],
+        evidence_clue_ids: evidenceIds ?? (s.evidence_clue_id ? [s.evidence_clue_id] : []),
+        evidence_claim_ids: testimonyIds ?? [],
         player_statement: `You claimed: "${s.claim_text}" — but ${s.evidence_title}.`,
       });
       setLastChallenge(result);
@@ -402,6 +473,13 @@ function InterviewPanel({
             <p className="muted dossier-meta">
               {agent.occupation} · {agent.age}
             </p>
+            {/* Composure made visible: the meter drains as the interrogation bites, so the
+                player can read how close a suspect is to breaking. */}
+            <ComposureMeter
+              name={firstName}
+              pressure={pressure}
+              lastShift={lastChallenge?.emotional_shift ?? lastResult?.emotional_shift}
+            />
             <div className="trait-chips">
               {agent.traits.map((t) => (
                 <span key={t} className="trait-chip">
@@ -497,6 +575,14 @@ function InterviewPanel({
                 <span className="badge outcome">
                   {lastChallenge.outcome.replace(/_/g, " ")}
                 </span>
+                {/* The player caught two statements that cannot both be true. Show them the
+                    collision — the deduction is theirs and they should see it land. */}
+                {lastChallenge.testimony_conflict && (
+                  <p className="testimony-conflict">
+                    <strong>These cannot both be true.</strong>{" "}
+                    {lastChallenge.testimony_conflict}
+                  </p>
+                )}
                 {lastChallenge.emotional_shift && (
                   <span className="muted small">
                     {" "}
@@ -504,7 +590,7 @@ function InterviewPanel({
                   </span>
                 )}
                 {lastChallenge.pressure_delta > 0 && (
-                  <span className="muted small pressure-up"> pressure ↑</span>
+                  <span className="muted small pressure-up"> — their composure slips</span>
                 )}
                 {lastChallenge.revealed_memories.map((m) => (
                   <p key={m.memory_id} className="small revealed-memory">
@@ -519,30 +605,167 @@ function InterviewPanel({
         {error && <p className="error">{error}</p>}
         {fallbackMsg && <p className="error fallback-message">{fallbackMsg}</p>}
 
-        {suggestions.length > 0 && (
+        {!isVictim && claims.length > 0 && (
           <div className="challenge-builder panel">
-            <h3>Contradictions you can press</h3>
+            <h3>Put it to {firstName}</h3>
             <p className="muted small">
-              You hold evidence that conflicts with what {firstName} has told you. Confront
-              them.
+              Pick something {firstName} has told you, and the evidence you think disproves it.
+              {contradictionCount > 0 ? (
+                <>
+                  {" "}
+                  <strong className="contradiction-nudge">
+                    You are holding evidence that contradicts{" "}
+                    {contradictionCount === 1
+                      ? "one thing"
+                      : `${contradictionCount} things`}{" "}
+                    {firstName} has said.
+                  </strong>{" "}
+                  Which?
+                </>
+              ) : (
+                <> Nothing you hold disproves {firstName} yet — but you can still try.</>
+              )}
             </p>
-            {suggestions.map((s) => (
-              <div
-                key={`${s.challenged_claim_id}:${s.evidence_clue_id}`}
-                className="challenge-card"
-              >
-                <div className="challenge-claim">
-                  <span className={`badge status-${s.claim_status}`}>{s.claim_status}</span>
-                  <span>“{s.claim_text}”</span>
-                </div>
-                <div className="challenge-evidence">
-                  <span className="muted small">contradicted by</span> {s.evidence_title}
-                </div>
-                <button className="challenge-btn" disabled={busy} onClick={() => runChallenge(s)}>
-                  Challenge
-                </button>
+
+            <div className="confront-columns">
+              <div className="confront-col">
+                <h4 className="confront-heading">What {firstName} has told you</h4>
+                {claims.map((c) => (
+                  <label key={c.claim_id} className="confront-option">
+                    <input
+                      type="radio"
+                      name="confront-claim"
+                      value={c.claim_id}
+                      checked={confrontClaim === c.claim_id}
+                      onChange={() => setConfrontClaim(c.claim_id)}
+                    />
+                    <span className={`badge status-${c.player_known_status}`}>
+                      {c.player_known_status}
+                    </span>{" "}
+                    <span>“{c.claim_text}”</span>
+                  </label>
+                ))}
               </div>
-            ))}
+
+              <div className="confront-col">
+                <h4 className="confront-heading">Evidence in your notebook</h4>
+                {clues.length === 0 ? (
+                  <p className="muted small disabled-hint">
+                    Nothing yet — search Places to find some.
+                  </p>
+                ) : (
+                  clues.map((c) => (
+                    <label key={c.clue_id} className="confront-option">
+                      <input
+                        type="checkbox"
+                        checked={confrontEvidence.includes(c.clue_id)}
+                        onChange={(e) =>
+                          setConfrontEvidence((prev) =>
+                            e.target.checked
+                              ? [...prev, c.clue_id]
+                              : prev.filter((id) => id !== c.clue_id)
+                          )
+                        }
+                      />
+                      <span>{c.title}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+
+              {/* No one saw everything. What another villager told you is evidence too — and it
+                  is often the only thing that can break an alibi. */}
+              <div className="confront-col">
+                <h4 className="confront-heading">What others have told you</h4>
+                {otherTestimony.length === 0 ? (
+                  <p className="muted small disabled-hint">
+                    Nobody else has told you anything yet. Go and talk to them.
+                  </p>
+                ) : (
+                  otherTestimony.map((t) => {
+                    const who =
+                      agents.find((a) => a.agent_id === t.speaker_agent_id)?.full_name.split(" ")[0] ??
+                      "Someone";
+                    return (
+                      <label key={t.claim_id} className="confront-option">
+                        <input
+                          type="checkbox"
+                          checked={confrontTestimony.includes(t.claim_id)}
+                          onChange={(e) =>
+                            setConfrontTestimony((prev) =>
+                              e.target.checked
+                                ? [...prev, t.claim_id]
+                                : prev.filter((id) => id !== t.claim_id)
+                            )
+                          }
+                        />
+                        <span>
+                          <strong className="testimony-speaker">{who}:</strong> “{t.claim_text}”
+                        </span>
+                      </label>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            <div className="confront-actions">
+              <button
+                className="challenge-btn"
+                disabled={
+                  busy ||
+                  !confrontClaim ||
+                  (confrontEvidence.length === 0 && confrontTestimony.length === 0)
+                }
+                title={
+                  !confrontClaim
+                    ? "Pick a statement first"
+                    : confrontEvidence.length === 0 && confrontTestimony.length === 0
+                      ? "Pick the evidence — or the testimony — you think disproves it"
+                      : undefined
+                }
+                onClick={putItToThem}
+              >
+                Put it to {firstName}
+              </button>
+
+              {contradictionCount > 0 && suggestions.length === 0 && (
+                <button className="small-button hint-button" disabled={busy} onClick={revealHint}>
+                  Stuck? Show me what contradicts what
+                  {hintsTaken > 0 && (
+                    <span className="muted small"> ({hintsTaken} hints taken)</span>
+                  )}
+                </button>
+              )}
+            </div>
+
+            {suggestions.length > 0 && (
+              <div className="hint-revealed">
+                <p className="muted small">
+                  Hint ({hintsTaken} taken this case) — the contradictions you are holding:
+                </p>
+                {suggestions.map((s) => (
+                  <div
+                    key={`${s.challenged_claim_id}:${s.evidence_clue_id}`}
+                    className="challenge-card"
+                  >
+                    <div className="challenge-claim">
+                      <span>“{s.claim_text}”</span>
+                    </div>
+                    <div className="challenge-evidence">
+                      <span className="muted small">contradicted by</span> {s.evidence_title}
+                    </div>
+                    <button
+                      className="challenge-btn"
+                      disabled={busy}
+                      onClick={() => runChallenge(s)}
+                    >
+                      Put it to {firstName}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -767,19 +990,9 @@ function InterviewPanel({
           </select>
         </label>
         <p className="muted small">Your judgement is private until you're ready to accuse.</p>
-        <div className="judgement-state">
-          <span className="muted small">Demeanour</span>
-          <span className={`badge suspect-state state-${state.tone}`}>{state.label}</span>
-        </div>
-        <div className="pressure-block">
-          <span className="muted small">Pressure</span>
-          <div className="pressure-meter" title={`Pressure: ${Math.round(pressure * 100)}%`}>
-            <div
-              className="pressure-fill"
-              style={{ width: `${Math.min(100, Math.round(pressure * 100))}%` }}
-            />
-          </div>
-        </div>
+        {/* Demeanour and pressure used to be shown here too, but the composure meter on the
+            dossier is now the single, richer read of how a suspect is holding up — two copies
+            only invited them to disagree on screen. */}
       </aside>
     </>
   );
@@ -831,6 +1044,8 @@ function AutopsyPanel({
   const found = known_clues?.length || 0;
   const total = found + (hidden_clues?.length || 0);
   const pct = total > 0 ? Math.round((found / total) * 100) : 0;
+  const postMortemPortrait =
+    agent.portrait_art?.deceased || agent.portrait_art?.calm || undefined;
 
   return (
     <div className="interview-panel panel autopsy-panel">
@@ -882,8 +1097,8 @@ function AutopsyPanel({
               bounds={null}
               hiddenClues={hidden_clues}
               onDiscover={handleDiscover}
-              imageUrl={agent.portrait_art?.calm || undefined}
-              spriteAsset={agent.sprite_asset || undefined}
+              imageUrl={postMortemPortrait}
+              spriteAsset={postMortemPortrait ? undefined : agent.sprite_asset || undefined}
               isPortrait={true}
               sheetFolded={sheetFolded}
             />

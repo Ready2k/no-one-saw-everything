@@ -5,6 +5,7 @@ import type {
   CaseOverview,
   ChallengeResult,
   ChallengeSuggestion,
+  ChallengeSuggestionsResponse,
   ClaimPublic,
   CluePublic,
   EventPublic,
@@ -140,14 +141,23 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
-  challengeSuggestions: (agentId?: string) =>
-    request<ChallengeSuggestion[]>(
-      `/api/challenge/suggestions${agentId ? `?agent_id=${agentId}` : ""}`
-    ),
+  /** `reveal` asks the game to show WHICH claim each clue disproves — an explicit, counted hint.
+   *  Without it, only the contradiction count comes back. */
+  challengeSuggestions: (agentId?: string, reveal = false) => {
+    const qs = new URLSearchParams();
+    if (agentId) qs.set("agent_id", agentId);
+    if (reveal) qs.set("reveal", "true");
+    const q = qs.toString();
+    return request<ChallengeSuggestionsResponse>(
+      `/api/challenge/suggestions${q ? `?${q}` : ""}`
+    );
+  },
   challenge: (payload: {
     target_agent_id: string;
     challenged_claim_id: string;
     evidence_clue_ids: string[];
+    /** Another person's statement, used as evidence. */
+    evidence_claim_ids?: string[];
     player_statement?: string;
   }) =>
     request<ChallengeResult>("/api/challenge", {
@@ -239,10 +249,16 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
-  activate: (caseId: string) =>
-    request<{ active_session_id: string }>("/api/cases/activate", {
+  /** Opening a case RESUMES the investigation. Pass restart to bin it and start over. */
+  activate: (caseId: string, restart = false) =>
+    request<{
+      active_session_id: string;
+      resumed: boolean;
+      discovered_clue_count: number;
+      accused: boolean;
+    }>("/api/cases/activate", {
       method: "POST",
-      body: JSON.stringify({ case_id: caseId }),
+      body: JSON.stringify({ case_id: caseId, restart }),
     }),
   getConfig: () => request<Config>("/api/config"),
   getLlmSettings: () => request<LlmSettingsResponse>("/api/llm-settings"),
@@ -274,7 +290,23 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
-  cases: () => request<{ case_id: string; title: string; case_type: string }[]>("/api/cases"),
+  cases: () =>
+    request<
+      {
+        case_id: string;
+        title: string;
+        case_type: string;
+        is_active: boolean;
+        /** null when the case has never been opened. */
+        progress: {
+          clues_found: number;
+          suspects_interviewed: number;
+          notes: number;
+          hints_taken: number;
+          accused: boolean;
+        } | null;
+      }[]
+    >("/api/cases"),
   generatedCases: {
     list: (params?: { sort_by?: string; tone?: string; case_type?: string; best_of_n?: boolean; fallback_used?: boolean }) => {
       const q = new URLSearchParams();

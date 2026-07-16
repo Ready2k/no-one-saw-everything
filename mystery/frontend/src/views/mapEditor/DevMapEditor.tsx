@@ -3,9 +3,12 @@ import { api } from "../../api";
 import { useToast } from "../../components/Toast";
 import {
   ALLOWED_LAYERS,
+  ALLOWED_AMBIENT_ASSETS,
   ALLOWED_LIGHT_ASSETS,
   ALLOWED_PROPS,
   ALLOWED_TILES,
+  AMBIENT_ASSET_SWATCHES,
+  AmbientSpriteDef,
   Bounds,
   BuildingInstance,
   Camera,
@@ -53,6 +56,7 @@ import {
   ROTATE_HANDLE_OFFSET_PX,
   Scene,
   SceneAnchor,
+  SceneAmbient,
   SceneLight,
   SceneLocation,
   SceneProp,
@@ -334,6 +338,17 @@ function applyLightUpdate(layout: TownLayout, id: string, fn: (light: LightDef) 
   return true;
 }
 
+function findAmbient(layout: TownLayout, id: string): AmbientSpriteDef | undefined {
+  return (layout.ambient_sprites || {})[id];
+}
+
+function applyAmbientUpdate(layout: TownLayout, id: string, fn: (sprite: AmbientSpriteDef) => void): boolean {
+  const sprite = findAmbient(layout, id);
+  if (!sprite) return false;
+  fn(sprite);
+  return true;
+}
+
 function applyAnchor(
   layout: TownLayout,
   recs: CanonicalRecs,
@@ -472,7 +487,9 @@ type Gesture =
   | { kind: "resizeProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { w: number; h: number }; mutated: boolean }
   | { kind: "moveBuilding"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
   | { kind: "moveLight"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
-  | { kind: "resizeLight"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { width: number; height: number }; mutated: boolean };
+  | { kind: "resizeLight"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { width: number; height: number }; mutated: boolean }
+  | { kind: "moveAmbient"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
+  | { kind: "resizeAmbient"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { width: number; height: number }; mutated: boolean };
 
 interface MirrorState {
   selectedCaseId: string;
@@ -493,6 +510,7 @@ interface MirrorState {
   selectedPropId: string;
   selectedBuildingId: string;
   selectedLightAssetId: string;
+  selectedAmbientAssetId: string;
   buildingRotation: number;
   paintLayer: string;
   propLayer: string;
@@ -529,6 +547,7 @@ export default function DevMapEditor() {
   const [selectedTileId, setSelectedTileId] = useState("tile_grass");
   const [selectedPropId, setSelectedPropId] = useState("prop_bench");
   const [selectedLightAssetId, setSelectedLightAssetId] = useState(ALLOWED_LIGHT_ASSETS[0]);
+  const [selectedAmbientAssetId, setSelectedAmbientAssetId] = useState(ALLOWED_AMBIENT_ASSETS[0]);
   const [selectedBuildingId, setSelectedBuildingId] = useState("cafe_small_v1");
   const [buildingRotation, setBuildingRotation] = useState(0);
   const [buildingLibrary, setBuildingLibrary] = useState<Record<string, any>>({});
@@ -852,6 +871,23 @@ export default function DevMapEditor() {
       }
     }
 
+    // Ambient sprites
+    const ambientSprites: SceneAmbient[] = [];
+    if (st.visibleLayers["ambient"]) {
+      for (const [id, sprite] of Object.entries(lay.ambient_sprites || {})) {
+        ambientSprites.push({
+          id,
+          assetId: sprite.asset_id,
+          x: sprite.x,
+          y: sprite.y,
+          width: sprite.width,
+          height: sprite.height,
+          opacity: sprite.opacity,
+          selected: st.selection?.kind === "ambient" && st.selection.id === id
+        });
+      }
+    }
+
     // Props
     const props: SceneProp[] = [];
     for (const p of mergedProps(lay, st.selectedCaseId)) {
@@ -951,6 +987,7 @@ export default function DevMapEditor() {
       anchors,
       props,
       lights,
+      ambientSprites,
       overlay
     };
     lastSceneRef.current = scene;
@@ -980,6 +1017,7 @@ export default function DevMapEditor() {
       selectedTileId,
       selectedPropId,
       selectedLightAssetId,
+      selectedAmbientAssetId,
       selectedBuildingId,
       buildingRotation,
       paintLayer,
@@ -1021,7 +1059,8 @@ export default function DevMapEditor() {
           tile_layers: data.layout.tile_layers || {},
           prop_instances: data.layout.prop_instances || {},
           building_instances: data.layout.building_instances || [],
-          lights: data.layout.lights || {}
+          lights: data.layout.lights || {},
+          ambient_sprites: data.layout.ambient_sprites || {}
         } as TownLayout;
         setLayout(cleanLayout);
         setLayoutVersion(data.layout_version ?? null);
@@ -1522,6 +1561,68 @@ export default function DevMapEditor() {
     showToast("Light duplicated.", "success");
   };
 
+  // --- Ambient sprites ---
+  const placeAmbient = (world: { wx: number; wy: number }) => {
+    const st = stateRef.current!;
+    const before = layoutRef.current!;
+    const copy = deepClone(before);
+    const asset = AMBIENT_ASSET_SWATCHES[st.selectedAmbientAssetId];
+    const id = `ambient_${st.selectedAmbientAssetId}_${Date.now().toString().slice(-6)}`;
+    const sprite: AmbientSpriteDef = {
+      asset_id: st.selectedAmbientAssetId,
+      x: world.wx,
+      y: world.wy,
+      width: asset?.width || 3,
+      height: asset?.height || 3,
+      opacity: asset?.opacity ?? 0.6,
+      from: "00:00",
+      to: "23:59"
+    };
+    if (!copy.ambient_sprites) copy.ambient_sprites = {};
+    copy.ambient_sprites[id] = sprite;
+    layoutRef.current = copy;
+    setSelection({ kind: "ambient", id });
+    gestureRef.current = {
+      kind: "moveAmbient",
+      before,
+      id,
+      startW: world,
+      orig: { x: sprite.x, y: sprite.y },
+      mutated: true
+    };
+    requestRender();
+  };
+
+  const deleteAmbient = (id: string) => {
+    mutateLayout(
+      (l) => {
+        if (l.ambient_sprites) delete l.ambient_sprites[id];
+      },
+      { undoable: true }
+    );
+    setSelection(null);
+    showToast("Ambient effect deleted.", "success");
+  };
+
+  const duplicateAmbient = (id: string) => {
+    const lay = layoutRef.current;
+    if (!lay) return;
+    const src = findAmbient(lay, id);
+    if (!src) return;
+    const copyId = `ambient_${src.asset_id}_${Date.now().toString().slice(-6)}`;
+    mutateLayout(
+      (l) => {
+        const s = findAmbient(l, id);
+        if (!s) return;
+        if (!l.ambient_sprites) l.ambient_sprites = {};
+        l.ambient_sprites[copyId] = { ...deepClone(s), x: s.x + 1, y: s.y + 1 };
+      },
+      { undoable: true }
+    );
+    setSelection({ kind: "ambient", id: copyId });
+    showToast("Ambient effect duplicated.", "success");
+  };
+
   // --- Buildings ---
   const findBuilding = (l: TownLayout, id: string): BuildingInstance | undefined =>
     (l.building_instances || []).find((b) => b.instance_id === id);
@@ -1729,6 +1830,11 @@ export default function DevMapEditor() {
       const eff = resolveLightView(found, st.mapView);
       return { x: eff.x + eff.width / 2, y: eff.y + eff.height / 2 };
     }
+    if (st.selection.kind === "ambient") {
+      const found = findAmbient(lay, st.selection.id);
+      if (!found) return null;
+      return { x: found.x + found.width, y: found.y + found.height };
+    }
     return null;
   };
 
@@ -1797,6 +1903,16 @@ export default function DevMapEditor() {
           orig: { width: eff.width, height: eff.height },
           mutated: false
         };
+      } else if (st.selection.kind === "ambient") {
+        const found = findAmbient(before, st.selection.id)!;
+        gestureRef.current = {
+          kind: "resizeAmbient",
+          before,
+          id: st.selection.id,
+          startW: world,
+          orig: { width: found.width, height: found.height },
+          mutated: false
+        };
       }
       return;
     }
@@ -1827,6 +1943,34 @@ export default function DevMapEditor() {
           const before = lay;
           layoutRef.current = deepClone(lay);
           gestureRef.current = { kind: "moveLight", before, id, startW: world, orig: { x: eff.x, y: eff.y }, mutated: false };
+          return;
+        }
+      }
+    }
+
+    // 2.6 Ambient sprites (rect hit-test; topmost wins)
+    if (st.visibleLayers["ambient"]) {
+      const ambientIds = Object.keys(lay.ambient_sprites || {});
+      for (let i = ambientIds.length - 1; i >= 0; i--) {
+        const id = ambientIds[i];
+        const sprite = lay.ambient_sprites[id];
+        if (
+          world.wx >= sprite.x &&
+          world.wx < sprite.x + sprite.width &&
+          world.wy >= sprite.y &&
+          world.wy < sprite.y + sprite.height
+        ) {
+          setSelection({ kind: "ambient", id });
+          const before = lay;
+          layoutRef.current = deepClone(lay);
+          gestureRef.current = {
+            kind: "moveAmbient",
+            before,
+            id,
+            startW: world,
+            orig: { x: sprite.x, y: sprite.y },
+            mutated: false
+          };
           return;
         }
       }
@@ -1968,6 +2112,9 @@ export default function DevMapEditor() {
         break;
       case "light":
         placeLight(world);
+        break;
+      case "ambient":
+        placeAmbient(world);
         break;
       default:
         beginSelectGesture(e, world);
@@ -2136,6 +2283,34 @@ export default function DevMapEditor() {
         requestRender();
         break;
       }
+      case "moveAmbient": {
+        const st = stateRef.current!;
+        const fine = st.fineAdjustment;
+        const snap = (v: number) => (fine ? Math.round(v * 2) / 2 : Math.round(v));
+        const dx = snap(world.wx - g.startW.wx);
+        const dy = snap(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        applyAmbientUpdate(layoutRef.current!, g.id, (sprite) => {
+          sprite.x = clamp(g.orig.x + dx, 0, gCols);
+          sprite.y = clamp(g.orig.y + dy, 0, gRows);
+        });
+        requestRender();
+        break;
+      }
+      case "resizeAmbient": {
+        const st = stateRef.current!;
+        const fine = st.fineAdjustment;
+        const snap = (v: number) => (fine ? Math.round(v * 2) / 2 : Math.round(v));
+        const dx = snap(world.wx - g.startW.wx);
+        const dy = snap(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        applyAmbientUpdate(layoutRef.current!, g.id, (sprite) => {
+          sprite.width = Math.max(0.5, g.orig.width + dx);
+          sprite.height = Math.max(0.5, g.orig.height + dy);
+        });
+        requestRender();
+        break;
+      }
     }
   };
 
@@ -2211,6 +2386,7 @@ export default function DevMapEditor() {
         setCanvasCursor("crosshair");
         return;
       case "prop":
+      case "ambient":
         setCanvasCursor("copy");
         return;
       default: {
@@ -2312,6 +2488,16 @@ export default function DevMapEditor() {
             { x: clamp(eff.x + mx, 0, gCols), y: clamp(eff.y + my, 0, gRows) },
             st.mapView
           );
+        },
+        { undoable: true }
+      );
+    } else if (sel.kind === "ambient") {
+      mutateLayout(
+        (l) => {
+          applyAmbientUpdate(l, sel.id, (sprite) => {
+            sprite.x = clamp(sprite.x + mx, 0, gCols);
+            sprite.y = clamp(sprite.y + my, 0, gRows);
+          });
         },
         { undoable: true }
       );
@@ -2451,6 +2637,9 @@ export default function DevMapEditor() {
       } else if (selection?.kind === "light") {
         e.preventDefault();
         duplicateLight(selection.id);
+      } else if (selection?.kind === "ambient") {
+        e.preventDefault();
+        duplicateAmbient(selection.id);
       }
       return;
     }
@@ -2472,6 +2661,7 @@ export default function DevMapEditor() {
         if (selection?.kind === "prop") deleteProp(selection.id);
         else if (selection?.kind === "building") deleteBuilding(selection.id);
         else if (selection?.kind === "light") deleteLight(selection.id);
+        else if (selection?.kind === "ambient") deleteAmbient(selection.id);
         return;
       case "[":
         setBrushSize((s) => Math.max(1, s - 1));
@@ -2684,7 +2874,8 @@ export default function DevMapEditor() {
             ...parsed,
             tile_layers: parsed.tile_layers || {},
             prop_instances: parsed.prop_instances || {},
-            lights: parsed.lights || {}
+            lights: parsed.lights || {},
+            ambient_sprites: parsed.ambient_sprites || {}
           });
         },
         { undoable: true }
@@ -2780,6 +2971,7 @@ export default function DevMapEditor() {
     selection?.kind === "building" ? (layout.building_instances || []).find((b) => b.instance_id === selection.id) : null;
   const selectedLight = selection?.kind === "light" ? (layout.lights || {})[selection.id] : null;
   const selectedLightEff = selectedLight ? resolveLightView(selectedLight, mapView) : null;
+  const selectedAmbient = selection?.kind === "ambient" ? (layout.ambient_sprites || {})[selection.id] : null;
 
   return (
     <div className="dev-map-root">
@@ -2999,6 +3191,37 @@ export default function DevMapEditor() {
                       }}
                     />
                     <span className="palette-item-text">{LIGHT_ASSET_SWATCHES[aId]?.label || aId.replace("light_", "")}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTool === "ambient" && (
+            <div className="control-group">
+              <label className="section-title">Ambient Palette</label>
+              <div className="view-note">
+                Place water shimmer, smoke, mist, birds and motes against the current map art; saved effects can be reused by the replay/runtime.
+              </div>
+              <div className="palette-grid">
+                {ALLOWED_AMBIENT_ASSETS.map((aId) => (
+                  <div
+                    key={aId}
+                    className={`palette-item prop ${selectedAmbientAssetId === aId ? "active" : ""}`}
+                    onClick={() => setSelectedAmbientAssetId(aId)}
+                    title={aId}
+                  >
+                    <span
+                      className="palette-emoji"
+                      style={{
+                        display: "inline-block",
+                        width: "1.1em",
+                        height: "1.1em",
+                        borderRadius: "50%",
+                        background: AMBIENT_ASSET_SWATCHES[aId]?.color || "#bae6fd"
+                      }}
+                    />
+                    <span className="palette-item-text">{AMBIENT_ASSET_SWATCHES[aId]?.label || aId.replace(/_/g, " ")}</span>
                   </div>
                 ))}
               </div>
@@ -3750,6 +3973,116 @@ export default function DevMapEditor() {
                   ⧉ Duplicate
                 </button>
                 <button className="mse-btn mse-btn-danger" onClick={() => deleteLight(selection!.id)}>
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
+          ) : selectedAmbient ? (
+            <div className="panel-stack">
+              <div className="section-title">Selected Ambient Effect</div>
+              <div className="control-group">
+                <label>Instance</label>
+                <input type="text" value={selection!.id} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Asset</label>
+                <select
+                  value={selectedAmbient.asset_id}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    mutateLayout((l) => {
+                      applyAmbientUpdate(l, selection!.id, (sprite) => {
+                        sprite.asset_id = val;
+                        const asset = AMBIENT_ASSET_SWATCHES[val];
+                        if (asset) sprite.opacity = asset.opacity;
+                      });
+                    });
+                  }}
+                >
+                  {ALLOWED_AMBIENT_ASSETS.map((aId) => (
+                    <option key={aId} value={aId}>
+                      {AMBIENT_ASSET_SWATCHES[aId]?.label || aId}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="num-grid">
+                {(
+                  [
+                    ["x", "X"],
+                    ["y", "Y"],
+                    ["width", "Width"],
+                    ["height", "Height"]
+                  ] as const
+                ).map(([k, label]) => (
+                  <div key={k} className="control-group">
+                    <label>{label}</label>
+                    <input
+                      type="number"
+                      step={fineAdjustment ? 0.5 : 1}
+                      value={selectedAmbient[k]}
+                      onChange={(e) => {
+                        const v = parseFloat(e.target.value);
+                        if (Number.isNaN(v)) return;
+                        mutateLayout((l) => {
+                          applyAmbientUpdate(l, selection!.id, (sprite) => {
+                            sprite[k] = k === "width" || k === "height" ? Math.max(0.5, v) : v;
+                          });
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="num-grid">
+                <div className="control-group">
+                  <label>From</label>
+                  <input
+                    type="time"
+                    value={selectedAmbient.from || "00:00"}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      mutateLayout((l) => {
+                        applyAmbientUpdate(l, selection!.id, (sprite) => (sprite.from = val));
+                      });
+                    }}
+                  />
+                </div>
+                <div className="control-group">
+                  <label>To</label>
+                  <input
+                    type="time"
+                    value={selectedAmbient.to || "23:59"}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      mutateLayout((l) => {
+                        applyAmbientUpdate(l, selection!.id, (sprite) => (sprite.to = val));
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="control-group">
+                <label>Opacity ({(selectedAmbient.opacity ?? 0.6).toFixed(2)})</label>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={selectedAmbient.opacity ?? 0.6}
+                  onChange={(e) => {
+                    const v = parseFloat(e.target.value);
+                    mutateLayout((l) => {
+                      applyAmbientUpdate(l, selection!.id, (sprite) => (sprite.opacity = v));
+                    });
+                  }}
+                />
+              </div>
+              <div className="btn-row">
+                <button className="mse-btn mse-btn-secondary" onClick={() => duplicateAmbient(selection!.id)}>
+                  ⧉ Duplicate
+                </button>
+                <button className="mse-btn mse-btn-danger" onClick={() => deleteAmbient(selection!.id)}>
                   🗑 Delete
                 </button>
               </div>

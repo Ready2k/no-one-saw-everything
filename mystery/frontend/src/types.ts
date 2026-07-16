@@ -2,6 +2,7 @@ export interface PortraitState {
   calm: string | null;
   defensive: string | null;
   cracking: string | null;
+  deceased?: string | null;
 }
 
 export interface AgentPublic {
@@ -172,12 +173,32 @@ export interface MapLightOverlay {
   opacity_internal?: number;
 }
 
+export interface MapAmbientSprite {
+  id: string;
+  asset_id:
+    | "water_shimmer"
+    | "fish_ripple_loop"
+    | "chimney_smoke"
+    | "lamp_flicker"
+    | "drifting_mist"
+    | "birds_crossing"
+    | "warm_motes";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  opacity?: number;
+  from?: string;
+  to?: string;
+}
+
 export interface MapVisualContract {
   mode: "canonical_pilot" | "canonical_overworld" | "legacy_fallback";
   definition_id: string;
   visible_location_ids: string[] | null;
   overlays: string[];
   light_overlays?: MapLightOverlay[];
+  ambient_sprites?: MapAmbientSprite[];
   crop_padding_by_location?: Record<string, number>;
   object_visuals?: MapVisualObject[];
   objects: MapVisualObject[];
@@ -237,6 +258,10 @@ export interface ClaimPublic {
   time_reference: string | null;
   location_reference_id: string | null;
   player_known_status: ClaimStatus;
+  /** Whose whereabouts this statement pins down (the speaker, unless they spoke about someone else). */
+  about_agent_id: string;
+  /** false = the speaker insists that person was NOT there. */
+  asserts_presence: boolean;
 }
 
 export type ChallengeOutcome =
@@ -256,6 +281,16 @@ export interface ChallengeSuggestion {
   evidence_title: string;
 }
 
+/** By default `suggestions` is empty and only `contradiction_count` is populated: the player is
+ *  told a contradiction exists, not which one. Asking for the pairings is an explicit,
+ *  counted hint (`reveal=true`). */
+export interface ChallengeSuggestionsResponse {
+  contradiction_count: number;
+  revealed: boolean;
+  hints_taken: number;
+  suggestions: ChallengeSuggestion[];
+}
+
 export interface RevealedMemory {
   memory_id: string;
   summary: string;
@@ -266,6 +301,9 @@ export interface ChallengeResult {
   target_agent_id: string;
   challenged_claim_id: string;
   evidence_clue_ids: string[];
+  evidence_claim_ids: string[];
+  /** Set when the player caught two statements that cannot both be true. */
+  testimony_conflict: string | null;
   outcome: ChallengeOutcome;
   response_text: string;
   deterministic_response_text?: string;

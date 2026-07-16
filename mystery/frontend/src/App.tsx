@@ -20,6 +20,7 @@ import { useToast } from "./components/Toast";
 import { audioManager } from "./audio";
 import { markCaseStarted } from "./progress";
 import DevMapEditor from "./views/DevMapEditor";
+import AmbientTownPreview from "./views/AmbientTownPreview";
 
 export interface World {
   caseOverview: CaseOverview;
@@ -86,6 +87,15 @@ export interface CaseMeta {
   case_id: string;
   title: string;
   case_type: string;
+  is_active?: boolean;
+  /** null when the case has never been opened. Investigations persist per case. */
+  progress?: {
+    clues_found: number;
+    suspects_interviewed: number;
+    notes: number;
+    hints_taken: number;
+    accused: boolean;
+  } | null;
 }
 
 export default function App() {
@@ -106,6 +116,13 @@ export default function App() {
   const isDevMapEditor = currentPath === "/dev/map-editor" || currentPath.endsWith("/dev/map-editor") || window.location.hash === "#/dev/map-editor";
   if (isDevMapEditor) {
     return <DevMapEditor />;
+  }
+  const isAmbientTownPreview =
+    currentPath === "/dev/ambient-town" ||
+    currentPath.endsWith("/dev/ambient-town") ||
+    window.location.hash === "#/dev/ambient-town";
+  if (isAmbientTownPreview) {
+    return <AmbientTownPreview />;
   }
 
   const [world, setWorld] = useState<World | null>(null);

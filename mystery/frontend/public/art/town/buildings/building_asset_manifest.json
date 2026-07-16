@@ -1,7 +1,7 @@
 {
   "manifest_version": "building_asset_manifest_v1",
   "source": "generated_and_cleaned_project_owned",
-  "style_reference": "/art/town/tiles_3x3_hd/town_overworld_B2_all_cases_external_hd.png",
+  "style_reference": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.png",
   "lighting": "neutral_daylight_runtime_tint",
   "tile_size": 32,
   "assets": [

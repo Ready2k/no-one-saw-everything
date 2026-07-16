@@ -1,0 +1,30 @@
+{
+  "version": "living_town_v2_remaster_v5_zoom_b2_interior_preview",
+  "purpose": "Zoom-state QA mosaic: v5 exterior surrounding tiles with existing B2 interior/cutaway tile in the centre.",
+  "coordinate_space": {
+    "full_map_width": 6144,
+    "full_map_height": 4608,
+    "tile_width": 2048,
+    "tile_height": 1536,
+    "cols": 3,
+    "rows": 3
+  },
+  "master_preview": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_full_master_remaster_v5_zoom_b2_interior.png",
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_full_master_remaster_v5_zoom_b2_interior_contact.png",
+  "tile_urls": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_A1_living_town_remaster_v5_zoom_b2_interior.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_A2_living_town_remaster_v5_zoom_b2_interior.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_A3_living_town_remaster_v5_zoom_b2_interior.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_B1_living_town_remaster_v5_zoom_b2_interior.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_B2_living_town_remaster_v5_zoom_b2_interior.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_B3_living_town_remaster_v5_zoom_b2_interior.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_C1_living_town_remaster_v5_zoom_b2_interior.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_C2_living_town_remaster_v5_zoom_b2_interior.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_preview/town_overworld_C3_living_town_remaster_v5_zoom_b2_interior.png"
+  },
+  "qa_notes": [
+    "This mirrors runtime zoom_image_tiles composition: only B2 swaps to the interior tile.",
+    "A visual mismatch here means the existing B2 interior art no longer matches the v5 generated exterior master.",
+    "Do not promote this as final art without reviewing B2 edge alignment."
+  ]
+}

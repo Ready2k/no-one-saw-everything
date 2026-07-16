@@ -58,7 +58,7 @@
       "agent_ruth"
     ],
     "event_type": "routine",
-    "truth_description": "Ruth delivers the post. She slots a letter from Whittle & Cross through the bookshop door \u2014 it lands on the mat.",
+    "truth_description": "Ruth delivers the post. She slots a letter from Whittle & Cross through the bookshop door — it lands on the mat.",
     "player_description": "The postwoman delivers letters to the bookshop.",
     "visibility": "public",
     "visible_to_agent_ids": [
@@ -126,7 +126,7 @@
       "agent_priya"
     ],
     "event_type": "object_use",
-    "truth_description": "Priya signs the delivery invoice in the stockroom \u2014 but the driver has already gone. She back-dates it by five minutes.",
+    "truth_description": "Priya signs the delivery invoice in the stockroom — but the driver has already gone. She back-dates it by five minutes.",
     "player_description": "A delivery receipt on the stockroom table, signed by Priya at 12:10.",
     "visibility": "public",
     "object_ids": [
@@ -145,7 +145,7 @@
       "agent_owen"
     ],
     "event_type": "movement",
-    "truth_description": "Owen strides past the bookshop, glances in, and keeps walking. He looks furious \u2014 another late notice on the debt arrived this afternoon.",
+    "truth_description": "Owen strides past the bookshop, glances in, and keeps walking. He looks furious — another late notice on the debt arrived this afternoon.",
     "player_description": "Owen Price walks past the bookshop with a rolled-up letter in his fist. He pauses at the window.",
     "visibility": "public",
     "visible_to_agent_ids": [
@@ -221,7 +221,7 @@
     "location_id": "loc_rear_alley",
     "agent_ids": [],
     "event_type": "sound",
-    "truth_description": "A sharp crash \u2014 a chair overturning \u2014 is audible from the bookshop back room.",
+    "truth_description": "A sharp crash — a chair overturning — is audible from the bookshop back room.",
     "player_description": "A sharp crack, like furniture going over, from the back of the bookshop.",
     "visibility": "public_partial",
     "audible_to_agent_ids": [
@@ -277,7 +277,7 @@
       "agent_priya"
     ],
     "event_type": "arrival",
-    "truth_description": "Priya re-enters through the bookshop front door \u2014 she had slipped out through the rear alley and come around the square. She goes to the stockroom, removes her scarf (noticing the loose thread too late), and begins loudly shelving books.",
+    "truth_description": "Priya re-enters through the bookshop front door — she had slipped out through the rear alley and come around the square. She goes to the stockroom, removes her scarf (noticing the loose thread too late), and begins loudly shelving books.",
     "player_description": "Priya is shelving stock in the back of the shop when others arrive.",
     "visibility": "public_partial",
     "object_ids": [
@@ -313,7 +313,7 @@
       "agent_ben"
     ],
     "event_type": "routine",
-    "truth_description": "Ben finishes his round and stops for a coffee at Hobbs. He mentions to the person behind the counter that 'something looked off at the bookshop back' \u2014 the broken window.",
+    "truth_description": "Ben finishes his round and stops for a coffee at Hobbs. He mentions to the person behind the counter that 'something looked off at the bookshop back' — the broken window.",
     "visibility": "public",
     "importance": 5,
     "linked_clue_ids": [
@@ -342,7 +342,7 @@
       "agent_bg_sal"
     ],
     "event_type": "arrival",
-    "truth_description": "Sal is seen near Village Square, leaving bottles on the step.",
+    "truth_description": "Sal stops by Village Square, leaving bottles on the step.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -354,7 +354,7 @@
       "agent_bg_sal"
     ],
     "event_type": "movement",
-    "truth_description": "Sal is seen near Hobbs Cafe, clinking crates off the milk cart.",
+    "truth_description": "At Hobbs Cafe, Sal is clinking crates off the milk cart.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_hobbs_cafe"
@@ -367,7 +367,7 @@
       "agent_bg_wren"
     ],
     "event_type": "arrival",
-    "truth_description": "Wren is seen near Hobbs Cafe, tuning up for a lunchtime busk.",
+    "truth_description": "Wren is by Hobbs Cafe, tuning up for a morning busk.",
     "importance": 2,
     "to_location_id": "loc_hobbs_cafe"
   },
@@ -379,7 +379,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near Village Clinic, picking a good corner to play.",
+    "truth_description": "Wren is at Village Clinic, picking a good corner to play.",
     "importance": 2,
     "from_location_id": "loc_hobbs_cafe",
     "to_location_id": "loc_clinic"
@@ -392,7 +392,7 @@
       "agent_bg_wren"
     ],
     "event_type": "movement",
-    "truth_description": "Wren is seen near Owen Price's House & Yard, busking for the afternoon crowd.",
+    "truth_description": "Wren passes Owen Price's House & Yard, busking for the afternoon crowd.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_owen_house"
@@ -405,7 +405,7 @@
       "agent_bg_min"
     ],
     "event_type": "arrival",
-    "truth_description": "Min is seen near Village Clinic, carrying a tray of loaves.",
+    "truth_description": "Min is at Village Clinic, carrying a tray of loaves.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -417,7 +417,7 @@
       "agent_bg_min"
     ],
     "event_type": "movement",
-    "truth_description": "Min is seen near Owen Price's House & Yard, handing out the last of the lunch rolls.",
+    "truth_description": "Min passes Owen Price's House & Yard, handing out the last of the lunch rolls.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_owen_house"
@@ -430,7 +430,7 @@
       "agent_bg_min"
     ],
     "event_type": "movement",
-    "truth_description": "Min is seen near Fountain, fetching sacks of flour.",
+    "truth_description": "Min stops by Fountain, fetching sacks of flour.",
     "importance": 2,
     "from_location_id": "loc_owen_house",
     "to_location_id": "loc_fountain"
@@ -443,7 +443,7 @@
       "agent_bg_cole"
     ],
     "event_type": "arrival",
-    "truth_description": "Cole is seen near Owen Price's House & Yard, wiping down the windows.",
+    "truth_description": "Cole passes Owen Price's House & Yard, wiping down the windows.",
     "importance": 2,
     "to_location_id": "loc_owen_house"
   },
@@ -455,7 +455,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Fountain, moving his ladder to the next building.",
+    "truth_description": "Cole stops by Fountain, moving his ladder to the next building.",
     "importance": 2,
     "from_location_id": "loc_owen_house",
     "to_location_id": "loc_fountain"
@@ -468,7 +468,7 @@
       "agent_bg_cole"
     ],
     "event_type": "movement",
-    "truth_description": "Cole is seen near Village Square, polishing the shopfront glass.",
+    "truth_description": "At Village Square, Cole is polishing the shopfront glass.",
     "importance": 2,
     "from_location_id": "loc_fountain",
     "to_location_id": "loc_village_square"
@@ -481,7 +481,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "arrival",
-    "truth_description": "Birdie is seen near Fountain, sweeping out the gutters.",
+    "truth_description": "Birdie is at Fountain, sweeping out the gutters.",
     "importance": 2,
     "to_location_id": "loc_fountain"
   },
@@ -493,7 +493,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "movement",
-    "truth_description": "Birdie is seen near Village Square, picking up stray litter.",
+    "truth_description": "Birdie passes Village Square, picking up stray litter.",
     "importance": 2,
     "from_location_id": "loc_fountain",
     "to_location_id": "loc_village_square"
@@ -506,7 +506,7 @@
       "agent_bg_birdie"
     ],
     "event_type": "movement",
-    "truth_description": "Birdie is seen near Hobbs Cafe, sweeping out the gutters.",
+    "truth_description": "Birdie stops by Hobbs Cafe, sweeping out the gutters.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_hobbs_cafe"
@@ -519,7 +519,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "arrival",
-    "truth_description": "Rosa is seen near Village Square, tending the flowerbeds.",
+    "truth_description": "Rosa passes Village Square, tending the flowerbeds.",
     "importance": 2,
     "to_location_id": "loc_village_square"
   },
@@ -531,7 +531,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "movement",
-    "truth_description": "Rosa is seen near Hobbs Cafe, watering the planters.",
+    "truth_description": "Rosa stops by Hobbs Cafe, watering the planters.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_hobbs_cafe"
@@ -544,7 +544,7 @@
       "agent_bg_rosa"
     ],
     "event_type": "movement",
-    "truth_description": "Rosa is seen near Village Clinic, trimming the hedges.",
+    "truth_description": "At Village Clinic, Rosa is trimming the hedges.",
     "importance": 2,
     "from_location_id": "loc_hobbs_cafe",
     "to_location_id": "loc_clinic"
@@ -557,7 +557,7 @@
       "agent_bg_gus"
     ],
     "event_type": "arrival",
-    "truth_description": "Gus is seen near Hobbs Cafe, setting out the lunchtime papers.",
+    "truth_description": "Gus is by Hobbs Cafe, setting out the morning papers.",
     "importance": 2,
     "to_location_id": "loc_hobbs_cafe"
   },
@@ -569,7 +569,7 @@
       "agent_bg_gus"
     ],
     "event_type": "movement",
-    "truth_description": "Gus is seen near Village Clinic, restocking his paper rack.",
+    "truth_description": "Gus is at Village Clinic, restocking his paper rack.",
     "importance": 2,
     "from_location_id": "loc_hobbs_cafe",
     "to_location_id": "loc_clinic"
@@ -582,7 +582,7 @@
       "agent_bg_effie"
     ],
     "event_type": "arrival",
-    "truth_description": "Effie is seen near Village Clinic, walking the dog past.",
+    "truth_description": "At Village Clinic, Effie is walking the dog past.",
     "importance": 2,
     "to_location_id": "loc_clinic"
   },
@@ -594,7 +594,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near Owen Price's House & Yard, throwing a stick for the dog.",
+    "truth_description": "Effie is by Owen Price's House & Yard, throwing a stick for the dog.",
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_owen_house"
@@ -607,7 +607,7 @@
       "agent_bg_effie"
     ],
     "event_type": "movement",
-    "truth_description": "Effie is seen near Fountain, walking a pair of dogs past.",
+    "truth_description": "Effie is at Fountain, walking a pair of dogs past.",
     "importance": 2,
     "from_location_id": "loc_owen_house",
     "to_location_id": "loc_fountain"
@@ -620,7 +620,7 @@
       "agent_bg_tam"
     ],
     "event_type": "arrival",
-    "truth_description": "Tam is seen near Owen Price's House & Yard, starting the early post round.",
+    "truth_description": "At Owen Price's House & Yard, Tam is starting the early post round.",
     "importance": 2,
     "to_location_id": "loc_owen_house"
   },
@@ -632,7 +632,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near Fountain, emptying the postbox.",
+    "truth_description": "Tam is by Fountain, emptying the postbox.",
     "importance": 2,
     "from_location_id": "loc_owen_house",
     "to_location_id": "loc_fountain"
@@ -645,7 +645,7 @@
       "agent_bg_tam"
     ],
     "event_type": "movement",
-    "truth_description": "Tam is seen near Village Square, finishing a post round.",
+    "truth_description": "Tam is at Village Square, finishing a post round.",
     "importance": 2,
     "from_location_id": "loc_fountain",
     "to_location_id": "loc_village_square"
@@ -658,7 +658,7 @@
       "agent_bg_dez"
     ],
     "event_type": "arrival",
-    "truth_description": "Dez is seen near Fountain, setting up a stall.",
+    "truth_description": "Dez stops by Fountain, setting up a stall.",
     "importance": 2,
     "to_location_id": "loc_fountain"
   },
@@ -670,7 +670,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Village Square, laying out the morning's produce.",
+    "truth_description": "At Village Square, Dez is laying out the morning's produce.",
     "importance": 2,
     "from_location_id": "loc_fountain",
     "to_location_id": "loc_village_square"
@@ -683,7 +683,7 @@
       "agent_bg_dez"
     ],
     "event_type": "movement",
-    "truth_description": "Dez is seen near Hobbs Cafe, calling out prices at the stall.",
+    "truth_description": "Dez is by Hobbs Cafe, calling out prices at the stall.",
     "importance": 2,
     "from_location_id": "loc_village_square",
     "to_location_id": "loc_hobbs_cafe"

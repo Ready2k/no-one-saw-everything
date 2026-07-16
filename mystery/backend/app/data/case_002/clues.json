@@ -4,7 +4,7 @@
       "clue_id": "clue_solicitor_letter",
       "title": "Letter from Whittle & Cross",
       "clue_type": "document",
-      "description": "A letter from the firm Whittle & Cross, delivered this afternoon and found already opened on Isabella's desk: 'Confirming our appointment at 13:30 today to review irregularities in the bookshop partnership transfer documents.' Isabella had found something wrong \u2014 and had booked a solicitor.",
+      "description": "A letter from the firm Whittle & Cross, delivered this afternoon and found already opened on Isabella's desk: 'Confirming our appointment at 13:30 today to review irregularities in the bookshop partnership transfer documents.' Isabella had found something wrong — and had booked a solicitor.",
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
@@ -32,7 +32,7 @@
       "clue_id": "clue_forged_document",
       "title": "Forged partnership transfer document",
       "clue_type": "physical_evidence",
-      "description": "In the safe behind the loose back panel: a signed transfer document putting the bookshop expansion in Priya's name. The signature reads 'I. Reed' but the loop on the capital R is reversed \u2014 inconsistent with every other sample of Isabella's handwriting in the room.",
+      "description": "In the safe behind the loose back panel: a signed transfer document putting the bookshop expansion in Priya's name. The signature reads 'I. Reed' but the loop on the capital R is reversed — inconsistent with every other sample of Isabella's handwriting in the room.",
       "strength": "strong",
       "reliability": 0.95,
       "ambiguity": "low",
@@ -61,7 +61,7 @@
       "clue_id": "clue_scarf_thread",
       "title": "Green thread on the rear door latch",
       "clue_type": "physical_evidence",
-      "description": "A single thread of emerald-green wool caught on the sharp edge of the bookshop's rear door latch. The same shade as Priya's scarf \u2014 and the scarf, still hanging on the stockroom hook, has a small pulled loop on one end.",
+      "description": "A single thread of emerald-green wool caught on the sharp edge of the bookshop's rear door latch. The same shade as Priya's scarf — and the scarf, still hanging on the stockroom hook, has a small pulled loop on one end.",
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "low",
@@ -112,9 +112,9 @@
     },
     {
       "clue_id": "clue_letter_opener_wiped",
-      "title": "Letter opener \u2014 wiped clean and replaced",
+      "title": "Letter opener — wiped clean and replaced",
       "clue_type": "physical_evidence",
-      "description": "The Victorian letter opener in the pen pot on Isabella's desk. Despite being the nearest heavy implement to the wound, it shows no fingerprints at all \u2014 it has been recently wiped. And the pen pot stands slightly off its usual ring-mark, as if hurriedly returned.",
+      "description": "The Victorian letter opener in the pen pot on Isabella's desk. Despite being the nearest heavy implement to the wound, it shows no fingerprints at all — it has been recently wiped. And the pen pot stands slightly off its usual ring-mark, as if hurriedly returned.",
       "strength": "strong",
       "reliability": 0.9,
       "ambiguity": "medium",
@@ -140,7 +140,7 @@
       "clue_id": "clue_invoice_discrepancy",
       "title": "Invoice timestamp mismatch",
       "clue_type": "document",
-      "description": "The delivery invoice on the stockroom table is signed by Priya at 12:10. The driver's carbon copy, however, records the delivery complete at 12:05. Five minutes are unaccounted for \u2014 exactly when she claims to have been shelving books, proving she was elsewhere and breaking her alibi.",
+      "description": "The delivery invoice on the stockroom table is signed by Priya at 12:10. The driver's carbon copy records the delivery completed at 12:05 — he had already gone. Priya was not in the stockroom to take it. Something pulled her out of the room she says she never left, in the minutes just after the post landed on the mat.",
       "strength": "medium",
       "reliability": 0.85,
       "ambiguity": "medium",
@@ -152,7 +152,7 @@
         "radius": 6
       },
       "supports_conclusion_ids": [
-        "conc_priya_opportunity"
+        "conc_priya_motive"
       ],
       "linked_agent_ids": [
         "agent_priya"
@@ -165,7 +165,7 @@
       "clue_id": "clue_ruth_post_sighting",
       "title": "Solicitor's letter delivered sealed",
       "clue_type": "witness_statement",
-      "description": "Ruth confirms she pushed the Whittle & Cross letter through the bookshop door sealed and unopened at 11:10. By 12:00, Priya had already read it \u2014 before Isabella arrived. Priya knew exactly what Isabella was about to bring to the solicitor.",
+      "description": "Ruth confirms she pushed the Whittle & Cross letter through the bookshop door sealed and unopened at 11:10. By 12:00, Priya had already read it — before Isabella arrived. Priya knew exactly what Isabella was about to bring to the solicitor.",
       "strength": "medium",
       "reliability": 0.9,
       "ambiguity": "medium",
@@ -189,7 +189,7 @@
       "clue_id": "clue_crash_sound",
       "title": "A crash from the bookshop back room",
       "clue_type": "witness_statement",
-      "description": "Ruth heard a sharp crash \u2014 like furniture going over \u2014 from the back of the bookshop at around 12:40 while she was finishing her round along the rear alley. She assumed it was boxes falling in the stockroom.",
+      "description": "Ruth heard a sharp crash — like furniture going over — from the back of the bookshop at around 12:40 while she was finishing her round along the rear alley. She assumed it was boxes falling in the stockroom.",
       "strength": "medium",
       "reliability": 0.8,
       "ambiguity": "medium",
@@ -210,7 +210,7 @@
       "clue_id": "clue_isabella_early_arrival",
       "title": "Isabella arrived early and went straight inside",
       "clue_type": "witness_statement",
-      "description": "Elias saw Isabella arrive at 12:32, nearly half an hour before her usual opening time. She didn't stop to talk to anyone \u2014 just went directly in. Something had brought her in early.",
+      "description": "Elias saw Isabella arrive at 12:32, nearly half an hour before her usual opening time. She didn't stop to talk to anyone — just went directly in. Something had brought her in early.",
       "strength": "medium",
       "reliability": 0.8,
       "ambiguity": "medium",
@@ -237,7 +237,10 @@
       "discoverability": {
         "method": "interview",
         "agent_id": "agent_ben",
-        "question_type": "timeline"
+        "question_type": "timeline",
+        "required_prior_clue_ids": [
+          "clue_staged_breakin"
+        ]
       },
       "supports_conclusion_ids": [
         "conc_priya_opportunity",
@@ -279,7 +282,7 @@
       "clue_id": "clue_owen_debt_folder",
       "title": "Owen's debt folder in Isabella's desk",
       "clue_type": "document",
-      "description": "A folder in Isabella's drawer: letters to Owen Price demanding repayment of a personal loan by month's end, with a note in Isabella's hand \u2014 'next step: solicitor, 11th.' Today is the 11th.",
+      "description": "A folder in Isabella's drawer: letters to Owen Price demanding repayment of a personal loan by month's end, with a note in Isabella's hand — 'next step: solicitor, 11th.' Today is the 11th.",
       "strength": "medium",
       "reliability": 0.9,
       "ambiguity": "medium",
@@ -324,7 +327,7 @@
       "clue_id": "clue_ben_broken_window",
       "title": "Ben noticed the broken window",
       "clue_type": "witness_statement",
-      "description": "Ben mentioned at the cafe at 13:00 that the bookshop's back window looked broken. When he passed the alley at about 12:50, he noticed a scatter of glass outside but a larger shard still sitting inside on the sill \u2014 enough to strike him as odd even before he heard Isabella was dead.",
+      "description": "Ben mentioned at the cafe at 13:00 that the bookshop's back window looked broken. When he passed the alley at about 12:50, he noticed a scatter of glass outside but a larger shard still sitting inside on the sill — enough to strike him as odd even before he heard Isabella was dead.",
       "strength": "medium",
       "reliability": 0.8,
       "ambiguity": "medium",
@@ -347,7 +350,7 @@
       "clue_id": "clue_priya_stockroom_claim",
       "title": "Priya claims she was shelving stock all lunchtime",
       "clue_type": "witness_statement",
-      "description": "Priya says she was in the stockroom from 11:00 until Nadia arrived. But she cannot account for the gap between 12:10 (when the invoice was signed) and 12:48 (when she was heard shelving books).",
+      "description": "Priya says she was in the stockroom from 11:00 until Nadia arrived. But nothing places her there between 12:10, when she signed the invoice, and 12:48, when she was heard loudly shelving books. That is thirty-eight unaccounted minutes — and the murder sits inside them.",
       "strength": "medium",
       "reliability": 0.4,
       "ambiguity": "high",
@@ -367,7 +370,7 @@
       "clue_id": "clue_priya_scarf_missing_thread",
       "title": "Loose thread on Priya's scarf",
       "clue_type": "physical_evidence",
-      "description": "Priya's green scarf hangs in the stockroom. Inspect it closely: one end has a small pulled loop, matching exactly the thread snagged on the rear door latch \u2014 same weight, same shade, same twist direction.",
+      "description": "Priya's green scarf hangs in the stockroom. Inspect it closely: one end has a small pulled loop, matching exactly the thread snagged on the rear door latch — same weight, same shade, same twist direction.",
       "strength": "medium",
       "reliability": 0.85,
       "ambiguity": "medium",
@@ -390,19 +393,63 @@
       "linked_object_ids": [
         "obj_priya_scarf"
       ]
+    },
+    {
+      "clue_id": "clue_ben_no_alibi",
+      "title": "Ben has no alibi for 12:43",
+      "clue_type": "witness_statement",
+      "description": "Ben admits he was inside the bookshop at 12:38 and cannot say where he was five minutes later. He was 'somewhere on the round'. He also did not mention, until pressed, that he had been quietly seeing Priya for weeks — which makes his account of what he saw in that back room a good deal less disinterested than it first appeared.",
+      "strength": "medium",
+      "reliability": 0.75,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_priya"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_clinic_docket",
+      "title": "The clinic delivery, signed at 12:44",
+      "clue_type": "document",
+      "description": "The clinic's goods-in book: a delivery signed for by N. Cole at 12:44, with Ben's name and scrawl beside it. The clinic is across the square from the bookshop's back room. Nadia remembers him — he was complaining about a mis-sorted parcel. He could not have been in that back room when Isabella died.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clinic"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_nadia"
+      ],
+      "linked_location_ids": [
+        "loc_clinic"
+      ]
     }
   ],
   "conclusions": [
     {
       "conclusion_id": "conc_priya_motive",
       "type": "motive",
-      "summary": "Priya had forged Isabella's signature on the partnership transfer. Isabella had discovered this and booked a solicitor. Priya read the letter before Isabella arrived \u2014 she knew she had hours.",
+      "summary": "Priya had forged Isabella's signature on the partnership transfer. Isabella had discovered this and booked a solicitor. Priya read the letter before Isabella arrived — she knew she had hours.",
       "target_agent_id": "agent_priya",
       "required_for_solution": true,
       "supported_by_clue_ids": [
         "clue_solicitor_letter",
         "clue_forged_document",
-        "clue_ruth_post_sighting"
+        "clue_ruth_post_sighting",
+        "clue_invoice_discrepancy"
       ]
     },
     {
@@ -413,7 +460,6 @@
       "required_for_solution": true,
       "supported_by_clue_ids": [
         "clue_ben_argument_glimpse",
-        "clue_invoice_discrepancy",
         "clue_scarf_thread",
         "clue_priya_scarf_missing_thread",
         "clue_priya_stockroom_claim"
@@ -422,7 +468,7 @@
     {
       "conclusion_id": "conc_priya_means",
       "type": "means",
-      "summary": "The letter opener was the nearest heavy object and has been recently wiped clean \u2014 it was used and returned.",
+      "summary": "The letter opener was the nearest heavy object and has been recently wiped clean — it was used and returned.",
       "target_agent_id": "agent_priya",
       "required_for_solution": true,
       "supported_by_clue_ids": [
@@ -457,7 +503,6 @@
       "required_for_solution": true,
       "supported_by_clue_ids": [
         "clue_ben_argument_glimpse",
-        "clue_invoice_discrepancy",
         "clue_scarf_thread",
         "clue_priya_stockroom_claim"
       ]
@@ -479,6 +524,25 @@
       "target_agent_id": "agent_owen",
       "supported_by_clue_ids": [
         "clue_owen_yard_alibi"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_red_herring",
+      "type": "red_herring",
+      "summary": "Ben was inside the bookshop minutes before the murder, hid his relationship with Priya, and cannot account for himself at 12:43 — and it is his testimony that points at her.",
+      "target_agent_id": "agent_ben",
+      "supported_by_clue_ids": [
+        "clue_ben_argument_glimpse",
+        "clue_ben_no_alibi"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_innocent",
+      "type": "innocence_anchor",
+      "summary": "Nadia signed Ben's clinic delivery at 12:44, across the square from the back room.",
+      "target_agent_id": "agent_ben",
+      "supported_by_clue_ids": [
+        "clue_ben_clinic_docket"
       ]
     }
   ]

@@ -3,26 +3,76 @@
   "motive": {
     "canonical": "Ruth is Marcus Bell's illegitimate half-sister, never acknowledged by the Bell family. Marcus was changing his will in a way that would have required Ruth to contest it publicly and protractedly. She killed him before the will was finalised so she could claim as next-of-kin on intestacy.",
     "concept_groups": [
-      ["half-sister", "half-sibling", "illegitimate", "Bell girl", "Calder", "Henry Bell", "birth certificate", "family"],
-      ["will", "estate", "inheritance", "bequest", "contest", "next-of-kin"],
-      ["acknowledged", "denied", "never recognised", "cut out", "ignored"]
+      [
+        "half-sister",
+        "half-sibling",
+        "illegitimate",
+        "Bell girl",
+        "Calder",
+        "Henry Bell",
+        "birth certificate",
+        "family"
+      ],
+      [
+        "will",
+        "estate",
+        "inheritance",
+        "bequest",
+        "contest",
+        "next-of-kin"
+      ],
+      [
+        "acknowledged",
+        "denied",
+        "never recognised",
+        "cut out",
+        "ignored"
+      ]
     ],
     "min_groups": 2
   },
   "method": {
     "canonical": "Poison — digitalis glycoside extracted from foxglove, added to Marcus's evening cocoa.",
     "concept_groups": [
-      ["poison", "poisoned", "digitalis", "foxglove", "glycoside", "extract", "plant"],
-      ["cocoa", "mug", "drink", "fireside"]
+      [
+        "poison",
+        "poisoned",
+        "digitalis",
+        "foxglove",
+        "glycoside",
+        "extract",
+        "plant"
+      ],
+      [
+        "cocoa",
+        "mug",
+        "drink",
+        "fireside"
+      ]
     ],
     "min_groups": 2
   },
   "opportunity": {
     "canonical": "Ruth had a spare key to Marcus's house and used it to enter at 21:00, adding the poison to the pre-prepared cocoa and burning a copy of the birth certificate in the study fireplace.",
     "concept_groups": [
-      ["spare key", "key", "let herself in", "entered the house"],
-      ["21:00", "nine o'clock", "evening", "cocoa already prepared"],
-      ["fireplace", "burnt", "ash", "destroyed evidence"]
+      [
+        "spare key",
+        "key",
+        "let herself in",
+        "entered the house"
+      ],
+      [
+        "21:00",
+        "nine o'clock",
+        "evening",
+        "cocoa already prepared"
+      ],
+      [
+        "fireplace",
+        "burnt",
+        "ash",
+        "destroyed evidence"
+      ]
     ],
     "min_groups": 1
   },
@@ -35,5 +85,14 @@
     "clue_ruth_key",
     "clue_cocoa_residue"
   ],
-  "explanation": "Correct. Ruth Calder killed Marcus Bell. Ruth is Marcus's illegitimate half-sister — Henry Bell's daughter by Doris Calder — never acknowledged by the Bell family despite living in the same village for twenty years. When Marcus revised his will to exclude Isabella and the clinic, he left a private note to his solicitor: 'if R. contests, she may have legal standing.' Ruth had confronted Marcus at 18:00 the previous evening; he told her to contest if she liked, but he would fight it. That night, Ruth harvested foxglove from her garden, extracted digitalis glycoside, and used her spare key to enter the house at 21:00. She added the extract to Marcus's pre-prepared cocoa and burned a copy of the birth certificate in the study. Marcus died in his chair at 22:40 of cardiac arrhythmia, indistinguishable from natural causes without targeted toxicology. The cracked vial in Ruth's fireplace ash, the cut foxgloves, the annotated pharmacy text, the mug residue, and — above all — the birth certificate hidden in the binding of a book in Marcus's study are the keys to this case."
+  "explanation": "Correct. Ruth Calder killed Marcus Bell. Ruth is Marcus's illegitimate half-sister — Henry Bell's daughter by Doris Calder — never acknowledged by the Bell family despite living in the same village for twenty years. When Marcus revised his will to exclude Isabella and the clinic, he left a private note to his solicitor: 'if R. contests, she may have legal standing.' Ruth had confronted Marcus at 18:00 the previous evening; he told her to contest if she liked, but he would fight it. That night, Ruth harvested foxglove from her garden, extracted digitalis glycoside, and used her spare key to enter the house at 21:00. She added the extract to Marcus's pre-prepared cocoa and burned a copy of the birth certificate in the study. Marcus died in his chair at 22:40 of cardiac arrhythmia, indistinguishable from natural causes without targeted toxicology. The cracked vial in Ruth's fireplace ash, the cut foxgloves, the annotated pharmacy text, the mug residue, and — above all — the birth certificate hidden in the binding of a book in Marcus's study are the keys to this case.",
+  "epilogues": {
+    "agent_ruth": "She never contested the will. She had the birth certificate, the grounds and, the solicitors agreed, a decent chance — and she let the date pass without filing. When they asked her why, she said she had not wanted the money. She had wanted to be in it.",
+    "agent_marcus": "The estate went to the nephew in Carlisle, who had met his uncle four times and who put the house on the market in the spring. The new owners took out the fireplace. Nobody in the village goes past it much.",
+    "agent_priya": "She kept the Tuesday appointment for three weeks after he died — let herself in, sat down with the ledgers at seven, and worked through them at the empty table. Then she stopped. The accounts have never been so accurate.",
+    "agent_isabella": "She was furious with him the night he died and she will be asked about it at every dinner party for the rest of her life. She has decided to simply say yes. Yes, I shouted at him. He was wrong, and I was right, and he died, and those are three separate facts.",
+    "agent_nadia": "It was Nadia who said the word digitalis, quietly, before anyone had asked her to. She has thought a great deal since about how easily it would have gone down as a bad heart.",
+    "agent_elias": "He remembered a Bell girl. He had remembered her for fifty years and never once said the name out loud, because it was not his to say. When it was finally asked of him, he answered, and then he went home early, which he never does.",
+    "agent_solicitor": "Whittle & Cross now telephone their clients about will revisions. They do not put them in the post."
+  }
 }

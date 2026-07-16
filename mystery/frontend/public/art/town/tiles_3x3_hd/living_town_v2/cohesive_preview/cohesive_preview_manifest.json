@@ -1,0 +1,26 @@
+{
+  "version": "living_town_v2_cohesive_preview_v1",
+  "purpose": "Non-destructive stitched preview background for ambient sprite review.",
+  "source_tiles": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A1_living_town_v2_fauna.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A2_living_town_v2_fauna.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A3_living_town_v2_fauna.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B1_living_town_v2_fauna.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B3_living_town_v2_fauna.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C1_living_town_v2_fauna.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C2_living_town_v2_fauna.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C3_living_town_v2_fauna.png"
+  },
+  "image": "/art/town/tiles_3x3_hd/living_town_v2/cohesive_preview/town_overworld_living_town_v2_fauna_cohesive_preview.jpg",
+  "contact_preview": "/art/town/tiles_3x3_hd/living_town_v2/cohesive_preview/town_overworld_living_town_v2_fauna_cohesive_preview_contact.png",
+  "process": [
+    "per-tile RGB mean/std normalization toward a tempered B2/global target",
+    "single stitched full-map image to remove browser tile edge sampling",
+    "blurred seam-band composite to reduce hard color jumps",
+    "subtle whole-map atmospheric grade, vignette, and fine grain"
+  ],
+  "limitations": [
+    "This preview reduces color and seam discontinuity but does not fully repaint misaligned roads or terrain features."
+  ]
+}

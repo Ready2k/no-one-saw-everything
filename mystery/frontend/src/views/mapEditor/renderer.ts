@@ -3,6 +3,7 @@
 
 import {
   ALLOWED_LAYERS,
+  AMBIENT_ASSET_SWATCHES,
   Bounds,
   Camera,
   LIGHT_ASSET_SWATCHES,
@@ -39,6 +40,17 @@ export interface SceneLight {
   width: number;
   height: number;
   semanticAssetId: string;
+  opacity?: number;
+  selected: boolean;
+}
+
+export interface SceneAmbient {
+  id: string;
+  assetId: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   opacity?: number;
   selected: boolean;
 }
@@ -103,6 +115,7 @@ export interface Scene {
   anchors: SceneAnchor[];
   props: SceneProp[];
   lights: SceneLight[];
+  ambientSprites: SceneAmbient[];
   overlay: ToolOverlay;
 }
 
@@ -292,6 +305,44 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.restore();
+      drawHandle(ctx, px + pw, py + ph);
+    }
+  }
+
+  // Ambient sprites (editor alignment boxes; runtime can animate from the
+  // saved asset_id and dimensions).
+  for (const amb of scene.ambientSprites) {
+    const px = X(amb.x);
+    const py = Y(amb.y);
+    const pw = amb.width * s;
+    const ph = amb.height * s;
+    if (px + pw < 0 || px > cssW || py + ph < 0 || py > cssH) continue;
+
+    const swatch = AMBIENT_ASSET_SWATCHES[amb.assetId] || { label: amb.assetId, color: "#bae6fd" };
+    ctx.save();
+    ctx.globalAlpha = amb.opacity ?? 0.6;
+    roundRectPath(ctx, px, py, Math.max(pw, 3), Math.max(ph, 3), Math.min(8, s * 0.25));
+    ctx.fillStyle = `${swatch.color}33`;
+    ctx.fill();
+    ctx.strokeStyle = amb.selected ? "#38bdf8" : `${swatch.color}cc`;
+    ctx.lineWidth = amb.selected ? 2 : 1.25;
+    if (!amb.selected) ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (s >= 4 && pw > 42 && ph > 16) {
+      ctx.globalAlpha = 0.95;
+      ctx.font = "700 10px -apple-system, 'Segoe UI', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#f8fafc";
+      ctx.shadowColor = "rgba(0,0,0,0.8)";
+      ctx.shadowBlur = 3;
+      ctx.fillText(swatch.label, px + pw / 2, py + ph / 2, pw - 8);
+      ctx.shadowBlur = 0;
+    }
+    ctx.restore();
+
+    if (amb.selected) {
       drawHandle(ctx, px + pw, py + ph);
     }
   }
