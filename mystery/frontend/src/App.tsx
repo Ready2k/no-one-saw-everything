@@ -162,7 +162,9 @@ export default function App() {
             locations.find((l) => l.location_id === id)?.name ?? id,
         });
         setCases(availableCases);
-        setShowIntro(!localStorage.getItem(introSeenKey(caseOverview.case_id)));
+        const forceIntroReplay = new URLSearchParams(window.location.search).get("intro") === "1";
+        setShowIntro(forceIntroReplay || !localStorage.getItem(introSeenKey(caseOverview.case_id)));
+        if (forceIntroReplay) setMode("investigation");
         markCaseStarted(caseOverview.case_id);
       })
       .catch((e) => setError(String(e)));

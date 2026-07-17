@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
 import type { MapReplayData } from "../types";
@@ -8,10 +8,10 @@ import Portrait from "../components/Portrait";
 import { audioManager } from "../audio";
 import { sfx } from "../sfx";
 
-type ScenePhase = "initial" | "time" | "victim" | "map" | "suspects" | "title" | "cta";
+type ScenePhase = "initial" | "time" | "victim" | "scene" | "suspects" | "title" | "cta";
 
 export default function Intro({ onBegin }: { onBegin: () => void }) {
-  const { caseOverview: c, agents } = useWorld();
+  const { caseOverview: c, agents, locations } = useWorld();
   const [mapData, setMapData] = useState<MapReplayData | null>(null);
   const [witnessIds, setWitnessIds] = useState<string[]>([]);
   const [phase, setPhase] = useState<ScenePhase>("initial");
@@ -37,6 +37,20 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
   const witnesses = witnessIds
     .map((id) => agents.find((a) => a.agent_id === id))
     .filter((a) => a != null);
+  const suspects = useMemo(
+    () => agents.filter((a) => !a.is_victim && !a.is_background).slice(0, 8),
+    [agents]
+  );
+  const discoveredBy = agents.find(
+    (a) => a.agent_id === c.discovered_by.agent_id
+  ) ?? c.discovered_by;
+  const location =
+    locations.find((l) => l.location_id === c.discovery_location.location_id) ??
+    c.discovery_location;
+  const locationArt =
+    location.illustration ??
+    location.building_art?.interior ??
+    location.building_art?.exterior;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -55,20 +69,20 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
       setPhase("time");
       audioManager.playStinger("tension");
       sfx.stampThunk();
-    }, 1000);
+    }, 250);
 
     const t2 = setTimeout(() => {
       setPhase("victim");
-    }, 4500);
+    }, 2200);
 
     const t3 = setTimeout(() => {
-      setPhase("map");
+      setPhase("scene");
       audioManager.playStinger("discovery");
-    }, 9500);
+    }, 5800);
 
     const t4 = setTimeout(() => {
       setPhase("suspects");
-    }, 15000);
+    }, 9800);
 
     return () => {
       clearTimeout(t1);
@@ -81,10 +95,10 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
   // Suspects flashing logic
   useEffect(() => {
     if (phase === "suspects") {
-      if (witnesses.length > 0) {
+      if (suspects.length > 0) {
         let count = 0;
         const interval = setInterval(() => {
-          if (count < witnesses.length) {
+          if (count < suspects.length) {
             setVisibleSuspects(count + 1);
             sfx.pinPush();
             count++;
@@ -105,7 +119,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
         return () => clearTimeout(t);
       }
     }
-  }, [phase, witnesses.length]);
+  }, [phase, suspects.length]);
 
   useEffect(() => {
     if (phase === "title") {
@@ -117,25 +131,51 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
   }, [phase]);
 
   return (
-    <div className="intro-scene">
+    <div className="intro-scene" data-phase={phase}>
       <button className="intro-skip" onClick={onBegin} title="Skip (Esc)">
         Skip ›
       </button>
 
-      {/* Layer 1: Map/Location (Ken Burns) */}
-      <div className={`cinematic-layer ${phase === "map" || phase === "suspects" || phase === "title" || phase === "cta" ? "active" : ""}`}>
+      <div className="cinematic-backdrop" aria-hidden="true">
+        {locationArt ? (
+          <img src={locationArt} alt="" draggable={false} />
+        ) : mapData ? (
+          <MapCrop
+            data={mapData}
+            locationId={c.discovery_location.location_id}
+            width={1200}
+            height={720}
+            className="cinematic-backdrop-map"
+          />
+        ) : null}
+      </div>
+
+      {/* Layer 1: Evidence location */}
+      <div className={`cinematic-layer ${phase === "scene" || phase === "suspects" || phase === "title" || phase === "cta" ? "active" : ""}`}>
         <div className="cinematic-map-container">
-          {mapData ? (
-            <MapCrop data={mapData} locationId={c.discovery_location.location_id} />
-          ) : c.discovery_location.illustration ? (
+          {locationArt ? (
             <img
-              src={c.discovery_location.illustration}
-              alt={c.discovery_location.name}
+              src={locationArt}
+              alt={location.name}
               draggable={false}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : mapData ? (
+            <MapCrop
+              data={mapData}
+              locationId={c.discovery_location.location_id}
+              width={900}
+              height={520}
+              className="cinematic-map-crop"
             />
           ) : null}
         </div>
+        {phase === "scene" && (
+          <div className="cinematic-scene-brief">
+            <p className="cinematic-kicker">Discovery Scene</p>
+            <h2>{location.name}</h2>
+            <p>{c.scene_description || c.overview_text}</p>
+          </div>
+        )}
       </div>
 
       {/* Layer 2: Time */}
@@ -147,8 +187,15 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
       <div className={`cinematic-layer ${phase === "victim" ? "active" : ""}`}>
         {phase === "victim" && (
           <div className="cinematic-victim">
-            <Portrait agent={c.victim} />
+            <div className="cinematic-victim-card">
+              <Portrait agent={c.victim} size="large" />
+            </div>
             <h1>{c.victim.full_name} is dead.</h1>
+            <div className="cinematic-facts">
+              <span>{c.discovery_time}</span>
+              <span>{location.name}</span>
+              <span>Found by {discoveredBy.full_name}</span>
+            </div>
           </div>
         )}
       </div>
@@ -156,15 +203,24 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
       {/* Layer 4: Suspects */}
       <div className={`cinematic-layer ${phase === "suspects" ? "active" : ""}`}>
         {phase === "suspects" && (
-          <div className="cinematic-suspects">
-            {witnesses.map((w, idx) => (
+          <div className="cinematic-suspect-wall">
+            <p className="cinematic-kicker">People In The Window</p>
+            <div className="cinematic-suspects">
+              {suspects.slice(0, visibleSuspects).map((w) => (
               <div 
                 key={w.agent_id} 
-                className={`cinematic-suspect ${idx < visibleSuspects ? 'flash persist' : ''}`}
+                className="cinematic-suspect flash"
               >
-                <Portrait agent={w} />
+                <Portrait agent={w} size="large" />
+                <span>{w.full_name}</span>
               </div>
-            ))}
+              ))}
+            </div>
+            {witnesses.length > 0 && (
+              <p className="cinematic-witness-note">
+                {witnesses.length} seen near the discovery scene. None saw enough.
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -174,7 +230,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
         {(phase === "title" || phase === "cta") && (
           <div className="cinematic-title">
             No One Saw<br />Everything
-            <span>A Generative Mystery</span>
+            <span>{c.title}</span>
           </div>
         )}
         {phase === "cta" && (
