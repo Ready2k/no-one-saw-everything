@@ -44,6 +44,7 @@
     "sprite_asset": "Marcus_Chen.png",
     "portrait_art": {
       "calm": "/art/portraits/marcus_calm.png",
+      "deceased": "/art/portraits/marcus_deceased.png",
       "defensive": null,
       "cracking": null
     },
@@ -94,6 +95,7 @@
     "sprite_asset": "Sarah_Whitmore.png",
     "portrait_art": {
       "calm": "/art/portraits/ruth_calm.png",
+      "deceased": "/art/portraits/ruth_deceased.png",
       "defensive": null,
       "cracking": null
     },
@@ -137,6 +139,7 @@
     "sprite_asset": "Priya_Kapoor.png",
     "portrait_art": {
       "calm": "/art/portraits/priya_calm.png",
+      "deceased": "/art/portraits/priya_deceased.png",
       "defensive": null,
       "cracking": null
     },
@@ -180,6 +183,7 @@
     "sprite_asset": "Isabella_Rodriguez.png",
     "portrait_art": {
       "calm": "/art/portraits/isabella_calm.png",
+      "deceased": "/art/portraits/isabella_deceased.png",
       "defensive": null,
       "cracking": null
     },
@@ -223,6 +227,7 @@
     "sprite_asset": "Ayesha_Khan.png",
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.png",
+      "deceased": "/art/portraits/nadia_deceased.png",
       "defensive": null,
       "cracking": null
     },
@@ -265,6 +270,7 @@
     "sprite_asset": "Adam_Smith.png",
     "portrait_art": {
       "calm": "/art/portraits/elias_calm.png",
+      "deceased": "/art/portraits/elias_deceased.png",
       "defensive": null,
       "cracking": null
     },
@@ -308,6 +314,7 @@
     "sprite_asset": "Leo_Patterson.png",
     "portrait_art": {
       "calm": "/art/portraits/solicitor_calm.png",
+      "deceased": "/art/portraits/solicitor_deceased.png",
       "defensive": null,
       "cracking": null
     },

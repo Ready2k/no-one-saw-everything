@@ -40,6 +40,7 @@ def test_project_agent_round_trips_portrait_art():
         "calm": "art/calm.png",
         "defensive": None,
         "cracking": "art/cracking.png",
+        "deceased": None,
     }
 
 
