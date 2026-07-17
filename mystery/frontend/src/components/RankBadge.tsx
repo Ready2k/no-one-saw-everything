@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { clearHistory, getHistory, getRank } from "../progress";
+import { sfx } from "../sfx";
 
 export default function RankBadge() {
   const [open, setOpen] = useState(false);
@@ -11,7 +12,10 @@ export default function RankBadge() {
     <div className="rank-badge-wrap">
       <button
         className="tool-btn rank-badge"
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          sfx.click();
+          setOpen(!open);
+        }}
         title="Your detective record"
       >
         🕵️ {rank.title}
@@ -49,6 +53,7 @@ export default function RankBadge() {
             <button
               className="reset small-button"
               onClick={() => {
+                sfx.click();
                 if (confirm("Clear your detective record?")) {
                   clearHistory();
                   bump((n) => n + 1);

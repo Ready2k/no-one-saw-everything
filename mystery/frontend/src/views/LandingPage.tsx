@@ -38,6 +38,17 @@ export default function LandingPage({
 }: LandingPageProps) {
   const [showGuide, setShowGuide] = useState(false);
   const activeCase = world?.caseOverview;
+  const activeCaseMeta = activeCase
+    ? cases.find((c) => c.case_id === activeCase.case_id)
+    : null;
+  const hasMeaningfulProgress = Boolean(
+    activeCaseMeta?.progress &&
+      (activeCaseMeta.progress.clues_found > 0 ||
+        activeCaseMeta.progress.suspects_interviewed > 0 ||
+        activeCaseMeta.progress.notes > 0 ||
+        activeCaseMeta.progress.hints_taken > 0 ||
+        activeCaseMeta.progress.accused)
+  );
 
   const activeCasePrefix = activeCase?.case_id.startsWith('case_')
     ? `Case Nº ${activeCase.case_id.split('_')[1]}`
@@ -53,6 +64,22 @@ export default function LandingPage({
   const openFolder = () => {
     sfx.pageTurn();
     onContinue();
+  };
+
+  const restartActiveCase = async () => {
+    if (!activeCase) return;
+    if (
+      !confirm(
+        `Restart "${activeCase.title}" from the beginning? This will discard the current clues, notes, interviews, and accusation for this case.`
+      )
+    ) {
+      return;
+    }
+    await api.activate(activeCase.case_id, true);
+    localStorage.removeItem(introSeenKey(activeCase.case_id));
+    clearRewindBriefingSeen(activeCase.case_id);
+    clearCaseStarted(activeCase.case_id);
+    location.reload();
   };
 
   /** Opening a case resumes it, and leaving one no longer destroys it — investigations are saved
@@ -104,13 +131,25 @@ export default function LandingPage({
                 <div className="hub-folder-meta">
                   <span className="hub-case-no">{activeCasePrefix}</span>
                   <span className="hub-case-sep">•</span>
-                  <span className="hub-case-status">In progress</span>
+                  <span className="hub-case-status">
+                    {hasMeaningfulProgress ? "In progress" : "Ready to start"}
+                  </span>
                 </div>
                 <h2 className="hub-case-title">{activeCase.title}</h2>
                 <p className="hub-case-sub">Discovered {activeCase.discovery_time}</p>
                 <button className="primary hub-continue" onClick={openFolder}>
-                  Continue Investigation
+                  {hasMeaningfulProgress ? "Continue Investigation" : "Start Investigation"}
                 </button>
+                <div className="hub-case-actions" aria-label="Case actions">
+                  <button className="hub-case-link" onClick={onOpenNewCase}>
+                    Abandon / Change Case
+                  </button>
+                  {hasMeaningfulProgress && (
+                    <button className="hub-case-link danger" onClick={restartActiveCase}>
+                      Restart Investigation
+                    </button>
+                  )}
+                </div>
               </>
             ) : (
               <div className="hub-folder-empty">

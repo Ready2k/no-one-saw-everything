@@ -12,19 +12,17 @@ interface NewCaseModalProps {
 const introSeenKey = (caseId: string) => `mystery_intro_seen_${caseId}`;
 
 export default function NewCaseModal({ cases, activeCaseId, onClose }: NewCaseModalProps) {
-  const handleSelectCase = async (newCaseId: string, caseTitle: string) => {
+  const handleSelectCase = async (newCaseId: string) => {
     if (newCaseId === activeCaseId) {
       alert("This case is already active.");
       return;
     }
 
-    if (confirm(`Start investigation for ${caseTitle}? Your current progress on the active case will be lost.`)) {
-      await api.activate(newCaseId);
-      localStorage.removeItem(introSeenKey(newCaseId));
-      clearRewindBriefingSeen(newCaseId);
-      clearCaseStarted(newCaseId);
-      location.reload();
-    }
+    await api.activate(newCaseId);
+    localStorage.removeItem(introSeenKey(newCaseId));
+    clearRewindBriefingSeen(newCaseId);
+    clearCaseStarted(newCaseId);
+    location.reload();
   };
 
   return (
@@ -49,7 +47,7 @@ export default function NewCaseModal({ cases, activeCaseId, onClose }: NewCaseMo
               return (
                 <button
                   key={c.case_id}
-                  onClick={() => handleSelectCase(c.case_id, c.title)}
+                  onClick={() => handleSelectCase(c.case_id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',

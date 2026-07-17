@@ -240,10 +240,12 @@ class AudioManager {
     }
   }
 
-  public playUi(name: string) {
-    if (!this.state.unlocked) return;
+  public playUi(name: string): boolean {
+    if (!this.state.unlocked) return false;
     const howl = this.getHowl('ui', name, UI_MULT);
-    if (howl) howl.play();
+    if (!howl) return false;
+    howl.play();
+    return true;
   }
 }
 

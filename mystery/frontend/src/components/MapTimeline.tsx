@@ -1,4 +1,5 @@
 import { hhmm, minutes } from "../api";
+import { sfx } from "../sfx";
 
 export default function MapTimeline({
   startMin,
@@ -27,7 +28,13 @@ export default function MapTimeline({
 
   return (
     <div className="map-timeline">
-      <button className="map-play" onClick={onTogglePlay}>
+      <button
+        className="map-play"
+        onClick={() => {
+          sfx.click();
+          onTogglePlay();
+        }}
+      >
         {playing ? "⏸ Pause" : "▶ Play"}
       </button>
       <span className="map-clock">{hhmm(current)}</span>
@@ -49,7 +56,10 @@ export default function MapTimeline({
       <select
         className="map-speed"
         value={speed}
-        onChange={(e) => onSpeed(Number(e.target.value))}
+        onChange={(e) => {
+          sfx.click();
+          onSpeed(Number(e.target.value));
+        }}
         title="Replay speed"
       >
         <option value={0.5}>0.5×</option>

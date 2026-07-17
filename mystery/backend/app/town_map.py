@@ -94,6 +94,8 @@ ALLOWED_NESTING = {
     ("loc_village_square", "loc_fountain"),
     ("loc_hobbs_cafe", "loc_cafe_kitchen"),
     ("loc_hobbs_cafe", "loc_cafe_storage"),
+    ("loc_hobbs_cafe", "loc_clara_flat"),
+    ("loc_cafe_storage", "loc_clara_flat"),
     ("loc_bookshop", "loc_bookshop_back"),
     ("loc_clinic", "loc_clinic_dispensary"),
     ("loc_marcus_house", "loc_marcus_study"),
@@ -807,6 +809,7 @@ _BOUNDS_TILES: dict[str, tuple[int, int, int, int]] = {
     "loc_lake": (66, 50, 14, 10),
     "loc_woodland": (65, 82, 3, 12),
     "loc_meadow": (94, 85, 12, 9),
+    "loc_back_lane": (100, 88, 12, 2),
 }
 
 
@@ -842,14 +845,14 @@ CANONICAL_ADJACENCY: dict[str, list[str]] = {
     "loc_hobbs_cafe": ["loc_village_square", "loc_cafe_kitchen", "loc_clara_flat"],
     "loc_cafe_kitchen": ["loc_hobbs_cafe", "loc_cafe_storage"],
     "loc_cafe_storage": ["loc_cafe_kitchen", "loc_rear_alley"],
-    "loc_rear_alley": ["loc_village_square", "loc_hobbs_cafe", "loc_bookshop"],
+    "loc_rear_alley": ["loc_village_square", "loc_hobbs_cafe", "loc_bookshop", "loc_back_lane"],
     "loc_bookshop": ["loc_village_square", "loc_bookshop_back", "loc_rear_alley"],
     "loc_bookshop_back": ["loc_bookshop", "loc_rear_alley"],
     "loc_clinic": ["loc_village_square", "loc_clinic_dispensary"],
     "loc_clinic_dispensary": ["loc_clinic"],
     "loc_marcus_house": ["loc_village_square", "loc_marcus_study"],
     "loc_marcus_study": ["loc_marcus_house"],
-    "loc_owen_house": ["loc_village_square"],
+    "loc_owen_house": ["loc_village_square", "loc_back_lane"],
     "loc_elias_house": ["loc_village_square"],
     "loc_elias_bench": ["loc_village_square", "loc_fountain"],
     "loc_clara_flat": ["loc_hobbs_cafe"],
@@ -863,12 +866,13 @@ CANONICAL_ADJACENCY: dict[str, list[str]] = {
     "loc_lake": ["loc_village_square"],
     "loc_woodland": ["loc_village_square"],
     "loc_meadow": ["loc_village_square"],
+    "loc_back_lane": ["loc_rear_alley", "loc_owen_house"],
 }
 
 LOCATION_FUNCTION_TAGS: dict[str, dict[str, Any]] = {
     "loc_village_square": {"display_name": "Village Square", "function_tag": "public_square", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external"},
     "loc_fountain": {"display_name": "Village Fountain", "function_tag": "fountain", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external"},
-    "loc_elias_bench": {"display_name": "Elias's Bench", "function_tag": "bench", "building_role": "landmark", "case_ids": ["case_003"], "zoom_behavior": "external"},
+    "loc_elias_bench": {"display_name": "Elias's Bench", "function_tag": "bench", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_005"], "zoom_behavior": "external"},
     "loc_hobbs_cafe": {"display_name": "Hobbs Cafe", "function_tag": "cafe", "building_role": "business", "case_ids": ["case_001", "case_002", "case_003", "case_005"], "zoom_behavior": "external_to_internal"},
     "loc_cafe_kitchen": {"display_name": "Cafe Kitchen", "function_tag": "kitchen", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
     "loc_cafe_storage": {"display_name": "Cafe Storage Room", "function_tag": "storage", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
@@ -879,7 +883,7 @@ LOCATION_FUNCTION_TAGS: dict[str, dict[str, Any]] = {
     "loc_clinic": {"display_name": "Village Clinic", "function_tag": "clinic", "building_role": "public_service", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external_to_internal"},
     "loc_clinic_dispensary": {"display_name": "Clinic Dispensary", "function_tag": "dispensary", "building_role": "service_room", "case_ids": ["case_003"], "parent_location_id": "loc_clinic", "zoom_behavior": "internal"},
     "loc_marcus_house": {"display_name": "Marcus Bell's House", "function_tag": "house", "building_role": "residence", "case_ids": ["case_001", "case_006"], "zoom_behavior": "external_to_internal"},
-    "loc_marcus_study": {"display_name": "Marcus's Study", "function_tag": "study", "building_role": "private_room", "case_ids": ["case_006"], "parent_location_id": "loc_marcus_house", "zoom_behavior": "internal"},
+    "loc_marcus_study": {"display_name": "Marcus's Study", "function_tag": "study", "building_role": "private_room", "case_ids": ["case_001", "case_006"], "parent_location_id": "loc_marcus_house", "zoom_behavior": "internal"},
     "loc_owen_house": {"display_name": "Owen Price's House & Yard", "function_tag": "house_and_yard", "building_role": "residence_workyard", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external_to_internal"},
     "loc_pub": {"display_name": "The Mallet & Crown", "function_tag": "pub", "building_role": "business", "case_ids": ["case_004"], "zoom_behavior": "external_to_internal"},
     "loc_ben_flat": {"display_name": "Ben's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_004"], "zoom_behavior": "internal"},
@@ -892,6 +896,7 @@ LOCATION_FUNCTION_TAGS: dict[str, dict[str, Any]] = {
     "loc_lake": {"display_name": "Lover's Lake", "function_tag": "lake", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
     "loc_woodland": {"display_name": "Whispering Woodland", "function_tag": "woodland", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
     "loc_meadow": {"display_name": "Green Meadow", "function_tag": "meadow", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_back_lane": {"display_name": "The Back Lane", "function_tag": "service_lane", "building_role": "exterior_service", "case_ids": ["case_005"], "zoom_behavior": "external"},
 }
 
 
@@ -1097,9 +1102,9 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         "mode": "canonical_overworld",
         "map": CANONICAL_MAP,
         "visible_location_ids": [
-            "loc_village_square", "loc_fountain", "loc_hobbs_cafe",
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
             "loc_cafe_kitchen", "loc_cafe_storage", "loc_rear_alley",
-            "loc_bookshop", "loc_clinic", "loc_marcus_house",
+            "loc_bookshop", "loc_clinic", "loc_marcus_house", "loc_marcus_study",
             "loc_owen_house", "loc_clara_flat", "loc_priya_flat",
             "loc_nadia_flat", "loc_elias_house",
         ],
@@ -1107,16 +1112,18 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         "crop_padding_by_location": {
             "loc_village_square": 2.1,
             "loc_fountain": 2.0,
+            "loc_elias_bench": 2.0,
             "loc_hobbs_cafe": 2.3,
             "loc_bookshop": 2.3,
             "loc_clinic": 2.4,
+            "loc_marcus_study": 2.0,
         },
     },
     "case_002": {
         "mode": "canonical_overworld",
         "map": CANONICAL_MAP,
         "visible_location_ids": [
-            "loc_village_square", "loc_fountain", "loc_bookshop",
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_bookshop",
             "loc_bookshop_back", "loc_rear_alley", "loc_hobbs_cafe",
             "loc_clinic", "loc_owen_house", "loc_priya_flat",
         ],
@@ -1124,9 +1131,27 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         "crop_padding_by_location": {
             "loc_village_square": 2.1,
             "loc_fountain": 2.0,
+            "loc_elias_bench": 2.0,
             "loc_bookshop": 2.35,
             "loc_bookshop_back": 2.0,
             "loc_rear_alley": 2.6,
+        },
+    },
+    "case_003": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_clinic", "loc_clinic_dispensary",
+            "loc_fountain", "loc_hobbs_cafe", "loc_owen_house",
+            "loc_clara_flat", "loc_elias_bench",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_clinic": 2.4,
+            "loc_clinic_dispensary": 2.0,
+            "loc_elias_bench": 2.0,
         },
     },
     "case_004": {
@@ -1148,7 +1173,43 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
             "loc_ben_flat": 2.2,
             "loc_priya_flat": 2.2,
         },
-    }
+    },
+    "case_005": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_rear_alley", "loc_hobbs_cafe",
+            "loc_clara_flat", "loc_owen_house", "loc_clinic",
+            "loc_bookshop", "loc_fountain", "loc_back_lane", "loc_elias_bench",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_rear_alley": 2.6,
+            "loc_hobbs_cafe": 2.3,
+            "loc_clara_flat": 2.0,
+            "loc_owen_house": 2.2,
+            "loc_back_lane": 2.4,
+            "loc_elias_bench": 2.0,
+        },
+    },
+    "case_006": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_marcus_house", "loc_marcus_study",
+            "loc_ruth_cottage", "loc_bookshop", "loc_clinic",
+            "loc_solicitors_office", "loc_priya_flat",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_marcus_house": 2.2,
+            "loc_marcus_study": 2.0,
+            "loc_ruth_cottage": 2.2,
+            "loc_solicitors_office": 2.2,
+        },
+    },
 }
 
 # The temporary daylight pilot image is a versioned reference asset, not a
@@ -1327,10 +1388,17 @@ def map_config(case_id: str) -> dict[str, Any] | None:
     return CASE_MAPS.get(case_id)
 
 
-def _clue_ids_by_object(case: CaseData) -> dict[str, list[str]]:
+def _clue_ids_by_object(case: CaseData, object_locations: dict[str, str]) -> dict[str, list[str]]:
     result: dict[str, list[str]] = {}
     for clue in case.clues:
         for object_id in clue.linked_object_ids or []:
+            object_location = object_locations.get(object_id)
+            clue_location = clue.discoverability.location_id
+            # Do not let a trail/absence clue reveal the object's rendered
+            # final marker in another room. The object marker belongs to the
+            # clue found at that same visual location.
+            if clue_location and object_location and clue_location != object_location:
+                continue
             result.setdefault(object_id, []).append(clue.clue_id)
     return result
 
@@ -1340,34 +1408,47 @@ def pilot_objects(
     discovered_clue_ids: set[str],
     visible_location_ids: set[str] | None = None,
 ) -> list[dict[str, Any]]:
-    """Return safe Case 004 visual object states.
+    """Return safe visual object states for cases using the canonical town.
 
     A visible-but-undiscovered object is deliberately suppressed: the map
     knows the semantic anchor exists, but the client receives no evidence
     marker to render. A discovered state is only true when the existing clue
     discovery session contains one of the object's linked clue IDs.
     """
-    if case.case.case_id != "case_004":
-        return []
-    
-    # Load dynamic object anchors from town_layout.json if available
     layout = load_town_layout()
+    if not layout and case.case.case_id not in CASE_MAPS:
+        return []
+
     overridden_anchors = {}
     if layout:
-        overridden_anchors = layout.get("case_overrides", {}).get("case_004", {}).get("object_anchors", {})
+        overridden_anchors = layout.get("case_overrides", {}).get(case.case.case_id, {}).get("object_anchors", {})
 
-    clue_ids = _clue_ids_by_object(case)
+    object_locations = {
+        obj.object_id: (obj.final_location_id or obj.normal_location_id or "")
+        for obj in case.objects
+    }
+    for object_id, override in overridden_anchors.items():
+        if isinstance(override, dict) and override.get("location_id"):
+            object_locations[object_id] = override["location_id"]
+
+    clue_ids = _clue_ids_by_object(case, object_locations)
     objects = []
     for obj in case.objects:
-        visual = SEMANTIC_ASSETS.get(obj.object_id)
-        if not visual:
-            continue
-        location_id = obj.final_location_id or obj.normal_location_id
+        visual = SEMANTIC_ASSETS.get(obj.object_id, {
+            "category": "evidence",
+            "asset": obj.object_id,
+            "glyph": "◆",
+        })
+        override = overridden_anchors.get(obj.object_id)
+        location_id = (
+            override.get("location_id")
+            if isinstance(override, dict) and override.get("location_id")
+            else obj.final_location_id or obj.normal_location_id
+        )
         location = CANONICAL_LOCATIONS.get(location_id or "")
         if not location:
             continue
         
-        override = overridden_anchors.get(obj.object_id)
         if override and "anchor" in override:
             ax, ay = override["anchor"]["x"], override["anchor"]["y"]
             anchor_pos = {"x": ax * 32, "y": ay * 32}
@@ -1421,6 +1502,36 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
     """Return the visual-only contract for the active case."""
     config = map_config(case.case.case_id)
     if not config:
+        if case.case.case_id.startswith("gen_"):
+            layout = load_town_layout()
+            visible_location_ids_list = [
+                loc.location_id
+                for loc in case.locations
+                if loc.location_id in CANONICAL_LOCATIONS
+            ]
+            visible_location_ids = set(visible_location_ids_list)
+            canonical_locations_dict = {}
+            for loc_id in visible_location_ids_list:
+                pos, bounds, layer = pilot_location_visuals(loc_id, case.case.case_id)
+                if pos and bounds:
+                    canonical_locations_dict[loc_id] = _tagged_location_payload(loc_id, pos, bounds, layer)
+                internal = pilot_location_bounds_internal(loc_id)
+                if internal and loc_id in canonical_locations_dict:
+                    canonical_locations_dict[loc_id]["bounds_internal"] = internal
+            object_visuals = pilot_objects(case, discovered_clue_ids, visible_location_ids)
+            return {
+                "mode": "canonical_overworld",
+                "definition_id": CANONICAL_MAP["definition_id"],
+                "visible_location_ids": visible_location_ids_list,
+                "overlays": [],
+                "light_overlays": resolve_town_lights(layout, visible_location_ids),
+                "ambient_sprites": resolve_town_ambient_sprites(layout),
+                "crop_padding_by_location": {},
+                "object_visuals": object_visuals,
+                "objects": object_visuals,
+                "adjacency": {k: v for k, v in CANONICAL_ADJACENCY.items() if k in visible_location_ids},
+                "canonical_locations": canonical_locations_dict,
+            }
         return {
             "mode": "legacy_fallback",
             "definition_id": "legacy_the_ville",

@@ -62,7 +62,7 @@
   {
     "event_id": "ev_1900_isabella_visits",
     "time": "19:00",
-    "location_id": "loc_marcus_house",
+    "location_id": "loc_marcus_study",
     "agent_ids": [
       "agent_isabella",
       "agent_marcus"

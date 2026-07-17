@@ -2,7 +2,7 @@
   {
     "event_id": "ev_0600_marcus_wakes",
     "time": "06:00",
-    "location_id": "loc_marcus_house",
+    "location_id": "loc_marcus_study",
     "agent_ids": [
       "agent_marcus"
     ],
@@ -14,7 +14,7 @@
   {
     "event_id": "ev_0615_marcus_ledger",
     "time": "06:15",
-    "location_id": "loc_marcus_house",
+    "location_id": "loc_marcus_study",
     "agent_ids": [
       "agent_marcus"
     ],
@@ -46,7 +46,7 @@
   {
     "event_id": "ev_0640_elias_bench",
     "time": "06:40",
-    "location_id": "loc_village_square",
+    "location_id": "loc_elias_bench",
     "agent_ids": [
       "agent_elias"
     ],

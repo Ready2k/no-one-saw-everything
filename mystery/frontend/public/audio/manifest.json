@@ -23,6 +23,11 @@
     "case_failed": "/audio/stingers/case_failed.mp3"
   },
   "ui": {
-    "click": "/audio/ui/click.mp3"
+    "click": "/audio/ui/click.wav",
+    "paper_slide": "/audio/ui/paper_slide.wav",
+    "page_turn": "/audio/ui/page_turn.wav",
+    "pin_push": "/audio/ui/pin_push.wav",
+    "stamp_thunk": "/audio/ui/stamp_thunk.wav",
+    "pencil_scratch": "/audio/ui/pencil_scratch.wav"
   }
 }

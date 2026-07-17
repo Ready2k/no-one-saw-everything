@@ -93,6 +93,16 @@
     "visibility_type": "public"
   },
   {
+    "location_id": "loc_elias_bench",
+    "name": "Elias's Bench",
+    "description": "The specific bench in the village square where Elias always sits, facing the square, watching everyone who crosses it.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_fountain"
+    ],
+    "visibility_type": "public"
+  },
+  {
     "location_id": "loc_back_lane",
     "name": "The Back Lane",
     "description": "A rutted service lane running behind the yards and the cafe's rear wall. No windows overlook it. It is the one way across the village that the square cannot see, and half the village has forgotten it is there.",

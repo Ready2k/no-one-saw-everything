@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cinematicsPref, setCinematicsPref } from "../settings";
+import { sfx } from "../sfx";
 
 export default function CinematicsToggle() {
   const [on, setOn] = useState(cinematicsPref());
@@ -13,6 +14,7 @@ export default function CinematicsToggle() {
       }
       aria-label={on ? "Disable cinematic transitions" : "Enable cinematic transitions"}
       onClick={() => {
+        sfx.click();
         setCinematicsPref(!on);
         setOn(!on);
       }}

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "./api";
-import type { AgentPublic, CaseOverview, LocationPublic } from "./types";
+import type { AgentPublic, CaseOverview, HintsResponse, LocationPublic } from "./types";
 import Intro from "./views/Intro";
 import Overview from "./views/Overview";
 import Rewind from "./views/Rewind";
@@ -98,6 +98,13 @@ export interface CaseMeta {
   } | null;
 }
 
+interface InvestigationStatus {
+  discovered_clue_count: number;
+  claim_count: number;
+  challenge_count: number;
+  accused: boolean;
+}
+
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname + window.location.hash);
 
@@ -138,6 +145,8 @@ export default function App() {
   const [showLlmSettingsModal, setShowLlmSettingsModal] = useState(false);
   const [mapJump, setMapJump] = useState<MapJump | null>(null);
   const [suspectFocus, setSuspectFocus] = useState<string | null>(null);
+  const [investigationStatus, setInvestigationStatus] = useState<InvestigationStatus | null>(null);
+  const [investigationHints, setInvestigationHints] = useState<HintsResponse | null>(null);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -164,6 +173,30 @@ export default function App() {
       audioManager.playAmbient("investigation");
     }
   }, [tab]);
+
+  useEffect(() => {
+    if (!world || mode !== "investigation" || showIntro) return;
+    let cancelled = false;
+    const refreshProgress = () => {
+      Promise.all([api.status(), api.hints()])
+        .then(([status, hints]) => {
+          if (cancelled) return;
+          setInvestigationStatus(status);
+          setInvestigationHints(hints);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setInvestigationStatus(null);
+          setInvestigationHints(null);
+        });
+    };
+    refreshProgress();
+    const timer = window.setInterval(refreshProgress, 8000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [world, mode, showIntro]);
 
   if (error)
     return (
@@ -272,6 +305,8 @@ export default function App() {
           currentTab={tab} 
           onTabChange={setTab} 
           onReturnToHub={() => setMode("hub")} 
+          status={investigationStatus}
+          hints={investigationHints}
         />
         <main className="content">
           {/* Keyed on tab so each phase enters like a scene cut, not a swap */}

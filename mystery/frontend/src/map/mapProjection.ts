@@ -56,13 +56,29 @@ export function buildTracks(data: MapReplayData): Map<string, TrackPoint[]> {
   return tracks;
 }
 
-function spread(index: number, count: number): { dx: number; dy: number } {
+// The jitter radius below was tuned against the legacy fallback map, whose
+// coordinate space is 719px wide. Canonical-overworld cases render in a much
+// larger space (6144px wide), so the base radius must scale with the map's
+// actual width or agents sharing a location (e.g. several background
+// villagers with no authored home, parked at the square) render stacked
+// instead of spread. The result is then capped to the location's own footprint
+// (when known) so a crowded plaza doesn't push someone past a tiny back room's
+// walls into the next building.
+const SPREAD_REFERENCE_MAP_WIDTH = 719;
+const SPREAD_FOOTPRINT_FRACTION = 0.42; // keeps the outermost agent inside the bounds
+
+function spread(
+  index: number,
+  count: number,
+  mapWidth: number,
+  footprint: { width: number; height: number } | null
+): { dx: number; dy: number } {
   if (count <= 1) return { dx: 0, dy: 0 };
-  // Radius grows with crowd size so agents sharing a default location (e.g.
-  // several villagers with no authored home, parked at the square) don't
-  // fully overlap. Map coordinates are in the ~719-wide reference space;
-  // the map view supports zooming in to resolve dense clusters further.
-  const radius = Math.min(50, 20 + count * 7);
+  const scale = mapWidth / SPREAD_REFERENCE_MAP_WIDTH;
+  let radius = Math.min(50, 20 + count * 7) * scale;
+  if (footprint) {
+    radius = Math.min(radius, Math.min(footprint.width, footprint.height) * SPREAD_FOOTPRINT_FRACTION);
+  }
   const angle = (2 * Math.PI * index) / count - Math.PI / 2;
   return { dx: Math.cos(angle) * radius, dy: Math.sin(angle) * radius };
 }
@@ -118,7 +134,8 @@ export function agentPinsAt(
   return raw.map((r) => {
     const index = seen.get(r.locId) ?? 0;
     seen.set(r.locId, index + 1);
-    const { dx, dy } = spread(index, byLoc.get(r.locId) ?? 1);
+    const bounds = data.locations.find((l) => l.location_id === r.locId)?.map_bounds ?? null;
+    const { dx, dy } = spread(index, byLoc.get(r.locId) ?? 1, data.map.width, bounds);
     return {
       agent: r.agent,
       x: r.pos.x + dx,

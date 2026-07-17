@@ -4,6 +4,7 @@ import { useWorld } from "../App";
 import type { AccusationResult, CluePublic, Note } from "../types";
 import AccusationCeremony from "./AccusationCeremony";
 import { audioManager } from "../audio";
+import { sfx } from "../sfx";
 import { recordCaseResult } from "../progress";
 import Portrait from "../components/Portrait";
 
@@ -94,7 +95,10 @@ export default function Accuse() {
             <button
               type="button"
               className="custom-select-trigger"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              onClick={() => {
+                sfx.click();
+                setDropdownOpen(!dropdownOpen);
+              }}
             >
               {accused ? (
                 <>
@@ -116,6 +120,7 @@ export default function Accuse() {
                     type="button"
                     className={`custom-select-option ${accused === a.agent_id ? "selected" : ""}`}
                     onClick={() => {
+                      sfx.click();
                       setAccused(a.agent_id);
                       setDropdownOpen(false);
                     }}
@@ -158,7 +163,10 @@ export default function Accuse() {
             <input
               type="checkbox"
               checked={clueIds.has(c.clue_id)}
-              onChange={() => toggle(clueIds, c.clue_id, setClueIds)}
+              onChange={() => {
+                sfx.click();
+                toggle(clueIds, c.clue_id, setClueIds);
+              }}
             />
             <span>
               <strong>{c.title}</strong>
@@ -175,7 +183,10 @@ export default function Accuse() {
                 <input
                   type="checkbox"
                   checked={noteIds.has(n.note_id)}
-                  onChange={() => toggle(noteIds, n.note_id, setNoteIds)}
+                  onChange={() => {
+                    sfx.click();
+                    toggle(noteIds, n.note_id, setNoteIds);
+                  }}
                 />
                 <span>
                   <span className="badge">{n.note_type}</span> {n.title}
@@ -188,4 +199,3 @@ export default function Accuse() {
     </div>
   );
 }
-

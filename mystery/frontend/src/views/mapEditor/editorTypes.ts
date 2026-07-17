@@ -319,6 +319,10 @@ export const ALLOWED_NESTING = [
   ["loc_village_square", "loc_fountain"],
   ["loc_hobbs_cafe", "loc_cafe_kitchen"],
   ["loc_hobbs_cafe", "loc_cafe_storage"],
+  // Clara's flat is above Hobbs Cafe in the cutaway art, so its footprint can
+  // legitimately overlap the cafe and adjacent back-room bounds.
+  ["loc_hobbs_cafe", "loc_clara_flat"],
+  ["loc_cafe_storage", "loc_clara_flat"],
   ["loc_bookshop", "loc_bookshop_back"],
   ["loc_clinic", "loc_clinic_dispensary"],
   ["loc_marcus_house", "loc_marcus_study"],

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { audioManager, AudioState } from "../audio";
+import { sfx } from "../sfx";
 
 export default function AudioControls() {
   const [state, setState] = useState<AudioState>(audioManager.getAudioState());
@@ -12,7 +13,15 @@ export default function AudioControls() {
     <div className="audio-controls">
       <button
         className={state.muted ? "tool-btn icon-only tool-off" : "tool-btn icon-only"}
-        onClick={() => audioManager.toggleMute()}
+        onClick={() => {
+          if (state.muted) {
+            audioManager.toggleMute();
+            sfx.click();
+          } else {
+            sfx.click();
+            audioManager.toggleMute();
+          }
+        }}
         title={state.muted ? "Unmute" : "Mute"}
         aria-label={state.muted ? "Unmute" : "Mute"}
       >

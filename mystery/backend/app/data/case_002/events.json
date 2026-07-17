@@ -14,7 +14,7 @@
   {
     "event_id": "ev_1040_elias_bench",
     "time": "10:40",
-    "location_id": "loc_village_square",
+    "location_id": "loc_elias_bench",
     "agent_ids": [
       "agent_elias"
     ],

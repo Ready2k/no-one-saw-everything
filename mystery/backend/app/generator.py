@@ -626,6 +626,22 @@ def compact_case_data(
     case_data.events = filtered_events
     kept_event_ids = {e.event_id for e in case_data.events}
 
+    # --- 5b. REMAP OBJECT LOCATIONS ---
+    # Object locations feed both clue inspection text and visual anchors. If a
+    # compact generated case drops the original room, keep the object in the
+    # same remapped scene as any event/clue that referred to that room.
+    for obj in case_data.objects:
+        if obj.normal_location_id and obj.normal_location_id not in kept_location_ids:
+            obj.normal_location_id = remap_location(
+                obj.normal_location_id,
+                obj.touched_by_agent_ids[0] if obj.touched_by_agent_ids else None,
+            )
+        if obj.final_location_id and obj.final_location_id not in kept_location_ids:
+            obj.final_location_id = remap_location(
+                obj.final_location_id,
+                obj.touched_by_agent_ids[0] if obj.touched_by_agent_ids else None,
+            )
+
     # --- 6. FILTER CLUES & REMAP DISCOVERABILITY ---
     filtered_clues = []
     kept_clue_ids = set()

@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 from app.case_store import get_case
 from app.town_map import map_payload
 
@@ -21,6 +19,28 @@ def test_case_004_uses_canonical_overworld_contract_without_revealing_objects():
     assert fountain["marker_state"] == "active"
     assert fountain["safe_to_render"] is True
     assert fountain["overlay_ids"] == ["overlay_missing_coping"]
+
+
+def test_case_001_body_pocket_clues_are_anchored_in_storage_room():
+    payload = map_payload(get_case("case_001"), {
+        "clue_ledger_page",
+        "clue_isabella_note",
+        "clue_partnership_letter",
+    })
+    objects = {obj["object_id"]: obj for obj in payload["object_visuals"]}
+
+    for object_id in ("obj_ledger_page", "obj_isabella_note", "obj_partnership_letter"):
+        assert objects[object_id]["location_id"] == "loc_cafe_storage"
+        assert objects[object_id]["safe_to_render"] is True
+
+
+def test_object_marker_only_activates_from_clue_at_same_location():
+    payload = map_payload(get_case("case_001"), {"clue_till_weight_missing"})
+    till_weight = next(obj for obj in payload["object_visuals"] if obj["object_id"] == "obj_till_weight")
+
+    assert till_weight["location_id"] == "loc_cafe_kitchen"
+    assert till_weight["marker_state"] == "suppressed"
+    assert till_weight["safe_to_render"] is False
 
 
 def test_case_004_locations_include_function_tags_for_migration():
@@ -129,14 +149,14 @@ def test_case_002_inspect_clues_have_authored_search_hotspots():
 def test_case_001_and_002_use_canonical_hd_world_map_contract():
     expected_visible = {
         "case_001": {
-            "loc_village_square", "loc_fountain", "loc_hobbs_cafe",
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
             "loc_cafe_kitchen", "loc_cafe_storage", "loc_rear_alley",
-            "loc_bookshop", "loc_clinic", "loc_marcus_house",
+            "loc_bookshop", "loc_clinic", "loc_marcus_house", "loc_marcus_study",
             "loc_owen_house", "loc_clara_flat", "loc_priya_flat",
             "loc_nadia_flat", "loc_elias_house",
         },
         "case_002": {
-            "loc_village_square", "loc_fountain", "loc_bookshop",
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_bookshop",
             "loc_bookshop_back", "loc_rear_alley", "loc_hobbs_cafe",
             "loc_clinic", "loc_owen_house", "loc_priya_flat",
         },
@@ -174,12 +194,24 @@ def test_case_004_inspect_clues_have_authored_search_hotspots():
         assert discoverability.radius == radius
 
 
-def test_unmigrated_cases_keep_legacy_visual_fallback_contract():
-    for case_id in ("case_003", "case_005", "case_006"):
-        # The visual contract only needs the case id. Avoid loading unrelated
-        # static case truth in this regression test; those files may be under
-        # separate authoring/validation work.
-        payload = map_payload(SimpleNamespace(case=SimpleNamespace(case_id=case_id)), set())
-        assert payload["mode"] == "legacy_fallback"
-        assert payload["definition_id"] == "legacy_the_ville"
-        assert payload["objects"] == []
+def test_all_authored_cases_use_canonical_visual_contract():
+    for case_id in ("case_001", "case_002", "case_003", "case_004", "case_005", "case_006"):
+        case = get_case(case_id)
+        payload = map_payload(case, set())
+
+        assert payload["mode"] == "canonical_overworld"
+        assert payload["definition_id"] == "town_canonical_v1"
+        assert set(payload["visible_location_ids"]) == {loc.location_id for loc in case.locations}
+        assert set(payload["canonical_locations"]) == set(payload["visible_location_ids"])
+
+
+def test_all_authored_case_object_visuals_stay_in_visible_locations():
+    for case_id in ("case_001", "case_002", "case_003", "case_004", "case_005", "case_006"):
+        case = get_case(case_id)
+        discovered = {clue.clue_id for clue in case.clues}
+        payload = map_payload(case, discovered)
+        visible_locations = set(payload["visible_location_ids"])
+
+        assert payload["object_visuals"], case_id
+        for obj in payload["object_visuals"]:
+            assert obj["location_id"] in visible_locations

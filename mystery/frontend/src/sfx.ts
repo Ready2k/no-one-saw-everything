@@ -1,9 +1,10 @@
 import { Howler } from "howler";
+import { audioManager } from "./audio";
 
-// Procedural diegetic UI sounds — paper, pins, pencil, rubber stamp —
-// synthesised with WebAudio so there are no asset files to load. Everything
-// routes through Howler's master gain, so the existing mute button and
-// volume slider govern these too.
+// Diegetic UI sounds — paper, pins, pencil, rubber stamp. Production assets
+// play through the audio manifest, with WebAudio synthesis kept as a fallback.
+// Everything routes through Howler's master gain, so the existing mute button
+// and volume slider govern these too.
 
 const COOLDOWN_MS = 70;
 const lastPlayed: Record<string, number> = {};
@@ -99,8 +100,10 @@ function thump(
 export const sfx = {
   /** Folder tab / view change: a sheet sliding across the desk. */
   paperSlide() {
+    if (throttled("paperSlide")) return;
+    if (audioManager.playUi("paper_slide")) return;
     const c = ctx();
-    if (!c || throttled("paperSlide")) return;
+    if (!c) return;
     noiseSwish(c, {
       duration: 0.22,
       volume: 0.05,
@@ -113,8 +116,10 @@ export const sfx = {
 
   /** Page turn: brighter, longer flick for opening covers and modals. */
   pageTurn() {
+    if (throttled("pageTurn")) return;
+    if (audioManager.playUi("page_turn")) return;
     const c = ctx();
-    if (!c || throttled("pageTurn")) return;
+    if (!c) return;
     noiseSwish(c, {
       duration: 0.16,
       volume: 0.045,
@@ -135,16 +140,20 @@ export const sfx = {
 
   /** Board pin pressed into cork. */
   pinPush() {
+    if (throttled("pinPush")) return;
+    if (audioManager.playUi("pin_push")) return;
     const c = ctx();
-    if (!c || throttled("pinPush")) return;
+    if (!c) return;
     thump(c, { freqFrom: 1900, freqTo: 900, duration: 0.03, volume: 0.09, type: "square" });
     thump(c, { at: c.currentTime + 0.012, freqFrom: 240, freqTo: 110, duration: 0.07, volume: 0.14 });
   },
 
   /** Rubber stamp hitting the case file. */
   stampThunk() {
+    if (throttled("stampThunk")) return;
+    if (audioManager.playUi("stamp_thunk")) return;
     const c = ctx();
-    if (!c || throttled("stampThunk")) return;
+    if (!c) return;
     thump(c, { freqFrom: 150, freqTo: 55, duration: 0.16, volume: 0.4, type: "sine" });
     noiseSwish(c, {
       duration: 0.05,
@@ -157,8 +166,10 @@ export const sfx = {
 
   /** Pencil scribbling a note — a few irregular scratch bursts. */
   pencilScratch() {
+    if (throttled("pencilScratch")) return;
+    if (audioManager.playUi("pencil_scratch")) return;
     const c = ctx();
-    if (!c || throttled("pencilScratch")) return;
+    if (!c) return;
     let t = c.currentTime;
     const bursts = 3 + Math.floor(Math.random() * 3);
     for (let i = 0; i < bursts; i++) {
@@ -173,5 +184,15 @@ export const sfx = {
       });
       t += 0.07 + Math.random() * 0.08;
     }
+  },
+
+  /** Small mechanical click for toggles, dropdowns, and compact controls. */
+  click() {
+    if (throttled("click")) return;
+    if (audioManager.playUi("click")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 1700, freqTo: 900, duration: 0.025, volume: 0.06, type: "square" });
+    thump(c, { at: c.currentTime + 0.008, freqFrom: 260, freqTo: 130, duration: 0.045, volume: 0.08 });
   },
 };

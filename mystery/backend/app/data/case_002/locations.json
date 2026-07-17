@@ -111,5 +111,15 @@
       "loc_village_square"
     ],
     "visibility_type": "public"
+  },
+  {
+    "location_id": "loc_elias_bench",
+    "name": "Elias's Bench",
+    "description": "The specific bench in the village square where Elias always sits, facing the bookshop and cafe.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_fountain"
+    ],
+    "visibility_type": "public"
   }
 ]

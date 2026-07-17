@@ -179,7 +179,8 @@
     "name": "Marcus Bell's House",
     "description": "Marcus's house on the edge of the square. His study holds the cafe's books.",
     "connected_location_ids": [
-      "loc_village_square"
+      "loc_village_square",
+      "loc_marcus_study"
     ],
     "access_rules": [
       "owner"
@@ -196,6 +197,19 @@
       "height": 92
     },
     "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_marcus_study",
+    "name": "Marcus's Study",
+    "description": "A small study off the house where Marcus keeps the cafe's books and his own private ledger.",
+    "connected_location_ids": [
+      "loc_marcus_house"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_owen_house",
@@ -260,6 +274,30 @@
       "y": 168,
       "width": 26,
       "height": 28
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_elias_bench",
+    "name": "Elias's Bench",
+    "description": "The specific bench in the village square where Elias always sits, facing the cafe.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_fountain"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "map_position": {
+      "x": 335,
+      "y": 172
+    },
+    "map_bounds": {
+      "x": 322,
+      "y": 160,
+      "width": 24,
+      "height": 24
     },
     "visual_layer": "exterior"
   },
