@@ -1,0 +1,1058 @@
+[
+  {
+    "event_id": "ev_1930_fair_opens",
+    "time": "19:30",
+    "location_id": "loc_village_square",
+    "agent_ids": [],
+    "event_type": "routine",
+    "truth_description": "The lantern fair opens. Paper lanterns hang unlit along every stall line, waiting for nine o'clock; the band tunes up on the bandstand.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_1932_stall_setup",
+    "time": "19:32",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_clara"
+    ],
+    "event_type": "routine",
+    "truth_description": "Marcus and Clara set up the cafe stall: urn of mulled cider, ladle, two crates of glasses and cups stacked beneath.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_1935_owen_brazier",
+    "time": "19:35",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "routine",
+    "truth_description": "Owen lights the brazier with timber from his own yard and appoints himself keeper of it, chestnut pan and all.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_1938_priya_tombola",
+    "time": "19:38",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_priya"
+    ],
+    "event_type": "routine",
+    "truth_description": "Priya opens the tombola stall opposite the bookshop, prize tickets in a biscuit tin.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_1940_isabella_table",
+    "time": "19:40",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_isabella"
+    ],
+    "event_type": "routine",
+    "truth_description": "Isabella dresses the ceremony table below the bandstand: cloth, lectern, and a banner reading THE VILLAGE ARCHIVE.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_1942_ben_crates",
+    "time": "19:42",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "routine",
+    "truth_description": "Ben's van is parked at the bookshop end of the alley. He wheels crates of glasses through to the square for the stalls.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_1945_nadia_arrives",
+    "time": "19:45",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Nadia arrives from the clinic, off duty, coat over her uniform because she never quite believes in evenings off.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_1948_elias_bench",
+    "time": "19:48",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias takes his bench with his flask, tonight's programme folded in his breast pocket, and watches the fair assemble the way he has watched everything for forty years.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_1950_curation_row",
+    "time": "19:50",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_elias"
+    ],
+    "event_type": "argument",
+    "truth_description": "Isabella corners Elias by the ceremony table: nothing from the archive goes to that lectern unless she has read it first. Elias, delighted, tells her curation is a fine word for fear. Several heads turn.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_priya",
+      "agent_nadia",
+      "agent_clara"
+    ],
+    "audible_to_agent_ids": [
+      "agent_priya",
+      "agent_nadia"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_isabella_curation_row"
+    ]
+  },
+  {
+    "event_id": "ev_1955_first_ciders",
+    "time": "19:55",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "routine",
+    "truth_description": "Clara serves the first mulled ciders. The queue never really stops again.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_2005_lantern_hanging",
+    "time": "20:05",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ben",
+      "agent_priya"
+    ],
+    "event_type": "routine",
+    "truth_description": "Ben and Priya hang the last unlit lanterns along the stall line, standing closer than the job requires.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_2010_owen_row",
+    "time": "20:10",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_owen",
+      "agent_elias"
+    ],
+    "event_type": "argument",
+    "truth_description": "At the brazier, Elias makes a crack about 'the church roof of 2015' loud enough to carry. Owen goes white, then red, and tells him to keep Owen Price's name out of his damned books. Half the square hears it.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_nadia",
+      "agent_priya"
+    ],
+    "audible_to_agent_ids": [
+      "agent_nadia",
+      "agent_priya",
+      "agent_clara"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_owen_row"
+    ]
+  },
+  {
+    "event_id": "ev_2015_announcement",
+    "time": "20:15",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "announcement",
+    "truth_description": "Elias climbs the bandstand between tunes and announces the nine o'clock ceremony: his notebooks go to the village archive tonight, and he will read one passage aloud himself. 'My notebooks remember,' he says, tapping the rail, 'what the village finds convenient to forget.'",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_marcus",
+      "agent_clara",
+      "agent_isabella",
+      "agent_owen",
+      "agent_priya",
+      "agent_ben",
+      "agent_nadia"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_elias_announcement"
+    ]
+  },
+  {
+    "event_id": "ev_2024_nadia_queue",
+    "time": "20:24",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "movement",
+    "truth_description": "Nadia joins the cider queue at the cafe stall, next in line.",
+    "visibility": "public",
+    "importance": 3,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_2025_elias_words",
+    "time": "20:25",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias",
+      "agent_marcus"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Elias stops at the cafe stall and says, low, over the urn: 'Come to the reading, Marcus. Or come and see me before it. You know which page.' Marcus goes very still, and the ladle drips.",
+    "player_description": "Elias stops at the cafe stall and says something quietly to Marcus. Marcus goes very still, and the ladle drips.",
+    "visibility": "public_partial",
+    "audible_to_agent_ids": [
+      "agent_nadia"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_elias_words"
+    ]
+  },
+  {
+    "event_id": "ev_2032_elias_bench_return",
+    "time": "20:32",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias returns to his bench, pours the last of the flask, and checks his watch twice in three minutes.",
+    "visibility": "public",
+    "importance": 4
+  },
+  {
+    "event_id": "ev_2035_owen_burn",
+    "time": "20:35",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "routine",
+    "truth_description": "Showing off with the chestnut pan, Owen catches his palm on the brazier grate. He snatches his hand back, swears once, and laughs it off before anyone can look too closely.",
+    "visibility": "public",
+    "importance": 4
+  },
+  {
+    "event_id": "ev_2038_owen_slips_away",
+    "time": "20:38",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "departure",
+    "truth_description": "Owen hands the brazier tongs to nobody in particular and walks off towards the dark end of the square, hand pressed flat against his coat.",
+    "player_description": "Owen leaves the brazier and walks towards the dark end of the square, one hand held oddly.",
+    "visibility": "public_partial",
+    "importance": 5,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_2039_nadia_follows",
+    "time": "20:39",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "departure",
+    "truth_description": "Nadia hands back her cup and follows Owen out of the light. She saw the hand.",
+    "player_description": "Nadia hands back her cup and slips out of the square.",
+    "visibility": "public_partial",
+    "importance": 4,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_2040_marcus_leaves",
+    "time": "20:40",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "departure",
+    "truth_description": "Marcus hands Clara the ladle \u2014 'cups' \u2014 and heads for the cafe.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_clara"
+    ],
+    "object_ids": [
+      "obj_grey_coat"
+    ],
+    "importance": 7,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_2040_elias_leaves",
+    "time": "20:40",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "departure",
+    "truth_description": "Elias folds his rug over the bench arm, tucks the flask away, and sets off towards the bookshop lane to fetch the volume for his reading.",
+    "visibility": "public",
+    "importance": 6,
+    "from_location_id": "loc_elias_bench",
+    "to_location_id": "loc_rear_alley"
+  },
+  {
+    "event_id": "ev_2041_clinic_dressing",
+    "time": "20:41",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_nadia",
+      "agent_owen"
+    ],
+    "event_type": "private_meeting",
+    "truth_description": "Nadia unlocks the clinic and dresses the burn across Owen's palm. He makes her swear the fair never hears of it \u2014 a builder branded by his own brazier, and him with two ciders and a rum in him.",
+    "visibility": "private",
+    "importance": 6
+  },
+  {
+    "event_id": "ev_2042_elias_stockroom",
+    "time": "20:42",
+    "location_id": "loc_bookshop_back",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "movement",
+    "truth_description": "Elias lets himself in through the stockroom's alley door with the archive key, draws the bolt back behind him out of habit reversed \u2014 leaving it unbolted \u2014 and starts on the boxes, looking for 1994.",
+    "visibility": "private",
+    "importance": 7,
+    "from_location_id": "loc_rear_alley",
+    "to_location_id": "loc_bookshop_back"
+  },
+  {
+    "event_id": "ev_2043_ben_to_van",
+    "time": "20:43",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "departure",
+    "truth_description": "Ben mutters something about van straps and ducks away from the stalls towards the alley.",
+    "player_description": "Ben mutters something about his van and ducks out towards the alley.",
+    "visibility": "public_partial",
+    "importance": 5,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_rear_alley"
+  },
+  {
+    "event_id": "ev_2044_grey_coat",
+    "time": "20:44",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Marcus, collar up in his grey overcoat, comes out of the cafe's kitchen door and cuts down the unlit alley to the bookshop's rear door, which opens to his hand.",
+    "player_description": "A figure in a long grey coat crosses the dark alley towards the bookshop's rear door.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_ben"
+    ],
+    "object_ids": [
+      "obj_grey_coat"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_ben_grey_coat"
+    ],
+    "from_location_id": "loc_cafe_kitchen",
+    "to_location_id": "loc_rear_alley"
+  },
+  {
+    "event_id": "ev_2045_marcus_enters",
+    "time": "20:45",
+    "location_id": "loc_bookshop_back",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Marcus steps in through the unbolted alley door. Elias looks up from the boxes and is not surprised.",
+    "visibility": "hidden",
+    "importance": 9,
+    "from_location_id": "loc_rear_alley",
+    "to_location_id": "loc_bookshop_back"
+  },
+  {
+    "event_id": "ev_2046_ben_lantern",
+    "time": "20:46",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Ben unlocks the van and lifts out the lantern he built \u2014 sweet peas painted round the panes, a ring taped inside the little door \u2014 and wraps it in a delivery blanket.",
+    "player_description": "At his van, Ben lifts out something bulky and wraps it carefully in a delivery blanket.",
+    "visibility": "public_partial",
+    "object_ids": [
+      "obj_painted_lantern"
+    ],
+    "importance": 5
+  },
+  {
+    "event_id": "ev_2047_isabella_enters",
+    "time": "20:47",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_isabella"
+    ],
+    "event_type": "movement",
+    "truth_description": "Isabella crosses from the ceremony table, unlocks the bookshop's front door, and slips inside without lighting the main lamps \u2014 the ceremony glasses are behind the counter.",
+    "player_description": "Isabella unlocks the bookshop's front door and slips inside without lighting the lamps.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_clara",
+      "agent_priya"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_isabella_seen"
+    ],
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_2048_confrontation",
+    "time": "20:48",
+    "location_id": "loc_bookshop_back",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_elias"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Elias holds up the 1994 volume like a returned essay. Marcus asks what his silence costs. Elias says there isn't a price: the cafe goes to the village trust by Christmas, or the archive reads the page for him. Thirty years, he says, is long enough.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_notebook_1994"
+    ],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_2049_ben_back",
+    "time": "20:49",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Ben hurries back to the stalls with the blanket-wrapped lantern and stows it under the tombola table when Priya isn't looking.",
+    "player_description": "Ben returns to the stalls carrying something wrapped in a blanket and tucks it under the tombola table.",
+    "visibility": "public_partial",
+    "object_ids": [
+      "obj_painted_lantern"
+    ],
+    "importance": 4,
+    "from_location_id": "loc_rear_alley",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_2052_murder",
+    "time": "20:52",
+    "location_id": "loc_bookshop_back",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_elias"
+    ],
+    "event_type": "murder",
+    "truth_description": "'The committee, then,' Elias says, and turns back to his boxes as if Marcus were already entered in the book and ruled off. Marcus takes up the owl doorstop from beside the alley door.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_owl_doorstop",
+      "obj_notebook_1994"
+    ],
+    "importance": 10
+  },
+  {
+    "event_id": "ev_2052_thud",
+    "time": "20:52",
+    "location_id": "loc_bookshop",
+    "agent_ids": [],
+    "event_type": "sound",
+    "truth_description": "The blow lands. In the dark front room, the sound carries as a single muffled thud from behind the stockroom door.",
+    "player_description": "A muffled thud sounds from the back of the bookshop, almost lost under the band.",
+    "visibility": "public_partial",
+    "audible_to_agent_ids": [
+      "agent_isabella"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_bookshop_thud"
+    ]
+  },
+  {
+    "event_id": "ev_2053_isabella_leaves",
+    "time": "20:53",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_isabella"
+    ],
+    "event_type": "departure",
+    "truth_description": "Isabella tells herself the thud was a box settling \u2014 Priya, probably, in the stockroom \u2014 loads the tray of glasses, backs out of the front door, and locks it with her elbow.",
+    "player_description": "Isabella backs out of the bookshop balancing a loaded tray and locks the door behind her.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_priya",
+      "agent_clara"
+    ],
+    "importance": 6,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_2055_marcus_tidies",
+    "time": "20:55",
+    "location_id": "loc_bookshop_back",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "Marcus wipes the owl doorstop with his scarf and sets it down by the door \u2014 the wrong side, though he has no way of knowing there is a right one \u2014 and pushes the 1994 volume flat under his coat.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_owl_doorstop",
+      "obj_notebook_1994"
+    ],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_2056_marcus_exits",
+    "time": "20:56",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Marcus steps out of the alley door, pulls it to, and walks unhurried up the dark lane towards the cafe's kitchen door.",
+    "player_description": "The bookshop's alley door opens a hand's width; a grey-coated figure steps out and walks towards the cafe's back door.",
+    "visibility": "public_partial",
+    "object_ids": [
+      "obj_grey_coat"
+    ],
+    "importance": 8,
+    "from_location_id": "loc_bookshop_back",
+    "to_location_id": "loc_rear_alley"
+  },
+  {
+    "event_id": "ev_2057_marcus_kitchen",
+    "time": "20:57",
+    "location_id": "loc_cafe_kitchen",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Marcus stands a moment in the dark kitchen, straightens his cuffs, and takes nothing from the cup cupboard.",
+    "visibility": "private",
+    "importance": 6,
+    "from_location_id": "loc_rear_alley",
+    "to_location_id": "loc_cafe_kitchen"
+  },
+  {
+    "event_id": "ev_2058_owen_returns",
+    "time": "20:58",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Owen reappears by the brazier, one hand jammed in his coat pocket, and picks up the tongs left-handed.",
+    "player_description": "Owen reappears by the brazier, one hand jammed in his coat pocket.",
+    "visibility": "public_partial",
+    "importance": 5,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_2059_marcus_returns",
+    "time": "20:59",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Marcus reappears at the stall empty-handed and takes the ladle back from Clara. When she asks about the cups he says the box was spoiled \u2014 damp, or mice \u2014 and does not meet her eye.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_clara"
+    ],
+    "object_ids": [
+      "obj_grey_coat"
+    ],
+    "importance": 7,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_2100_lanterns_lit",
+    "time": "21:00",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_clara",
+      "agent_isabella",
+      "agent_owen",
+      "agent_priya",
+      "agent_ben",
+      "agent_nadia"
+    ],
+    "event_type": "routine",
+    "truth_description": "Nine o'clock. The lanterns go up one by one around the square \u2014 but the ceremony stalls. Elias Grant is not in his seat, and Elias Grant is never not in his seat.",
+    "visibility": "public",
+    "importance": 7
+  },
+  {
+    "event_id": "ev_2101_notebook_hidden",
+    "time": "21:01",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "While the others call for Elias, Marcus slides the 1994 volume deep into the crate of spare cups beneath the stall, under the straw.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_notebook_1994"
+    ],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_2106_priya_sent",
+    "time": "21:06",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_priya"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Isabella gives Priya the shop key: fetch the archive boxes out to the table, so the reading can start the moment Elias turns up. He will turn up. He always turns up.",
+    "visibility": "public",
+    "importance": 5
+  },
+  {
+    "event_id": "ev_2107_priya_bookshop",
+    "time": "21:07",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_priya"
+    ],
+    "event_type": "movement",
+    "truth_description": "Priya unlocks the bookshop's front door and switches on the lights.",
+    "visibility": "public",
+    "importance": 4,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_2108_discovery",
+    "time": "21:08",
+    "location_id": "loc_bookshop_back",
+    "agent_ids": [
+      "agent_priya",
+      "agent_elias"
+    ],
+    "event_type": "body_discovery",
+    "truth_description": "Priya opens the stockroom door on toppled boxes and scattered year-labels, thinks 'he'd hate this mess' \u2014 and then sees his shoe. Her cry cuts clean through the band.",
+    "player_description": "Priya finds Elias Grant dead among the archive boxes in the bookshop stockroom. Her cry cuts through the band.",
+    "visibility": "public",
+    "importance": 10
+  },
+  {
+    "event_id": "ev_2110_square_stops",
+    "time": "21:10",
+    "location_id": "loc_village_square",
+    "agent_ids": [],
+    "event_type": "routine",
+    "truth_description": "The band stops mid-tune. Under a hundred fresh-lit lanterns, the square empties towards the bookshop.",
+    "player_description": "The band stops mid-tune. The square empties towards the bookshop.",
+    "visibility": "public",
+    "importance": 6
+  },
+  {
+    "event_id": "ev_bg_cole_0",
+    "time": "19:31",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Cole strings the last lantern line above the stalls, ladder wobbling, to a round of unhelpful advice.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_rosa_0",
+    "time": "19:33",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Rosa sets candle lanterns afloat on the fountain, one at a time, nudging each into place with a bamboo cane.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_gus_0",
+    "time": "19:34",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Gus stacks the evening editions by the fountain and reads the front page aloud to the floating candles.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_wren_0",
+    "time": "19:36",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Wren tunes the fiddle by the stalls \u2014 more pegs than playing, this early in the evening.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_min_0",
+    "time": "19:37",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Min works the crowd with a tray of toffee apples, the misshapen one kept back for herself.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_effie_0",
+    "time": "19:39",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Effie arrives towed by three dogs in ribbon bows; the terrier has already decided where they are going.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_sal_0",
+    "time": "19:41",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Sal wheels two churns of cocoa to the cafe front and sets out a strict row of mugs.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_dez_0",
+    "time": "19:43",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Dez opens the hoopla with a speech about the prize table that nobody requested.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_tam_0",
+    "time": "19:44",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Tam arrives off duty and immediately starts walking the square in his usual delivery order anyway.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_birdie_0",
+    "time": "19:46",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Birdie takes up station with her broom at the edge of the stalls, eyeing the popcorn seller with open suspicion.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_cole_1",
+    "time": "20:00",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole hangs the bandstand's paper moon and takes a bow nobody sees.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_gus_1",
+    "time": "20:02",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus works the square with the last editions, announcing the headline to anyone slower than him.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_rosa_1",
+    "time": "20:04",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "routine",
+    "truth_description": "Rosa relights the two fountain candles the wind got, shielding each with her hat.",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_bg_sal_1",
+    "time": "20:06",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "Sal carries a round of cocoa to the stalls and collects three mugs, rating each returner by promptness.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_wren_1",
+    "time": "20:08",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "movement",
+    "truth_description": "Wren joins the band on the bandstand and pulls the tempo up until the fair moves to it.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_min_1",
+    "time": "20:12",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min restocks her tray at the cafe step and trades a toffee apple for a cocoa with Sal's honour system.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_effie_1",
+    "time": "20:14",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "The terrier halts the whole expedition at the fountain to bark at the floating candles, as Effie predicted it would.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_tam_1",
+    "time": "20:16",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam stands at the bandstand rail through the announcement, nodding along like a man checking a schedule.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_dez_1",
+    "time": "20:18",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "routine",
+    "truth_description": "Dez accuses a nine-year-old of a professional hoopla technique and awards the coconut anyway.",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_bg_birdie_1",
+    "time": "20:22",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "routine",
+    "truth_description": "Birdie sweeps a first sortie against the popcorn, muttering about paper cones and civilisation.",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_bg_gus_2",
+    "time": "20:31",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus leans his last papers against the cafe window, headline out, and treats himself to a cider.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_min_2",
+    "time": "20:34",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min sells her second-to-last toffee apple and begins guarding the misshapen one openly.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_sal_2",
+    "time": "20:36",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "Sal delivers cocoa to Rosa at the fountain and stays to watch the candles, churn lid in hand like a shield.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_cole_2",
+    "time": "20:37",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole retires his ladder against the cafe wall and joins the cider queue in triumph.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_effie_2",
+    "time": "20:44",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Effie crosses the square with all three dogs finally in step, accepting compliments on the bows as if she'd tied them willingly.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_rosa_2",
+    "time": "20:45",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "routine",
+    "truth_description": "Rosa counts her flotilla of fountain candles and finds all thirty still burning, which she takes personally as a triumph.",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_bg_tam_2",
+    "time": "20:51",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam drifts back to the stalls and tells anyone who'll listen that the fair ran twelve minutes late in 2019 as well.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_dez_2",
+    "time": "20:53",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "routine",
+    "truth_description": "Dez restacks the hoopla prize table for the third time, moving the coconut to the back on principle.",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_bg_wren_2",
+    "time": "20:54",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "routine",
+    "truth_description": "Wren leads the band into something slow while the square waits for nine o'clock.",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_bg_birdie_2",
+    "time": "20:57",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "routine",
+    "truth_description": "Birdie concedes the popcorn war until morning and parks her broom against the ceremony table.",
+    "importance": 2
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "case_id": "case_007",
+  "case_type": "cover_up",
+  "title": "The Man Who Saw Everything",
+  "status": "locked",
+  "victim_id": "agent_elias",
+  "killer_id": "agent_marcus",
+  "motive_summary": "Thirty years ago Marcus Bell forged Thomas Hobbs' signature on the bill of sale that gave him Hobbs Cafe. Elias Grant watched him practise that signature against the schoolhouse glass and wrote it in his 1994 notebook. On the night of the lantern fair, hours before Elias was to read from his notebooks in public, he gave Marcus a choice: sign the cafe over to the village trust, or the archive would read the page for him.",
+  "method": "blunt_force",
+  "weapon_id": "obj_owl_doorstop",
+  "murder_location_id": "loc_bookshop_back",
+  "time_of_death": "20:52",
+  "discovery_time": "21:08",
+  "discovered_by": "agent_priya",
+  "discovery_location_id": "loc_bookshop_back",
+  "sim_start_time": "19:30",
+  "murder_window": ["20:40", "21:00"],
+  "overview_text": "21:08 — Elias Grant, retired schoolteacher and the village's self-appointed witness, is found dead among his own archive boxes in the bookshop stockroom — minutes before he was due to read from forty years of notebooks at the lantern fair. The square was full of light and noise all evening, and every villager was in plain sight. Almost. The evening can be rewound from 19:30.",
+  "scene_description": "The stockroom smells of old paper and lamp oil. Archive boxes lie toppled, year-labels in Elias's careful hand scattered across the floor. Elias Grant lies among them, the ceremony programme still folded in his breast pocket. The cast-iron owl that props the alley door sits neatly by the wrong side of the frame, and out in the square, the band is still playing.",
+  "cause_of_death_observed": "A single heavy blow to the back of the head. He did not turn around for it."
+}

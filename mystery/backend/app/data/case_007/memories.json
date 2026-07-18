@@ -1,0 +1,483 @@
+[
+  {
+    "memory_id": "mem_marcus_forgery",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "Thirty years ago, as Thomas Hobbs' apprentice bookkeeper, Marcus traced Hobbs' signature against the schoolhouse glass until his wrist learned it, and forged the bill of sale that made Hobbs Cafe his. Everything he owns stands on that one line.",
+    "emotional_weight": 10,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_notebook_found",
+      "clue_bill_of_sale"
+    ],
+    "linked_agent_ids": [
+      "agent_elias"
+    ]
+  },
+  {
+    "memory_id": "mem_marcus_ultimatum",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "Last week a letter from Elias arrived: he had re-read his 1994 notebook and understood what he saw at the schoolhouse window. Sign the cafe to the village trust by Christmas, or the archive reads the page. At the fair, Elias repeated it over the cider urn: 'You know which page.'",
+    "emotional_weight": 10,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_bill_of_sale",
+      "clue_elias_words"
+    ],
+    "linked_agent_ids": [
+      "agent_elias"
+    ]
+  },
+  {
+    "memory_id": "mem_marcus_meeting",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "Elias's invitation was specific: come to the stockroom before the reading — he would be there fetching the volume, and the alley door would be unbolted. Marcus went by the back way, through his own kitchen and down the dark alley, so the fair would not see him go.",
+    "emotional_weight": 9,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_rear_door_latch",
+      "clue_ben_grey_coat"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop_back"
+    ]
+  },
+  {
+    "memory_id": "mem_marcus_cover",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "Marcus's prepared story: he was at the cafe stall essentially all evening, stepping into the cafe only briefly for a box of cups that turned out to be spoiled. Clara, run off her feet, will vouch for the shape of it if not the minutes.",
+    "emotional_weight": 8,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_marcus_cups_gap"
+    ],
+    "linked_location_ids": [
+      "loc_village_square"
+    ]
+  },
+  {
+    "memory_id": "mem_marcus_notebook",
+    "owner_agent_id": "agent_marcus",
+    "known_by_agent_ids": [
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "object_trail",
+    "truth_status": "true",
+    "summary": "Marcus carried the 1994 volume out under his coat and, at one minute past nine, slid it into the crate of spare cups beneath the stall, under the straw. He means to burn it once the square empties. He is terrified someone will want a cup.",
+    "emotional_weight": 10,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_notebook_found"
+    ],
+    "linked_location_ids": [
+      "loc_village_square"
+    ]
+  },
+  {
+    "memory_id": "mem_elias_1994",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_elias"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "victim_trigger",
+    "truth_status": "true",
+    "summary": "Sorting his notebooks for the archive donation, Elias re-read the autumn of 1994: young Marcus at the schoolhouse window, tracing Thomas Hobbs' signature against the glass, three days after the funeral and one day before the bill of sale surfaced. He had written it down and not understood it. Now he did.",
+    "emotional_weight": 9,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_notebook_found"
+    ],
+    "linked_agent_ids": [
+      "agent_marcus"
+    ]
+  },
+  {
+    "memory_id": "mem_elias_plan",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_elias"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "victim_trigger",
+    "truth_status": "true",
+    "summary": "Elias chose mercy with a deadline: the letter, then the quiet word at the stall, then the unbolted stockroom door before the reading. If Marcus came and agreed to the trust, the reading would be a harmless anecdote. If not, the archive would do what archives do.",
+    "emotional_weight": 9,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_bill_of_sale",
+      "clue_elias_words",
+      "clue_rear_door_latch"
+    ],
+    "linked_agent_ids": [
+      "agent_marcus"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop_back"
+    ]
+  },
+  {
+    "memory_id": "mem_clara_gap",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_clara"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Marcus left the stall at 20:40 saying 'cups' and did not come back until 20:59 — empty-handed, breathing hard, with a story about mice in the cup box. Clara stocked that cupboard herself this morning. She has decided not to think about it, and is failing.",
+    "emotional_weight": 8,
+    "confidence": 0.9,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_marcus_cups_gap"
+    ],
+    "linked_agent_ids": [
+      "agent_marcus"
+    ]
+  },
+  {
+    "memory_id": "mem_clara_saw_isabella",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_clara"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "From the stall, Clara watched Isabella cross to the bookshop at about 20:47, unlock it, and go in without lighting the lamps — and come back out six minutes later with a tray.",
+    "emotional_weight": 5,
+    "confidence": 0.85,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_isabella_seen"
+    ],
+    "linked_agent_ids": [
+      "agent_isabella"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop"
+    ]
+  },
+  {
+    "memory_id": "mem_clara_overheard_tone",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_clara"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Clara didn't hear what Elias said to Marcus over the urn at 20:25 — she was pouring — but she saw Marcus's face after, and he didn't speak for a good few minutes. She has never seen the ladle drip like that.",
+    "emotional_weight": 6,
+    "confidence": 0.8,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_elias_words"
+    ],
+    "linked_agent_ids": [
+      "agent_marcus",
+      "agent_elias"
+    ]
+  },
+  {
+    "memory_id": "mem_ben_grey_coat",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "From the van at about 20:44, Ben saw a man in a long grey coat come out of the cafe's kitchen door and cross to the bookshop's rear door, which opened for him. No face — but Marcus's coat, and Marcus's squared-off walk.",
+    "emotional_weight": 7,
+    "confidence": 0.75,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ben_grey_coat"
+    ],
+    "linked_agent_ids": [
+      "agent_marcus"
+    ],
+    "linked_location_ids": [
+      "loc_rear_alley"
+    ]
+  },
+  {
+    "memory_id": "mem_ben_lantern",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "innocent_secret",
+    "truth_status": "true",
+    "summary": "Ben went to the van to fetch the lantern he built in secret — sweet peas on the glass, a ring taped inside the door. He was going to propose to Priya at the nine o'clock lighting. He will lie badly about the trip rather than spoil the surprise that no longer has an evening to happen in.",
+    "emotional_weight": 8,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_painted_lantern",
+      "clue_ben_van"
+    ],
+    "linked_agent_ids": [
+      "agent_priya"
+    ]
+  },
+  {
+    "memory_id": "mem_priya_window",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "The tombola faces the bookshop window. Priya watched Isabella the whole six minutes: counter lamp, glasses, apron-polishing, never past the counter, out at 20:53 with a loaded tray as the band finished The Weaving Song.",
+    "emotional_weight": 5,
+    "confidence": 0.9,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_priya_window_view"
+    ],
+    "linked_agent_ids": [
+      "agent_isabella"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop"
+    ]
+  },
+  {
+    "memory_id": "mem_priya_bolt",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Priya shot the stockroom's alley-door bolt herself at six o'clock, after the last archive boxes went in. The owl doorstop lives on the latch side of that door; she trips on it often enough to be certain.",
+    "emotional_weight": 5,
+    "confidence": 0.95,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_rear_door_latch",
+      "clue_owl_doorstop"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop_back"
+    ]
+  },
+  {
+    "memory_id": "mem_priya_discovery",
+    "owner_agent_id": "agent_priya",
+    "known_by_agent_ids": [
+      "agent_priya",
+      "agent_isabella"
+    ],
+    "memory_type": "observed",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Priya went for the archive boxes at 21:07 and found Elias among them at 21:08 — toppled boxes, year-labels everywhere, and his shoe. She remembers thinking he would hate the mess, and then nothing else in order.",
+    "emotional_weight": 10,
+    "shareability": "will_share",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [],
+    "linked_location_ids": [
+      "loc_bookshop_back"
+    ]
+  },
+  {
+    "memory_id": "mem_isabella_visit",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_isabella"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "innocent_secret",
+    "truth_status": "true",
+    "summary": "Isabella was in the dark shop from 20:47 to 20:53 fetching the ceremony glasses. There was lamplight under the stockroom door and a heavy thud at ten to nine; she told herself it was boxes and locked up on her way out. Admitting she stood twenty feet from it is more than she can bear to volunteer.",
+    "emotional_weight": 9,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_isabella_light",
+      "clue_isabella_seen"
+    ],
+    "linked_location_ids": [
+      "loc_bookshop"
+    ]
+  },
+  {
+    "memory_id": "mem_isabella_debts",
+    "owner_agent_id": "agent_isabella",
+    "known_by_agent_ids": [
+      "agent_isabella",
+      "agent_marcus"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Isabella's first shop failed. The bailiffs came, and it was Marcus Bell who quietly bought her debts — a fact the village has never known and Elias's notebooks certainly do. Her war over 'curation' was a war over that year reaching the lectern.",
+    "emotional_weight": 8,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_isabella_curation_row"
+    ],
+    "linked_agent_ids": [
+      "agent_marcus",
+      "agent_elias"
+    ]
+  },
+  {
+    "memory_id": "mem_owen_roof",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_owen",
+      "agent_elias"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "The church roof job of 2015 was quoted for oak and built with what the yard had. It held — it holds still — but Elias watched the timber go up and wrote down what he saw, and has been dining out on the raised eyebrow ever since.",
+    "emotional_weight": 7,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_owen_row"
+    ],
+    "linked_agent_ids": [
+      "agent_elias"
+    ]
+  },
+  {
+    "memory_id": "mem_owen_burn",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_owen",
+      "agent_nadia"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Owen burned his palm showing off with the chestnut pan and spent 20:40 to nearly 21:00 in the clinic being dressed and lectured. Two ciders and a rum, branded by his own brazier — he made Nadia swear the fair would never hear of it. He would honestly rather be suspected.",
+    "emotional_weight": 6,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_owen_burn"
+    ],
+    "linked_agent_ids": [
+      "agent_nadia"
+    ],
+    "linked_location_ids": [
+      "loc_clinic"
+    ]
+  },
+  {
+    "memory_id": "mem_nadia_overheard",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Next in the cider queue at 20:25, Nadia heard Elias tell Marcus, low, over the urn: 'Come to the reading. Or come and see me before it. You know which page.' She noted the stillness that followed the way she'd note a symptom.",
+    "emotional_weight": 7,
+    "confidence": 0.85,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_elias_words"
+    ],
+    "linked_agent_ids": [
+      "agent_elias",
+      "agent_marcus"
+    ]
+  },
+  {
+    "memory_id": "mem_nadia_owen",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia",
+      "agent_owen"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Nadia dressed the burn across Owen's palm in the clinic from 20:40 until nearly 21:00 and never left him. She treats the promise she made him as a patient confidence: filed, not forgotten, and given up only when it matters more than his pride.",
+    "emotional_weight": 5,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_owen_burn"
+    ],
+    "linked_agent_ids": [
+      "agent_owen"
+    ],
+    "linked_location_ids": [
+      "loc_clinic"
+    ]
+  },
+  {
+    "memory_id": "mem_rumour_notebooks",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_owen",
+      "agent_clara",
+      "agent_ben"
+    ],
+    "memory_type": "rumour",
+    "case_function": "rumour_noise",
+    "truth_status": "rumour",
+    "summary": "Village rumour, running all evening: half the village is in those notebooks, and Elias picked tonight's passage to make somebody sweat. Everyone laughed. Nobody laughed with their whole face.",
+    "emotional_weight": 4,
+    "shareability": "will_share",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_elias_announcement"
+    ],
+    "linked_agent_ids": [
+      "agent_elias"
+    ]
+  }
+]
