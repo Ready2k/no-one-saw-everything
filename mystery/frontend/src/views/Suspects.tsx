@@ -9,6 +9,7 @@ import type {
   ClaimPublic,
   CluePublic,
   InspectResult,
+  ObservableTell,
   QuestionType,
   SuspicionLevel,
   TranscriptMessage,
@@ -39,6 +40,10 @@ interface BeatData {
 const beatOutcome = (o: ChallengeResult["outcome"]) =>
   o === "contradiction_locked" || o === "partial_admission";
 
+function tellClass(tell?: ObservableTell) {
+  return tell ? `mugshot-tell mugshot-tell-${tell.category} mugshot-tell-${tell.intensity}` : "";
+}
+
 const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "unknown", label: "Unmarked" },
   { value: "person_of_interest", label: "Person of interest" },
@@ -47,6 +52,24 @@ const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "likely_innocent", label: "Likely innocent" },
   { value: "cleared", label: "Cleared" },
 ];
+
+function BehaviouralRead({ tells }: { tells?: ObservableTell[] }) {
+  if (!tells || tells.length === 0) return null;
+  return (
+    <div className="behavioural-read">
+      <span className="behavioural-title">Behavioural read</span>
+      {tells.map((tell) => (
+        <p key={tell.tell_id} className={`tell tell-${tell.intensity} tell-${tell.category}`}>
+          <span className="tell-tags">
+            <span>{tell.category}</span>
+            <span>{tell.intensity}</span>
+          </span>
+          {tell.cue}
+        </p>
+      ))}
+    </div>
+  );
+}
 
 const SUSPICION_LABEL = Object.fromEntries(
   SUSPICION_LEVELS.map((s) => [s.value, s.label])
@@ -183,6 +206,8 @@ function InterviewPanel({
   // Everything anyone has told the player. What OTHERS said is usable against this suspect.
   const [allClaims, setAllClaims] = useState<ClaimPublic[]>([]);
   const [lastChallenge, setLastChallenge] = useState<ChallengeResult | null>(null);
+  const latestTell = lastChallenge?.observable_tells?.[0] ?? lastResult?.observable_tells?.[0];
+  const [activeTellClass, setActiveTellClass] = useState("");
   const [beat, setBeat] = useState<BeatData | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -242,6 +267,14 @@ function InterviewPanel({
     const el = transcriptRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [transcript, lastResult, lastChallenge, busy]);
+
+  useEffect(() => {
+    const nextClass = tellClass(latestTell);
+    setActiveTellClass(nextClass);
+    if (!nextClass) return;
+    const t = setTimeout(() => setActiveTellClass(""), 1150);
+    return () => clearTimeout(t);
+  }, [latestTell?.tell_id]);
 
   // Audio trigger: Contradiction locked
   useEffect(() => {
@@ -458,7 +491,7 @@ function InterviewPanel({
         <div className="dossier panel">
           {/* Police line-up mugshot: height-chart wall, placard, and a
               backdrop that heats up as interrogation pressure rises. */}
-          <div className={`dossier-portrait mugshot mugshot-${expressionForPressure(pressure)}`}>
+          <div className={`dossier-portrait mugshot mugshot-${expressionForPressure(pressure)} ${activeTellClass}`}>
             <div className="mugshot-wall" aria-hidden="true" />
             <Portrait agent={agent} pressure={pressure} size="large" />
             <span className="mugshot-placard">
@@ -535,6 +568,7 @@ function InterviewPanel({
                     revealed: {m.revealed_clue_ids.join(", ")}
                   </p>
                 )}
+                <BehaviouralRead tells={m.observable_tells} />
               </div>
             ))}
             {pendingQuestion && (
@@ -551,6 +585,7 @@ function InterviewPanel({
                 {firstName} seems {lastResult.emotional_shift}.
               </p>
             )}
+            <BehaviouralRead tells={lastResult?.observable_tells} />
             {lastResult && lastResult.suggested_followups.length > 0 && (
               <div className="followups">
                 {lastResult.suggested_followups.map((f, i) => (
@@ -592,6 +627,7 @@ function InterviewPanel({
                 {lastChallenge.pressure_delta > 0 && (
                   <span className="muted small pressure-up"> — their composure slips</span>
                 )}
+                <BehaviouralRead tells={lastChallenge.observable_tells} />
                 {lastChallenge.revealed_memories.map((m) => (
                   <p key={m.memory_id} className="small revealed-memory">
                     🗝️ {m.summary}

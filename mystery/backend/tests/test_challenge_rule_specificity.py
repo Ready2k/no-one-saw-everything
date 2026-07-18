@@ -14,7 +14,7 @@ from app.challenge import _find_rule
 from app.models import ChallengeRequest
 from app.session import Session
 
-CASE_IDS = ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"]
+CASE_IDS = ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006", "case_007"]
 
 
 def _session_with_all_clues(case) -> Session:

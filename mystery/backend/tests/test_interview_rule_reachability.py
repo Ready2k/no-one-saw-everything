@@ -14,7 +14,7 @@ import pytest
 
 from app.case_store import load_case_from_disk as load_case
 
-CASE_IDS = ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"]
+CASE_IDS = ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006", "case_007"]
 
 
 @pytest.mark.parametrize("case_id", CASE_IDS)

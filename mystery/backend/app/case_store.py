@@ -24,6 +24,17 @@ from .models import (
 DATA_DIR = Path(__file__).parent / "data"
 
 _GENERATED_CASES: dict[str, CaseData] = {}
+REQUIRED_CASE_FILES = {
+    "case.json",
+    "agents.json",
+    "locations.json",
+    "objects.json",
+    "memories.json",
+    "events.json",
+    "interviews.json",
+    "solution.json",
+    "clues.json",
+}
 
 
 def reset_case_store() -> None:
@@ -175,7 +186,7 @@ def list_all_cases() -> list[dict[str, str]]:
     for p in DATA_DIR.iterdir():
         if p.is_dir() and p.name != "templates":
             case_json_path = p / "case.json"
-            if case_json_path.exists():
+            if case_json_path.exists() and REQUIRED_CASE_FILES <= {f.name for f in p.iterdir() if f.is_file()}:
                 try:
                     with open(case_json_path) as f:
                         case_info = json.load(f)

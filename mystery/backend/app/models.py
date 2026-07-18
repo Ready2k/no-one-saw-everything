@@ -25,6 +25,9 @@ Visibility = Literal[
 
 TruthStatus = Literal["true", "false", "mistaken", "rumour", "unknown"]
 
+TellCategory = Literal["gaze", "voice", "hands", "posture", "timing", "overexplaining"]
+TellIntensity = Literal["subtle", "noticeable", "strong"]
+
 MemoryType = Literal[
     "private_secret",
     "shared_secret",
@@ -487,6 +490,22 @@ class Claim(BaseModel):
     asserts_presence: bool = True
 
 
+class ObservableTell(BaseModel):
+    """A player-facing behavioural observation.
+
+    Tells are intentionally ambiguous: they describe visible behaviour, never
+    hidden truth. A tell can point at pressure, grief, fear, evasion, confusion,
+    or guilt, and the player must still connect it to evidence.
+    """
+
+    tell_id: str
+    agent_id: str
+    cue: str
+    category: TellCategory
+    intensity: TellIntensity = "subtle"
+    source: Literal["interview", "challenge"] = "interview"
+
+
 class InterviewMessage(BaseModel):
     speaker: Literal["player", "agent"]
     text: str
@@ -494,6 +513,7 @@ class InterviewMessage(BaseModel):
     question_type: Optional[QuestionType] = None
     generated_claim_ids: list[str] = []
     revealed_clue_ids: list[str] = []
+    observable_tells: list[ObservableTell] = []
     llm_rewrite_used: bool = False
     llm_rewrite_fallback: bool = False
     llm_rewrite_fallback_reason: Optional[str] = None
@@ -555,6 +575,7 @@ class AskResponse(BaseModel):
     display_answer_text: str
     answer_type: str
     emotional_shift: Optional[str] = None
+    observable_tells: list[ObservableTell] = []
     new_claims: list[Claim] = []
     revealed_clues: list[Clue] = []
     suggested_followups: list[str] = []
@@ -674,6 +695,7 @@ class ChallengeRecord(BaseModel):
     # the reason the confrontation bit, so the deduction is theirs and they can see it land.
     testimony_conflict: Optional[str] = None
     emotional_shift: Optional[str] = None
+    observable_tells: list[ObservableTell] = []
     new_claim_ids: list[str] = []
     revealed_memory_ids: list[str] = []
     revealed_clue_ids: list[str] = []

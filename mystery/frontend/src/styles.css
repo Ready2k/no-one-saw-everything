@@ -793,6 +793,62 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 .bubble.important { border: 1px solid var(--accent); box-shadow: 0 0 10px rgba(216, 162, 74, 0.15); }
 .bubble.pending { opacity: 0.6; }
 .emotional { font-style: italic; }
+.behavioural-read {
+  margin-top: 0.45rem;
+  padding: 0.5rem 0.6rem;
+  border-left: 2px solid rgba(216, 162, 74, 0.55);
+  background: rgba(216, 162, 74, 0.08);
+}
+.behavioural-title {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--accent);
+  font-family: var(--font-typewriter, monospace);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.tell {
+  margin: 0.25rem 0 0;
+  color: #d9d2bd;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.tell-tags {
+  display: inline-flex;
+  gap: 0.28rem;
+  margin-right: 0.45rem;
+  vertical-align: 1px;
+}
+.tell-tags span {
+  padding: 1px 5px;
+  border: 1px solid rgba(216, 162, 74, 0.35);
+  color: var(--muted);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.tell-noticeable .tell-tags span { border-color: rgba(216, 162, 74, 0.6); color: #d8c28c; }
+.tell-strong .tell-tags span { border-color: rgba(214, 66, 50, 0.75); color: #e39a8f; }
+.tell-gaze { animation: tell-glance-text 0.8s ease-out; }
+.tell-voice,
+.tell-timing { animation: tell-voice-text 0.8s ease-out; }
+.tell-hands,
+.tell-posture,
+.tell-overexplaining { animation: tell-restless-text 0.8s ease-out; }
+@keyframes tell-glance-text {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+@keyframes tell-voice-text {
+  0% { opacity: 0.72; }
+  100% { opacity: 1; }
+}
+@keyframes tell-restless-text {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-1px); }
+}
 .followups { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .followup-chip {
   font-size: 0.78rem;
@@ -4448,17 +4504,39 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 .mugshot-defensive::after {
   background: radial-gradient(110% 85% at 50% 30%, transparent 50%, rgba(150, 90, 30, 0.22));
 }
+.mugshot-defensive .portrait-img.portrait-large,
+.mugshot-defensive .portrait-sprite.portrait-large {
+  animation: portrait-guarded-breath 3.2s ease-in-out infinite;
+}
 .mugshot-cracking .mugshot-wall { filter: saturate(0.7) brightness(0.8) hue-rotate(-16deg); }
 .mugshot-cracking::after {
   background: radial-gradient(110% 85% at 50% 30%, transparent 42%, rgba(160, 44, 28, 0.4));
   animation: mugshot-heat 2.6s ease-in-out infinite;
 }
+.mugshot-cracking .portrait-img.portrait-large,
+.mugshot-cracking .portrait-sprite.portrait-large {
+  animation: portrait-cracking-tremor 1.8s steps(2, end) infinite;
+}
 @keyframes mugshot-heat {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.65; }
 }
+@keyframes portrait-guarded-breath {
+  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45)); }
+  50% { transform: translateY(1px) scale(1.01); filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.5)); }
+}
+@keyframes portrait-cracking-tremor {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  50% { transform: translateX(1px); }
+  75% { transform: translateX(0); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .mugshot-cracking::after { animation: none; }
+  .mugshot-cracking::after,
+  .mugshot-defensive .portrait-img.portrait-large,
+  .mugshot-defensive .portrait-sprite.portrait-large,
+  .mugshot-cracking .portrait-img.portrait-large,
+  .mugshot-cracking .portrait-sprite.portrait-large { animation: none; }
 }
 
 /* The suspect, blown up from the sprite sheet, feet on the floor line */
@@ -4471,8 +4549,69 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   margin-bottom: -4px;
   image-rendering: pixelated;
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45));
+  transform-origin: 50% 82%;
 }
 .mugshot .portrait { position: relative; z-index: 1; font-size: 4rem; }
+.mugshot-tell .portrait-img.portrait-large,
+.mugshot-tell .portrait-sprite.portrait-large {
+  animation-duration: 0.78s;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+}
+.mugshot-tell-gaze .portrait-img.portrait-large,
+.mugshot-tell-gaze .portrait-sprite.portrait-large {
+  animation-name: portrait-tell-gaze;
+}
+.mugshot-tell-voice .portrait-img.portrait-large,
+.mugshot-tell-voice .portrait-sprite.portrait-large,
+.mugshot-tell-timing .portrait-img.portrait-large,
+.mugshot-tell-timing .portrait-sprite.portrait-large {
+  animation-name: portrait-tell-tighten;
+}
+.mugshot-tell-hands .portrait-img.portrait-large,
+.mugshot-tell-hands .portrait-sprite.portrait-large,
+.mugshot-tell-posture .portrait-img.portrait-large,
+.mugshot-tell-posture .portrait-sprite.portrait-large {
+  animation-name: portrait-tell-flinch;
+}
+.mugshot-tell-overexplaining .portrait-img.portrait-large,
+.mugshot-tell-overexplaining .portrait-sprite.portrait-large {
+  animation-name: portrait-tell-restless;
+}
+.mugshot-tell-strong .portrait-img.portrait-large,
+.mugshot-tell-strong .portrait-sprite.portrait-large {
+  animation-duration: 1.05s;
+}
+@keyframes portrait-tell-gaze {
+  0%, 100% { transform: translateX(0); }
+  35% { transform: translateX(-3px); }
+  65% { transform: translateX(2px); }
+}
+@keyframes portrait-tell-tighten {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45)); }
+  45% { transform: scale(0.985); filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55)) brightness(0.92); }
+}
+@keyframes portrait-tell-flinch {
+  0%, 100% { transform: translateY(0); }
+  32% { transform: translateY(-2px); }
+  62% { transform: translateY(1px); }
+}
+@keyframes portrait-tell-restless {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  24% { transform: translateX(-2px) rotate(-0.5deg); }
+  52% { transform: translateX(2px) rotate(0.5deg); }
+  76% { transform: translateX(-1px) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mugshot-tell .portrait-img.portrait-large,
+  .mugshot-tell .portrait-sprite.portrait-large,
+  .tell-gaze,
+  .tell-voice,
+  .tell-timing,
+  .tell-hands,
+  .tell-posture,
+  .tell-overexplaining { animation: none; }
+}
 
 /* Booking placard */
 .mugshot-placard {

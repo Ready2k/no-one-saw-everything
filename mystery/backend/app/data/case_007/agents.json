@@ -1,5 +1,57 @@
 [
   {
+    "agent_id": "agent_elias",
+    "full_name": "Elias Grant",
+    "age": 68,
+    "occupation": "Retired schoolteacher",
+    "traits": [
+      "nosy",
+      "certain of himself",
+      "keeper of records"
+    ],
+    "portrait": "\ud83c\udfa9",
+    "home_location_id": "loc_elias_house",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "First to the square bench every morning with a flask; each evening he fills an exercise book with the day's comings and goings, the way other men keep gardens.",
+    "voice_card": "Talks like he's lecturing a classroom; fond of rhetorical questions and certain of every detail.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_marcus",
+        "relationship_type": "old_teacher",
+        "affinity": 0.3,
+        "trust": 0.4,
+        "tension": 0.7
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "old_teacher",
+        "affinity": 0.3,
+        "trust": 0.4,
+        "tension": 0.7
+      },
+      {
+        "target_agent_id": "agent_isabella",
+        "relationship_type": "archive_partner",
+        "affinity": 0.4,
+        "trust": 0.5,
+        "tension": 0.6
+      }
+    ],
+    "observation_skill": 0.85,
+    "memory_reliability": 0.8,
+    "honesty_baseline": 0.9,
+    "gossip_tendency": 0.9,
+    "is_victim": true,
+    "sprite_asset": "Adam_Smith.png",
+    "sprite_id": "sprite_adam_smith",
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/elias_calm.png",
+      "defensive": null,
+      "cracking": null
+    }
+  },
+  {
     "agent_id": "agent_marcus",
     "full_name": "Marcus Bell",
     "age": 54,
@@ -7,48 +59,47 @@
     "traits": [
       "exacting",
       "proud",
-      "fair but unforgiving"
+      "keeps his own counsel"
     ],
     "portrait": "\u2615",
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_hobbs_cafe",
-    "routine_summary": "Up at six, reviews the books in his study, at the cafe by a quarter to seven to oversee opening.",
+    "routine_summary": "Opens the cafe at seven sharp, keeps the books himself each evening, and closes the till to the penny before bed.",
     "voice_card": "Speaks in ledgers and verdicts; every sentence sounds like a final decision.",
     "relationships": [
       {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "old_student",
+        "affinity": 0.2,
+        "trust": 0.3,
+        "tension": 0.8
+      },
+      {
         "target_agent_id": "agent_clara",
         "relationship_type": "employer",
-        "affinity": -0.2,
-        "trust": 0.1,
-        "tension": 0.9
+        "affinity": 0.3,
+        "trust": 0.6,
+        "tension": 0.3
       },
       {
         "target_agent_id": "agent_isabella",
-        "relationship_type": "business_partner",
-        "affinity": 0.3,
-        "trust": 0.4,
-        "tension": 0.7
-      },
-      {
-        "target_agent_id": "agent_owen",
         "relationship_type": "creditor",
-        "affinity": -0.1,
-        "trust": 0.3,
-        "tension": 0.8
+        "affinity": 0.1,
+        "trust": 0.4,
+        "tension": 0.5
       }
     ],
     "observation_skill": 0.8,
     "memory_reliability": 0.9,
-    "honesty_baseline": 0.8,
-    "is_victim": true,
+    "honesty_baseline": 0.4,
+    "conflict_avoidance": 0.3,
     "sprite_asset": "Marcus_Chen.png",
     "sprite_id": "sprite_marcus_chen",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/marcus_calm.png",
-      "defensive": "/art/portraits/marcus_defensive.png",
-      "cracking": "/art/portraits/marcus_cracking.png",
-      "deceased": "/art/portraits/marcus_deceased.png"
+      "defensive": null,
+      "cracking": null
     }
   },
   {
@@ -58,117 +109,78 @@
     "occupation": "Cafe manager",
     "traits": [
       "organised",
-      "proud",
+      "loyal",
       "guarded"
     ],
     "portrait": "\ud83e\udde3",
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
-    "routine_summary": "Lives above the cafe. Down by half six to prep, opens the doors at eight sharp.",
+    "routine_summary": "Lives above the cafe. Runs the counter from half six, and at village dos she's the one behind whatever urn needs ladling.",
     "voice_card": "Precise and clipped; clips her sentences even shorter when defensive, and never volunteers more than was asked.",
     "relationships": [
       {
         "target_agent_id": "agent_marcus",
         "relationship_type": "employee",
-        "affinity": -0.3,
-        "trust": 0.2,
-        "tension": 0.9
+        "affinity": 0.4,
+        "trust": 0.7,
+        "tension": 0.4
       },
       {
-        "target_agent_id": "agent_ben",
-        "relationship_type": "acquaintance",
-        "affinity": 0.1,
-        "trust": 0.3,
+        "target_agent_id": "agent_elias",
+        "relationship_type": "regular_customer",
+        "affinity": 0.4,
+        "trust": 0.5,
         "tension": 0.2
       }
     ],
-    "observation_skill": 0.7,
-    "memory_reliability": 0.8,
-    "honesty_baseline": 0.45,
-    "conflict_avoidance": 0.6,
+    "observation_skill": 0.75,
+    "memory_reliability": 0.85,
+    "honesty_baseline": 0.55,
+    "conflict_avoidance": 0.7,
     "sprite_asset": "Abigail_Chen.png",
     "sprite_id": "sprite_abigail_chen",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/clara_calm.png",
-      "deceased": "/art/portraits/clara_deceased.png",
-      "defensive": "/art/portraits/clara_defensive.png",
-      "cracking": "/art/portraits/clara_cracking.png"
-    }
-  },
-  {
-    "agent_id": "agent_ben",
-    "full_name": "Ben Carter",
-    "age": 29,
-    "occupation": "Delivery driver",
-    "traits": [
-      "easygoing",
-      "chatty",
-      "bad at secrets"
-    ],
-    "portrait": "\ud83d\udce6",
-    "home_location_id": "loc_village_square",
-    "work_location_id": "loc_village_square",
-    "routine_summary": "Morning delivery round through the square and rear alley; usually cadges a coffee when the cafe opens.",
-    "voice_card": "Rambles cheerfully, over-explains when nervous, and tends to answer a question you didn't ask.",
-    "relationships": [
-      {
-        "target_agent_id": "agent_priya",
-        "relationship_type": "secret_relationship",
-        "affinity": 0.9,
-        "trust": 0.8,
-        "tension": 0.4
-      },
-      {
-        "target_agent_id": "agent_marcus",
-        "relationship_type": "acquaintance",
-        "affinity": 0.2,
-        "trust": 0.5,
-        "tension": 0.1
-      }
-    ],
-    "observation_skill": 0.6,
-    "memory_reliability": 0.65,
-    "honesty_baseline": 0.7,
-    "gossip_tendency": 0.8,
-    "sprite_asset": "Ryan_Park.png",
-    "sprite_id": "sprite_ryan_park",
-    "pronoun": "he",
-    "portrait_art": {
-      "calm": "/art/portraits/ben_calm.png",
-      "deceased": "/art/portraits/ben_deceased.png",
-      "defensive": "/art/portraits/ben_defensive.png",
-      "cracking": "/art/portraits/ben_cracking.png"
+      "defensive": null,
+      "cracking": null
     }
   },
   {
     "agent_id": "agent_isabella",
     "full_name": "Isabella Reed",
     "age": 41,
-    "occupation": "Bookshop owner",
+    "occupation": "Bookshop owner & archive curator",
     "traits": [
       "ambitious",
-      "wounded",
+      "particular",
       "composed"
     ],
     "portrait": "\ud83d\udcda",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
+    "routine_summary": "Opens the bookshop at nine and spends her spare hours cataloguing the new village archive, which she treats as hers because mostly it is.",
     "voice_card": "Measured, almost rehearsed; pauses before answering and chooses polite words with visible care.",
     "relationships": [
       {
-        "target_agent_id": "agent_marcus",
-        "relationship_type": "business_partner",
-        "affinity": -0.4,
-        "trust": 0.2,
-        "tension": 0.9
+        "target_agent_id": "agent_elias",
+        "relationship_type": "archive_partner",
+        "affinity": 0.3,
+        "trust": 0.4,
+        "tension": 0.7
       },
       {
         "target_agent_id": "agent_priya",
         "relationship_type": "employer",
-        "affinity": 0.2,
-        "trust": 0.5,
+        "affinity": 0.5,
+        "trust": 0.6,
+        "tension": 0.3
+      },
+      {
+        "target_agent_id": "agent_marcus",
+        "relationship_type": "debtor",
+        "affinity": 0.1,
+        "trust": 0.3,
         "tension": 0.6
       }
     ],
@@ -180,9 +192,8 @@
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/isabella_calm.png",
-      "deceased": "/art/portraits/isabella_deceased.png",
-      "defensive": "/art/portraits/isabella_defensive.png",
-      "cracking": "/art/portraits/isabella_cracking.png"
+      "defensive": null,
+      "cracking": null
     }
   },
   {
@@ -198,15 +209,22 @@
     "portrait": "\ud83d\udd28",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
-    "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
+    "routine_summary": "In the timber yard from early; at village events he appoints himself keeper of any fire that needs lighting.",
     "voice_card": "Blunt, short sentences, no hedging; gets louder rather than more careful when pressed.",
     "relationships": [
       {
-        "target_agent_id": "agent_marcus",
-        "relationship_type": "debtor",
-        "affinity": -0.6,
-        "trust": 0.2,
-        "tension": 0.95
+        "target_agent_id": "agent_elias",
+        "relationship_type": "old_student",
+        "affinity": 0.2,
+        "trust": 0.3,
+        "tension": 0.8
+      },
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "friend",
+        "affinity": 0.6,
+        "trust": 0.7,
+        "tension": 0.2
       }
     ],
     "observation_skill": 0.5,
@@ -218,9 +236,8 @@
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/owen_calm.png",
-      "deceased": "/art/portraits/owen_deceased.png",
-      "defensive": "/art/portraits/owen_defensive.png",
-      "cracking": "/art/portraits/owen_cracking.png"
+      "defensive": null,
+      "cracking": null
     }
   },
   {
@@ -231,48 +248,91 @@
     "traits": [
       "careful",
       "kind",
-      "conflict-averse"
+      "notices small things"
     ],
     "portrait": "\ud83c\udf38",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
-    "voice_card": "Soft-spoken and apologetic; qualifies everything ('I think', 'maybe') and trails off under pressure.",
+    "routine_summary": "Opens the bookshop stockroom early, shelves the deliveries, and bolts the alley door herself every closing because nobody else remembers.",
+    "voice_card": "Soft-spoken and exact; qualifies everything ('I think', 'maybe') except the things she has counted.",
     "relationships": [
       {
         "target_agent_id": "agent_ben",
-        "relationship_type": "secret_relationship",
+        "relationship_type": "sweetheart",
         "affinity": 0.9,
-        "trust": 0.8,
-        "tension": 0.4
+        "trust": 0.9,
+        "tension": 0.1
       },
       {
         "target_agent_id": "agent_isabella",
         "relationship_type": "employee",
-        "affinity": 0.3,
-        "trust": 0.4,
-        "tension": 0.6
-      },
-      {
-        "target_agent_id": "agent_marcus",
-        "relationship_type": "sponsor",
         "affinity": 0.5,
         "trust": 0.6,
         "tension": 0.3
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "friend",
+        "affinity": 0.7,
+        "trust": 0.8,
+        "tension": 0.1
       }
     ],
-    "observation_skill": 0.7,
-    "memory_reliability": 0.8,
-    "honesty_baseline": 0.65,
-    "conflict_avoidance": 0.85,
+    "observation_skill": 0.85,
+    "memory_reliability": 0.85,
+    "honesty_baseline": 0.85,
+    "conflict_avoidance": 0.7,
     "sprite_asset": "Priya_Kapoor.png",
     "sprite_id": "sprite_priya_kapoor",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/priya_calm.png",
-      "deceased": "/art/portraits/priya_deceased.png",
-      "defensive": "/art/portraits/priya_defensive.png",
-      "cracking": "/art/portraits/priya_cracking.png"
+      "defensive": null,
+      "cracking": null
+    }
+  },
+  {
+    "agent_id": "agent_ben",
+    "full_name": "Ben Carter",
+    "age": 29,
+    "occupation": "Delivery driver",
+    "traits": [
+      "easygoing",
+      "chatty",
+      "bad at secrets"
+    ],
+    "portrait": "\ud83d\udce6",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Delivery rounds through the square and rear alley by day; at village dos he's the unofficial hauler of everything heavy.",
+    "voice_card": "Rambles cheerfully, over-explains when nervous, and tends to answer a question you didn't ask.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_priya",
+        "relationship_type": "sweetheart",
+        "affinity": 0.9,
+        "trust": 0.9,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "acquaintance",
+        "affinity": 0.5,
+        "trust": 0.5,
+        "tension": 0.1
+      }
+    ],
+    "observation_skill": 0.65,
+    "memory_reliability": 0.7,
+    "honesty_baseline": 0.7,
+    "gossip_tendency": 0.8,
+    "sprite_asset": "Ryan_Park.png",
+    "sprite_id": "sprite_ryan_park",
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/ben_calm.png",
+      "defensive": null,
+      "cracking": null
     }
   },
   {
@@ -288,15 +348,22 @@
     "portrait": "\ud83e\ude7a",
     "home_location_id": "loc_nadia_flat",
     "work_location_id": "loc_clinic",
-    "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
+    "routine_summary": "Early shift at the clinic; crosses the square a few times each day and keeps other people's business exactly where they left it.",
     "voice_card": "Calm, clinical phrasing; states observations like chart notes and avoids speculation.",
     "relationships": [
       {
-        "target_agent_id": "agent_marcus",
+        "target_agent_id": "agent_elias",
         "relationship_type": "neighbour",
-        "affinity": 0.4,
+        "affinity": 0.5,
         "trust": 0.6,
         "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "friend",
+        "affinity": 0.6,
+        "trust": 0.7,
+        "tension": 0.2
       }
     ],
     "observation_skill": 0.85,
@@ -308,54 +375,8 @@
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.png",
-      "deceased": "/art/portraits/nadia_deceased.png",
-      "defensive": "/art/portraits/nadia_defensive.png",
-      "cracking": "/art/portraits/nadia_cracking.png"
-    }
-  },
-  {
-    "agent_id": "agent_elias",
-    "full_name": "Elias Grant",
-    "age": 68,
-    "occupation": "Retired schoolteacher",
-    "traits": [
-      "nosy",
-      "certain of himself",
-      "harmless"
-    ],
-    "portrait": "\ud83c\udfa9",
-    "home_location_id": "loc_elias_house",
-    "work_location_id": "loc_village_square",
-    "routine_summary": "First on the square bench every morning with a flask and opinions.",
-    "voice_card": "Talks like he's lecturing a classroom; fond of rhetorical questions and certain of every detail.",
-    "relationships": [
-      {
-        "target_agent_id": "agent_marcus",
-        "relationship_type": "old_friend",
-        "affinity": 0.5,
-        "trust": 0.7,
-        "tension": 0.2
-      },
-      {
-        "target_agent_id": "agent_clara",
-        "relationship_type": "acquaintance",
-        "affinity": -0.2,
-        "trust": 0.3,
-        "tension": 0.3
-      }
-    ],
-    "observation_skill": 0.55,
-    "memory_reliability": 0.5,
-    "honesty_baseline": 0.9,
-    "gossip_tendency": 0.9,
-    "sprite_asset": "Adam_Smith.png",
-    "sprite_id": "sprite_adam_smith",
-    "pronoun": "he",
-    "portrait_art": {
-      "calm": "/art/portraits/elias_calm.png",
-      "deceased": "/art/portraits/elias_deceased.png",
-      "defensive": "/art/portraits/elias_defensive.png",
-      "cracking": "/art/portraits/elias_cracking.png"
+      "defensive": null,
+      "cracking": null
     }
   },
   {
@@ -370,7 +391,7 @@
     "portrait": "\ud83c\udf3f",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_fountain",
-    "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear alley before the village wakes properly.",
+    "routine_summary": "Tends the fountain flowerbeds at first light; for the fair she's been floating candle lanterns on the fountain since teatime.",
     "relationships": [],
     "is_background": true,
     "pronoun": "she",
@@ -392,9 +413,9 @@
       "punctual"
     ],
     "portrait": "\ud83d\udce8",
-    "home_location_id": "loc_rear_alley",
+    "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
-    "routine_summary": "Does the morning post round through the square, the bookshop and the clinic before most doors have even opened.",
+    "routine_summary": "Does the morning post round through the square; off duty tonight, which he finds harder work than the round.",
     "relationships": [],
     "is_background": true,
     "pronoun": "he",
@@ -414,7 +435,7 @@
     "portrait": "\ud83e\udd56",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_hobbs_cafe",
-    "routine_summary": "Up before the ovens, delivers the morning loaves to the cafe and the bookshop, and always keeps the misshapen one back for herself.",
+    "routine_summary": "Up before the ovens most days; tonight she's selling toffee apples off a tray and keeping the misshapen one back for herself.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
@@ -432,8 +453,8 @@
     "occupation": "Milkman",
     "portrait": "\ud83e\udd5b",
     "home_location_id": "loc_hobbs_cafe",
-    "work_location_id": "loc_bookshop",
-    "routine_summary": "Runs the milk round in strict order \u2014 cafe first, bookshop second \u2014 and rates every doorstep in the village by how promptly they bring the empties back.",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Runs the milk round in strict order by day; for the fair he's hauled two churns of cocoa to the square and rates every drinker by how promptly they return the mug.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
@@ -450,9 +471,9 @@
     "age": 26,
     "occupation": "Window cleaner",
     "portrait": "\ud83e\ude9f",
-    "home_location_id": "loc_bookshop",
-    "work_location_id": "loc_clinic",
-    "routine_summary": "Works his ladder clockwise around the square; swears the clinic's windows are the only ones anyone ever thanks him for.",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Works his ladder clockwise around the square by day; tonight the committee has him stringing lanterns because he's the only one who'll climb for free.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
@@ -469,9 +490,9 @@
     "age": 61,
     "occupation": "Market stallholder",
     "portrait": "\ud83e\uddfa",
-    "home_location_id": "loc_clinic",
-    "work_location_id": "loc_owen_house",
-    "routine_summary": "Trundles his stall cart around the village testing pitches; has moved 'the perfect spot' four times this year and defends each one loudly.",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Trundles his stall cart around the village testing pitches; tonight he's running the hoopla and defending its prize table loudly.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
@@ -488,9 +509,9 @@
     "age": 46,
     "occupation": "Dog walker",
     "portrait": "\ud83d\udc15",
-    "home_location_id": "loc_owen_house",
+    "home_location_id": "loc_village_square",
     "work_location_id": "loc_fountain",
-    "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; the terrier decides when they stop, and it always stops at the fountain.",
+    "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; tonight all three are in ribbon bows nobody asked for either.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
@@ -509,7 +530,7 @@
     "portrait": "\ud83d\udcf0",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_village_square",
-    "routine_summary": "Sets the papers out from the fountain to the cafe and reads every front page aloud to whoever stands still long enough.",
+    "routine_summary": "Sets the papers out from the fountain to the cafe each morning; tonight he's selling the last editions by lantern light and reading the headlines aloud anyway.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
@@ -527,8 +548,8 @@
     "occupation": "Busker",
     "portrait": "\ud83c\udfbb",
     "home_location_id": "loc_village_square",
-    "work_location_id": "loc_hobbs_cafe",
-    "routine_summary": "Tunes the fiddle by the square until her fingers warm up, then follows the smell of coffee to the cafe pitch.",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Tunes the fiddle by the square until her fingers warm up; tonight she's leading the fair band from the bandstand and taking requests she then ignores.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
@@ -546,8 +567,8 @@
     "occupation": "Street sweeper",
     "portrait": "\ud83e\uddf9",
     "home_location_id": "loc_hobbs_cafe",
-    "work_location_id": "loc_bookshop",
-    "routine_summary": "Sweeps the shopfronts in the order the village wakes \u2014 cafe, bookshop, clinic \u2014 and knows everyone's doormat better than they do.",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Sweeps the shopfronts in the order the village wakes; tonight she's fighting a losing war against spilt popcorn and enjoying every minute of it.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {

@@ -45,8 +45,8 @@
     "portrait_art": {
       "calm": "/art/portraits/owen_calm.png",
       "deceased": "/art/portraits/owen_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/owen_defensive.png",
+      "cracking": "/art/portraits/owen_cracking.png"
     },
     "sprite_id": "sprite_carlos_gomez"
   },
@@ -96,8 +96,8 @@
     "portrait_art": {
       "calm": "/art/portraits/ben_calm.png",
       "deceased": "/art/portraits/ben_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/ben_defensive.png",
+      "cracking": "/art/portraits/ben_cracking.png"
     },
     "sprite_id": "sprite_ryan_park"
   },
@@ -140,8 +140,8 @@
     "portrait_art": {
       "calm": "/art/portraits/elias_calm.png",
       "deceased": "/art/portraits/elias_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/elias_defensive.png",
+      "cracking": "/art/portraits/elias_cracking.png"
     },
     "sprite_id": "sprite_adam_smith"
   },
@@ -177,8 +177,8 @@
     "portrait_art": {
       "calm": "/art/portraits/priya_calm.png",
       "deceased": "/art/portraits/priya_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/priya_defensive.png",
+      "cracking": "/art/portraits/priya_cracking.png"
     },
     "sprite_id": "sprite_priya_kapoor"
   },
@@ -221,8 +221,8 @@
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.png",
       "deceased": "/art/portraits/nadia_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/nadia_defensive.png",
+      "cracking": "/art/portraits/nadia_cracking.png"
     },
     "sprite_id": "sprite_ayesha_khan"
   },
@@ -265,8 +265,8 @@
     "portrait_art": {
       "calm": "/art/portraits/fred_calm.png",
       "deceased": "/art/portraits/fred_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/fred_defensive.png",
+      "cracking": "/art/portraits/fred_cracking.png"
     },
     "sprite_id": "sprite_tom_moreno"
   },

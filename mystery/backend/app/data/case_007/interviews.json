@@ -1,0 +1,1210 @@
+[
+  {
+    "agent_id": "agent_marcus",
+    "default_answers": {
+      "alibi": "The stall. Cider does not ladle itself, and Clara can't run a queue like that alone.",
+      "timeline": "Cider. Cups. More cider. A fair is repetitive work, detective.",
+      "last_seen_victim": "At my stall, some time after eight. He took a cider.",
+      "relationship": "He taught me, forty years ago. In a village this size that never stops being the relationship.",
+      "evidence": "I deal in what's in front of me. That isn't.",
+      "location": "I know this village to the brick. Ask me something specific."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "How did I meet Elias Grant? In a classroom of forty, aged nine. He said I had a bookkeeper's eye — first kind word anyone in that school ever spent on me. I owe that man the habit of accuracy. Whatever else tonight is, write that down as true.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "measured",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "An old teacher, an old customer. He sat on that bench and kept his accounts of us all, and the village indulged him because the village enjoys being remembered. We had no quarrel. A man doesn't quarrel with the weather.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "level",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_no_quarrel",
+            "summary": "Marcus says he and Elias had no quarrel — 'a man doesn't quarrel with the weather.'",
+            "claim_type": "relationship",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "From half past eight I was at our stall, and before that too — we set up at half seven. Ask Clara; we barely kept ahead of the queue. I stepped into the cafe at some point for a box of cups — thirty seconds, and the box was spoiled anyway, damp or mice — and came straight back to the ladle. That is my evening, detective, in full.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "composed",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_stall",
+            "summary": "Marcus claims he was at the cafe stall through the murder window, leaving only for 'thirty seconds' to fetch cups.",
+            "claim_type": "alibi",
+            "time_reference": "20:30",
+            "time_to": "21:00",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "false",
+            "about_agent_id": "agent_marcus"
+          }
+        ],
+        "suggested_followups": [
+          "How long were you actually gone for those cups?",
+          "Did anyone see you inside the cafe?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:40",
+        "time_to": "21:00",
+        "answer_text": "The stall. I told you. There was a queue at twenty to nine and a queue at nine; between the two I fetched a box of cups that turned out spoiled. If you want the minutes accounted for, count the ciders.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "clipped",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_stall",
+            "summary": "Marcus claims he was at the cafe stall through the murder window, leaving only for 'thirty seconds' to fetch cups.",
+            "claim_type": "alibi",
+            "time_reference": "20:30",
+            "time_to": "21:00",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "false",
+            "about_agent_id": "agent_marcus"
+          }
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:20",
+        "time_to": "20:35",
+        "answer_text": "Elias came by for a cider around twenty-five past. On the house — I told him it was for the nerves, before his reading. He made one of his remarks. He was a man of remarks. Then he went back to his bench and I went back to the urn.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "flat",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_cider_chat",
+            "summary": "Marcus says Elias stopped for a free cider at about 20:25 and made 'one of his remarks' — nothing more.",
+            "claim_type": "statement",
+            "time_reference": "20:25",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": [
+          "What exactly did Elias say to you?"
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "At the stall, twenty-five past eight, taking a free cider off me. I watched him carry it back to that bench of his. That was the last I saw of Elias Grant.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "carefully still",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_last_seen",
+            "summary": "Marcus claims he last saw Elias alive at the stall at about 20:25, carrying a cider back to his bench.",
+            "claim_type": "sighting",
+            "time_reference": "20:25",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_notebook_gap",
+        "answer_text": "A missing volume? Elias's filing was sentiment, not system. A book loaned, a book lost, a year he never filled. The man kept forty years of paper in a fish crate until spring — and now every gap is a conspiracy?",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "dismissive",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_notebook_ignorance",
+            "summary": "Marcus claims to know nothing about the missing 1994 notebook.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_bill_of_sale",
+        "answer_text": "You went into my study. ... Thomas Hobbs sold me that cafe for a fair price a month before he died, and the paper on my wall says so in his own hand. I'll not apologise for owning what I bought. The letter? Elias had opinions about history. Old men write letters. I framed the document and filed the opinion.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "cold",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_bill_legitimate",
+            "summary": "Marcus insists the bill of sale is legitimate and dismisses Elias's letter as 'an opinion about history'.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": [
+          "Why keep a threatening letter hidden behind the frame?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_grey_coat",
+        "answer_text": "Half this village owns a grey coat, detective, and in November all of us wear them. Ben saw a coat in a dark alley and his imagination supplied the rest. Mine was on my shoulders, at my stall, in the light.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "clipped",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_coat_denial",
+            "summary": "Marcus denies he was the grey-coated figure in the alley and insists he was at the stall.",
+            "claim_type": "statement",
+            "time_reference": "20:44",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "false",
+            "about_agent_id": "agent_marcus",
+            "asserts_presence": false
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_notebook_found",
+        "answer_text": "In my cup crate. ... Then someone put it there. A stall is not a safe; that square was full of hands all evening, and every one of them knew where I'd be standing until nine. You have a notebook and a location, detective. What you do not have is my hand on either.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "very still",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_planted",
+            "summary": "Marcus claims the 1994 notebook must have been planted in his cup crate.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_bookshop_back",
+        "answer_text": "I have no key to that room and no cause to hold one. Isabella's shop; Elias's boxes; Priya's bolt. I was at my stall. You may draw the geometry yourself.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "cold",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_never_stockroom",
+            "summary": "Marcus denies ever being in the bookshop stockroom.",
+            "claim_type": "statement",
+            "time_reference": "20:45",
+            "time_to": "21:00",
+            "location_reference_id": "loc_bookshop_back",
+            "truthfulness": "false",
+            "about_agent_id": "agent_marcus",
+            "asserts_presence": false
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_cafe_kitchen",
+        "answer_text": "My own kitchen, yes — for the cups. In and out. If you're asking whether anyone saw me in my own dark kitchen during my own fair: no. That is what kitchens are like.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "irritated",
+        "claims": [
+          {
+            "claim_id": "claim_marcus_kitchen_brief",
+            "summary": "Marcus admits entering the cafe kitchen for cups but insists it was momentary.",
+            "claim_type": "statement",
+            "time_reference": "20:41",
+            "location_reference_id": "loc_cafe_kitchen",
+            "truthfulness": "false"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_clara",
+    "default_answers": {
+      "alibi": "Behind the urn all evening. The queue can vouch for me forty times over.",
+      "timeline": "Ladling, mostly. You lose the minutes in a queue like that.",
+      "last_seen_victim": "At the stall, taking a cider off Marcus. After that I was pouring.",
+      "relationship": "He had the same table every morning and the same opinion about my scones. I'll miss both, and I never thought I'd say the second part.",
+      "evidence": "I was behind an urn. I only know what I could see from there.",
+      "location": "I was at the stall. Ask me what I could see from it."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "When I first came to the village he sat me down, ordered a pot for two, and told me the entire history of everyone I was about to meet. Most of it was even true. He did it kindly, though. He wanted you to know where you'd landed.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "fond",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "Elias? A fixture. He needled everyone — it was his way of saying good morning. Lately he'd been needling Marcus, little remarks over the counter, and Marcus had gone quiet about it. Quiet for Marcus is loud, if you know him.",
+        "answer_type": "gossip",
+        "truthfulness": "true",
+        "emotional_shift": "careful",
+        "claims": [
+          {
+            "claim_id": "claim_clara_marcus_needled",
+            "summary": "Clara says Elias had lately been needling Marcus, and Marcus had gone unusually quiet about it.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ],
+        "suggested_followups": [
+          "How did you first meet Elias?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "The stall, the whole evening — me and Marcus both. The cider queue never stopped. He stepped in for cups at some point, that's all; we were two of us behind that urn from setup to the scream.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "steady",
+        "claims": [
+          {
+            "claim_id": "claim_clara_stall_self",
+            "summary": "Clara says she was behind the stall urn all evening.",
+            "claim_type": "alibi",
+            "time_reference": "19:32",
+            "time_to": "21:08",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_clara"
+          },
+          {
+            "claim_id": "claim_clara_vouch_marcus",
+            "summary": "Clara vouches that Marcus was at the stall with her essentially the whole evening, including the murder window.",
+            "claim_type": "alibi",
+            "time_reference": "20:30",
+            "time_to": "21:00",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "false",
+            "about_agent_id": "agent_marcus"
+          }
+        ],
+        "suggested_followups": [
+          "When exactly did Marcus step away for cups?",
+          "What could you see from the stall?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:40",
+        "time_to": "21:00",
+        "answer_text": "Flat out at the urn. Marcus was— we were both busy. The only thing I noticed, and I only noticed because her shop was dark: Isabella crossed over at about a quarter to and let herself into the bookshop without putting the lamps on. Came out a few minutes later with the ceremony glasses. Odd way to fetch glasses, in the dark. That's all I saw.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "hesitant",
+        "claims": [
+          {
+            "claim_id": "claim_clara_saw_isabella",
+            "summary": "Clara saw Isabella enter the dark bookshop at about 20:47 and come out at about 20:53 with a tray.",
+            "claim_type": "sighting",
+            "time_reference": "20:47",
+            "time_to": "20:53",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "true",
+            "about_agent_id": "agent_isabella"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_isabella_seen"
+        ],
+        "suggested_followups": [
+          "Where was Marcus while Isabella was in the shop?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:20",
+        "time_to": "20:35",
+        "answer_text": "Elias came by for his cider. Marcus gave it him free, which — Marcus doesn't do free. I was pouring, I didn't catch the words. But I saw Marcus's face after, and the ladle just... dripped. He didn't say a word for minutes. I've worked that counter fifteen years and I've never seen the ladle drip like that.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "uneasy",
+        "claims": [
+          {
+            "claim_id": "claim_clara_ladle",
+            "summary": "Clara saw Marcus frozen after Elias's quiet words at the stall, though she didn't hear them.",
+            "claim_type": "sighting",
+            "time_reference": "20:25",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_marcus"
+          }
+        ],
+        "suggested_followups": [
+          "Who might have heard what Elias said?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_grey_coat",
+        "answer_text": "A grey coat, going to the bookshop's back door? At a quarter to nine? ...He did step away. Twenty to, near enough — 'cups', he said, and took the ladle back off me at nine on the dot. No cups. Out of breath. Some story about mice in the box, and I stocked that cupboard myself this morning. I didn't want it to mean anything, detective. He's my employer. He's the reason I make rent. But you asked, and there it is: nineteen minutes, and no cups.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "torn",
+        "claims": [
+          {
+            "claim_id": "claim_clara_admits_gap",
+            "summary": "Clara stops covering: Marcus was away from the stall from 20:40 to 20:59 and returned empty-handed and out of breath.",
+            "claim_type": "sighting",
+            "time_reference": "20:40",
+            "time_to": "20:59",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_marcus",
+            "asserts_presence": false
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_marcus_cups_gap"
+        ],
+        "reveals_memory_ids": [
+          "mem_clara_gap"
+        ],
+        "suggested_followups": [
+          "Did Marcus's coat look different when he came back?",
+          "Had Marcus and Elias argued before tonight?"
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Twenty-five past eight, at our stall, cider in hand. He toasted the urn — 'to accurate records', he said, which I thought was one of his jokes. Then he went back to his bench. I was pouring when he... when whatever happened, happened.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "sad",
+        "claims": [
+          {
+            "claim_id": "claim_clara_last_seen",
+            "summary": "Clara last saw Elias at the stall at 20:25, toasting 'to accurate records'.",
+            "claim_type": "sighting",
+            "time_reference": "20:25",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_cafe_kitchen",
+        "answer_text": "The kitchen was dark all night — everything we needed was out at the stall. The cup cupboard's by the sink, full as of this morning. If a box in there spoiled between eight and nine, it spoiled fast.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "pointed",
+        "claims": [
+          {
+            "claim_id": "claim_clara_cupboard_full",
+            "summary": "Clara says the cafe's cup cupboard was full this morning, undermining the 'spoiled box' story.",
+            "claim_type": "statement",
+            "location_reference_id": "loc_cafe_kitchen",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_isabella",
+    "default_answers": {
+      "alibi": "I was at the fair, at the ceremony table. It was my ceremony to run.",
+      "timeline": "Ceremony table, mostly. Someone has to make an evening like that stand up straight.",
+      "last_seen_victim": "Alive? At our disagreement, ten to eight. You'll have heard about the disagreement.",
+      "relationship": "We built the archive together. Which is to say: he donated chaos and I have been alphabetising it since spring.",
+      "evidence": "I can't help you with that.",
+      "location": "I know every room in this village worth knowing. Which one?"
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "He came to me in the spring with forty years of exercise books in a fish crate and said the village should keep its own memory. I said yes before he'd finished the sentence. Whatever we became over the cataloguing — that first afternoon he was magnificent, and I'll thank you to record it.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "wistful",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "We disagreed about the reading — publicly, this evening, as I'm sure six people have already told you with relish. I curate that archive. Elias treated 'curation' as a word for other people. That is the whole of our quarrel: process. Nothing that ends in a stockroom.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "guarded",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_process_only",
+            "summary": "Isabella frames her public row with Elias as a procedural disagreement about curation, nothing more.",
+            "claim_type": "relationship",
+            "truthfulness": "mistaken"
+          }
+        ],
+        "suggested_followups": [
+          "How did the archive project begin?",
+          "What were you afraid the reading contained?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "The ceremony table, the bandstand, the stalls — the square, detective. I was running an evening. I did not leave it until Priya screamed, and then all of us left it at once.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "composed",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_never_left",
+            "summary": "Isabella claims she never left the square between setup and the discovery.",
+            "claim_type": "alibi",
+            "time_reference": "20:30",
+            "time_to": "21:08",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "false",
+            "about_agent_id": "agent_isabella"
+          }
+        ],
+        "suggested_followups": [
+          "You never once stepped into your own shop?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_isabella_seen",
+        "answer_text": "...Very well. Yes. Six minutes, for the ceremony glasses, because nobody else was going to fetch them. I didn't light the lamps because I know my own shop in the dark and the switch panel is behind the display I'd have had to move. And since you will drag it out of me regardless: there was light under the stockroom door. I assumed Priya was in there among the boxes. And at ten to nine there was a — a thud. Heavy. I told myself it was a box coming off a stack, and I took my tray, and I locked my own front door on a room with a dying man in it. I have been arranging glasses on trays in my head ever since, detective. It is not a confession. It is worse. It is what I didn't do.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "shaken",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_admits_visit",
+            "summary": "Isabella admits she was inside the dark bookshop from 20:47 to 20:53 fetching glasses, saw light under the stockroom door, and heard a heavy thud at 20:52.",
+            "claim_type": "statement",
+            "time_reference": "20:47",
+            "time_to": "20:53",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "true",
+            "about_agent_id": "agent_isabella"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_isabella_light"
+        ],
+        "reveals_memory_ids": [
+          "mem_isabella_visit"
+        ],
+        "suggested_followups": [
+          "Who knew the stockroom would be in use tonight?",
+          "Who else could get through the alley door?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_isabella_curation_row",
+        "answer_text": "You want to know what I was afraid his notebooks held. ... My first shop failed. Properly failed — bailiffs, the lot. It was Marcus Bell who bought my debts, quietly, and let me pay him back across a decade at terms he never once mentioned in public. This village believes I built Reed & Bell out of cleverness, and I have spent fifteen years letting it. Elias watched the bailiffs come. It's in a notebook. That is what curation was for, detective. Vanity — not violence.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "bitter",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_debts_admitted",
+            "summary": "Isabella admits she feared the notebooks would expose her first shop's failure and that Marcus quietly bought her debts.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_memory_ids": [
+          "mem_isabella_debts"
+        ],
+        "suggested_followups": [
+          "Did Elias hold anything over Marcus the same way?"
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Ten to eight, at our row over the lectern, which I would take back word by word if the evening would only run in reverse. He told me curation was a fine word for fear. I have thought about that sentence every quarter hour since.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "quiet",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_last_seen",
+            "summary": "Isabella last spoke to Elias at their 19:50 row and never took it back.",
+            "claim_type": "sighting",
+            "time_reference": "19:50",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "21:00",
+        "time_to": "21:10",
+        "answer_text": "Nine came and Elias didn't, which has never once happened in the history of this village. I sent Priya for the boxes at six past so the reading could begin the second he appeared. He always appears. That is the entire premise of the man. I sent her in, detective. I sent her in to find that.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "brittle",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_sent_priya",
+            "summary": "Isabella sent Priya to fetch the archive boxes at 21:06, leading to the discovery.",
+            "claim_type": "statement",
+            "time_reference": "21:06",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_bookshop_back",
+        "answer_text": "Three keys open that room: mine, Priya's, and the archive key I cut for Elias in the spring so he could commune with his own paper whenever the mood took him. The alley door only opens if someone draws the bolt from inside. Priya bolts it at closing the way other people say their prayers.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "precise",
+        "claims": [
+          {
+            "claim_id": "claim_isabella_keys",
+            "summary": "Isabella confirms three stockroom keys exist — hers, Priya's, and the archive key cut for Elias — and that the alley door only opens if unbolted from inside.",
+            "claim_type": "statement",
+            "location_reference_id": "loc_bookshop_back",
+            "truthfulness": "true"
+          }
+        ],
+        "suggested_followups": [
+          "So whoever came through the alley door was let in?"
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_owen",
+    "default_answers": {
+      "alibi": "At my brazier. Where else would I be?",
+      "timeline": "Brazier. Chestnuts. A fair's a fair.",
+      "last_seen_victim": "At our row, ten past eight. I'm not going to pretend we didn't have one.",
+      "relationship": "He taught me. Failed me at every subject going. We had history, and you'll hear worse versions of it than mine.",
+      "evidence": "No idea.",
+      "location": "What about it?"
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "He failed me at every subject the school had and then told my mother I'd build things instead. Only teacher who was ever right about me. I've resented him and owed him my whole life, in about equal measure, and tonight I'd give the yard to have him back needling me by that fire.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "gruff",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "I'll say it before the village does: he had a line in his damned books about my roof job at St. Anne's, 2015, and he liked to walk it out on a lead in public. I told him tonight to keep my name out of them. Half the square heard me. If that makes me your man, get on with it.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_owen_grudge_admitted",
+            "summary": "Owen admits the public grudge over what Elias's notebooks say about his 2015 church roof job.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ],
+        "suggested_followups": [
+          "What actually happened with the church roof?",
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Twenty to nine I went to my yard for logs. Back by nine. And no, nobody saw me, and no, I'll not beg you to believe it. A man shouldn't need a witness to fetch wood off his own pile.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "bristling",
+        "claims": [
+          {
+            "claim_id": "claim_owen_logs",
+            "summary": "Owen claims he was at his own yard fetching logs from about 20:40 until 21:00.",
+            "claim_type": "alibi",
+            "time_reference": "20:40",
+            "time_to": "21:00",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "false",
+            "about_agent_id": "agent_owen"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_missing"
+        ],
+        "suggested_followups": [
+          "The brazier never ran short of wood — why did you need logs?",
+          "What happened to your hand?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_owen_row",
+        "answer_text": "Aye, I shouted at him. Ten past eight, by my own fire, in front of everyone — that's how I do my shouting, detective, in the light, at volume. The roof held. It holds still. My temper's the only thing I've ever built that collapses. A row at eight isn't a body at nine.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "steady",
+        "claims": [
+          {
+            "claim_id": "claim_owen_row_admitted",
+            "summary": "Owen admits the 20:10 row and insists public shouting is the whole of his violence.",
+            "claim_type": "statement",
+            "time_reference": "20:10",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_owen_burn",
+        "answer_text": "She told you, then. ...Fine. Yes. I burned my hand on my own brazier like a first-year apprentice, showing off with the chestnut pan, with two ciders and a rum in me. Nadia strapped it in the clinic and I made her swear. You want to know why I lied about logs? Because I've been the man who builds this village's fires for thirty years, and I'd sooner be your suspect than its punchline. There. Now you know the worst thing I did tonight.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "sheepish",
+        "claims": [
+          {
+            "claim_id": "claim_owen_clinic",
+            "summary": "Owen admits he was in the clinic having a burn dressed from 20:40 until nearly 21:00.",
+            "claim_type": "alibi",
+            "time_reference": "20:40",
+            "time_to": "20:58",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true",
+            "about_agent_id": "agent_owen"
+          }
+        ],
+        "reveals_memory_ids": [
+          "mem_owen_burn"
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "Our row, ten past eight. Last thing I ever said to a man who taught me long division was to keep my name out of his books. ...He'd have written that down too, you know. Word for word. He'd have got my spelling right and all.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "heavy",
+        "claims": [
+          {
+            "claim_id": "claim_owen_last_seen",
+            "summary": "Owen last spoke to Elias at their 20:10 row.",
+            "claim_type": "sighting",
+            "time_reference": "20:10",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_owen_house",
+        "answer_text": "My yard's my yard. The woodpile's by the gate, the brazier stock came off it this afternoon, and if you count the logs you'll find I never touched it tonight. ...You'll count them, won't you. Of course you will.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "resigned",
+        "claims": [
+          {
+            "claim_id": "claim_owen_woodpile",
+            "summary": "Owen concedes the woodpile would show he never fetched logs tonight.",
+            "claim_type": "statement",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_priya",
+    "default_answers": {
+      "alibi": "I was at the tombola all evening. It faces the shop. I wish it didn't, now.",
+      "timeline": "The tombola, mostly. I can tell you the raffle numbers if it helps. I remember all of them.",
+      "last_seen_victim": "Alive — at the bandstand, his announcement. He waved at me. I had a ticket for him.",
+      "relationship": "He sat in the shop on wet mornings and told me which books were lying. I loved him a bit. Most of us did, under the complaining.",
+      "evidence": "I'm sorry. I'll tell you if I know. I mostly know about the shop.",
+      "location": "I know the shop best. Ask me about the shop."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "My first week in the shop I shelved his order wrong and he came back in to explain the Dewey system to me from memory, standing up, with an umbrella for a pointer. It should have been horrible. It was the kindest hour anyone had spent on me in years. That was Elias. Corrections were how he loved people.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "grieving",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "The tombola, from half past seven until... until Isabella sent me for the boxes. It faces the bookshop. I was twenty feet from that window all evening, detective, selling tickets, and I saw nothing worse than Dez arguing about a coconut. That's what I can't stop thinking about. I was right there.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "quiet",
+        "claims": [
+          {
+            "claim_id": "claim_priya_tombola",
+            "summary": "Priya was at the tombola stall opposite the bookshop from 19:38 until sent to fetch the boxes at 21:06.",
+            "claim_type": "alibi",
+            "time_reference": "19:38",
+            "time_to": "21:06",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_priya"
+          }
+        ],
+        "suggested_followups": [
+          "What could you see of the bookshop from there?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_isabella_seen",
+        "answer_text": "Isabella? Oh — no. No, I watched her the whole time, without meaning to; the tombola faces that window. She put the counter lamp on, took the glasses down two at a time, polished each one on her apron — she doesn't know she does that. She never went past the counter. She came out at eight fifty-three with the tray; I remember because the band had just finished The Weaving Song and I'd been humming it. If you're asking whether Isabella went into that stockroom: she didn't. I'd swear it on the shop.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "earnest",
+        "claims": [
+          {
+            "claim_id": "claim_priya_saw_isabella",
+            "summary": "Priya watched Isabella through the bookshop window for the whole six minutes — front of shop only, out at 20:53 with the tray.",
+            "claim_type": "sighting",
+            "time_reference": "20:47",
+            "time_to": "20:53",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "true",
+            "about_agent_id": "agent_isabella"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_priya_window_view"
+        ],
+        "reveals_memory_ids": [
+          "mem_priya_window"
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_bookshop_back",
+        "answer_text": "I bolted the alley door myself at six, after we carried the last boxes in — I always do, the bolt sticks and nobody else has the knack. And the owl lives on the latch side of the door; I trip over it enough to know. If it's sitting by the hinges, someone moved it tonight, and if that door opened, someone drew my bolt from inside. Those are the two things in that room I'd swear to in any court you like.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "precise",
+        "claims": [
+          {
+            "claim_id": "claim_priya_bolt",
+            "summary": "Priya bolted the stockroom's alley door at 18:00 and confirms the owl doorstop was moved from its usual side.",
+            "claim_type": "statement",
+            "location_reference_id": "loc_bookshop_back",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_rear_door_latch"
+        ],
+        "reveals_memory_ids": [
+          "mem_priya_bolt"
+        ],
+        "suggested_followups": [
+          "Who had keys to the stockroom?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "21:05",
+        "time_to": "21:10",
+        "answer_text": "Isabella gave me the key at six past and said fetch the boxes out, so the reading could start the moment he turned up. I put the lights on. The stockroom door was shut, like always. I opened it and the boxes were everywhere — years and years, all over the floor — and I thought, he'd hate this mess, he'd absolutely hate it. And then I saw his shoe. I don't remember screaming. Everyone says I did.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "shaking",
+        "claims": [
+          {
+            "claim_id": "claim_priya_discovery",
+            "summary": "Priya describes finding Elias's body at 21:08 among the toppled archive boxes.",
+            "claim_type": "statement",
+            "time_reference": "21:08",
+            "location_reference_id": "loc_bookshop_back",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:40",
+        "time_to": "20:50",
+        "answer_text": "Ben went off to the van at about twenty to — said something about straps and went pink, which for Ben is practically a signed statement. He came back a few minutes later carrying something in a blanket and put it under my table when he thought I wasn't looking. I've been at that table all evening, detective. I'm always looking.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "almost a smile",
+        "claims": [
+          {
+            "claim_id": "claim_priya_saw_ben",
+            "summary": "Priya saw Ben go to the van at about 20:43 and return around 20:49 to hide something under the tombola table.",
+            "claim_type": "sighting",
+            "time_reference": "20:43",
+            "time_to": "20:49",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_ben"
+          }
+        ],
+        "suggested_followups": [
+          "What did Ben hide under the table?"
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "The announcement, at the bandstand. He tapped the rail and said his notebooks remember what the village forgets, and everybody laughed, and I remember thinking some of the laughs came out wrong. Like coughs. I couldn't tell you whose. I've been trying all night.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "troubled",
+        "claims": [
+          {
+            "claim_id": "claim_priya_wrong_laughs",
+            "summary": "Priya recalls that some of the laughter at Elias's announcement 'came out wrong'.",
+            "claim_type": "statement",
+            "time_reference": "20:15",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_ben",
+    "default_answers": {
+      "alibi": "At the stalls, mate. Hauling, hanging, hauling again. Fair night's a work night for a van man.",
+      "timeline": "Around the stalls somewhere. It blurs.",
+      "last_seen_victim": "The announcement. Front row, me. He told me once my van was 'the newsroom'. I liked that.",
+      "relationship": "Everyone's got an Elias story. Mine's that he knew my round better than I did and marked me late from a bench.",
+      "evidence": "Couldn't tell you anything about that.",
+      "location": "I'm all over the square on a night like this, take your pick."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "First week on the round, he flagged me down from that bench to tell me the old postman did the bookshop before the clinic and I'd got it backwards. Backwards! It's my round! ...I do it his way now, mind. Have done for six years. That was Elias for you — wrong about nothing, welcome about half the time.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "warm",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Stalls, mostly, all evening. I did pop out to the van at some point — quarter to nine, about. Just checking the straps. Load shifts, doesn't it. Straps. Then I came straight back.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "shifty",
+        "claims": [
+          {
+            "claim_id": "claim_ben_straps",
+            "summary": "Ben admits being at his van in the alley around the murder window but says he was 'checking the straps'.",
+            "claim_type": "alibi",
+            "time_reference": "20:43",
+            "time_to": "20:49",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "mistaken",
+            "about_agent_id": "agent_ben"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_ben_van"
+        ],
+        "suggested_followups": [
+          "What did you see from the van?",
+          "What were you really doing in the alley?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:40",
+        "time_to": "20:50",
+        "answer_text": "Right, so — I was at the van, and I saw someone. Quarter to, near enough. Fella in a long grey coat, collar up, came out the cafe's kitchen door — the back one, into the alley — and went across to the bookshop's rear door. And here's the thing: it opened. No knock, no key that I saw. Opened like it was waiting for him. I never saw the face. But Marcus has a coat like that, and the walk was... you know the walk. That squared-off way, like the ground owes him rent. I've told myself all night it could've been anyone. I don't believe me either.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reluctant",
+        "claims": [
+          {
+            "claim_id": "claim_ben_grey_coat",
+            "summary": "Ben saw a man he believes was Marcus — grey coat, squared-off walk — cross the alley from the cafe kitchen to the bookshop's rear door at about 20:44, and the door opened to him.",
+            "claim_type": "sighting",
+            "time_reference": "20:44",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "true",
+            "about_agent_id": "agent_marcus"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_ben_grey_coat"
+        ],
+        "reveals_memory_ids": [
+          "mem_ben_grey_coat"
+        ],
+        "suggested_followups": [
+          "Was Marcus meant to be at his stall then?",
+          "Did you hear anything from the bookshop after that?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_van",
+        "answer_text": "The straps. Right. ...Okay. Don't laugh. Please actually don't laugh. It's a lantern. I built it — three weekends in me mum's shed. Sweet peas painted round the glass, because sweet peas are Priya's flower, and there's — there's a ring. Taped inside the little door. Tonight at the lighting, when hers went up, I was going to... you know. That's what was in the blanket. That's what I was doing in the alley while somebody— while it happened twenty feet off. Checking the straps on the rest of my life. You can see it. It's under the tombola table. Just — let me be the one who shows her. Whenever this is over. Let me still be the one.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "mortified, then steady",
+        "claims": [
+          {
+            "claim_id": "claim_ben_lantern",
+            "summary": "Ben admits the van trip was to fetch a hand-built proposal lantern for Priya, hidden under the tombola table.",
+            "claim_type": "statement",
+            "time_reference": "20:46",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "true",
+            "about_agent_id": "agent_ben"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_painted_lantern"
+        ],
+        "reveals_memory_ids": [
+          "mem_ben_lantern"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:50",
+        "time_to": "21:00",
+        "answer_text": "Back at the stalls by ten to, near enough. Stowed the— stowed a thing, helped Wren's lot shift the amp. Didn't hear anything from the shop side, but the band was up, you couldn't have heard a wall fall over.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "subdued",
+        "claims": [
+          {
+            "claim_id": "claim_ben_back_at_stalls",
+            "summary": "Ben was back at the stalls by about 20:49-20:50.",
+            "claim_type": "alibi",
+            "time_reference": "20:49",
+            "time_to": "21:00",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_ben"
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_rear_alley",
+        "answer_text": "My van lives at the bookshop end, has done for years. Dark as a coal sack back there on a night like this — the fair light stops dead at the corner. You could walk that alley in a gorilla suit and all anyone would swear to is the suit.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "wry",
+        "claims": [
+          {
+            "claim_id": "claim_ben_alley_dark",
+            "summary": "Ben notes the alley was near-dark, which is why he saw only the coat and the walk.",
+            "claim_type": "statement",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "The fair until about twenty to nine, then the clinic — with a patient. Back for nine.",
+      "timeline": "The square, the cider queue, briefly the clinic. Ask me something specific and I'll tell you what I saw.",
+      "last_seen_victim": "Through the crowd, after his announcement. Pleased with himself. He'd earned it, I suppose.",
+      "relationship": "A neighbour for twenty years. He noticed everything and forgave most of it. People mix up which half matters.",
+      "evidence": "I only know what I saw and heard, and I'll keep to that.",
+      "location": "I crossed the square a few times. Be specific."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "The week I took the clinic job he presented me with a hand-drawn map of the village with every household's ailments pencilled in the margins. Utterly improper. Completely accurate. I burned it in front of him and he said, 'Good — you'll do.' We were friends from then on, on the understanding that I was the only person in this village allowed to keep secrets.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "amused, then sad",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "I was at the fair until about twenty to nine. Then I was at the clinic with a patient until just before nine, and back in the square for the lanterns. Who the patient was and what for is theirs to tell, not mine — unless it starts to matter more than their pride. Then we'll talk again.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "steady",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_clinic",
+            "summary": "Nadia says she was at the clinic with an unnamed patient from about 20:40 to just before 21:00.",
+            "claim_type": "alibi",
+            "time_reference": "20:40",
+            "time_to": "20:58",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true",
+            "about_agent_id": "agent_nadia"
+          }
+        ],
+        "suggested_followups": [
+          "Who was the patient?"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:20",
+        "time_to": "20:30",
+        "answer_text": "I was next in the cider queue, about twenty-five past. Elias leaned in over the urn and said to Marcus — quietly, but I was a foot away — 'Come to the reading, Marcus. Or come and see me before it. You know which page.' And Marcus went still. Not startled — still. The ladle sat there dripping. I noted it the way I'd note a symptom, and I've been turning it over since Priya screamed.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "sober",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_overheard",
+            "summary": "Nadia heard Elias tell Marcus at 20:25: 'Come to the reading. Or come and see me before it. You know which page.'",
+            "claim_type": "sighting",
+            "time_reference": "20:25",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true",
+            "about_agent_id": "agent_marcus"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_elias_words"
+        ],
+        "reveals_memory_ids": [
+          "mem_nadia_overheard"
+        ],
+        "suggested_followups": [
+          "What page do you think Elias meant?",
+          "How did Marcus behave after that?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_owen_missing",
+        "answer_text": "You're asking me to open a door I promised to keep shut. ...But a man is dead, and Owen Price is a fool about exactly one thing, and it isn't murder. He was with me. Clinic, twenty to nine until nearly nine, having a second-degree burn dressed across his palm — his own brazier, his own showing-off, two ciders and a rum. He swore me to secrecy because he'd sooner be suspected of killing a man than laughed at by the fair. So here I am breaking a promise to spare an idiot. Write it down before I regret it.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "exasperated, fond",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_owen_clinic",
+            "summary": "Nadia confirms Owen was in the clinic having a burn dressed from 20:40 to nearly 21:00 — covering the murder window.",
+            "claim_type": "alibi",
+            "time_reference": "20:40",
+            "time_to": "20:58",
+            "location_reference_id": "loc_clinic",
+            "truthfulness": "true",
+            "about_agent_id": "agent_owen"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_burn"
+        ],
+        "reveals_memory_ids": [
+          "mem_nadia_owen"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_cider_residue",
+        "answer_text": "Cinnamon, clove, orange peel — that's the stall's mixture; I drank two of them tonight. Sticky the moment it cools. If that's what's dried on the iron, then it came off a hand that had been at the urn — serving it, not sipping it. You don't get ladle-hands from carrying a glass.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "clinical",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_ladle_hands",
+            "summary": "Nadia's assessment: the residue pattern suggests hands that had been serving cider, not merely holding a glass.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "After the announcement, moving through the crowd like a man who'd finally posted a letter he'd carried for years. I remember thinking: he's decided something. In my work you learn the look of a person who has stopped weighing and started doing. He had it.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "thoughtful",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_last_seen",
+            "summary": "Nadia last saw Elias after the announcement, looking like 'a man who had decided something'.",
+            "claim_type": "sighting",
+            "time_reference": "20:18",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "20:05",
+        "time_to": "20:15",
+        "answer_text": "The row at the brazier, you mean. Elias made his crack about the church roof and Owen went up like his own kindling. Loud, public, over in ninety seconds. I've watched those two poke each other for twenty years, detective. It's how they said hello.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "level",
+        "claims": [
+          {
+            "claim_id": "claim_nadia_row_context",
+            "summary": "Nadia confirms the 20:10 row but frames Owen and Elias's sparring as twenty years of routine.",
+            "claim_type": "sighting",
+            "time_reference": "20:10",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  }
+]

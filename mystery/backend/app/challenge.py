@@ -24,6 +24,7 @@ from .models import (
 )
 from .projections import project_claim, project_clue
 from .session import Session
+from .behavioural_tells import challenge_tells
 from .llm.config import get_llm_config
 from .llm.dialogue_rewriter import rewrite_challenge_response
 from .world_state import build_world_state_digest
@@ -177,6 +178,18 @@ def resolve_challenge(case: CaseData, session: Session, req: ChallengeRequest) -
         record = _resolve_unscripted(case, session, req, claim)
     else:
         record = _apply_rule(case, session, req, claim, rule)
+
+    if not record.observable_tells:
+        agent = next(a for a in case.agents if a.agent_id == req.target_agent_id)
+        seed = f"{case.case.case_id}:{record.challenge_id}:{record.challenged_claim_id}:{','.join(record.evidence_clue_ids + record.evidence_claim_ids)}"
+        record.observable_tells = challenge_tells(
+            agent=agent,
+            outcome=record.outcome,
+            emotional_shift=record.emotional_shift,
+            pressure_delta=record.pressure_delta,
+            pressure_after=session.pressure_for(req.target_agent_id),
+            seed=seed,
+        )
 
     config = get_llm_config()
     if config.dialogue_enabled:
@@ -477,6 +490,7 @@ def _record_transcript(session: Session, req: ChallengeRequest, record: Challeng
             deterministic_text=record.deterministic_response_text,
             generated_claim_ids=record.new_claim_ids,
             revealed_clue_ids=record.revealed_clue_ids,
+            observable_tells=record.observable_tells,
             llm_rewrite_used=record.llm_rewrite_used,
             llm_rewrite_fallback=record.llm_rewrite_fallback,
             llm_rewrite_fallback_reason=record.llm_rewrite_fallback_reason,
@@ -514,6 +528,7 @@ def public_challenge(case: CaseData, session: Session, record: ChallengeRecord) 
         "outcome": record.outcome,
         "response_text": record.display_response_text,
         "emotional_shift": record.emotional_shift,
+        "observable_tells": [t.model_dump() for t in record.observable_tells],
         "new_claims": new_claims,
         "revealed_clues": revealed_clues,
         "revealed_memories": revealed_memories,

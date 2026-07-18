@@ -23,6 +23,7 @@ from .models import (
 from .projections import project_claim, project_clue
 from .session import Session
 from .case_store import minutes
+from .behavioural_tells import interview_tells
 from .llm.config import get_llm_config
 from .llm.dialogue_rewriter import rewrite_interview_answer
 from .world_state import build_conversation_context, build_world_state_digest
@@ -142,6 +143,7 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
             deterministic_answer = f"Around {req.time_reference}? {deterministic_answer}"
         
         answer_type = "uncertain"
+        truthfulness = "unknown"
         emotional_shift = None
         suggested_followups: list[str] = []
     else:
@@ -171,8 +173,21 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
 
         deterministic_answer = rule.answer_text
         answer_type = rule.answer_type
+        truthfulness = rule.truthfulness
         emotional_shift = rule.emotional_shift
         suggested_followups = rule.suggested_followups
+
+    agent = next(a for a in case.agents if a.agent_id == req.agent_id)
+    pressure = session.pressure_for(req.agent_id)
+    tell_seed = f"{case.case.case_id}:{req.agent_id}:{question_text}:{len(session.transcript_for(req.agent_id).messages)}"
+    observable_tells = interview_tells(
+        agent=agent,
+        question_type=req.question_type,
+        truthfulness=truthfulness,
+        emotional_shift=emotional_shift,
+        pressure=pressure,
+        seed=tell_seed,
+    )
 
     # Rewrite logic. Applies whether or not an authored rule matched — an
     # agent with no scripted line for this topic should still speak in their
@@ -186,9 +201,6 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
 
     if config.dialogue_enabled:
         allowed_facts = [c.claim_text for c in new_claims] + [c.title for c in revealed]
-        agent = next(a for a in case.agents if a.agent_id == req.agent_id)
-        pressure = session.pressure_for(req.agent_id)
-
         # Recent turns verbatim plus an extractive summary of the interview's
         # earlier statements (spec 15 Phase B), so long interrogations keep
         # continuity with their own opening.
@@ -238,6 +250,7 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         display_answer_text=display_answer,
         claim_ids=[c.claim_id for c in new_claims],
         clue_ids=[c.clue_id for c in revealed],
+        observable_tells=observable_tells,
         llm_rewrite_used=llm_rewrite_used,
         llm_rewrite_fallback=llm_rewrite_fallback,
         llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,
@@ -249,6 +262,7 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         display_answer_text=display_answer,
         answer_type=answer_type,
         emotional_shift=emotional_shift,
+        observable_tells=observable_tells,
         new_claims=new_claims,
         revealed_clues=revealed,
         suggested_followups=suggested_followups,
@@ -266,6 +280,7 @@ def _record(
     display_answer_text: str,
     claim_ids: list[str],
     clue_ids: list[str],
+    observable_tells: list = [],
     llm_rewrite_used: bool = False,
     llm_rewrite_fallback: bool = False,
     llm_rewrite_fallback_reason: Optional[str] = None,
@@ -281,6 +296,7 @@ def _record(
             deterministic_text=deterministic_answer_text,
             generated_claim_ids=claim_ids,
             revealed_clue_ids=clue_ids,
+            observable_tells=observable_tells,
             llm_rewrite_used=llm_rewrite_used,
             llm_rewrite_fallback=llm_rewrite_fallback,
             llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,
@@ -296,6 +312,7 @@ def public_ask_response(resp: AskResponse) -> dict:
         "deterministic_answer_text": resp.deterministic_answer_text,
         "answer_type": resp.answer_type,
         "emotional_shift": resp.emotional_shift,
+        "observable_tells": [t.model_dump() for t in resp.observable_tells],
         "new_claims": [project_claim(c) for c in resp.new_claims],
         "revealed_clues": [project_clue(c) for c in resp.revealed_clues],
         "suggested_followups": resp.suggested_followups,

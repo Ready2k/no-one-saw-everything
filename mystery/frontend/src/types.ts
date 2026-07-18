@@ -296,6 +296,25 @@ export interface RevealedMemory {
   summary: string;
 }
 
+export type TellCategory =
+  | "gaze"
+  | "voice"
+  | "hands"
+  | "posture"
+  | "timing"
+  | "overexplaining";
+
+export type TellIntensity = "subtle" | "noticeable" | "strong";
+
+export interface ObservableTell {
+  tell_id: string;
+  agent_id: string;
+  cue: string;
+  category: TellCategory;
+  intensity: TellIntensity;
+  source: "interview" | "challenge";
+}
+
 export interface ChallengeResult {
   challenge_id: string;
   target_agent_id: string;
@@ -308,6 +327,7 @@ export interface ChallengeResult {
   response_text: string;
   deterministic_response_text?: string;
   emotional_shift: string | null;
+  observable_tells: ObservableTell[];
   new_claims: ClaimPublic[];
   revealed_clues: CluePublic[];
   revealed_memories: RevealedMemory[];
@@ -333,6 +353,7 @@ export interface AskResult {
   deterministic_answer_text?: string;
   answer_type: string;
   emotional_shift: string | null;
+  observable_tells: ObservableTell[];
   new_claims: ClaimPublic[];
   revealed_clues: CluePublic[];
   suggested_followups: string[];
@@ -347,6 +368,7 @@ export interface TranscriptMessage {
   question_type: QuestionType | null;
   generated_claim_ids: string[];
   revealed_clue_ids: string[];
+  observable_tells?: ObservableTell[];
   llm_rewrite_used?: boolean;
   llm_rewrite_fallback?: boolean;
 }

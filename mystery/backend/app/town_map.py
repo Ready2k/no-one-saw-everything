@@ -769,13 +769,22 @@ def list_hd_tile_variants() -> dict[str, list[dict[str, str]]]:
     variants: dict[str, list[dict[str, str]]] = {cell: [] for cell in HD_TILE_CELLS}
     if not HD_TILE_ART_DIR.is_dir():
         return variants
-    for path in sorted(HD_TILE_ART_DIR.glob("town_overworld_*.png")):
+    for cell in HD_TILE_CELLS:
+        variants[cell].append({
+            "url": f"{HD_TILE_ART_URL_PREFIX}town_overworld_{cell}_blank_hd.png",
+            "label": "blank",
+        })
+    for path in sorted(HD_TILE_ART_DIR.rglob("town_overworld_*.png")):
         stem = path.stem.removeprefix("town_overworld_").removesuffix("_hd")
         cell, _, variant = stem.partition("_")
         if cell not in HD_TILE_CELLS:
             continue
+        rel = path.relative_to(HD_TILE_ART_DIR).as_posix()
+        url = f"{HD_TILE_ART_URL_PREFIX}{rel}"
+        if any(v["url"] == url for v in variants[cell]):
+            continue
         variants[cell].append({
-            "url": f"{HD_TILE_ART_URL_PREFIX}{path.name}",
+            "url": url,
             "label": variant.replace("_", " ") if variant else "original",
         })
     return variants
@@ -870,26 +879,26 @@ CANONICAL_ADJACENCY: dict[str, list[str]] = {
 }
 
 LOCATION_FUNCTION_TAGS: dict[str, dict[str, Any]] = {
-    "loc_village_square": {"display_name": "Village Square", "function_tag": "public_square", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external"},
-    "loc_fountain": {"display_name": "Village Fountain", "function_tag": "fountain", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external"},
-    "loc_elias_bench": {"display_name": "Elias's Bench", "function_tag": "bench", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_005"], "zoom_behavior": "external"},
-    "loc_hobbs_cafe": {"display_name": "Hobbs Cafe", "function_tag": "cafe", "building_role": "business", "case_ids": ["case_001", "case_002", "case_003", "case_005"], "zoom_behavior": "external_to_internal"},
-    "loc_cafe_kitchen": {"display_name": "Cafe Kitchen", "function_tag": "kitchen", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_village_square": {"display_name": "Village Square", "function_tag": "public_square", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006", "case_007"], "zoom_behavior": "external"},
+    "loc_fountain": {"display_name": "Village Fountain", "function_tag": "fountain", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_007"], "zoom_behavior": "external"},
+    "loc_elias_bench": {"display_name": "Elias's Bench", "function_tag": "bench", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_005", "case_007"], "zoom_behavior": "external"},
+    "loc_hobbs_cafe": {"display_name": "Hobbs Cafe", "function_tag": "cafe", "building_role": "business", "case_ids": ["case_001", "case_002", "case_003", "case_005", "case_007"], "zoom_behavior": "external_to_internal"},
+    "loc_cafe_kitchen": {"display_name": "Cafe Kitchen", "function_tag": "kitchen", "building_role": "service_room", "case_ids": ["case_001", "case_007"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
     "loc_cafe_storage": {"display_name": "Cafe Storage Room", "function_tag": "storage", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
-    "loc_clara_flat": {"display_name": "Clara's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_003", "case_005"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
-    "loc_bookshop": {"display_name": "Reed & Bell Bookshop", "function_tag": "bookshop", "building_role": "business", "case_ids": ["case_001", "case_002", "case_005", "case_006"], "zoom_behavior": "external_to_internal"},
-    "loc_bookshop_back": {"display_name": "Bookshop Back Room", "function_tag": "back_office", "building_role": "service_room", "case_ids": ["case_002"], "parent_location_id": "loc_bookshop", "zoom_behavior": "internal"},
-    "loc_rear_alley": {"display_name": "Rear Alley", "function_tag": "service_alley", "building_role": "exterior_service", "case_ids": ["case_001", "case_002", "case_005"], "zoom_behavior": "external"},
-    "loc_clinic": {"display_name": "Village Clinic", "function_tag": "clinic", "building_role": "public_service", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_clara_flat": {"display_name": "Clara's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_003", "case_005", "case_007"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_bookshop": {"display_name": "Reed & Bell Bookshop", "function_tag": "bookshop", "building_role": "business", "case_ids": ["case_001", "case_002", "case_005", "case_006", "case_007"], "zoom_behavior": "external_to_internal"},
+    "loc_bookshop_back": {"display_name": "Bookshop Back Room", "function_tag": "back_office", "building_role": "service_room", "case_ids": ["case_002", "case_007"], "parent_location_id": "loc_bookshop", "zoom_behavior": "internal"},
+    "loc_rear_alley": {"display_name": "Rear Alley", "function_tag": "service_alley", "building_role": "exterior_service", "case_ids": ["case_001", "case_002", "case_005", "case_007"], "zoom_behavior": "external"},
+    "loc_clinic": {"display_name": "Village Clinic", "function_tag": "clinic", "building_role": "public_service", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006", "case_007"], "zoom_behavior": "external_to_internal"},
     "loc_clinic_dispensary": {"display_name": "Clinic Dispensary", "function_tag": "dispensary", "building_role": "service_room", "case_ids": ["case_003"], "parent_location_id": "loc_clinic", "zoom_behavior": "internal"},
-    "loc_marcus_house": {"display_name": "Marcus Bell's House", "function_tag": "house", "building_role": "residence", "case_ids": ["case_001", "case_006"], "zoom_behavior": "external_to_internal"},
-    "loc_marcus_study": {"display_name": "Marcus's Study", "function_tag": "study", "building_role": "private_room", "case_ids": ["case_001", "case_006"], "parent_location_id": "loc_marcus_house", "zoom_behavior": "internal"},
-    "loc_owen_house": {"display_name": "Owen Price's House & Yard", "function_tag": "house_and_yard", "building_role": "residence_workyard", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external_to_internal"},
+    "loc_marcus_house": {"display_name": "Marcus Bell's House", "function_tag": "house", "building_role": "residence", "case_ids": ["case_001", "case_006", "case_007"], "zoom_behavior": "external_to_internal"},
+    "loc_marcus_study": {"display_name": "Marcus's Study", "function_tag": "study", "building_role": "private_room", "case_ids": ["case_001", "case_006", "case_007"], "parent_location_id": "loc_marcus_house", "zoom_behavior": "internal"},
+    "loc_owen_house": {"display_name": "Owen Price's House & Yard", "function_tag": "house_and_yard", "building_role": "residence_workyard", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_007"], "zoom_behavior": "external_to_internal"},
     "loc_pub": {"display_name": "The Mallet & Crown", "function_tag": "pub", "building_role": "business", "case_ids": ["case_004"], "zoom_behavior": "external_to_internal"},
     "loc_ben_flat": {"display_name": "Ben's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_004"], "zoom_behavior": "internal"},
-    "loc_priya_flat": {"display_name": "Priya's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_002", "case_004", "case_006"], "zoom_behavior": "internal"},
-    "loc_nadia_flat": {"display_name": "Nadia's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001"], "zoom_behavior": "internal"},
-    "loc_elias_house": {"display_name": "Elias's Cottage", "function_tag": "cottage", "building_role": "residence", "case_ids": ["case_001", "case_004"], "zoom_behavior": "external_to_internal"},
+    "loc_priya_flat": {"display_name": "Priya's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_002", "case_004", "case_006", "case_007"], "zoom_behavior": "internal"},
+    "loc_nadia_flat": {"display_name": "Nadia's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_007"], "zoom_behavior": "internal"},
+    "loc_elias_house": {"display_name": "Elias's Cottage", "function_tag": "cottage", "building_role": "residence", "case_ids": ["case_001", "case_004", "case_007"], "zoom_behavior": "external_to_internal"},
     "loc_ruth_cottage": {"display_name": "Ruth's Cottage", "function_tag": "cottage", "building_role": "residence_garden", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal"},
     "loc_solicitors_office": {"display_name": "Whittle & Cross Solicitors", "function_tag": "solicitors_office", "building_role": "office", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal"},
     "loc_fishery": {"display_name": "Fishery", "function_tag": "fishery", "building_role": "exterior_worksite", "case_ids": ["case_004"], "zoom_behavior": "external"},
@@ -1208,6 +1217,28 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
             "loc_marcus_study": 2.0,
             "loc_ruth_cottage": 2.2,
             "loc_solicitors_office": 2.2,
+        },
+    },
+    "case_007": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
+            "loc_cafe_kitchen", "loc_rear_alley", "loc_bookshop", "loc_bookshop_back",
+            "loc_clinic", "loc_marcus_house", "loc_marcus_study", "loc_owen_house",
+            "loc_clara_flat", "loc_priya_flat", "loc_nadia_flat", "loc_elias_house",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_elias_bench": 2.0,
+            "loc_hobbs_cafe": 2.3,
+            "loc_bookshop": 2.35,
+            "loc_bookshop_back": 2.0,
+            "loc_rear_alley": 2.6,
+            "loc_clinic": 2.4,
+            "loc_marcus_study": 2.0,
         },
     },
 }

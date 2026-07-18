@@ -248,9 +248,12 @@ handles map projection/assets; `audio.ts` + Howler drive ambient/stinger audio
 
 The migrated town map is visual-only and must not become case truth. `backend/app/town_map.py`
 owns the `town_canonical_v1` contract: a 6144x4608, 192x144-grid overworld assembled from a
-3x3 mosaic of 2048x1536 HD tiles under `frontend/public/art/town/tiles_3x3_hd/`. Case 004 is
-currently the only runtime consumer with `mode: "canonical_overworld"`; cases 001, 002, 003,
-005, and 006 intentionally retain `legacy_fallback` until migrated.
+3x3 mosaic of 2048x1536 HD tiles under `frontend/public/art/town/tiles_3x3_hd/`. All
+hand-authored cases (001–007) are wired to `mode: "canonical_overworld"` via `CASE_MAPS` in
+`town_map.py`; `legacy_fallback` (the old original artwork) only applies to a case with no
+`CASE_MAPS` entry — so a new case must be registered there (visible locations, crop padding)
+and added to the `case_ids` of its `LOCATION_FUNCTION_TAGS`, and should reuse canonical
+`loc_*` IDs rather than inventing new ones that have no HD art.
 
 The centre tile B2 has paired all-cases assets. Zoomed-out views use
 `town_overworld_B2_all_cases_external_hd.png`; zoomed-in views swap B2 to

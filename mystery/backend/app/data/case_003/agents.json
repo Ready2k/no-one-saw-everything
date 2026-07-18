@@ -45,8 +45,8 @@
     "portrait_art": {
       "calm": "/art/portraits/elias_calm.png",
       "deceased": "/art/portraits/elias_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/elias_defensive.png",
+      "cracking": "/art/portraits/elias_cracking.png"
     },
     "sprite_id": "sprite_adam_smith"
   },
@@ -96,8 +96,8 @@
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.png",
       "deceased": "/art/portraits/nadia_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/nadia_defensive.png",
+      "cracking": "/art/portraits/nadia_cracking.png"
     },
     "sprite_id": "sprite_ayesha_khan"
   },
@@ -140,8 +140,8 @@
     "portrait_art": {
       "calm": "/art/portraits/owen_calm.png",
       "deceased": "/art/portraits/owen_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/owen_defensive.png",
+      "cracking": "/art/portraits/owen_cracking.png"
     },
     "sprite_id": "sprite_carlos_gomez"
   },
@@ -192,8 +192,8 @@
     "portrait_art": {
       "calm": "/art/portraits/ben_calm.png",
       "deceased": "/art/portraits/ben_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/ben_defensive.png",
+      "cracking": "/art/portraits/ben_cracking.png"
     },
     "sprite_id": "sprite_ryan_park"
   },
@@ -244,8 +244,8 @@
     "portrait_art": {
       "calm": "/art/portraits/clara_calm.png",
       "deceased": "/art/portraits/clara_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/clara_defensive.png",
+      "cracking": "/art/portraits/clara_cracking.png"
     },
     "sprite_id": "sprite_abigail_chen"
   },
@@ -288,8 +288,8 @@
     "portrait_art": {
       "calm": "/art/portraits/dr_haig_calm.png",
       "deceased": "/art/portraits/dr_haig_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/dr_haig_defensive.png",
+      "cracking": "/art/portraits/dr_haig_cracking.png"
     },
     "sprite_id": "sprite_arthur_hughes"
   },
@@ -332,8 +332,8 @@
     "portrait_art": {
       "calm": "/art/portraits/ruth_calm.png",
       "deceased": "/art/portraits/ruth_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/ruth_defensive.png",
+      "cracking": "/art/portraits/ruth_cracking.png"
     },
     "sprite_id": "sprite_sarah_whitmore"
   },

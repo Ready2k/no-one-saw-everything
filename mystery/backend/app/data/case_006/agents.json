@@ -45,8 +45,8 @@
     "portrait_art": {
       "calm": "/art/portraits/marcus_calm.png",
       "deceased": "/art/portraits/marcus_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/marcus_defensive.png",
+      "cracking": "/art/portraits/marcus_cracking.png"
     },
     "sprite_id": "sprite_marcus_chen"
   },
@@ -96,8 +96,8 @@
     "portrait_art": {
       "calm": "/art/portraits/ruth_calm.png",
       "deceased": "/art/portraits/ruth_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/ruth_defensive.png",
+      "cracking": "/art/portraits/ruth_cracking.png"
     },
     "sprite_id": "sprite_sarah_whitmore"
   },
@@ -140,8 +140,8 @@
     "portrait_art": {
       "calm": "/art/portraits/priya_calm.png",
       "deceased": "/art/portraits/priya_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/priya_defensive.png",
+      "cracking": "/art/portraits/priya_cracking.png"
     },
     "sprite_id": "sprite_priya_kapoor"
   },
@@ -184,8 +184,8 @@
     "portrait_art": {
       "calm": "/art/portraits/isabella_calm.png",
       "deceased": "/art/portraits/isabella_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/isabella_defensive.png",
+      "cracking": "/art/portraits/isabella_cracking.png"
     },
     "sprite_id": "sprite_isabella_rodriguez"
   },
@@ -228,8 +228,8 @@
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.png",
       "deceased": "/art/portraits/nadia_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/nadia_defensive.png",
+      "cracking": "/art/portraits/nadia_cracking.png"
     },
     "sprite_id": "sprite_ayesha_khan"
   },
@@ -271,8 +271,8 @@
     "portrait_art": {
       "calm": "/art/portraits/elias_calm.png",
       "deceased": "/art/portraits/elias_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/elias_defensive.png",
+      "cracking": "/art/portraits/elias_cracking.png"
     },
     "sprite_id": "sprite_adam_smith"
   },
@@ -315,8 +315,8 @@
     "portrait_art": {
       "calm": "/art/portraits/solicitor_calm.png",
       "deceased": "/art/portraits/solicitor_deceased.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/solicitor_defensive.png",
+      "cracking": "/art/portraits/solicitor_cracking.png"
     },
     "sprite_id": "sprite_leo_patterson"
   },
