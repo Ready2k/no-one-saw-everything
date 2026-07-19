@@ -463,6 +463,11 @@ def inspect(req: InspectRequest):
         d = clue.discoverability
         if d.method != "inspect" or d.location_id != req.location_id:
             continue
+        # Body-examination clues share the body's discovery location for
+        # narrative context, but they belong to the dedicated visual autopsy
+        # flow rather than the room magnifying-glass search.
+        if "examine_body" in (d.reveal_on or []):
+            continue
         if clue.clue_id in sess.discovered_clue_ids:
             already.append(project_clue(clue))
             continue

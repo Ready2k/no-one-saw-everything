@@ -3,7 +3,7 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
-from helpers import inspect_and_discover
+from helpers import examine_body_and_discover, inspect_and_discover
 
 client = TestClient(app)
 
@@ -12,9 +12,9 @@ def test_golden_solve_path():
     # 1. Reset
     client.post("/api/session/reset")
 
-    # 2. Inspect locations and work the hotspots to find physical evidence
-    # Storage room for ledger page
-    found = inspect_and_discover(client, "loc_cafe_storage")
+    # 2. Inspect/examine and work the hotspots to find physical evidence
+    # Body exam for the ledger page found in Marcus's pocket.
+    found = examine_body_and_discover(client, "agent_marcus")
     assert "clue_ledger_page" in found
 
     # Marcus's house for audited ledger

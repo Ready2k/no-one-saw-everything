@@ -194,7 +194,7 @@ def test_sanitise_allows_been_but_blocks_unsupported_names():
 def test_telemetry_covers_inspection_and_discovery_sources():
     from helpers import inspect_and_discover
 
-    inspect_and_discover(client, "loc_cafe_storage")
+    inspect_and_discover(client, "loc_marcus_house")
     client.post("/api/events/ev_0756_sound/pin")
     client.post(
         "/api/interview/ask",

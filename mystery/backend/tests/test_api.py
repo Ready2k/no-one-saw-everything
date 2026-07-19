@@ -61,6 +61,22 @@ def test_inspect_kitchen_gates_till_weight_behind_missing_clue():
     assert any(c["clue_id"] == "clue_till_weight_found" for c in r2["hidden_clues"])
 
 
+def test_room_inspect_excludes_body_examination_clues(reset_app_state):
+    r = client.post("/api/inspect", json={"location_id": "loc_cafe_storage"})
+    assert r.status_code == 200
+    hotspot_ids = {c["clue_id"] for c in r.json()["hidden_clues"]}
+    assert "clue_ledger_page" not in hotspot_ids
+    assert "clue_isabella_note" not in hotspot_ids
+    assert "clue_partnership_letter" not in hotspot_ids
+
+    body = client.get("/api/examine_body/agent_marcus")
+    assert body.status_code == 200
+    body_ids = {c["clue_id"] for c in body.json()["hidden_clues"]}
+    assert "clue_ledger_page" in body_ids
+    assert "clue_isabella_note" in body_ids
+    assert "clue_partnership_letter" in body_ids
+
+
 def test_clara_alibi_is_a_lie_but_lie_flag_not_leaked():
     r = client.post(
         "/api/interview/ask",
