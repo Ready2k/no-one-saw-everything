@@ -1,12 +1,14 @@
 """Converts an LLM CasePlan into a valid CaseData object."""
 
-import json
+# import json  # UNUSED — commented out during code review [2026-07-19]
 import random
 import re
 from typing import Dict, List, Any
 from copy import deepcopy
 
-from ..models import CaseData, CaseFile, Agent, Location, GameObject, SeededMemory, Event, Clue, Conclusion, AgentInterviewPack, ChallengeRule, Solution, Discoverability, AnswerRule
+from ..models import CaseData, CaseFile, Agent, Location, SeededMemory, Event, Clue, AgentInterviewPack, Discoverability, AnswerRule
+# UNUSED — commented out during code review [2026-07-19]
+# from ..models import GameObject, Conclusion, ChallengeRule, Solution
 from .schemas import CasePlan
 
 def resolve_role(role_key: str, roles: Dict[str, str]) -> str:
@@ -238,7 +240,7 @@ def assemble_case(
             ambiguity=normalize_ambiguity(clue_plan.ambiguity_level),
             discoverability=discoverability,
             supports_conclusion_ids=[], # Can't blindly map to deterministic conclusions without risk
-            linked_agent_ids=[linked_agent_id] if linked_agent_id in [a.agent_id for a in case_data.agents] else []
+            linked_agent_ids=[linked_agent_id] if linked_agent_id in valid_agent_ids else []
         )
         case_data.clues.append(new_clue)
 

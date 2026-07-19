@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api, hhmm, minutes, timeOfDayLabel } from "../api";
 import { useWorld } from "../App";
 import type { CluePublic, EventPublic, LocationPublic } from "../types";
@@ -31,6 +31,12 @@ export default function Rewind() {
     () => cinematicsEnabled() && !rewindBriefingSeen(caseOverview.case_id)
   );
 
+  const toastTimer = useRef<number>(0);
+
+  useEffect(() => {
+    return () => window.clearTimeout(toastTimer.current);
+  }, []);
+
   const refresh = useCallback(() => {
     api
       .events({
@@ -47,13 +53,18 @@ export default function Rewind() {
 
   const pin = async (eventId: string) => {
     sfx.pinPush();
-    const result = await api.pinEvent(eventId);
-    if (result.new_clues.length) {
-      audioManager.playStinger("clue_discovered");
-      setToast(result.new_clues);
-      setTimeout(() => setToast(null), 6000);
+    try {
+      const result = await api.pinEvent(eventId);
+      if (result.new_clues.length) {
+        audioManager.playStinger("clue_discovered");
+        setToast(result.new_clues);
+        window.clearTimeout(toastTimer.current);
+        toastTimer.current = window.setTimeout(() => setToast(null), 6000);
+      }
+      refresh();
+    } catch (e) {
+      console.error("Failed to pin event:", e);
     }
-    refresh();
   };
 
   const windowStart = minutes(caseOverview.murder_window[0]);

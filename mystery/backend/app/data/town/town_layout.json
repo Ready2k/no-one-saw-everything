@@ -148,11 +148,11 @@
     },
     "loc_clinic_dispensary": {
       "bounds": {
-        "x": 113.5,
-        "y": 70.5,
+        "x": 112.5,
+        "y": 67.5,
         "w": 4,
         "h": 5,
-        "rotation": 44
+        "rotation": 93
       },
       "mode": "interior",
       "notes": "",
@@ -781,8 +781,8 @@
         "obj_dispensary_log": {
           "location_id": "loc_clinic_dispensary",
           "anchor": {
-            "x": 115.8,
-            "y": 72.7
+            "x": 113.8,
+            "y": 68.7
           },
           "semantic_asset_id": "obj_dispensary_log",
           "render_policy": "discovery_gated",
@@ -878,8 +878,8 @@
         "obj_mortgage_deed": {
           "location_id": "loc_clara_flat",
           "anchor": {
-            "x": 98,
-            "y": 55.2
+            "x": 102,
+            "y": 52.2
           },
           "semantic_asset_id": "obj_mortgage_deed",
           "render_policy": "discovery_gated",
@@ -888,8 +888,8 @@
         "obj_clara_note": {
           "location_id": "loc_rear_alley",
           "anchor": {
-            "x": 109.7,
-            "y": 53.4
+            "x": 104.7,
+            "y": 52.4
           },
           "semantic_asset_id": "obj_committee_note",
           "render_policy": "discovery_gated",
@@ -908,8 +908,8 @@
         "obj_col_log": {
           "location_id": "loc_owen_house",
           "anchor": {
-            "x": 121.8,
-            "y": 76
+            "x": 123.8,
+            "y": 77
           },
           "semantic_asset_id": "obj_delivery_log",
           "render_policy": "discovery_gated",
@@ -918,8 +918,8 @@
         "obj_owen_boot_mud": {
           "location_id": "loc_owen_house",
           "anchor": {
-            "x": 121.7,
-            "y": 77.5
+            "x": 119.7,
+            "y": 80.5
           },
           "semantic_asset_id": "obj_ashy_boots",
           "render_policy": "discovery_gated",
@@ -929,7 +929,7 @@
           "location_id": "loc_clara_flat",
           "anchor": {
             "x": 97.3,
-            "y": 54.4
+            "y": 53.4
           },
           "semantic_asset_id": "obj_property_register",
           "render_policy": "discovery_gated",
@@ -938,8 +938,8 @@
         "obj_clara_notebook": {
           "location_id": "loc_hobbs_cafe",
           "anchor": {
-            "x": 95,
-            "y": 57.4
+            "x": 93,
+            "y": 61.4
           },
           "semantic_asset_id": "obj_clara_notebook",
           "render_policy": "discovery_gated",
@@ -948,8 +948,8 @@
         "obj_yard_books": {
           "location_id": "loc_owen_house",
           "anchor": {
-            "x": 121.5,
-            "y": 75.2
+            "x": 123.5,
+            "y": 73.2
           },
           "semantic_asset_id": "obj_yard_books",
           "render_policy": "discovery_gated",
@@ -1033,8 +1033,8 @@
         "obj_elias_memory": {
           "location_id": "loc_village_square",
           "anchor": {
-            "x": 94.8,
-            "y": 68.2
+            "x": 91.8,
+            "y": 72.2
           },
           "semantic_asset_id": "clue_memory_bell_girl",
           "render_policy": "debug_only",
@@ -1072,7 +1072,48 @@
         "loc_elias_house"
       ],
       "location_bounds": {},
-      "object_anchors": {}
+      "object_anchors": {
+        "obj_owl_doorstop": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 86,
+            "y": 61
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_notebook_1994": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 85,
+            "y": 59
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_archive_boxes": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 86,
+            "y": 60
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_painted_lantern": {
+          "location_id": "loc_rear_alley",
+          "anchor": {
+            "x": 105,
+            "y": 52
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
     }
   },
   "tile_layers": {

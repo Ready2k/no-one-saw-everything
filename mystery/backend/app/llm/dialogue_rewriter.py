@@ -1,6 +1,6 @@
 """LLM dialogue rewriting module."""
 
-import json
+# import json  # UNUSED — commented out during code review [2026-07-19]
 import random
 import re
 from typing import Optional, Dict, Any, List

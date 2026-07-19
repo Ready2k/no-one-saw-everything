@@ -49,10 +49,10 @@ export default function BoardView() {
   const noteRefs = useRef(new Map<string, HTMLDivElement>());
 
   const refresh = useCallback(() => {
-    api.board().then(setBoard);
-    api.clues().then(setClues);
-    api.notes().then(setNotes);
-    api.hints().then(setHints);
+    api.board().then(setBoard).catch(console.error);
+    api.clues().then(setClues).catch(console.error);
+    api.notes().then(setNotes).catch(console.error);
+    api.hints().then(setHints).catch(console.error);
   }, []);
 
   useEffect(refresh, [refresh]);

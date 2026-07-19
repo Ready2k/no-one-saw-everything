@@ -43,12 +43,12 @@ export default function Accuse() {
   const [noteIds, setNoteIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    api.clues().then(setClues);
-    api.notes().then(setNotes);
+    api.clues().then(setClues).catch(console.error);
+    api.notes().then(setNotes).catch(console.error);
     // If an accusation was already made this session, show its reveal.
     api.status().then((s) => {
-      if (s.accused) api.reveal().then(setResult);
-    });
+      if (s.accused) api.reveal().then(setResult).catch(console.error);
+    }).catch(console.error);
   }, []);
 
   const toggle = (set: Set<string>, id: string, setter: (s: Set<string>) => void) => {

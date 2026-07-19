@@ -1,5 +1,9 @@
+import logging
+
 from fastapi import HTTPException
 from app.models import FreeTextAskRequest, FreeTextAskResponse, ChallengeSuggestion, AskRequest, ChallengeRequest, InterviewMessage, QuestionIntent
+
+logger = logging.getLogger(__name__)
 from app.question_classifier import classify_question
 from app.llm.question_intent_classifier import classify_question_intent_llm
 from app.llm.config import get_llm_config
@@ -41,7 +45,11 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
 
     intent = classify_question(req.question, case, sess)
     if not intent:
-        intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
+        try:
+            intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
+        except Exception as e:
+            logger.warning("LLM intent classification failed, falling back: %s", e)
+            intent = None
         
     if not intent:
         intent = QuestionIntent(

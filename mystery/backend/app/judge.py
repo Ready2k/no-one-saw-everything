@@ -170,7 +170,7 @@ def judge_accusation(
         score += 12 if opportunity_correct else 0
         score += round(evidence_score * 23)
     else:
-        mechanics = motive_correct + method_correct + opportunity_correct
+        mechanics = sum([motive_correct, method_correct, opportunity_correct])
         score = round(evidence_score * 20) + mechanics * 5
         score = min(score, 49)
         false_assumptions.insert(

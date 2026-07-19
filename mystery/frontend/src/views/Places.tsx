@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
-import type { InspectResult, LocationPublic } from "../types";
+import type { InspectResult, LocationPublic, ClueHotspot, CluePublic } from "../types";
 import { ClueCard } from "./shared";
 import { MagnifyingSearch } from "../components/MagnifyingSearch";
 import { sfx } from "../sfx";
@@ -48,7 +48,7 @@ export default function Places() {
         if (!prev) return prev;
         return {
           ...prev,
-          hidden_clues: prev.hidden_clues.filter((c: any) => c.clue_id !== clueId),
+          hidden_clues: prev.hidden_clues.filter((c: ClueHotspot) => c.clue_id !== clueId),
           known_clues: [...prev.known_clues, discoveredClue],
         };
       });
@@ -116,7 +116,7 @@ export default function Places() {
             <h3>Found evidence</h3>
             {result.known_clues.length > 0 ? (
                <div className="found-evidence-list">
-                 {result.known_clues.map((c: any) => (
+                 {result.known_clues.map((c: CluePublic) => (
                    <ClueCard key={c.clue_id} clue={c} />
                  ))}
                </div>

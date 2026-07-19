@@ -1,4 +1,7 @@
+import logging
 from app.models import CaseData
+
+logger = logging.getLogger(__name__)
 from app.session import Session
 from app.models import QuestionIntent
 from app.llm.client import get_llm_client
@@ -149,7 +152,8 @@ Intent rules:
                 "rewritten_structured_question": "Unknown question",
             })
         return intent
-    except Exception:
+    except Exception as e:
+        logger.warning("Intent classification failed: %s", e)
         return QuestionIntent(
             intent="fallback_unknown",
             confidence=1.0,

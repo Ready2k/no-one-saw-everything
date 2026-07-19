@@ -311,6 +311,8 @@ export default function VisualMap({
   };
 
   // Nudge markers sharing a location so they don't overlap.
+  // Note: We deliberately don't memoize this Map because it's populated during the JSX render
+  // inside the .map() callback below. We need a fresh empty Map on every single render.
   const markerOffsets = new Map<string, number>();
 
   return (

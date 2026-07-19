@@ -102,6 +102,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
     if (phase === "suspects") {
       if (suspects.length > 0) {
         let count = 0;
+        let innerTimeout: number | undefined;
         const interval = setInterval(() => {
           if (count < suspects.length) {
             setVisibleSuspects(count + 1);
@@ -109,13 +110,16 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
             count++;
           } else {
             clearInterval(interval);
-            setTimeout(() => {
+            innerTimeout = window.setTimeout(() => {
               setPhase("title");
               audioManager.playStinger("intro_drama");
             }, 1500);
           }
         }, 600); 
-        return () => clearInterval(interval);
+        return () => {
+          clearInterval(interval);
+          if (innerTimeout !== undefined) window.clearTimeout(innerTimeout);
+        };
       } else {
         const t = setTimeout(() => {
           setPhase("title");

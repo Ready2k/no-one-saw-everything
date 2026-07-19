@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import re
+import time
+import uuid
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Body, Header, Request
@@ -176,6 +178,8 @@ class LlmTestRequest(BaseModel):
     model: str
 
 
+# SECURITY NOTE: base_url is user-supplied and used to make HTTP requests.
+# In a hosted/multi-user deployment, validate against an allowlist to prevent SSRF.
 @app.post("/api/llm-settings/test")
 def test_llm_settings(payload: LlmTestRequest):
     """Sends a real chat completion request to the given endpoint/model so the
@@ -183,8 +187,6 @@ def test_llm_settings(payload: LlmTestRequest):
     than just resolving a reachable model list."""
     from .llm.config import normalize_base_url
     from .llm.client import OpenAICompatibleLLMClient
-    import time
-    import uuid
 
     if not payload.base_url.strip() or not payload.model.strip():
         raise HTTPException(status_code=400, detail="base_url and model are required")
@@ -457,7 +459,6 @@ def inspect(req: InspectRequest):
     sess.inspected_location_ids.add(req.location_id)
     log_telemetry_event(sess, "inspection_performed", {"location_id": req.location_id})
     hidden_clues, already, locked = [], [], 0
-    import hashlib
     for clue in case.clues:
         d = clue.discoverability
         if d.method != "inspect" or d.location_id != req.location_id:
@@ -1457,7 +1458,6 @@ def _layout_file_version(path) -> str:
     from this exact on-disk state, so two editors saving around the same time
     can't silently clobber each other. Empty file == no file, so a fresh
     editor session (nothing to conflict with) still gets a stable token."""
-    import hashlib
 
     if not path.exists():
         return "empty"

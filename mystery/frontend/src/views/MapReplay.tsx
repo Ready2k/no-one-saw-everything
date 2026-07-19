@@ -40,6 +40,12 @@ export default function MapReplay({
   const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
   const [showTrace, setShowTrace] = useState(false);
 
+  const toastTimer = useRef<number>(0);
+
+  useEffect(() => {
+    return () => window.clearTimeout(toastTimer.current);
+  }, []);
+
   // Full-range fetch; filtering is applied client-side on already-projected
   // (player-safe) data so agent position tracks stay complete.
   useEffect(() => {
@@ -142,7 +148,8 @@ export default function MapReplay({
     if (result.new_clues.length) {
       audioManager.playStinger("clue_discovered");
       setToast(result.new_clues);
-      setTimeout(() => setToast(null), 6000);
+      window.clearTimeout(toastTimer.current);
+      toastTimer.current = window.setTimeout(() => setToast(null), 6000);
     }
     setData((prev) =>
       prev
@@ -164,7 +171,8 @@ export default function MapReplay({
     if (result.new_clues.length) {
       audioManager.playStinger("clue_discovered");
       setToast(result.new_clues);
-      setTimeout(() => setToast(null), 6000);
+      window.clearTimeout(toastTimer.current);
+      toastTimer.current = window.setTimeout(() => setToast(null), 6000);
     }
     setInspectResult(
       result.new_clues.length

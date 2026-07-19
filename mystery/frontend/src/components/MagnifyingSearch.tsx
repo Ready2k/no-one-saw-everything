@@ -205,7 +205,8 @@ export function MagnifyingSearch({
 
     const found = adjustedClues.find((c) => {
       const dx = c.x - pctX;
-      const dy = (c.y - pctY) / (dim.w / dim.h);
+      const aspectRatio = dim.h > 0 ? dim.w / dim.h : 1;
+      const dy = (c.y - pctY) / aspectRatio;
       const dist = Math.sqrt(dx * dx + dy * dy);
       
       // The lens must be relatively sized to the clue to find it.
