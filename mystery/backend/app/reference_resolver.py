@@ -33,11 +33,18 @@ def _distinguishing_tokens(names: list[str]) -> list[set[str]]:
     return [{t for t in tokens if counts[t] == 1} for tokens in token_lists]
 
 
-def _match_by_name_or_alias(candidates: list, name_attr: str, q_norm: str):
+def _match_by_name_or_alias(
+    candidates: list, name_attr: str, q_norm: str, exclude_alias_tokens: set[str] | None = None
+):
     """candidates must already be sorted longest-name-first. A full
     canonical name match wins first (most specific, and matches prior
     behaviour exactly); otherwise fall back to a single-word alias that
-    uniquely identifies one candidate among the rest."""
+    uniquely identifies one candidate among the rest.
+
+    `exclude_alias_tokens` removes words from the alias fallback only — a
+    location named after a person ("Elias Grant's House") must not be matched
+    by the person's bare name ("how did you and Elias get along?" is about the
+    man, not his house). Saying the full location name still matches."""
     names = [getattr(c, name_attr) for c in candidates]
     for candidate, name in zip(candidates, names):
         if normalize_text(name) in q_norm:
@@ -45,6 +52,8 @@ def _match_by_name_or_alias(candidates: list, name_attr: str, q_norm: str):
 
     q_words = set(q_norm.split())
     for candidate, aliases in zip(candidates, _distinguishing_tokens(names)):
+        if exclude_alias_tokens:
+            aliases = aliases - exclude_alias_tokens
         if aliases & q_words:
             return candidate
     return None
@@ -94,7 +103,19 @@ def resolve_references(
 
     location_id = None
     locations = sorted(case.locations, key=lambda loc: len(loc.name), reverse=True)
-    match = _match_by_name_or_alias(locations, "name", q_norm)
+    # A person's name never stands in for a place named after them: "Elias" is
+    # Elias, not "Elias Grant's House". (Full location names still match.)
+    # Include possessive forms: "Grant's House" normalizes to "grants house",
+    # and "grants" must be excluded just like "grant".
+    agent_name_tokens = {
+        form
+        for a in case.agents
+        for tok in normalize_text(a.full_name).split()
+        for form in (tok, tok + "s")
+    }
+    match = _match_by_name_or_alias(
+        locations, "name", q_norm, exclude_alias_tokens=agent_name_tokens
+    )
     if match:
         location_id = match.location_id
 

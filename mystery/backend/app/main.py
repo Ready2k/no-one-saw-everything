@@ -347,6 +347,21 @@ def probe_llm_settings():
     }
 
 
+_HHMM_RE = re.compile(r"([01]?\d|2[0-3]):[0-5]\d")
+
+
+def _validate_time_param(value: Optional[str], param_name: str) -> Optional[str]:
+    """Times come off the wire and go straight into arithmetic; a malformed one
+    must be a polite 400, not a ValueError deep in the projection layer."""
+    if value is None:
+        return None
+    if not _HHMM_RE.fullmatch(value.strip()):
+        raise HTTPException(
+            400, f"'{value}' isn't a time the village clock understands — use HH:MM."
+        )
+    return value.strip()
+
+
 def case_data():
     return fetch_case(_effective_case_id())
 
@@ -419,6 +434,8 @@ def get_events(
     location_id: Optional[str] = None,
     agent_id: Optional[str] = None,
 ):
+    time_from = _validate_time_param(time_from, "time_from")
+    time_to = _validate_time_param(time_to, "time_to")
     events = visible_events(case_data(), time_from, time_to, location_id, agent_id)
     for e in events:
         e["pinned"] = e["event_id"] in session().pinned_event_ids
@@ -483,6 +500,8 @@ def map_replay(
     from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
     from .town_map import canonical_map_definition, map_config, map_payload
 
+    start = _validate_time_param(start, "start")
+    end = _validate_time_param(end, "end")
     case = case_data()
     sess = session()
 
@@ -620,6 +639,17 @@ def discover_clue(req: DiscoverClueRequest):
     clue = next((c for c in case.clues if c.clue_id == req.clue_id), None)
     if not clue:
         raise HTTPException(404, "No such clue")
+    # The clue graph is the fairness contract: a gated clue cannot be claimed by
+    # guessing its id before its prerequisite discoveries have been made.
+    unmet = [
+        p
+        for p in clue.discoverability.required_prior_clue_ids
+        if p not in sess.discovered_clue_ids
+    ]
+    if unmet and clue.clue_id not in sess.discovered_clue_ids:
+        raise HTTPException(
+            409, "Something about this doesn't add up yet — you're missing the context to see it."
+        )
     if clue.clue_id not in sess.discovered_clue_ids:
         sess.discovered_clue_ids.add(clue.clue_id)
         log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "magnifying_glass"})
@@ -748,6 +778,8 @@ def ask(req: AskRequest):
         raise HTTPException(400, "This person isn't part of the investigation.")
     if req.question_type == "timeline" and not req.time_reference:
         raise HTTPException(400, "timeline questions need time_reference")
+    if req.time_reference:
+        req.time_reference = _validate_time_param(req.time_reference, "time_reference")
     if req.question_type == "evidence":
         if req.topic_clue_id and req.topic_clue_id not in sess.discovered_clue_ids:
             raise HTTPException(400, "You can only ask about evidence you have discovered.")
@@ -767,6 +799,11 @@ def ask(req: AskRequest):
 def free_text_ask(req: FreeTextAskRequest):
     case = case_data()
     sess = session()
+    target = next((a for a in case.agents if a.agent_id == req.agent_id), None)
+    if target is None:
+        raise HTTPException(404, "No such agent")
+    if target.is_background:
+        raise HTTPException(400, "This person isn't part of the investigation.")
     from app.free_text_api import handle_free_text
     resp = handle_free_text(req, case, sess)
     log_telemetry_event(sess, "free_text_question_asked", {"agent_id": req.agent_id})
@@ -776,6 +813,9 @@ def free_text_ask(req: FreeTextAskRequest):
 
 @app.get("/api/interview/{agent_id}")
 def transcript(agent_id: str):
+    case = case_data()
+    if not any(a.agent_id == agent_id for a in case.agents):
+        raise HTTPException(404, "No such agent")
     sess = session()
     t = sess.transcripts.get(agent_id)
     return t.messages if t else []
@@ -855,6 +895,9 @@ def observe(req: ObserveRequest):
 
 @app.get("/api/interview/{agent_id}/observations")
 def observations(agent_id: str):
+    case = case_data()
+    if not any(a.agent_id == agent_id for a in case.agents):
+        raise HTTPException(404, "No such agent")
     return session().observations.get(agent_id, [])
 
 
@@ -1014,6 +1057,12 @@ def delete_note(note_id: str):
 
 @app.post("/api/suspicion")
 def set_suspicion(payload: SuspicionUpdate):
+    case = case_data()
+    agent = next((a for a in case.agents if a.agent_id == payload.agent_id), None)
+    if agent is None:
+        raise HTTPException(404, "No such agent")
+    if agent.is_victim or agent.is_background:
+        raise HTTPException(400, "Suspicion belongs on the living members of the village.")
     sess = session()
     sess.suspicion[payload.agent_id] = payload.level
     log_telemetry_event(sess, "marker_updated", {"agent_id": payload.agent_id, "type": "suspicion", "level": payload.level})
@@ -1022,6 +1071,8 @@ def set_suspicion(payload: SuspicionUpdate):
 from .models import MarkerUpdate
 @app.post("/api/session/markers")
 def update_markers(payload: MarkerUpdate):
+    if not payload.element_id or len(payload.element_id) > 120:
+        raise HTTPException(400, "That isn't a board element the markers can stick to.")
     sess = session()
     if payload.element_id not in sess.case_board_markers:
         sess.case_board_markers[payload.element_id] = []
@@ -1219,9 +1270,18 @@ def delete_player_investigation(case_id: str):
 
 @app.post("/api/cases/generate")
 def generate(req: GenerateCaseRequest):
-    from .generator import generate_case
+    from .generator import generate_case, TEMPLATES_DIR
     from .validator import validate_case
     from .case_store import register_case
+
+    # case_type names a template file and ends up inside the generated case id
+    # (a future path component) — it must be a known template, nothing else.
+    known_types = {p.stem for p in TEMPLATES_DIR.glob("*.json")}
+    if req.case_type not in known_types:
+        raise HTTPException(
+            400,
+            f"Unknown case type '{req.case_type[:40]}'. Available: {', '.join(sorted(known_types))}.",
+        )
 
     has_creative = (
         (req.custom_theme and req.custom_theme.strip()) or 
