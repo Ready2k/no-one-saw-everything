@@ -112,6 +112,14 @@ QuestionIntentType = Literal[
     "object",
     "contradiction",
     "explicit_challenge",
+    "greeting",
+    "how_are_you",
+    "occupation",
+    "how_can_help",
+    "favorite_thing",
+    "about_me",
+    "general_relationships",
+    "emotions",
     "fallback_unknown"
 ]
 
@@ -186,6 +194,7 @@ class Agent(BaseModel):
     home_location_id: Optional[str] = None
     work_location_id: Optional[str] = None
     routine_summary: str = ""
+    small_talk: dict[str, str] = {}
     # Authored speech mannerisms fed into rewrite prompts (spec 15 Phase B),
     # e.g. "clips his sentences when defensive". Purely descriptive flavour.
     voice_card: Optional[str] = None

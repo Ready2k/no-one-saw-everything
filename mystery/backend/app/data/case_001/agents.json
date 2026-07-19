@@ -49,6 +49,16 @@
       "defensive": "/art/portraits/marcus_defensive.png",
       "cracking": "/art/portraits/marcus_cracking.png",
       "deceased": "/art/portraits/marcus_deceased.png"
+    },
+    "small_talk": {
+      "greeting": "What is it? I'm a busy man.",
+      "how_are_you": "I have a business to run and a murder on my premises. How do you think I am?",
+      "occupation": "I own Hobbs Cafe. I built it from the ground up.",
+      "how_can_help": "I've already told your officers everything I know.",
+      "favorite_thing": "I appreciate a quiet evening and a balanced ledger.",
+      "about_me": "I'm a businessman, Detective. Hard work and discipline. That's all there is to me.",
+      "general_relationships": "I employ half this village and extend credit to the rest. I don't need to be liked.",
+      "emotions": "Efficiency makes me happy. Incompetence, on the other hand, angers me."
     }
   },
   {
@@ -94,6 +104,16 @@
       "deceased": "/art/portraits/clara_deceased.png",
       "defensive": "/art/portraits/clara_defensive.png",
       "cracking": "/art/portraits/clara_cracking.png"
+    },
+    "small_talk": {
+      "greeting": "Yes, Detective?",
+      "how_are_you": "I'm managing. We all have jobs to do, despite... everything.",
+      "occupation": "I manage Hobbs Cafe. I make sure everything runs like clockwork.",
+      "how_can_help": "I'll answer your questions if I can.",
+      "favorite_thing": "A perfectly organised stockroom. It's the little things.",
+      "about_me": "I keep my head down and do my work. I prefer not to get involved in village drama.",
+      "general_relationships": "I know everyone who comes in for coffee, but I keep my distance.",
+      "emotions": "A smooth morning rush is satisfying. Prying questions make me uncomfortable."
     }
   },
   {
@@ -139,6 +159,16 @@
       "deceased": "/art/portraits/ben_deceased.png",
       "defensive": "/art/portraits/ben_defensive.png",
       "cracking": "/art/portraits/ben_cracking.png"
+    },
+    "small_talk": {
+      "greeting": "Oh, hey there Detective!",
+      "how_are_you": "Bit rattled to be honest! It's not every day this kind of thing happens.",
+      "occupation": "I'm a delivery driver. I do the morning rounds for most of the shops here.",
+      "how_can_help": "I see a lot on my route, so ask away! Happy to help.",
+      "favorite_thing": "Can't beat a good cup of coffee and a chat in the morning.",
+      "about_me": "Just a local guy making rounds. Try to keep a smile on my face, you know?",
+      "general_relationships": "I get along with just about everyone! Hard not to when you're delivering their parcels.",
+      "emotions": "A bit of sunshine and a friendly face make my day. Secrets and sneaking around... not my style."
     }
   },
   {
@@ -183,6 +213,16 @@
       "deceased": "/art/portraits/isabella_deceased.png",
       "defensive": "/art/portraits/isabella_defensive.png",
       "cracking": "/art/portraits/isabella_cracking.png"
+    },
+    "small_talk": {
+      "greeting": "Good day, Detective.",
+      "how_are_you": "I am composed, thank you. Though the atmosphere is undeniably tense.",
+      "occupation": "I own the bookshop across the square. A quiet trade, usually.",
+      "how_can_help": "If I have observed anything of use, I will share it.",
+      "favorite_thing": "A rare first edition and an hour of silence.",
+      "about_me": "I came here for a quieter life. I tend my shop and mind my own business.",
+      "general_relationships": "I maintain cordial, professional relationships. Nothing more.",
+      "emotions": "I find satisfaction in order and literature. Chaos... unsettles me."
     }
   },
   {
@@ -221,6 +261,16 @@
       "deceased": "/art/portraits/owen_deceased.png",
       "defensive": "/art/portraits/owen_defensive.png",
       "cracking": "/art/portraits/owen_cracking.png"
+    },
+    "small_talk": {
+      "greeting": "What now?",
+      "how_are_you": "I'm busy, that's how I am. Got a yard to run.",
+      "occupation": "I'm a builder. I run the timber yard and do most of the heavy lifting in this town.",
+      "how_can_help": "Look, if you have a question, just ask it so I can get back to work.",
+      "favorite_thing": "A job done right and getting paid on time.",
+      "about_me": "I work with my hands. I don't have time for gossip or games.",
+      "general_relationships": "People pay me to fix things, and some people owe me money. That's the extent of it.",
+      "emotions": "An honest day's pay makes me happy. People messing me about makes me furious."
     }
   },
   {
@@ -273,6 +323,16 @@
       "deceased": "/art/portraits/priya_deceased.png",
       "defensive": "/art/portraits/priya_defensive.png",
       "cracking": "/art/portraits/priya_cracking.png"
+    },
+    "small_talk": {
+      "greeting": "Oh, um... hello, Detective.",
+      "how_are_you": "I'm... okay, I think. It's just all a bit frightening.",
+      "occupation": "I assist Isabella at the bookshop. Unpacking, shelving... that sort of thing.",
+      "how_can_help": "I... I don't know if I can be much help, but I'll try.",
+      "favorite_thing": "I love the smell of the new paperbacks when we open the boxes.",
+      "about_me": "I'm nobody important, really. Just trying to keep out of everyone's way.",
+      "general_relationships": "Everyone is mostly nice to me. I try not to cause any trouble.",
+      "emotions": "A quiet afternoon with a good book makes me happy. Shouting... I really don't like shouting."
     }
   },
   {
@@ -311,6 +371,16 @@
       "deceased": "/art/portraits/nadia_deceased.png",
       "defensive": "/art/portraits/nadia_defensive.png",
       "cracking": "/art/portraits/nadia_cracking.png"
+    },
+    "small_talk": {
+      "greeting": "Detective. Can I help you?",
+      "how_are_you": "I am quite alright. In my line of work, you learn to compartmentalise.",
+      "occupation": "I'm a nurse at the clinic. I handle the early shift mostly.",
+      "how_can_help": "I'll provide whatever factual information I can.",
+      "favorite_thing": "A properly sterilised workspace. And a good cup of tea.",
+      "about_me": "I deal in facts and symptoms, Detective. I leave the stories to Elias.",
+      "general_relationships": "I see people when they are vulnerable. I keep their secrets, and they respect my privacy.",
+      "emotions": "Helping people recover gives me purpose. Senseless tragedy just makes me tired."
     }
   },
   {
@@ -356,6 +426,16 @@
       "deceased": "/art/portraits/elias_deceased.png",
       "defensive": "/art/portraits/elias_defensive.png",
       "cracking": "/art/portraits/elias_cracking.png"
+    },
+    "small_talk": {
+      "greeting": "Ah, the authorities. Step into my office\u2014well, my bench.",
+      "how_are_you": "Never better, Detective. The village hasn't seen this much excitement in decades!",
+      "occupation": "I'm a retired schoolteacher. Though some say I'm the village historian now.",
+      "how_can_help": "Ask me anything! I see everything from this bench, you know. Everyone's business.",
+      "favorite_thing": "A captive audience and a thermos of strong tea.",
+      "about_me": "I've lived here my whole life. Taught half the village how to read.",
+      "general_relationships": "I know everyone's past, their parents, and their secrets. They tolerate me, mostly.",
+      "emotions": "A good juicy scandal makes my morning. Being ignored... well, that's just rude."
     }
   },
   {

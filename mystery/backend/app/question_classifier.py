@@ -107,5 +107,79 @@ def classify_question(question: str, case: CaseData, session: Session) -> Option
             rewritten_structured_question="What do you know about this location?"
         )
         
+    # Small talk - Greetings
+    words = set(q_norm.split())
+    if "hi" in words or "hello" in words or "hey" in words or "greetings" in words:
+        return QuestionIntent(
+            intent="greeting",
+            confidence=0.9,
+            **refs,
+            rewritten_structured_question="Hello."
+        )
+
+    # Small talk - How are you
+    if any(phrase in q_norm for phrase in ["how are you", "how are things", "how do you do", "are you ok", "are you alright", "how's it going"]):
+        return QuestionIntent(
+            intent="how_are_you",
+            confidence=0.9,
+            **refs,
+            rewritten_structured_question="How are you?"
+        )
+
+    # Small talk - Occupation
+    if any(phrase in q_norm for phrase in ["what do you do", "your job", "your occupation", "where do you work", "what is your work"]):
+        return QuestionIntent(
+            intent="occupation",
+            confidence=0.9,
+            **refs,
+            rewritten_structured_question="What is your occupation?"
+        )
+
+    # Small talk - How can help
+    if any(phrase in q_norm for phrase in ["how can you help", "can you help", "what can you do", "help me out"]):
+        return QuestionIntent(
+            intent="how_can_help",
+            confidence=0.9,
+            **refs,
+            rewritten_structured_question="How can you help?"
+        )
+
+    # Small talk - Favorite thing
+    if any(phrase in q_norm for phrase in ["favorite", "favourite", "what do you like", "hobbies", "hobby"]):
+        return QuestionIntent(
+            intent="favorite_thing",
+            confidence=0.9,
+            **refs,
+            rewritten_structured_question="What is your favorite thing?"
+        )
+
+    # Small talk - About me
+    if any(phrase in q_norm for phrase in ["tell me about yourself", "who are you", "your background", "where are you from"]):
+        return QuestionIntent(
+            intent="about_me",
+            confidence=0.9,
+            **refs,
+            rewritten_structured_question="Tell me about yourself."
+        )
+
+    # Small talk - Emotions
+    if any(phrase in q_norm for phrase in ["happy", "sad", "smile", "cry"]) and any(phrase in q_norm for phrase in ["what makes", "do you", "are you"]):
+        return QuestionIntent(
+            intent="emotions",
+            confidence=0.9,
+            **refs,
+            rewritten_structured_question="What makes you happy or sad?"
+        )
+
+    # Small talk - General relationships
+    if any(phrase in q_norm for phrase in ["friends", "get along", "do you like people", "relationships"]):
+        # Only if it wasn't already caught by the victim/suspect relationship intent
+        return QuestionIntent(
+            intent="general_relationships",
+            confidence=0.8,
+            **refs,
+            rewritten_structured_question="Tell me about your relationships."
+        )
+
     # Low confidence -> Return None to let LLM handle it
     return None

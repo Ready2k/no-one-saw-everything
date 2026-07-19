@@ -63,6 +63,40 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         fallback_message="I'm not sure what you mean. Ask me where I was, what I saw, or about a specific person or object."
     )
 
+    SMALL_TALK_INTENTS = ["greeting", "how_are_you", "occupation", "how_can_help", "favorite_thing", "about_me", "general_relationships", "emotions"]
+    
+    if intent.intent in SMALL_TALK_INTENTS:
+        agent = next(a for a in case.agents if a.agent_id == req.agent_id)
+        transcript = sess.transcript_for(req.agent_id)
+        
+        answer_text = agent.small_talk.get(intent.intent, "I don't have much to say about that.")
+        
+        transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
+        transcript.messages.append(
+            InterviewMessage(
+                speaker="agent",
+                text=answer_text,
+                llm_rewrite_used=False,
+                llm_rewrite_fallback=False,
+            )
+        )
+        return FreeTextAskResponse(
+            intent=intent,
+            answer={
+                "question_text": req.question,
+                "answer_text": answer_text,
+                "deterministic_answer_text": answer_text,
+                "answer_type": "small_talk",
+                "emotional_shift": None,
+                "new_claims": [],
+                "revealed_clues": [],
+                "suggested_followups": _generic_followups(case),
+                "llm_rewrite_used": False,
+                "llm_rewrite_fallback": False,
+                "llm_rewrite_fallback_reason": None,
+            },
+        )
+
     # Mapping based on intent rules
     if intent.intent == "fallback_unknown":
         config = get_llm_config()
