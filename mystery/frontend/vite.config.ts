@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     port: Number(process.env.MYSTERY_FRONTEND_PORT ?? 5179),
     proxy: {
-      "/api": `http://localhost:${process.env.MYSTERY_API_PORT ?? 8010}`,
+      "/api": `http://127.0.0.1:${process.env.MYSTERY_API_PORT ?? 8010}`,
     },
   },
 });

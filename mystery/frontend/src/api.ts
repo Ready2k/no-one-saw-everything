@@ -333,6 +333,14 @@ export const api = {
     delete: (caseId: string) => request<{ status: string }>(`/api/generated_cases/${caseId}`, { method: "DELETE" }),
   },
   getDevMapLayout: () => request<any>("/api/dev/map-editor/layout"),
+  saveDevMapClueLocation: (payload: { case_id: string; clue_id: string; x: number; y: number; radius?: number }) =>
+    request<{ status: string; case_id: string; clue_id: string; x: number; y: number; radius: number }>(
+      "/api/dev/map-editor/clue-location",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    ),
   // baseVersion is the `layout_version` the layout was last loaded/saved at;
   // the server 409s if the file has since changed (another tab/session saved
   // in the meantime) instead of silently overwriting those changes. Omit it

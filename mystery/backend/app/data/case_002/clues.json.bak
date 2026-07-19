@@ -121,8 +121,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_bookshop_back",
-        "x": 70.0,
-        "y": 68.0,
+        "x": 42.0,
+        "y": 59.0,
         "radius": 6.0
       },
       "supports_conclusion_ids": [

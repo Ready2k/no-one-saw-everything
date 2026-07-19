@@ -40,6 +40,20 @@ export interface CaseOverride {
   object_anchors: Record<string, ObjectAnchor>;
 }
 
+export interface CaseClueRef {
+  clue_id: string;
+  title: string;
+  clue_type: string;
+  strength: string;
+  method: string;
+  location_id: string | null;
+  object_id: string | null;
+  reveal_on: string[];
+  x: number | null;
+  y: number | null;
+  radius: number;
+}
+
 export interface TileEntry {
   x: number;
   y: number;
@@ -152,6 +166,7 @@ export interface CaseLocationRef {
   location_id: string;
   name: string;
   description: string;
+  search_illustration?: string | null;
   legacy_bounds: { x: number; y: number; width: number; height: number } | null;
   legacy_position: { x: number; y: number } | null;
   visual_layer: string | null;
@@ -170,6 +185,7 @@ export interface CaseRef {
   title: string;
   locations: CaseLocationRef[];
   objects: CaseObjectRef[];
+  clues: CaseClueRef[];
 }
 
 // --- Editor-side types ---
@@ -192,6 +208,7 @@ export type PreviewMode = "debug" | "player_reveal" | "fog";
 export type Selection =
   | { kind: "location"; id: string }
   | { kind: "object"; id: string }
+  | { kind: "clue"; id: string }
   | { kind: "prop"; id: string }
   | { kind: "building"; id: string }
   | { kind: "light"; id: string }
@@ -433,6 +450,7 @@ export const UNDERLAY_SOURCES: UnderlaySourceDef[] = [
 
 export type UnderlaySourceId =
   | "town_tiles_hd"
+  | "selected_location_art"
   | "town_overworld"
   | "town_day"
   | "case4_day"

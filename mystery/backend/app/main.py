@@ -1472,7 +1472,7 @@ def get_dev_map_layout():
         raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
 
     from .town_map import TOWN_LAYOUT_FILE, _BOUNDS_TILES, list_hd_tile_variants
-    from .place_library import load_building_library
+    from .place_library import load_building_library, location_search_illustration
     from .case_store import list_all_cases, get_case
 
     layout_version = _layout_file_version(TOWN_LAYOUT_FILE)
@@ -1507,6 +1507,7 @@ def get_dev_map_layout():
                     "location_id": l.location_id,
                     "name": l.name,
                     "description": l.description,
+                    "search_illustration": location_search_illustration(l.location_id, case_id),
                     "legacy_bounds": l.map_bounds.model_dump() if hasattr(l.map_bounds, "model_dump") else (l.map_bounds if l.map_bounds else None),
                     "legacy_position": l.map_position.model_dump() if hasattr(l.map_position, "model_dump") else (l.map_position if l.map_position else None),
                     "visual_layer": l.visual_layer
@@ -1520,11 +1521,28 @@ def get_dev_map_layout():
                     "normal_location_id": o.normal_location_id,
                     "final_location_id": o.final_location_id,
                 })
+            clues = []
+            for clue in case_data.clues:
+                d = clue.discoverability
+                clues.append({
+                    "clue_id": clue.clue_id,
+                    "title": clue.title,
+                    "clue_type": clue.clue_type,
+                    "strength": clue.strength,
+                    "method": d.method,
+                    "location_id": d.location_id,
+                    "object_id": d.object_id,
+                    "reveal_on": d.reveal_on,
+                    "x": d.x,
+                    "y": d.y,
+                    "radius": d.radius if d.radius is not None else 8.0,
+                })
             cases_details.append({
                 "case_id": case_id,
                 "title": case_data.case.title,
                 "locations": locations,
-                "objects": objects
+                "objects": objects,
+                "clues": clues
             })
         except Exception:
             pass
@@ -1592,3 +1610,70 @@ def save_dev_map_layout(payload: dict = Body(...), x_base_layout_version: str | 
         return {"status": "success", "layout_version": _layout_file_version(TOWN_LAYOUT_FILE)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to persist layout: {e}")
+
+
+@app.post("/api/dev/map-editor/clue-location")
+def save_dev_map_clue_location(payload: dict = Body(...)):
+    import json
+    enable_editor = os.getenv("ENABLE_DEV_MAP_EDITOR", "false").lower() == "true"
+    if not enable_editor:
+        raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
+
+    from .case_store import DATA_DIR, load_case_from_disk
+
+    case_id = payload.get("case_id")
+    clue_id = payload.get("clue_id")
+    x = payload.get("x")
+    y = payload.get("y")
+    radius = payload.get("radius", 8.0)
+    if not case_id or not clue_id:
+        raise HTTPException(status_code=400, detail="case_id and clue_id are required")
+    if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+        raise HTTPException(status_code=400, detail="x and y must be numbers")
+    if not 0 <= float(x) <= 100 or not 0 <= float(y) <= 100:
+        raise HTTPException(status_code=400, detail="x and y must be percentages from 0 to 100")
+    if not isinstance(radius, (int, float)) or float(radius) <= 0:
+        raise HTTPException(status_code=400, detail="radius must be a positive number")
+
+    case_dir = DATA_DIR / str(case_id)
+    clues_file = case_dir / "clues.json"
+    if not clues_file.exists():
+        raise HTTPException(status_code=404, detail=f"No clues.json for case {case_id}")
+
+    try:
+        data = json.loads(clues_file.read_text())
+        target = None
+        for clue in data.get("clues", []):
+            if clue.get("clue_id") == clue_id:
+                target = clue
+                break
+        if target is None:
+            raise HTTPException(status_code=404, detail=f"No clue {clue_id} in {case_id}")
+        discoverability = target.setdefault("discoverability", {})
+        if discoverability.get("method") != "inspect":
+            raise HTTPException(status_code=400, detail="Only inspect clues have map-search locations")
+        discoverability["x"] = round(float(x), 3)
+        discoverability["y"] = round(float(y), 3)
+        discoverability["radius"] = round(float(radius), 3)
+
+        temp_file = clues_file.with_suffix(".json.tmp")
+        backup_file = clues_file.with_suffix(".json.bak")
+        temp_file.write_text(json.dumps(data, indent=2))
+        if clues_file.exists():
+            if backup_file.exists():
+                backup_file.unlink()
+            clues_file.rename(backup_file)
+        temp_file.rename(clues_file)
+        load_case_from_disk.cache_clear()
+        return {
+            "status": "success",
+            "case_id": case_id,
+            "clue_id": clue_id,
+            "x": discoverability["x"],
+            "y": discoverability["y"],
+            "radius": discoverability["radius"],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to persist clue location: {e}")

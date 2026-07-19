@@ -160,10 +160,7 @@
       "ambiguity": "medium",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_hobbs_cafe",
-        "x": 58.0,
-        "y": 37.0,
-        "radius": 8.0
+        "location_id": "loc_hobbs_cafe"
       },
       "supports_conclusion_ids": [
         "conc_clara_means",
