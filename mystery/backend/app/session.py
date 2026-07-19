@@ -21,6 +21,7 @@ from .models import (
     Claim,
     InterviewTranscript,
     Note,
+    ObservationRead,
     SuspicionLevel,
     MarkerType,
     Feedback,
@@ -59,12 +60,21 @@ class Session:
         # rather than spotting it themselves. Surfaced back to the player, not hidden.
         self.hint_count: int = 0
         self.feedback: Optional[Feedback] = None
+        # Observe is an action you spend on a person answering: one read per fresh
+        # exchange. agent_id -> [message_count, challenge_count] at the last observe.
+        self.observations: dict[str, list[ObservationRead]] = {}
+        self.observed_progress: dict[str, list[int]] = {}
         self._notes_issued = 0
         self._challenges_issued = 0
+        self._observations_issued = 0
 
     def next_note_id(self) -> str:
         self._notes_issued += 1
         return f"note_{self._notes_issued:03d}"
+
+    def next_observation_id(self) -> str:
+        self._observations_issued += 1
+        return f"obs_{self._observations_issued:03d}"
 
     def next_challenge_id(self) -> str:
         self._challenges_issued += 1
@@ -98,8 +108,13 @@ class Session:
             "logged_suggestion_keys": [list(k) for k in self.logged_suggestion_keys],
             "hint_count": self.hint_count,
             "feedback": self.feedback.model_dump() if self.feedback else None,
+            "observations": {
+                k: [o.model_dump() for o in v] for k, v in self.observations.items()
+            },
+            "observed_progress": {k: list(v) for k, v in self.observed_progress.items()},
             "notes_issued": self._notes_issued,
             "challenges_issued": self._challenges_issued,
+            "observations_issued": self._observations_issued,
         }
 
     @classmethod
@@ -138,10 +153,18 @@ class Session:
         s.hint_count = data.get("hint_count", 0)
         if data.get("feedback"):
             s.feedback = Feedback(**data["feedback"])
+        s.observations = {
+            k: [ObservationRead(**o) for o in v]
+            for k, v in data.get("observations", {}).items()
+        }
+        s.observed_progress = {k: list(v) for k, v in data.get("observed_progress", {}).items()}
         # Resume the id sequences where they left off, so a reloaded session cannot mint an id
         # that collides with a note or challenge it already holds.
         s._notes_issued = data.get("notes_issued", len(s.notes))
         s._challenges_issued = data.get("challenges_issued", len(s.challenges))
+        s._observations_issued = data.get(
+            "observations_issued", sum(len(v) for v in s.observations.values())
+        )
         return s
 
     def pressure_for(self, agent_id: str) -> float:

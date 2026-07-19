@@ -15,6 +15,13 @@ describe("demeanourFor", () => {
     expect(labels).toEqual(["Composed", "Guarded", "Rattled", "Cornered", "Breaking"]);
   });
 
+  it("moves off Composed when the first authored deflect (+0.10) lands", () => {
+    // The challenge UI says "their composure slips" for any positive delta; the hint must not
+    // still claim nothing has touched them.
+    expect(demeanourFor(0.1).label).toBe("Guarded");
+    expect(demeanourFor(0.05).label).toBe("Composed"); // the related-evidence nudge stays quiet
+  });
+
   it("lets a fresh emotional beat override the steady-state read for a turn", () => {
     // A self-contradiction is only +0.3 pressure, but the player should see it as flustered now.
     expect(demeanourFor(0.2, "floundering").label).toBe("Floundering");

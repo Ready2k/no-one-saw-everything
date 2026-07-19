@@ -47,8 +47,9 @@
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/elias_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/elias_defensive.png",
+      "cracking": "/art/portraits/elias_cracking.png",
+      "deceased": "/art/portraits/elias_deceased.png"
     }
   },
   {
@@ -98,8 +99,9 @@
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/marcus_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/marcus_defensive.png",
+      "cracking": "/art/portraits/marcus_cracking.png",
+      "deceased": "/art/portraits/marcus_deceased.png"
     }
   },
   {
@@ -142,8 +144,9 @@
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/clara_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/clara_defensive.png",
+      "cracking": "/art/portraits/clara_cracking.png",
+      "deceased": "/art/portraits/clara_deceased.png"
     }
   },
   {
@@ -192,8 +195,9 @@
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/isabella_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/isabella_defensive.png",
+      "cracking": "/art/portraits/isabella_cracking.png",
+      "deceased": "/art/portraits/isabella_deceased.png"
     }
   },
   {
@@ -236,8 +240,9 @@
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/owen_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/owen_defensive.png",
+      "cracking": "/art/portraits/owen_cracking.png",
+      "deceased": "/art/portraits/owen_deceased.png"
     }
   },
   {
@@ -287,8 +292,9 @@
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/priya_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/priya_defensive.png",
+      "cracking": "/art/portraits/priya_cracking.png",
+      "deceased": "/art/portraits/priya_deceased.png"
     }
   },
   {
@@ -331,8 +337,9 @@
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/ben_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/ben_defensive.png",
+      "cracking": "/art/portraits/ben_cracking.png",
+      "deceased": "/art/portraits/ben_deceased.png"
     }
   },
   {
@@ -375,8 +382,9 @@
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.png",
-      "defensive": null,
-      "cracking": null
+      "defensive": "/art/portraits/nadia_defensive.png",
+      "cracking": "/art/portraits/nadia_cracking.png",
+      "deceased": "/art/portraits/nadia_deceased.png"
     }
   },
   {

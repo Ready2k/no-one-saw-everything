@@ -830,6 +830,41 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 }
 .tell-noticeable .tell-tags span { border-color: rgba(216, 162, 74, 0.6); color: #d8c28c; }
 .tell-strong .tell-tags span { border-color: rgba(214, 66, 50, 0.75); color: #e39a8f; }
+.tell-pin {
+  margin-left: 0.4rem;
+  padding: 0 3px;
+  border: none;
+  background: none;
+  font-size: 0.75rem;
+  opacity: 0.45;
+  cursor: pointer;
+  vertical-align: 1px;
+}
+.tell-pin:hover { opacity: 1; }
+/* Observe: the spent-action considered read, shown in the dossier under the meter. */
+.observe-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.observe-msg { font-style: italic; }
+.observe-read {
+  margin-top: 0.5rem;
+  padding: 0.55rem 0.65rem;
+  border-left: 2px solid rgba(154, 186, 216, 0.55);
+  background: rgba(154, 186, 216, 0.07);
+}
+.observe-read .behavioural-title { color: #9ab8d8; }
+.observe-read p {
+  margin: 0 0 0.4rem;
+  color: #d9d2bd;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+.observe-noticeable { border-left-color: rgba(216, 162, 74, 0.6); }
+.observe-strong { border-left-color: rgba(214, 66, 50, 0.7); }
 .tell-gaze { animation: tell-glance-text 0.8s ease-out; }
 .tell-voice,
 .tell-timing { animation: tell-voice-text 0.8s ease-out; }

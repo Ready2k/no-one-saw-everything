@@ -154,6 +154,100 @@ def interview_tells(
     return tells
 
 
+def observe_read(
+    *,
+    agent: Agent,
+    pressure: float,
+    last_tells: list[ObservableTell],
+    seed: str,
+) -> tuple[str, str, str]:
+    """A deliberate, spent-action study of a suspect: (text, category, intensity).
+
+    Observe sharpens what the player could already see — it is built ONLY from
+    player-visible signals (cumulative pressure, the tells already shown with the
+    last answer, public traits). It never touches truthfulness or hidden state, so
+    it can never become a lie detector: a composed liar reads as composed.
+    """
+
+    trait = agent.traits[0] if agent.traits else "guarded"
+
+    if pressure >= 0.85:
+        band_options = [
+            "They are barely holding the room. Every question lands somewhere soft now, and they know you can see it.",
+            "The composure is gone; what is left is effort. They are working for every level sentence.",
+        ]
+        band_intensity = "strong"
+    elif pressure >= 0.6:
+        band_options = [
+            "The stillness has gone brittle. They answer you, but part of them is somewhere else, checking the story for cracks.",
+            "They have started managing themselves — breath, hands, voice — and management is not the same as calm.",
+        ]
+        band_intensity = "strong"
+    elif pressure >= 0.35:
+        band_options = [
+            "There is a new economy to them: shorter answers, smaller movements, nothing volunteered.",
+            "They are listening to your questions differently now — for where the next one is going.",
+        ]
+        band_intensity = "noticeable"
+    elif pressure >= 0.1:
+        band_options = [
+            "They are careful, the way people get when a conversation stops being casual.",
+            "Nothing dramatic — just a beat more thought before each answer than the questions deserve.",
+        ]
+        band_intensity = "noticeable"
+    else:
+        band_options = [
+            f"Their breathing is even and their hands are quiet. Whatever this is costing them, it does not show. They read as {trait}.",
+            "They meet your eyes without effort. If something is being held back, it is being held well.",
+        ]
+        band_intensity = "subtle"
+
+    band_text = band_options[_stable_index((agent.agent_id, "observe-band", seed), len(band_options))]
+
+    sharpen = {
+        "gaze": [
+            "Watch the eyes: they keep returning to the same fixed point between answers, as if checking something is still where they left it.",
+            "Their glance does a small circuit — you, the table, the door — and it is the door that gets the extra beat.",
+        ],
+        "timing": [
+            "The rhythm gives more away than the words: the pauses come before the details, not after them.",
+            "Their answers arrive a fraction rehearsed — the cadence of something said before, in private, for practice.",
+        ],
+        "hands": [
+            "The hands are the tell: too still when the questions get specific, busy again the moment the subject moves on.",
+            "Watch the knuckles when a place or a time is named — a small grip, released a moment too late.",
+        ],
+        "voice": [
+            "The voice holds its level, but the register drops a shade on certain names, as if lowering them out of reach.",
+            "Listen under the words: the breath support falters just before the sentences that matter most.",
+        ],
+        "posture": [
+            "They keep re-settling into the same composed position — composure as a place they have to keep walking back to.",
+            "The shoulders answer before the mouth does: a small brace at some questions, none at others.",
+        ],
+        "overexplaining": [
+            "Count the detail: it thickens exactly where you pressed, padding the story where it is thinnest.",
+            "They keep furnishing the answer — one more particular, one more aside — the way people decorate a room they don't want searched.",
+        ],
+    }
+
+    latest = last_tells[0] if last_tells else None
+    if latest is not None and latest.category in sharpen:
+        options = sharpen[latest.category]
+        detail = options[_stable_index((agent.agent_id, "observe-detail", seed), len(options))]
+        category = latest.category
+        order = {"subtle": 0, "noticeable": 1, "strong": 2}
+        intensity = TELL_INTENSITIES[min(2, max(order[latest.intensity], order[band_intensity]))]
+        return f"{band_text} {detail}", category, intensity
+
+    quiet_options = [
+        "You watch them through a long silence, and they let you. Nothing surfaces worth the name of a tell.",
+        "For a held moment you study them openly. Either there is nothing underneath, or it is buried past watching.",
+    ]
+    detail = quiet_options[_stable_index((agent.agent_id, "observe-quiet", seed), len(quiet_options))]
+    return f"{band_text} {detail}", "posture", band_intensity
+
+
 def challenge_tells(
     *,
     agent: Agent,

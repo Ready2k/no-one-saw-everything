@@ -10,6 +10,7 @@ import type {
   CluePublic,
   InspectResult,
   ObservableTell,
+  ObservationRead,
   QuestionType,
   SuspicionLevel,
   TranscriptMessage,
@@ -53,7 +54,15 @@ const SUSPICION_LEVELS: { value: SuspicionLevel; label: string }[] = [
   { value: "cleared", label: "Cleared" },
 ];
 
-function BehaviouralRead({ tells }: { tells?: ObservableTell[] }) {
+function BehaviouralRead({
+  tells,
+  onPin,
+}: {
+  tells?: ObservableTell[];
+  /** When set, noticeable/strong reads grow a pin — the useful ones deserve a
+   *  place in the notebook, not just a moment in the transcript. */
+  onPin?: (tell: ObservableTell) => void;
+}) {
   if (!tells || tells.length === 0) return null;
   return (
     <div className="behavioural-read">
@@ -65,6 +74,16 @@ function BehaviouralRead({ tells }: { tells?: ObservableTell[] }) {
             <span>{tell.intensity}</span>
           </span>
           {tell.cue}
+          {onPin && tell.intensity !== "subtle" && (
+            <button
+              type="button"
+              className="tell-pin"
+              title="Pin this read to the notebook"
+              onClick={() => onPin(tell)}
+            >
+              📌
+            </button>
+          )}
         </p>
       ))}
     </div>
@@ -206,6 +225,9 @@ function InterviewPanel({
   // Everything anyone has told the player. What OTHERS said is usable against this suspect.
   const [allClaims, setAllClaims] = useState<ClaimPublic[]>([]);
   const [lastChallenge, setLastChallenge] = useState<ChallengeResult | null>(null);
+  // The Observe action: a deliberate study of the suspect, spent one per fresh exchange.
+  const [observation, setObservation] = useState<ObservationRead | null>(null);
+  const [observeMsg, setObserveMsg] = useState<string | null>(null);
   const latestTell = lastChallenge?.observable_tells?.[0] ?? lastResult?.observable_tells?.[0];
   const [activeTellClass, setActiveTellClass] = useState("");
   const [beat, setBeat] = useState<BeatData | null>(null);
@@ -376,6 +398,46 @@ function InterviewPanel({
     }
   };
 
+  /** Spend an action watching them. The backend 409s until there is a fresh
+   *  exchange to watch — that refusal is shown to the player as-is. */
+  const observeThem = async () => {
+    setBusy(true);
+    setObserveMsg(null);
+    try {
+      const obs = await api.observe(agentId);
+      setObservation(obs);
+    } catch (e) {
+      setObserveMsg(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const pinObservation = async () => {
+    if (!observation) return;
+    await api.createNote({
+      note_type: "interview",
+      title: `Read on ${firstName}`,
+      body: observation.text,
+      linked_agent_ids: [agentId],
+      pinned_to_agent_id: agentId,
+    });
+    setNotebookNote(`Read on ${firstName}: ${observation.text.slice(0, 90)}…`);
+  };
+
+  /** Pin a strong behavioural read where it becomes evidence-adjacent: on the
+   *  suspect's page of the notebook, with the moment it was seen. */
+  const pinTell = async (tell: ObservableTell, context?: string) => {
+    await api.createNote({
+      note_type: "interview",
+      title: `${firstName}: ${tell.category} tell (${tell.intensity})`,
+      body: context ? `${tell.cue}\n— watching ${firstName} ${context}` : tell.cue,
+      linked_agent_ids: [agentId],
+      pinned_to_agent_id: agentId,
+    });
+    setNotebookNote(`Pinned a read on ${firstName}`);
+  };
+
   const noteFromAnswer = async () => {
     if (!lastResult) return;
     await api.createNote({
@@ -513,6 +575,29 @@ function InterviewPanel({
               pressure={pressure}
               lastShift={lastChallenge?.emotional_shift ?? lastResult?.emotional_shift}
             />
+            {/* Observe: spend an action for a considered read of how they're holding
+                up. One per fresh exchange — the refusal message is part of the game. */}
+            <div className="observe-row">
+              <button
+                type="button"
+                className="small-button observe-button"
+                onClick={observeThem}
+                disabled={busy}
+                title={`Study ${firstName} for a sharper behavioural read`}
+              >
+                👁 Observe
+              </button>
+              {observeMsg && <span className="muted small observe-msg">{observeMsg}</span>}
+            </div>
+            {observation && (
+              <div className={`observe-read observe-${observation.intensity}`}>
+                <span className="behavioural-title">Considered read</span>
+                <p>{observation.text}</p>
+                <button type="button" className="small-button" onClick={pinObservation}>
+                  📌 Pin to notebook
+                </button>
+              </div>
+            )}
             <div className="trait-chips">
               {agent.traits.map((t) => (
                 <span key={t} className="trait-chip">
@@ -568,7 +653,17 @@ function InterviewPanel({
                     revealed: {m.revealed_clue_ids.join(", ")}
                   </p>
                 )}
-                <BehaviouralRead tells={m.observable_tells} />
+                <BehaviouralRead
+                  tells={m.observable_tells}
+                  onPin={(tell) =>
+                    pinTell(
+                      tell,
+                      transcript[i - 1]?.speaker === "player"
+                        ? `after being asked: “${transcript[i - 1].text}”`
+                        : undefined
+                    )
+                  }
+                />
               </div>
             ))}
             {pendingQuestion && (
@@ -585,7 +680,15 @@ function InterviewPanel({
                 {firstName} seems {lastResult.emotional_shift}.
               </p>
             )}
-            <BehaviouralRead tells={lastResult?.observable_tells} />
+            <BehaviouralRead
+              tells={lastResult?.observable_tells}
+              onPin={(tell) =>
+                pinTell(
+                  tell,
+                  lastResult ? `after being asked: “${lastResult.question_text}”` : undefined
+                )
+              }
+            />
             {lastResult && lastResult.suggested_followups.length > 0 && (
               <div className="followups">
                 {lastResult.suggested_followups.map((f, i) => (
@@ -627,7 +730,10 @@ function InterviewPanel({
                 {lastChallenge.pressure_delta > 0 && (
                   <span className="muted small pressure-up"> — their composure slips</span>
                 )}
-                <BehaviouralRead tells={lastChallenge.observable_tells} />
+                <BehaviouralRead
+                  tells={lastChallenge.observable_tells}
+                  onPin={(tell) => pinTell(tell, "when confronted with the evidence")}
+                />
                 {lastChallenge.revealed_memories.map((m) => (
                   <p key={m.memory_id} className="small revealed-memory">
                     🗝️ {m.summary}

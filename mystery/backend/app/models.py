@@ -503,7 +503,21 @@ class ObservableTell(BaseModel):
     cue: str
     category: TellCategory
     intensity: TellIntensity = "subtle"
-    source: Literal["interview", "challenge"] = "interview"
+    source: Literal["interview", "challenge", "observe"] = "interview"
+
+
+class ObservationRead(BaseModel):
+    """The result of the player spending an Observe action on a suspect.
+
+    Built only from player-visible signals (cumulative pressure, the tells already
+    shown, public traits) — never from truthfulness or hidden state, so observing
+    sharpens a read but can never work as a lie detector."""
+
+    observation_id: str
+    agent_id: str
+    text: str
+    category: TellCategory
+    intensity: TellIntensity = "subtle"
 
 
 class InterviewMessage(BaseModel):
@@ -567,6 +581,10 @@ class AskRequest(BaseModel):
     # Used in place of the templated question text so the transcript and the
     # LLM rewrite react to what was really asked, not a generic paraphrase.
     original_question_text: Optional[str] = None
+
+
+class ObserveRequest(BaseModel):
+    agent_id: str
 
 
 class AskResponse(BaseModel):

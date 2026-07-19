@@ -24,6 +24,8 @@ from .models import (
     InspectRequest,
     Note,
     NoteCreate,
+    ObservationRead,
+    ObserveRequest,
     NoteUpdate,
     SuspicionUpdate,
     GenerateCaseRequest,
@@ -661,6 +663,80 @@ def transcript(agent_id: str):
     sess = session()
     t = sess.transcripts.get(agent_id)
     return t.messages if t else []
+
+
+@app.post("/api/interview/observe")
+def observe(req: ObserveRequest):
+    """Spend an action studying the suspect for a sharper behavioural read.
+
+    One read per fresh exchange (a new answer or a new challenge): observing is a
+    choice with a cost, not a free lie-detector button. The read itself is built
+    only from player-visible signals — see behavioural_tells.observe_read."""
+    case = case_data()
+    sess = session()
+    agent = next((a for a in case.agents if a.agent_id == req.agent_id), None)
+    if agent is None:
+        raise HTTPException(404, "No such agent")
+    if agent.is_background:
+        raise HTTPException(400, "This person isn't part of the investigation.")
+    if req.agent_id == case.case.victim_id:
+        raise HTTPException(400, "The dead give nothing away. Examine the body instead.")
+
+    first_name = agent.full_name.split(" ")[0]
+    t = sess.transcripts.get(req.agent_id)
+    message_count = len(t.messages) if t else 0
+    challenge_count = sum(
+        1 for c in sess.challenges.values() if c.target_agent_id == req.agent_id
+    )
+    if message_count == 0 and challenge_count == 0:
+        raise HTTPException(
+            409, f"Get {first_name} talking first — you can only read someone who is answering."
+        )
+    seen_messages, seen_challenges = sess.observed_progress.get(req.agent_id, [0, 0])
+    if message_count == seen_messages and challenge_count == seen_challenges:
+        raise HTTPException(
+            409, f"You have already studied {first_name}. Ask something new, then watch again."
+        )
+
+    # Sharpen the tells from whatever the player just witnessed: the latest challenge
+    # if one has landed since the last observe, otherwise the latest answer.
+    last_tells = []
+    if challenge_count > seen_challenges:
+        agent_challenges = [
+            c for c in sess.challenges.values() if c.target_agent_id == req.agent_id
+        ]
+        last_tells = agent_challenges[-1].observable_tells
+    elif t is not None:
+        last_agent_msg = next(
+            (m for m in reversed(t.messages) if m.speaker == "agent"), None
+        )
+        if last_agent_msg is not None:
+            last_tells = last_agent_msg.observable_tells
+
+    from .behavioural_tells import observe_read
+
+    text, category, intensity = observe_read(
+        agent=agent,
+        pressure=sess.pressure_for(req.agent_id),
+        last_tells=last_tells,
+        seed=f"{case.case.case_id}:{req.agent_id}:{message_count}:{challenge_count}",
+    )
+    obs = ObservationRead(
+        observation_id=sess.next_observation_id(),
+        agent_id=req.agent_id,
+        text=text,
+        category=category,
+        intensity=intensity,
+    )
+    sess.observations.setdefault(req.agent_id, []).append(obs)
+    sess.observed_progress[req.agent_id] = [message_count, challenge_count]
+    log_telemetry_event(sess, "observe_used", {"agent_id": req.agent_id})
+    return obs
+
+
+@app.get("/api/interview/{agent_id}/observations")
+def observations(agent_id: str):
+    return session().observations.get(agent_id, [])
 
 
 @app.get("/api/claims")

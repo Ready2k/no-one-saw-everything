@@ -312,7 +312,17 @@ export interface ObservableTell {
   cue: string;
   category: TellCategory;
   intensity: TellIntensity;
-  source: "interview" | "challenge";
+  source: "interview" | "challenge" | "observe";
+}
+
+/** The result of spending an Observe action on a suspect: a sharper behavioural
+ *  read, built only from player-visible signals — never a lie detector. */
+export interface ObservationRead {
+  observation_id: string;
+  agent_id: string;
+  text: string;
+  category: TellCategory;
+  intensity: TellIntensity;
 }
 
 export interface ChallengeResult {

@@ -12,6 +12,7 @@ import type {
   InspectResult,
   LocationPublic,
   Note,
+  ObservationRead,
   AgentPublic,
   MapReplayData,
   QuestionType,
@@ -106,6 +107,13 @@ export const api = {
     }),
   transcript: (agentId: string) =>
     request<TranscriptMessage[]>(`/api/interview/${agentId}`),
+  /** Spend an action studying the suspect. 409s until they have given a fresh
+   *  exchange (a new answer or challenge) to watch. */
+  observe: (agentId: string) =>
+    request<ObservationRead>("/api/interview/observe", {
+      method: "POST",
+      body: JSON.stringify({ agent_id: agentId }),
+    }),
   freeTextAsk: (payload: { agent_id: string; question: string }) =>
     request<{
       intent: any;

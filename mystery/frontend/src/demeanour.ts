@@ -39,7 +39,9 @@ export function demeanourFor(pressure: number, lastShift?: string | null): Demea
   if (pressure >= 0.35) {
     return { label: "Rattled", level: "rattled", composure, hint: "You have got under their skin." };
   }
-  if (pressure >= 0.12) {
+  // 0.10 is the smallest authored deflect delta: the first challenge that lands must move the
+  // label off "Composed", or the meter says "their composure slips" while the hint denies it.
+  if (pressure >= 0.1) {
     return { label: "Guarded", level: "guarded", composure, hint: "They are choosing their words." };
   }
   return { label: "Composed", level: "composed", composure, hint: "Nothing you have said has touched them yet." };
