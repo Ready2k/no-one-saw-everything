@@ -171,10 +171,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (tab !== "accuse") {
-      audioManager.playAmbient("investigation");
+    if (mode !== "investigation") {
+      audioManager.stopAmbient();
+      return;
     }
-  }, [tab]);
+    if (showIntro) return;
+    if (tab === "accuse") {
+      audioManager.stopAmbient();
+      return;
+    }
+    audioManager.playAmbient("investigation");
+  }, [mode, showIntro, tab]);
 
   useEffect(() => {
     if (!world || mode !== "investigation" || showIntro) return;

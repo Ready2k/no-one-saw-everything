@@ -1169,6 +1169,7 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         "visible_location_ids": [
             "loc_village_square", "loc_fountain", "loc_pub", "loc_owen_house",
             "loc_clinic", "loc_elias_house", "loc_priya_flat", "loc_ben_flat",
+            "loc_fishery", "loc_lake", "loc_woodland", "loc_meadow",
         ],
         "overlays": [
             "overlay_case_004_runtime_lighting",

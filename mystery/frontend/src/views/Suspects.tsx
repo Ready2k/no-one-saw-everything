@@ -1233,7 +1233,7 @@ function AutopsyPanel({
   const handleDiscover = async (clueId: string) => {
     try {
       await api.discoverClue(clueId);
-      audioManager.playStinger("clue_discovered");
+      sfx.evidenceFound();
       refresh();
     } catch (err: any) {
       console.error(err);

@@ -4,7 +4,7 @@ import { useWorld } from "../App";
 import type { InspectResult, LocationPublic } from "../types";
 import { ClueCard } from "./shared";
 import { MagnifyingSearch } from "../components/MagnifyingSearch";
-import { audioManager } from "../audio";
+import { sfx } from "../sfx";
 import LocationTransition, {
   shouldPlayLocationTransition,
 } from "../components/LocationTransition";
@@ -31,7 +31,7 @@ export default function Places() {
     try {
       const res = await api.inspect(locationId);
       if (res.new_clues?.length) {
-        audioManager.playStinger("clue_discovered");
+        sfx.evidenceFound();
       }
       setResult(res);
     } finally {
@@ -43,7 +43,7 @@ export default function Places() {
     if (!result) return;
     try {
       const discoveredClue = await api.discoverClue(clueId);
-      audioManager.playStinger("clue_discovered");
+      sfx.evidenceFound();
       setResult((prev: InspectResult | null) => {
         if (!prev) return prev;
         return {

@@ -20,7 +20,10 @@
     "pressure_cracking": "/audio/stingers/pressure_cracking.mp3",
     "accusation_submitted": "/audio/stingers/accusation_submitted.mp3",
     "case_solved": "/audio/stingers/case_solved.mp3",
-    "case_failed": "/audio/stingers/case_failed.mp3"
+    "case_failed": "/audio/stingers/case_failed.mp3",
+    "intro_tension": "/audio/stingers/intro_tension.wav",
+    "intro_discovery": "/audio/stingers/intro_discovery.wav",
+    "intro_drama": "/audio/stingers/intro_drama.wav"
   },
   "ui": {
     "click": "/audio/ui/click.wav",

@@ -195,4 +195,22 @@ export const sfx = {
     thump(c, { freqFrom: 1700, freqTo: 900, duration: 0.025, volume: 0.06, type: "square" });
     thump(c, { at: c.currentTime + 0.008, freqFrom: 260, freqTo: 130, duration: 0.045, volume: 0.08 });
   },
+
+  /** Evidence reveal: force the authored clue stinger, with a bright fallback. */
+  evidenceFound() {
+    if (audioManager.playStinger("clue_discovered", { force: true })) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 520, freqTo: 1180, duration: 0.12, volume: 0.12, type: "sine" });
+    thump(c, { at: c.currentTime + 0.06, freqFrom: 780, freqTo: 1760, duration: 0.16, volume: 0.08, type: "sine" });
+    noiseSwish(c, {
+      at: c.currentTime + 0.02,
+      duration: 0.18,
+      volume: 0.035,
+      filter: "highpass",
+      freqFrom: 1800,
+      freqTo: 3600,
+      q: 0.8,
+    });
+  },
 };

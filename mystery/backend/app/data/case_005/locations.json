@@ -11,12 +11,23 @@
       "loc_fountain"
     ],
     "visibility_type": "public",
-    "camera_coverage": false
+    "camera_coverage": false,
+    "map_position": {
+      "x": 3176,
+      "y": 2344
+    },
+    "map_bounds": {
+      "x": 2928,
+      "y": 2112,
+      "width": 496,
+      "height": 464
+    },
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_rear_alley",
     "name": "Rear Alley",
-    "description": "The narrow service alley behind the cafe and bookshop. Bins, crates, a linen delivery bay. The alley is where Clara is found. A small fire was set near the bins — it scorched the crate stack and a section of wall before dying out.",
+    "description": "The narrow service alley behind the cafe and bookshop. Bins, crates, a linen delivery bay. The alley is where Clara is found. A small fire was set near the bins \u2014 it scorched the crate stack and a section of wall before dying out.",
     "connected_location_ids": [
       "loc_village_square",
       "loc_hobbs_cafe",
@@ -27,7 +38,19 @@
     "audible_from_location_ids": [
       "loc_village_square"
     ],
-    "murder_suitable": true
+    "murder_suitable": true,
+    "map_position": {
+      "x": 3416,
+      "y": 1696
+    },
+    "map_bounds": {
+      "x": 3056,
+      "y": 1664,
+      "width": 720,
+      "height": 64,
+      "rotation": 17
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_hobbs_cafe",
@@ -37,7 +60,19 @@
       "loc_village_square",
       "loc_rear_alley"
     ],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3088,
+      "y": 1912
+    },
+    "map_bounds": {
+      "x": 2976,
+      "y": 1776,
+      "width": 224,
+      "height": 272,
+      "rotation": -42
+    },
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_clara_flat",
@@ -49,7 +84,19 @@
     "access_rules": [
       "owner"
     ],
-    "visibility_type": "private"
+    "visibility_type": "private",
+    "map_position": {
+      "x": 3136,
+      "y": 1784
+    },
+    "map_bounds": {
+      "x": 3040,
+      "y": 1712,
+      "width": 192,
+      "height": 144,
+      "rotation": 32
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_owen_house",
@@ -62,7 +109,19 @@
     "access_rules": [
       "owner"
     ],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {
+      "x": 4008,
+      "y": 2456
+    },
+    "map_bounds": {
+      "x": 3824,
+      "y": 2272,
+      "width": 368,
+      "height": 368,
+      "rotation": 2
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_clinic",
@@ -71,7 +130,19 @@
     "connected_location_ids": [
       "loc_village_square"
     ],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3664,
+      "y": 2232
+    },
+    "map_bounds": {
+      "x": 3533,
+      "y": 2096,
+      "width": 262,
+      "height": 272,
+      "rotation": 6.5
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_bookshop",
@@ -81,7 +152,19 @@
       "loc_village_square",
       "loc_rear_alley"
     ],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {
+      "x": 2694,
+      "y": 1981
+    },
+    "map_bounds": {
+      "x": 2614,
+      "y": 1917,
+      "width": 160,
+      "height": 128,
+      "rotation": 18
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_fountain",
@@ -90,7 +173,18 @@
     "connected_location_ids": [
       "loc_village_square"
     ],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3152,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 3040,
+      "y": 2240,
+      "width": 224,
+      "height": 192
+    },
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_elias_bench",
@@ -100,7 +194,19 @@
       "loc_village_square",
       "loc_fountain"
     ],
-    "visibility_type": "public"
+    "visibility_type": "public",
+    "map_position": {
+      "x": 2880,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 2832,
+      "y": 2304,
+      "width": 96,
+      "height": 64,
+      "rotation": -55
+    },
+    "visual_layer": "exterior"
   },
   {
     "location_id": "loc_back_lane",
@@ -113,14 +219,14 @@
     "visibility_type": "public",
     "camera_coverage": false,
     "map_position": {
-      "x": 300,
-      "y": 40
+      "x": 4064,
+      "y": 2176
     },
     "map_bounds": {
-      "x": 230,
-      "y": 34,
-      "width": 190,
-      "height": 10
+      "x": 3872,
+      "y": 2144,
+      "width": 384,
+      "height": 64
     },
     "visual_layer": "exterior"
   }

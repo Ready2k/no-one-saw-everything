@@ -494,63 +494,13 @@
         "loc_woodland",
         "loc_meadow"
       ],
-      "location_bounds": {
-        "loc_village_square": {
-          "x": 95,
-          "y": 75,
-          "w": 10,
-          "h": 7
-        },
-        "loc_fountain": {
-          "x": 99,
-          "y": 76,
-          "w": 4,
-          "h": 4
-        },
-        "loc_pub": {
-          "x": 95,
-          "y": 66,
-          "w": 13,
-          "h": 7
-        },
-        "loc_clinic": {
-          "x": 105,
-          "y": 73,
-          "w": 8,
-          "h": 6
-        },
-        "loc_ben_flat": {
-          "x": 81,
-          "y": 66,
-          "w": 6,
-          "h": 3
-        },
-        "loc_priya_flat": {
-          "x": 80,
-          "y": 69,
-          "w": 6,
-          "h": 4
-        },
-        "loc_elias_house": {
-          "x": 83.1,
-          "y": 77,
-          "w": 6,
-          "h": 4,
-          "rotation": 30
-        },
-        "loc_owen_house": {
-          "x": 113,
-          "y": 68,
-          "w": 7,
-          "h": 7
-        }
-      },
+      "location_bounds": {},
       "object_anchors": {
         "obj_fountain_stone": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 102,
-            "y": 78
+            "x": 101,
+            "y": 73
           },
           "semantic_asset_id": "obj_fountain_coping_stone",
           "render_policy": "discovery_gated"
@@ -559,7 +509,7 @@
           "location_id": "loc_fountain",
           "anchor": {
             "x": 100,
-            "y": 79
+            "y": 74.5
           },
           "semantic_asset_id": "obj_muddy_bootprint",
           "render_policy": "discovery_gated"
@@ -567,8 +517,8 @@
         "obj_fred_lighter": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 100,
-            "y": 77
+            "x": 99.5,
+            "y": 73.2
           },
           "semantic_asset_id": "obj_pub_lighter",
           "render_policy": "discovery_gated",
@@ -577,8 +527,8 @@
         "obj_owen_pub_receipt": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 101,
-            "y": 77
+            "x": 100.6,
+            "y": 72.8
           },
           "semantic_asset_id": "obj_pub_receipt",
           "render_policy": "discovery_gated"
@@ -586,8 +536,8 @@
         "obj_pub_ledger": {
           "location_id": "loc_pub",
           "anchor": {
-            "x": 98,
-            "y": 70
+            "x": 79,
+            "y": 72
           },
           "semantic_asset_id": "obj_pub_ledger",
           "render_policy": "discovery_gated",
@@ -596,8 +546,8 @@
         "obj_blackmail_letters": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 84,
-            "y": 66
+            "x": 70.5,
+            "y": 87
           },
           "semantic_asset_id": "obj_blackmail_letters",
           "render_policy": "discovery_gated",
@@ -606,8 +556,8 @@
         "obj_arson_clipping": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 85,
-            "y": 66
+            "x": 71.5,
+            "y": 87.2
           },
           "semantic_asset_id": "obj_arson_clipping",
           "render_policy": "discovery_gated",
@@ -616,8 +566,8 @@
         "obj_ben_phone": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 86,
-            "y": 67
+            "x": 72.5,
+            "y": 88
           },
           "semantic_asset_id": "obj_phone",
           "render_policy": "discovery_gated",
@@ -626,8 +576,8 @@
         "obj_ben_jacket_mud": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 85,
-            "y": 68
+            "x": 71.2,
+            "y": 89
           },
           "semantic_asset_id": "obj_muddy_jacket",
           "render_policy": "discovery_gated",
@@ -1101,6 +1051,28 @@
           "external": false
         }
       }
+    },
+    "case_007": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_elias_bench",
+        "loc_hobbs_cafe",
+        "loc_cafe_kitchen",
+        "loc_rear_alley",
+        "loc_bookshop",
+        "loc_bookshop_back",
+        "loc_clinic",
+        "loc_marcus_house",
+        "loc_marcus_study",
+        "loc_owen_house",
+        "loc_clara_flat",
+        "loc_priya_flat",
+        "loc_nadia_flat",
+        "loc_elias_house"
+      ],
+      "location_bounds": {},
+      "object_anchors": {}
     }
   },
   "tile_layers": {

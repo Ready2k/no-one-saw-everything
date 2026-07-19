@@ -53,9 +53,14 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
     location.building_art?.exterior;
 
   useEffect(() => {
+    audioManager.playAmbient("testimony");
+    return () => audioManager.stopAmbient();
+  }, []);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        audioManager.playStinger("ui_click");
+        sfx.click();
         onBegin();
       }
     };
@@ -67,7 +72,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
     // Cinematic Timeline
     const t1 = setTimeout(() => {
       setPhase("time");
-      audioManager.playStinger("tension");
+      audioManager.playStinger("intro_tension");
       sfx.stampThunk();
     }, 250);
 
@@ -77,7 +82,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
 
     const t3 = setTimeout(() => {
       setPhase("scene");
-      audioManager.playStinger("discovery");
+      audioManager.playStinger("intro_discovery");
     }, 5800);
 
     const t4 = setTimeout(() => {
@@ -106,7 +111,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
             clearInterval(interval);
             setTimeout(() => {
               setPhase("title");
-              audioManager.playStinger("drama");
+              audioManager.playStinger("intro_drama");
             }, 1500);
           }
         }, 600); 
@@ -114,7 +119,7 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
       } else {
         const t = setTimeout(() => {
           setPhase("title");
-          audioManager.playStinger("drama");
+          audioManager.playStinger("intro_drama");
         }, 1000);
         return () => clearTimeout(t);
       }
@@ -132,7 +137,14 @@ export default function Intro({ onBegin }: { onBegin: () => void }) {
 
   return (
     <div className="intro-scene" data-phase={phase}>
-      <button className="intro-skip" onClick={onBegin} title="Skip (Esc)">
+      <button
+        className="intro-skip"
+        onClick={() => {
+          sfx.click();
+          onBegin();
+        }}
+        title="Skip (Esc)"
+      >
         Skip ›
       </button>
 
