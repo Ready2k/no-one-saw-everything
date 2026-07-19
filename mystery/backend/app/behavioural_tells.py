@@ -10,10 +10,67 @@ from __future__ import annotations
 import hashlib
 from typing import Iterable, Optional
 
-from .models import Agent, ObservableTell, QuestionType, TruthStatus
+from .models import Agent, BehaviouralBaseline, ObservableTell, QuestionType, TruthStatus
 
 
 TELL_INTENSITIES = ("subtle", "noticeable", "strong")
+
+# A suspect's calm manner: the thing the detective files away early and measures
+# change against later. Chosen by seeded identity only — never by guilt — so the
+# baseline itself can never leak who the killer is.
+BASELINE_HABITS: list[tuple[str, str]] = [
+    ("hands", "their hands do half the talking, carrying each answer along"),
+    ("overexplaining", "they round every answer up into a small story, one detail more than you asked for"),
+    ("timing", "they answer almost before the question is finished, quick and unguarded"),
+    ("gaze", "they hold your eyes comfortably and let the silences sit"),
+    ("voice", "their voice runs level and unhurried, like someone reading minutes"),
+    ("posture", "they sit loose in the chair, taking up all the room they need"),
+]
+
+# One-to-one with BASELINE_HABITS: the "different from earlier" phrasing. Says
+# that the manner has changed; never says why.
+BASELINE_DEVIATION_CUES: dict[str, str] = {
+    "hands": "The hands that carried their first answers along have gone flat and still.",
+    "overexplaining": "The easy extra detail from their first answers has been trimmed to nothing.",
+    "timing": "They used to answer before you had finished asking. Now every reply waits a beat.",
+    "gaze": "They held your eyes when this began. They are finding other places to look now.",
+    "voice": "The level, unhurried voice from earlier keeps having to be re-levelled.",
+    "posture": "They sat loose when this began. Now they are arranged, joint by joint.",
+}
+
+
+def baseline_habit(agent: Agent, case_id: str) -> tuple[str, str, Optional[str]]:
+    """(category, habit_text, deviation_cue) for this agent's calm manner.
+
+    An authored spec on the agent wins — writers should give each principal a
+    distinct manner; the seeded pick (stable per case) is the fallback so every
+    generated or unauthored character still has one."""
+    if agent.baseline is not None:
+        return (
+            agent.baseline.habit_category,
+            agent.baseline.habit_text,
+            agent.baseline.deviation_cue,
+        )
+    category, habit_text = BASELINE_HABITS[
+        _stable_index((case_id, agent.agent_id, "baseline-habit"), len(BASELINE_HABITS))
+    ]
+    return category, habit_text, None
+
+
+def pressure_band(pressure: float) -> int:
+    """0 composed / 1 guarded / 2 rattled / 3 cornered / 4 breaking.
+
+    Matches the frontend demeanour bands; baseline deviation is measured in band
+    steps so it tracks what the player can already see on the meter."""
+    if pressure >= 0.85:
+        return 4
+    if pressure >= 0.6:
+        return 3
+    if pressure >= 0.35:
+        return 2
+    if pressure >= 0.1:
+        return 1
+    return 0
 
 FALSEY_TRUTH = {"false", "mistaken", "rumour"}
 HIGH_STRESS = {
@@ -71,8 +128,14 @@ def interview_tells(
     emotional_shift: Optional[str],
     pressure: float,
     seed: str,
+    baseline: Optional[BehaviouralBaseline] = None,
+    note_baseline_shift: bool = False,
 ) -> list[ObservableTell]:
-    """Generate 0-2 observations for an interview answer."""
+    """Generate 0-2 observations for an interview answer.
+
+    When `note_baseline_shift` is set (the first answer after the suspect enters a
+    new pressure band), one tell is the baseline comparison — "different from
+    earlier" — which lands even if the answer itself is too flat to cue anything."""
 
     emotion = _norm(emotional_shift)
     falsey = truthfulness in FALSEY_TRUTH
@@ -89,7 +152,8 @@ def interview_tells(
     if emotionally_quiet and not falsey and pressure < 0.3:
         stress -= 0.25
 
-    if stress < 0.38:
+    wants_baseline_tell = baseline is not None and note_baseline_shift
+    if stress < 0.38 and not wants_baseline_tell:
         return []
 
     evasive_options = [
@@ -117,17 +181,19 @@ def interview_tells(
     else:
         options = steady_options
 
-    category, cue = _pick(agent, "interview", f"{seed}:{question_type}:{truthfulness}:{emotion}", options)
-    tells = [
-        ObservableTell(
-            tell_id=_tell_id(agent, "interview", seed, 0),
-            agent_id=agent.agent_id,
-            cue=cue,
-            category=category,
-            intensity=_intensity(stress),
-            source="interview",
+    tells: list[ObservableTell] = []
+    if stress >= 0.38:
+        category, cue = _pick(agent, "interview", f"{seed}:{question_type}:{truthfulness}:{emotion}", options)
+        tells.append(
+            ObservableTell(
+                tell_id=_tell_id(agent, "interview", seed, 0),
+                agent_id=agent.agent_id,
+                cue=cue,
+                category=category,
+                intensity=_intensity(stress),
+                source="interview",
+            )
         )
-    ]
 
     if stress >= 1.45 and falsey:
         category2, cue2 = _pick(
@@ -151,6 +217,22 @@ def interview_tells(
             )
         )
 
+    if wants_baseline_tell:
+        baseline_tell = ObservableTell(
+            tell_id=_tell_id(agent, "interview-baseline", seed, 0),
+            agent_id=agent.agent_id,
+            cue=baseline.deviation_cue or BASELINE_DEVIATION_CUES[baseline.habit_category],
+            category=baseline.habit_category,
+            intensity="strong" if pressure >= 0.6 else "noticeable",
+            source="interview",
+        )
+        # The comparison is the more valuable read: keep the 0-2 contract by
+        # letting it displace the second generic cue.
+        if len(tells) >= 2:
+            tells[1] = baseline_tell
+        else:
+            tells.append(baseline_tell)
+
     return tells
 
 
@@ -160,13 +242,18 @@ def observe_read(
     pressure: float,
     last_tells: list[ObservableTell],
     seed: str,
-) -> tuple[str, str, str]:
-    """A deliberate, spent-action study of a suspect: (text, category, intensity).
+    baseline: Optional[BehaviouralBaseline] = None,
+    first_observe: bool = False,
+) -> tuple[str, str, str, Optional[str]]:
+    """A deliberate, spent-action study of a suspect:
+    (text, category, intensity, baseline_state).
 
     Observe sharpens what the player could already see — it is built ONLY from
     player-visible signals (cumulative pressure, the tells already shown with the
-    last answer, public traits). It never touches truthfulness or hidden state, so
-    it can never become a lie detector: a composed liar reads as composed.
+    last answer, public traits, and the remembered calm baseline). It never touches
+    truthfulness or hidden state, so it can never become a lie detector: a composed
+    liar reads as composed, and "different from earlier" tracks pressure, which an
+    innocent under strain shows too.
     """
 
     trait = agent.traits[0] if agent.traits else "guarded"
@@ -204,6 +291,42 @@ def observe_read(
 
     band_text = band_options[_stable_index((agent.agent_id, "observe-band", seed), len(band_options))]
 
+    # The baseline comparison: how this manner sits against the one you filed away
+    # when they were calm. Measured in meter bands, so it says "different from
+    # earlier" exactly when the player can feel the difference — never "lying".
+    baseline_state: Optional[str] = None
+    baseline_clause = ""
+    if baseline is not None:
+        delta = pressure_band(pressure) - pressure_band(baseline.captured_at_pressure)
+        habit = baseline.habit_text
+        if delta >= 2:
+            baseline_state = "broken"
+            variants = [
+                f"At ease, {habit} — that was your first read of them. Every piece of it has been packed away now. It is not proof of anything, but they are not the person you first sat down with.",
+                f"Set it against your first read of them — {habit} — and the change is the loudest thing in the room.",
+            ]
+        elif delta == 1:
+            baseline_state = "shifted"
+            variants = [
+                f"At ease, {habit} — that was your first read of them. There is less of it now; a small difference, but a real one.",
+                f"Your first read of them still mostly holds — {habit} — but it is fraying at the edges.",
+            ]
+        elif first_observe:
+            baseline_state = "noted"
+            variants = [
+                f"Worth filing away: at ease, {habit}. If that ever changes, you will want to know.",
+                f"Note the manner while it is unforced: {habit}. That is your measure of this person.",
+            ]
+        else:
+            baseline_state = "consistent"
+            variants = [
+                f"Still the manner you filed away — {habit} — the same as when this began.",
+                f"Nothing has moved them off their baseline: {habit}, now as at the start.",
+            ]
+        baseline_clause = " " + variants[
+            _stable_index((agent.agent_id, "observe-baseline", seed), len(variants))
+        ]
+
     sharpen = {
         "gaze": [
             "Watch the eyes: they keep returning to the same fixed point between answers, as if checking something is still where they left it.",
@@ -238,14 +361,14 @@ def observe_read(
         category = latest.category
         order = {"subtle": 0, "noticeable": 1, "strong": 2}
         intensity = TELL_INTENSITIES[min(2, max(order[latest.intensity], order[band_intensity]))]
-        return f"{band_text} {detail}", category, intensity
+        return f"{band_text}{baseline_clause} {detail}", category, intensity, baseline_state
 
     quiet_options = [
         "You watch them through a long silence, and they let you. Nothing surfaces worth the name of a tell.",
         "For a held moment you study them openly. Either there is nothing underneath, or it is buried past watching.",
     ]
     detail = quiet_options[_stable_index((agent.agent_id, "observe-quiet", seed), len(quiet_options))]
-    return f"{band_text} {detail}", "posture", band_intensity
+    return f"{band_text}{baseline_clause} {detail}", "posture", band_intensity, baseline_state
 
 
 def challenge_tells(

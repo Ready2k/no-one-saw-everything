@@ -274,3 +274,8 @@ only `safe_to_render: true` / `marker_state: "active"` objects may appear.
 The game is built from a spec pack (spec numbers are referenced throughout, e.g. spec 06 =
 interview/challenge, spec 11 = data model, spec 12 = engine contract). `docs/` holds the
 presentation spec and the playtest bug-bash checklist.
+
+When authoring or generating a case, follow `docs/17_behavioural_authoring_guide.md` — the
+writer's contract for the behavioural layer (calm baselines via `Agent.baseline`, pressure-band
+escalations, relief beats, confession beats, portrait states). It is enforced by
+`tests/test_behavioural_arcs.py`; Marcus in case_007 is the model suspect arc.

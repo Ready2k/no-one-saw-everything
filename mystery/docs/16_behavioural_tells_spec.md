@@ -90,17 +90,24 @@ Intensity:
 
 ## Future Phases
 
-### Phase 2: Baselines
+### Phase 2: Baselines — BUILT
 
-Add per-agent baseline tells from low-pressure answers, then mark later deviations as "different from earlier."
+Per-agent calm baseline is captured from the first unpressured answer
+(`session.baselines`, engine in `behavioural_tells.baseline_habit`). The first
+answer after a suspect enters a new pressure band carries one "different from
+earlier" tell; Observe compares against the baseline every time. Writers can
+author each principal's manner via `Agent.baseline` — see
+`docs/17_behavioural_authoring_guide.md`.
 
-### Phase 3: Observation Skill
+### Phase 3: Observation Skill — BUILT
 
-Let players actively spend an "Observe" action on an answer to get a stronger or more precise read.
+`POST /api/interview/observe`: one considered read per fresh exchange, built only
+from player-visible signals. Guarded by `tests/test_observe.py`.
 
-### Phase 4: Notebook Integration
+### Phase 4: Notebook Integration — BUILT
 
-Allow behavioural reads to become notebook notes pinned to a suspect or claim.
+The considered read pins to the suspect's notebook page; noticeable/strong tells
+in the transcript pin with the question they followed.
 
 ### Phase 5: Asset Payoff
 

@@ -102,6 +102,11 @@
       "defensive": "/art/portraits/marcus_defensive.png",
       "cracking": "/art/portraits/marcus_cracking.png",
       "deceased": "/art/portraits/marcus_deceased.png"
+    },
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "his voice runs level and unhurried, like a man reading minutes he wrote himself",
+      "deviation_cue": "The level voice from earlier has gone exact \u2014 times, quantities, the order of events \u2014 precision standing in where ease used to be."
     }
   },
   {
@@ -147,6 +152,11 @@
       "defensive": "/art/portraits/clara_defensive.png",
       "cracking": "/art/portraits/clara_cracking.png",
       "deceased": "/art/portraits/clara_deceased.png"
+    },
+    "baseline": {
+      "habit_category": "overexplaining",
+      "habit_text": "she rounds every answer up into a story, with one more character in it than you asked about",
+      "deviation_cue": "The stories have stopped. Every answer now is exactly as long as it has to be, and not a word longer."
     }
   },
   {
@@ -198,6 +208,11 @@
       "defensive": "/art/portraits/isabella_defensive.png",
       "cracking": "/art/portraits/isabella_cracking.png",
       "deceased": "/art/portraits/isabella_deceased.png"
+    },
+    "baseline": {
+      "habit_category": "posture",
+      "habit_text": "she sits half out of the chair, as if the next task is already calling her name",
+      "deviation_cue": "She has stopped moving. The woman who ran an entire evening is sitting perfectly, unnaturally still."
     }
   },
   {
@@ -243,6 +258,11 @@
       "defensive": "/art/portraits/owen_defensive.png",
       "cracking": "/art/portraits/owen_cracking.png",
       "deceased": "/art/portraits/owen_deceased.png"
+    },
+    "baseline": {
+      "habit_category": "timing",
+      "habit_text": "he leaves a workman's pause before each answer, measuring twice before he commits",
+      "deviation_cue": "The pauses have doubled. He is testing every question for load before he puts any weight on it."
     }
   },
   {
@@ -295,6 +315,11 @@
       "defensive": "/art/portraits/priya_defensive.png",
       "cracking": "/art/portraits/priya_cracking.png",
       "deceased": "/art/portraits/priya_deceased.png"
+    },
+    "baseline": {
+      "habit_category": "gaze",
+      "habit_text": "she watches your face while she answers, checking that the words are landing right",
+      "deviation_cue": "She has stopped checking your face. Her answers go to the table now, and stay there."
     }
   },
   {
@@ -340,6 +365,11 @@
       "defensive": "/art/portraits/ben_defensive.png",
       "cracking": "/art/portraits/ben_cracking.png",
       "deceased": "/art/portraits/ben_deceased.png"
+    },
+    "baseline": {
+      "habit_category": "hands",
+      "habit_text": "his hands sketch every route and parcel in the air while he talks",
+      "deviation_cue": "His hands have quit the conversation \u2014 flat on his knees while his mouth does all the work alone."
     }
   },
   {
@@ -385,6 +415,11 @@
       "defensive": "/art/portraits/nadia_defensive.png",
       "cracking": "/art/portraits/nadia_cracking.png",
       "deceased": "/art/portraits/nadia_deceased.png"
+    },
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "her voice carries the unhurried warmth of someone used to talking people back to calm",
+      "deviation_cue": "The warmth has drained out of her voice. The words are the same; the bedside manner is gone."
     }
   },
   {

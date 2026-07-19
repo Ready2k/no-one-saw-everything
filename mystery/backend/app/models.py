@@ -158,6 +158,21 @@ class PortraitState(BaseModel):
     deceased: Optional[str] = None
 
 
+class AgentBaselineSpec(BaseModel):
+    """Authored calm-manner for the behavioural baseline engine (never projected).
+
+    Writers use this to make each principal's manner — and the way it changes
+    under pressure — distinct in character terms: one over-explains, one freezes,
+    one goes flat, one becomes too precise. Both texts describe visible behaviour
+    only; the deviation cue says the manner has changed, never why."""
+
+    habit_category: TellCategory
+    # Present tense, completes "at ease, {habit_text}".
+    habit_text: str
+    # A full sentence: the "different from earlier" tell shown once per escalation.
+    deviation_cue: str
+
+
 class Agent(BaseModel):
     agent_id: str
     full_name: str
@@ -166,6 +181,8 @@ class Agent(BaseModel):
     traits: list[str] = []
     portrait: Optional[str] = None  # emoji or asset path for MVP
     portrait_art: Optional[PortraitState] = None
+    # Optional authored calm manner; when absent the engine picks a seeded one.
+    baseline: Optional[AgentBaselineSpec] = None
     home_location_id: Optional[str] = None
     work_location_id: Optional[str] = None
     routine_summary: str = ""
@@ -506,6 +523,23 @@ class ObservableTell(BaseModel):
     source: Literal["interview", "challenge", "observe"] = "interview"
 
 
+class BehaviouralBaseline(BaseModel):
+    """How a suspect behaves when calm — quietly remembered from their first
+    unpressured answer, so later reads can say "different from earlier".
+
+    The habit is derived from seeded identity only, never from truthfulness or
+    guilt: a killer's baseline is as ordinary as anyone's, and deviation from it
+    tracks pressure, which an innocent under strain shows too."""
+
+    agent_id: str
+    habit_category: TellCategory
+    habit_text: str
+    captured_at_pressure: float = 0.0
+    # Authored "different from earlier" phrasing; falls back to the category's
+    # stock cue when absent.
+    deviation_cue: Optional[str] = None
+
+
 class ObservationRead(BaseModel):
     """The result of the player spending an Observe action on a suspect.
 
@@ -518,6 +552,9 @@ class ObservationRead(BaseModel):
     text: str
     category: TellCategory
     intensity: TellIntensity = "subtle"
+    # How the current manner compares with the remembered baseline:
+    # noted / consistent / shifted / broken. None when no baseline exists.
+    baseline_state: Optional[Literal["noted", "consistent", "shifted", "broken"]] = None
 
 
 class InterviewMessage(BaseModel):

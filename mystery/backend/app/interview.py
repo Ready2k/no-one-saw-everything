@@ -16,6 +16,7 @@ from .models import (
     AnswerRule,
     AskRequest,
     AskResponse,
+    BehaviouralBaseline,
     CaseData,
     Claim,
     InterviewMessage,
@@ -23,7 +24,7 @@ from .models import (
 from .projections import project_claim, project_clue
 from .session import Session
 from .case_store import minutes
-from .behavioural_tells import interview_tells
+from .behavioural_tells import baseline_habit, interview_tells, pressure_band
 from .llm.config import get_llm_config
 from .llm.dialogue_rewriter import rewrite_interview_answer
 from .world_state import build_conversation_context, build_world_state_digest
@@ -179,6 +180,31 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
 
     agent = next(a for a in case.agents if a.agent_id == req.agent_id)
     pressure = session.pressure_for(req.agent_id)
+
+    # Baseline memory: quietly file away how this person behaves when calm, the
+    # first time they answer unpressured. Later reads measure change against it.
+    baseline = session.baselines.get(req.agent_id)
+    if baseline is None and pressure < 0.35:
+        habit_category, habit_text, deviation_cue = baseline_habit(agent, case.case.case_id)
+        baseline = BehaviouralBaseline(
+            agent_id=req.agent_id,
+            habit_category=habit_category,
+            habit_text=habit_text,
+            captured_at_pressure=pressure,
+            deviation_cue=deviation_cue,
+        )
+        session.baselines[req.agent_id] = baseline
+
+    # "Different from earlier" is news exactly once per escalation: the first
+    # answer after the suspect enters a new pressure band carries the comparison.
+    note_baseline_shift = False
+    band = pressure_band(pressure)
+    if baseline is not None and band >= 2:
+        noted = session.baseline_shift_noted.setdefault(req.agent_id, [])
+        if band not in noted:
+            noted.append(band)
+            note_baseline_shift = True
+
     tell_seed = f"{case.case.case_id}:{req.agent_id}:{question_text}:{len(session.transcript_for(req.agent_id).messages)}"
     observable_tells = interview_tells(
         agent=agent,
@@ -187,6 +213,8 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
         emotional_shift=emotional_shift,
         pressure=pressure,
         seed=tell_seed,
+        baseline=baseline,
+        note_baseline_shift=note_baseline_shift,
     )
 
     # Rewrite logic. Applies whether or not an authored rule matched — an

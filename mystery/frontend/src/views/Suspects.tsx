@@ -90,6 +90,15 @@ function BehaviouralRead({
   );
 }
 
+/** Diegetic labels for how a considered read sits against the remembered calm
+ *  baseline — "changed from earlier", never "lying". */
+const BASELINE_LABEL: Record<string, string> = {
+  noted: "manner noted",
+  consistent: "same as earlier",
+  shifted: "changed from earlier",
+  broken: "nothing like earlier",
+};
+
 const SUSPICION_LABEL = Object.fromEntries(
   SUSPICION_LEVELS.map((s) => [s.value, s.label])
 ) as Record<SuspicionLevel, string>;
@@ -591,7 +600,14 @@ function InterviewPanel({
             </div>
             {observation && (
               <div className={`observe-read observe-${observation.intensity}`}>
-                <span className="behavioural-title">Considered read</span>
+                <span className="behavioural-title">
+                  Considered read
+                  {observation.baseline_state && (
+                    <span className={`observe-baseline observe-baseline-${observation.baseline_state}`}>
+                      {BASELINE_LABEL[observation.baseline_state]}
+                    </span>
+                  )}
+                </span>
                 <p>{observation.text}</p>
                 <button type="button" className="small-button" onClick={pinObservation}>
                   📌 Pin to notebook

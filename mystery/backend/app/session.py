@@ -19,6 +19,7 @@ from .models import (
     AgentBeliefState,
     ChallengeRecord,
     Claim,
+    BehaviouralBaseline,
     InterviewTranscript,
     Note,
     ObservationRead,
@@ -64,6 +65,12 @@ class Session:
         # exchange. agent_id -> [message_count, challenge_count] at the last observe.
         self.observations: dict[str, list[ObservationRead]] = {}
         self.observed_progress: dict[str, list[int]] = {}
+        # How each suspect behaves when calm, quietly remembered from their first
+        # unpressured answer; later reads compare against it. baseline_shift_noted
+        # records which pressure bands have already produced a "different from
+        # earlier" tell, so the comparison lands once per escalation, as news.
+        self.baselines: dict[str, BehaviouralBaseline] = {}
+        self.baseline_shift_noted: dict[str, list[int]] = {}
         self._notes_issued = 0
         self._challenges_issued = 0
         self._observations_issued = 0
@@ -112,6 +119,8 @@ class Session:
                 k: [o.model_dump() for o in v] for k, v in self.observations.items()
             },
             "observed_progress": {k: list(v) for k, v in self.observed_progress.items()},
+            "baselines": {k: v.model_dump() for k, v in self.baselines.items()},
+            "baseline_shift_noted": {k: list(v) for k, v in self.baseline_shift_noted.items()},
             "notes_issued": self._notes_issued,
             "challenges_issued": self._challenges_issued,
             "observations_issued": self._observations_issued,
@@ -158,6 +167,12 @@ class Session:
             for k, v in data.get("observations", {}).items()
         }
         s.observed_progress = {k: list(v) for k, v in data.get("observed_progress", {}).items()}
+        s.baselines = {
+            k: BehaviouralBaseline(**v) for k, v in data.get("baselines", {}).items()
+        }
+        s.baseline_shift_noted = {
+            k: list(v) for k, v in data.get("baseline_shift_noted", {}).items()
+        }
         # Resume the id sequences where they left off, so a reloaded session cannot mint an id
         # that collides with a note or challenge it already holds.
         s._notes_issued = data.get("notes_issued", len(s.notes))

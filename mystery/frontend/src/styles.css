@@ -865,6 +865,18 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 }
 .observe-noticeable { border-left-color: rgba(216, 162, 74, 0.6); }
 .observe-strong { border-left-color: rgba(214, 66, 50, 0.7); }
+/* Baseline chip: how this read sits against their remembered calm manner. */
+.observe-baseline {
+  margin-left: 0.5rem;
+  padding: 1px 6px;
+  border: 1px solid rgba(154, 186, 216, 0.4);
+  color: #9ab8d8;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.observe-baseline-shifted { border-color: rgba(216, 162, 74, 0.6); color: #d8c28c; }
+.observe-baseline-broken { border-color: rgba(214, 66, 50, 0.7); color: #e39a8f; }
 .tell-gaze { animation: tell-glance-text 0.8s ease-out; }
 .tell-voice,
 .tell-timing { animation: tell-voice-text 0.8s ease-out; }

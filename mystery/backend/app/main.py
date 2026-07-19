@@ -715,11 +715,13 @@ def observe(req: ObserveRequest):
 
     from .behavioural_tells import observe_read
 
-    text, category, intensity = observe_read(
+    text, category, intensity, baseline_state = observe_read(
         agent=agent,
         pressure=sess.pressure_for(req.agent_id),
         last_tells=last_tells,
         seed=f"{case.case.case_id}:{req.agent_id}:{message_count}:{challenge_count}",
+        baseline=sess.baselines.get(req.agent_id),
+        first_observe=not sess.observations.get(req.agent_id),
     )
     obs = ObservationRead(
         observation_id=sess.next_observation_id(),
@@ -727,6 +729,7 @@ def observe(req: ObserveRequest):
         text=text,
         category=category,
         intensity=intensity,
+        baseline_state=baseline_state,
     )
     sess.observations.setdefault(req.agent_id, []).append(obs)
     sess.observed_progress[req.agent_id] = [message_count, challenge_count]

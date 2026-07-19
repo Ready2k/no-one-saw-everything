@@ -323,6 +323,8 @@ export interface ObservationRead {
   text: string;
   category: TellCategory;
   intensity: TellIntensity;
+  /** How their manner compares with the remembered calm baseline. */
+  baseline_state?: "noted" | "consistent" | "shifted" | "broken" | null;
 }
 
 export interface ChallengeResult {
