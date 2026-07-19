@@ -6,9 +6,13 @@ import hashlib
 import re
 from typing import Optional
 
+from contextvars import ContextVar
+
 from fastapi import FastAPI, HTTPException, Body, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+import json
 import logging
 import os
 
@@ -43,14 +47,98 @@ from .projections import (
     visible_map_events,
     build_playtest_export,
 )
-from .session import get_session, reset_session, save_session, has_saved_session
+from .session import (
+    DEFAULT_PLAYER_ID,
+    SESSIONS_DIR,
+    SessionLoadError,
+    delete_investigation,
+    get_active_case,
+    get_session,
+    has_saved_session,
+    list_investigations,
+    peek_session,
+    reset_session,
+    sanitize_player_id,
+    save_session,
+    set_active_case,
+    _persist_enabled,
+)
 from .case_store import get_case as fetch_case
 from .telemetry import log_telemetry_event
 
-ACTIVE_CASE_ID = "case_001"
+# Which case a request is playing is per-player state (X-Session-Id header), stored in
+# the player's meta file. This module-level id is only the *default* for players who
+# have never chosen a case (and for tokenless clients such as curl and the tests) —
+# it is restored from disk at startup so a restart no longer silently reverts to case_001.
+_ACTIVE_STATE_FILE = SESSIONS_DIR / "active_state.json"
+
+
+def _restore_default_active_case() -> str:
+    if _persist_enabled():
+        try:
+            case_id = json.loads(_ACTIVE_STATE_FILE.read_text()).get("active_case_id")
+            if case_id:
+                fetch_case(case_id)  # must still exist and load
+                return case_id
+        except Exception:
+            logging.getLogger(__name__).warning(
+                "Could not restore active case from %s; defaulting to case_001",
+                _ACTIVE_STATE_FILE,
+            )
+    return "case_001"
+
+
+ACTIVE_CASE_ID = _restore_default_active_case()
 
 from .case_store import set_active_start_time
-set_active_start_time(fetch_case(ACTIVE_CASE_ID).case.sim_start_time)
+
+# The player id for the request being handled right now, set by middleware from the
+# X-Session-Id header. A ContextVar so concurrent requests each see their own player.
+_current_player: ContextVar[str] = ContextVar("mystery_player", default=DEFAULT_PLAYER_ID)
+
+
+def current_player_id() -> str:
+    return _current_player.get()
+
+
+def _effective_case_id(player_id: str | None = None) -> str:
+    """The case this player is playing: their own durable choice, else the process default."""
+    pid = player_id if player_id is not None else current_player_id()
+    chosen = get_active_case(pid)
+    if chosen:
+        try:
+            fetch_case(chosen)
+            return chosen
+        except Exception:
+            # Their chosen case has been deleted from disk; fall back rather than 500.
+            logging.getLogger(__name__).warning(
+                "Player %s's active case %s no longer loads; falling back", pid, chosen
+            )
+    return ACTIVE_CASE_ID
+
+
+def _persist_default_active_case(case_id: str) -> None:
+    if not _persist_enabled():
+        return
+    try:
+        SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+        tmp = _ACTIVE_STATE_FILE.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps({"active_case_id": case_id}))
+        tmp.replace(_ACTIVE_STATE_FILE)
+    except Exception:
+        logging.getLogger(__name__).exception("Could not persist active case")
+
+
+def _activate_for_current_player(case_id: str) -> None:
+    """Make case_id the current player's durable active case."""
+    global ACTIVE_CASE_ID
+    player_id = current_player_id()
+    set_active_case(player_id, case_id)
+    if player_id == DEFAULT_PLAYER_ID:
+        # Tokenless clients share the process default; keep it durable too.
+        ACTIVE_CASE_ID = case_id
+        _persist_default_active_case(case_id)
+
 
 app = FastAPI(title="No One Saw Everything", version="0.1.0")
 
@@ -62,21 +150,47 @@ app.add_middleware(
 )
 
 
+@app.exception_handler(SessionLoadError)
+async def session_load_error_handler(request: Request, exc: SessionLoadError):
+    # A saved investigation that cannot be used is a 409 with a plain explanation,
+    # never a 500: the player can restart the case (POST /api/cases/activate with
+    # restart=true) or run a compatible server. Nothing is deleted on this path.
+    return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+
 @app.middleware("http")
-async def persist_session_after_writes(request: Request, call_next):
-    """Save the active investigation after anything that could have changed it.
+async def request_context_and_autosave(request: Request, call_next):
+    """Resolve the requesting player, then save their investigation after any write.
 
     An investigation is hours of work and used to live only in this process — restarting the
     backend threw away every clue, claim, note and transcript. Doing this in middleware rather
     than at each call site means a new mutating endpoint cannot forget to save.
     """
-    response = await call_next(request)
-    if request.method in ("POST", "PATCH", "PUT", "DELETE") and response.status_code < 400:
+    player_id = sanitize_player_id(request.headers.get("x-session-id"))
+    ctx_token = _current_player.set(player_id)
+    try:
+        # Time-of-day wrapping must follow the case this request is actually playing
+        # (case_004 runs 22:00–23:45; case_001 mornings).
         try:
-            save_session(get_session(ACTIVE_CASE_ID))
+            set_active_start_time(
+                fetch_case(_effective_case_id(player_id)).case.sim_start_time
+            )
         except Exception:
-            logging.getLogger(__name__).exception("Session autosave failed")
-    return response
+            logging.getLogger(__name__).exception("Could not resolve case start time")
+        response = await call_next(request)
+        if request.method in ("POST", "PATCH", "PUT", "DELETE") and response.status_code < 400:
+            try:
+                # Re-resolve: the request itself may have switched the active case.
+                # Only persist a session that is actually loaded — autosave must not
+                # resurrect an investigation the request just deleted.
+                sess = peek_session(_effective_case_id(player_id), player_id)
+                if sess is not None:
+                    save_session(sess)
+            except Exception:
+                logging.getLogger(__name__).exception("Session autosave failed")
+        return response
+    finally:
+        _current_player.reset(ctx_token)
 
 
 MYSTERY_PLAYTEST_MODE = os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "true"
@@ -234,11 +348,11 @@ def probe_llm_settings():
 
 
 def case_data():
-    return fetch_case(ACTIVE_CASE_ID)
+    return fetch_case(_effective_case_id())
 
 
 def session():
-    return get_session(ACTIVE_CASE_ID)
+    return get_session(_effective_case_id(), current_player_id())
 
 
 # ---------------------------------------------------------------------------
@@ -274,10 +388,12 @@ def get_cases():
     from .case_store import list_all_cases
     from .session import load_session_summary
 
+    active = _effective_case_id()
+    player = current_player_id()
     cases = list_all_cases()
     for c in cases:
-        c["progress"] = load_session_summary(c["case_id"])
-        c["is_active"] = c["case_id"] == ACTIVE_CASE_ID
+        c["progress"] = load_session_summary(c["case_id"], player)
+        c["is_active"] = c["case_id"] == active
     return cases
 
 
@@ -1076,8 +1192,29 @@ def status():
 
 @app.post("/api/session/reset")
 def reset():
-    reset_session(ACTIVE_CASE_ID)
+    reset_session(_effective_case_id(), current_player_id())
     return {"reset": True}
+
+
+# ---------------------------------------------------------------------------
+# Investigations (per-player saves)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/session/investigations")
+def get_investigations():
+    """Every investigation the requesting player has, with progress summaries."""
+    return {
+        "active_case_id": _effective_case_id(),
+        "investigations": list_investigations(current_player_id()),
+    }
+
+
+@app.delete("/api/session/investigations/{case_id}")
+def delete_player_investigation(case_id: str):
+    """Drop the requesting player's investigation of one case (the case itself stays)."""
+    if not delete_investigation(case_id, current_player_id()):
+        raise HTTPException(404, "You have no investigation of that case.")
+    return {"deleted": True}
 
 
 @app.post("/api/cases/generate")
@@ -1085,7 +1222,6 @@ def generate(req: GenerateCaseRequest):
     from .generator import generate_case
     from .validator import validate_case
     from .case_store import register_case
-    global ACTIVE_CASE_ID
 
     has_creative = (
         (req.custom_theme and req.custom_theme.strip()) or 
@@ -1167,12 +1303,13 @@ def generate(req: GenerateCaseRequest):
     # Activate session if requested and valid
     active_session_id = None
     if req.activate and val_result["valid"]:
-        ACTIVE_CASE_ID = new_case.case.case_id
+        new_case_id = new_case.case.case_id
+        _activate_for_current_player(new_case_id)
         set_active_start_time(new_case.case.sim_start_time)
         # A fresh activation always means a fresh investigation — otherwise
         # re-generating the same (type, seed) resurrects a stale session.
-        reset_session(ACTIVE_CASE_ID)
-        active_session_id = ACTIVE_CASE_ID
+        reset_session(new_case_id, current_player_id())
+        active_session_id = new_case_id
 
     # Validation messages are developer-oriented and can reference the hidden
     # killer; redact identity before they cross the API.
@@ -1216,32 +1353,122 @@ class ActivateCaseRequest(BaseModel):
 @app.post("/api/cases/activate")
 def activate_case(req: ActivateCaseRequest):
     from .case_store import _GENERATED_CASES, load_case_from_disk
-    global ACTIVE_CASE_ID
-    
+
     # Validate case exists in store
     if req.case_id not in _GENERATED_CASES:
         try:
             load_case_from_disk(req.case_id)
         except Exception:
             raise HTTPException(status_code=404, detail="Case not found")
-            
-    ACTIVE_CASE_ID = req.case_id
-    set_active_start_time(fetch_case(ACTIVE_CASE_ID).case.sim_start_time)
+
+    _activate_for_current_player(req.case_id)
+    set_active_start_time(fetch_case(req.case_id).case.sim_start_time)
 
     # Opening a case RESUMES it. This used to call reset_session() unconditionally, so switching
     # cases — or coming back to one tomorrow — silently destroyed the investigation, which is why
     # the case library had to warn "your current progress will be lost". Starting over is now an
     # explicit choice.
     if req.restart:
-        sess = reset_session(ACTIVE_CASE_ID)
+        sess = reset_session(req.case_id, current_player_id())
     else:
-        sess = get_session(ACTIVE_CASE_ID)
+        sess = get_session(req.case_id, current_player_id())
 
-    return {
-        "active_session_id": ACTIVE_CASE_ID,
+    response = {
+        "active_session_id": req.case_id,
         "resumed": bool(sess.discovered_clue_ids or sess.claims or sess.notes),
         "discovered_clue_count": len(sess.discovered_clue_ids),
         "accused": sess.accusation is not None,
+    }
+    if sess.recovered_from_corrupt_save:
+        # Say it once, at the moment they open the case — not silently.
+        response["recovered_from_corrupt_save"] = True
+        response["save_notice"] = (
+            "Your previous save of this case could not be read and has been set aside; "
+            "the investigation has started fresh."
+        )
+        sess.recovered_from_corrupt_save = False
+    return response
+
+
+def _generated_case_entry(p) -> Optional[dict]:
+    """Player-safe library entry for one generated-case directory, or None.
+
+    This is the ONLY shape generated-case endpoints may return: title + recipe
+    metadata. The full bundle contains the solution and must never cross the API.
+    """
+    from .case_store import normalize_case_metadata
+
+    if not (p.is_dir() and p.name != "templates"):
+        return None
+    if not (p.name.startswith("gen_") or (p / "metadata.json").exists()):
+        return None
+
+    load_status = "ok"
+    metadata = normalize_case_metadata(None)
+
+    # 1. Try loading metadata
+    metadata_path = p / "metadata.json"
+    if metadata_path.exists():
+        try:
+            with open(metadata_path) as f:
+                raw_m = json.load(f)
+            metadata = normalize_case_metadata(raw_m)
+        except Exception:
+            load_status = "corrupted_metadata"
+    else:
+        load_status = "missing_metadata"
+
+    # 2. Try loading case.json
+    title = "Corrupted Case"
+    case_type_val = "unknown"
+    difficulty_val = "standard"
+    case_path = p / "case.json"
+    if case_path.exists():
+        try:
+            with open(case_path) as f:
+                case_info = json.load(f)
+            title = case_info.get("title", "Untitled Case")
+            case_type_val = case_info.get("case_type", "unknown")
+            difficulty_val = case_info.get("difficulty", "standard")
+        except Exception:
+            load_status = "missing_case_data"
+    else:
+        load_status = "missing_case_data"
+
+    # Verify other vital files exist to confirm ok status
+    for vital in ["clues.json", "agents.json", "locations.json", "solution.json"]:
+        if not (p / vital).exists():
+            load_status = "missing_case_data"
+            break
+
+    quality_report = metadata.get("quality_report", {})
+    q_score = quality_report.get("overall_score") if quality_report else None
+    candidate_scores = metadata.get("candidate_scores", [])
+    candidate_count = len(candidate_scores) if candidate_scores else 1
+
+    return {
+        "case_id": p.name,
+        "title": title,
+        "case_type": case_type_val,
+        "difficulty": difficulty_val,
+        "mode": metadata.get("mode", "deterministic"),
+        "seed": metadata.get("seed", 12345),
+        "selected_seed": metadata.get("selected_seed"),
+        "best_of_n_used": metadata.get("best_of_n_used", False),
+        "candidate_count": candidate_count,
+        "num_suspects": metadata.get("num_suspects"),
+        "num_locations": metadata.get("num_locations"),
+        "theme_preset": metadata.get("theme_preset"),
+        "custom_theme": metadata.get("custom_theme"),
+        "tone": metadata.get("tone", "standard"),
+        "quality_score": q_score,
+        "quality_report": quality_report,
+        "fallback_used": metadata.get("fallback_used", False),
+        "repair_attempts": metadata.get("repair_attempts", 0),
+        "compaction_applied": metadata.get("compaction_applied", False),
+        "created_at": metadata.get("created_at"),
+        "activated_at": metadata.get("activated_at"),
+        "load_status": load_status,
     }
 
 
@@ -1253,83 +1480,16 @@ def list_generated_cases(
     best_of_n: Optional[bool] = None,
     fallback_used: Optional[bool] = None
 ):
-    from .case_store import DATA_DIR, normalize_case_metadata
-    import json
-    
+    from .case_store import DATA_DIR
+
     entries = []
     if not DATA_DIR.exists():
         return entries
-        
-    for p in DATA_DIR.iterdir():
-        if p.is_dir() and p.name != "templates":
-            if p.name.startswith("gen_") or (p / "metadata.json").exists():
-                load_status = "ok"
-                metadata = normalize_case_metadata(None)
-                
-                # 1. Try loading metadata
-                metadata_path = p / "metadata.json"
-                if metadata_path.exists():
-                    try:
-                        with open(metadata_path) as f:
-                            raw_m = json.load(f)
-                        metadata = normalize_case_metadata(raw_m)
-                    except Exception:
-                        load_status = "corrupted_metadata"
-                else:
-                    load_status = "missing_metadata"
-                    
-                # 2. Try loading case.json
-                title = "Corrupted Case"
-                case_type_val = "unknown"
-                difficulty_val = "standard"
-                case_path = p / "case.json"
-                if case_path.exists():
-                    try:
-                        with open(case_path) as f:
-                            case_info = json.load(f)
-                        title = case_info.get("title", "Untitled Case")
-                        case_type_val = case_info.get("case_type", "unknown")
-                        difficulty_val = case_info.get("difficulty", "standard")
-                    except Exception:
-                        load_status = "missing_case_data"
-                else:
-                    load_status = "missing_case_data"
-                    
-                # Verify other vital files exist to confirm ok status
-                for vital in ["clues.json", "agents.json", "locations.json", "solution.json"]:
-                    if not (p / vital).exists():
-                        load_status = "missing_case_data"
-                        break
 
-                quality_report = metadata.get("quality_report", {})
-                q_score = quality_report.get("overall_score") if quality_report else None
-                candidate_scores = metadata.get("candidate_scores", [])
-                candidate_count = len(candidate_scores) if candidate_scores else 1
-                
-                entries.append({
-                    "case_id": p.name,
-                    "title": title,
-                    "case_type": case_type_val,
-                    "difficulty": difficulty_val,
-                    "mode": metadata.get("mode", "deterministic"),
-                    "seed": metadata.get("seed", 12345),
-                    "selected_seed": metadata.get("selected_seed"),
-                    "best_of_n_used": metadata.get("best_of_n_used", False),
-                    "candidate_count": candidate_count,
-                    "num_suspects": metadata.get("num_suspects"),
-                    "num_locations": metadata.get("num_locations"),
-                    "theme_preset": metadata.get("theme_preset"),
-                    "custom_theme": metadata.get("custom_theme"),
-                    "tone": metadata.get("tone", "standard"),
-                    "quality_score": q_score,
-                    "quality_report": quality_report,
-                    "fallback_used": metadata.get("fallback_used", False),
-                    "repair_attempts": metadata.get("repair_attempts", 0),
-                    "compaction_applied": metadata.get("compaction_applied", False),
-                    "created_at": metadata.get("created_at"),
-                    "activated_at": metadata.get("activated_at"),
-                    "load_status": load_status
-                })
+    for p in DATA_DIR.iterdir():
+        entry = _generated_case_entry(p)
+        if entry is not None:
+            entries.append(entry)
 
     # Filtering
     if tone:
@@ -1354,24 +1514,39 @@ def list_generated_cases(
 
 @app.get("/api/generated_cases/{case_id}")
 def get_generated_case(case_id: str):
-    from .case_store import CaseLoadError
-    try:
-        case_data = fetch_case(case_id)
-        return case_data
-    except CaseLoadError as cle:
-        if cle.load_status == "missing_case_data":
-            raise HTTPException(status_code=404, detail="Case not found")
-        raise HTTPException(status_code=400, detail=f"Case is corrupted: {cle.load_status}")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to load case: {e}")
+    """Library metadata for one generated case.
+
+    This used to return the entire raw CaseData — solution, killer, lie flags and
+    all — which broke the game's core invariant for any client that asked. Only
+    the player-safe library entry may cross the API; the case content itself is
+    served through the projected gameplay endpoints once the case is activated.
+    """
+    from .case_store import DATA_DIR, is_safe_case_id
+
+    if not is_safe_case_id(case_id):
+        raise HTTPException(status_code=404, detail="Case not found")
+    entry = _generated_case_entry(DATA_DIR / case_id)
+    if entry is None:
+        raise HTTPException(status_code=404, detail="Case not found")
+    if entry["load_status"] == "missing_case_data":
+        raise HTTPException(status_code=400, detail="Case is corrupted: missing_case_data")
+    # Nested "case" block kept for callers that read case-shaped metadata.
+    return {
+        "case": {
+            "case_id": entry["case_id"],
+            "title": entry["title"],
+            "case_type": entry["case_type"],
+            "difficulty": entry["difficulty"],
+        },
+        **entry,
+    }
 
 
 @app.post("/api/generated_cases/{case_id}/activate")
 def activate_generated_case(case_id: str):
     from .case_store import save_case_to_disk, CaseLoadError
     from datetime import datetime
-    global ACTIVE_CASE_ID
-    
+
     try:
         case_data = fetch_case(case_id)
         if case_data.metadata and case_data.metadata.get("load_status") in ["corrupted_metadata", "missing_case_data"]:
@@ -1383,15 +1558,15 @@ def activate_generated_case(case_id: str):
     except Exception:
         raise HTTPException(status_code=404, detail="Case not found")
         
-    ACTIVE_CASE_ID = case_id
+    _activate_for_current_player(case_id)
     set_active_start_time(case_data.case.sim_start_time)
-    reset_session(ACTIVE_CASE_ID)
-    
+    reset_session(case_id, current_player_id())
+
     if case_data.metadata:
         case_data.metadata["activated_at"] = datetime.now().isoformat() + "Z"
         save_case_to_disk(case_data)
-        
-    return {"status": "success", "active_session_id": ACTIVE_CASE_ID}
+
+    return {"status": "success", "active_session_id": case_id}
 
 
 @app.post("/api/generated_cases/{case_id}/regenerate")
@@ -1434,12 +1609,15 @@ def regenerate_generated_case(case_id: str):
 
 @app.delete("/api/generated_cases/{case_id}")
 def delete_generated_case(case_id: str):
-    from .case_store import delete_case_from_disk
+    from .case_store import delete_case_from_disk, CaseDeleteError
     try:
         delete_case_from_disk(case_id)
-        return {"status": "deleted"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except CaseDeleteError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except OSError:
+        logging.getLogger(__name__).exception("Could not delete case %s", case_id)
+        raise HTTPException(status_code=500, detail="Could not delete the case from disk.")
+    return {"status": "deleted"}
 
 
 # ---------------------------------------------------------------------------

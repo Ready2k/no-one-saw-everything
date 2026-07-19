@@ -1,8 +1,20 @@
 """Mutable player-session state.
 
-One in-memory session per case for the MVP. Everything the player has
-discovered, noted, or been told lives here; the locked case truth never
-changes.
+An *investigation* is everything one player has discovered, noted, or been told in one
+case; the locked case truth never changes. Investigations are scoped by a player id
+(an opaque browser token sent as X-Session-Id; tokenless clients share the "local"
+player) so concurrent players never see each other's notebooks — the reveal gate is
+only sound if one player's accusation cannot unlock the truth for another.
+
+On disk each player owns a directory of saves:
+
+    data/sessions/<player_id>/meta.json        # per-player state (active case)
+    data/sessions/<player_id>/<case_id>.json   # one investigation per case
+
+Saves carry a schema_version. A save from a *newer* schema refuses to load with a
+clear message (never a 500, never silent loss); an unreadable file is quarantined
+beside the original so nothing is destroyed. The pre-versioning MVP layout
+(data/sessions/<case_id>.json, one global player) is migrated into local/ on first use.
 """
 
 from __future__ import annotations
@@ -11,6 +23,8 @@ import json
 import logging
 import os
 import re
+import threading
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -30,10 +44,19 @@ from .models import (
 
 logger = logging.getLogger(__name__)
 
+SCHEMA_VERSION = 2
+
+DEFAULT_PLAYER_ID = "local"
+
+
+class SessionLoadError(Exception):
+    """A saved investigation exists but cannot be used. The message is player-facing."""
+
 
 class Session:
-    def __init__(self, case_id: str):
+    def __init__(self, case_id: str, player_id: str = DEFAULT_PLAYER_ID):
         self.case_id = case_id
+        self.player_id = player_id
         self.discovered_clue_ids: set[str] = set()
         self.revealed_memory_ids: set[str] = set()
         self.pinned_event_ids: set[str] = set()
@@ -71,6 +94,9 @@ class Session:
         # earlier" tell, so the comparison lands once per escalation, as news.
         self.baselines: dict[str, BehaviouralBaseline] = {}
         self.baseline_shift_noted: dict[str, list[int]] = {}
+        # Set when this session replaced a save that could not be read; the original
+        # file was quarantined, not deleted. Surfaced once via /api/cases/activate.
+        self.recovered_from_corrupt_save: bool = False
         self._notes_issued = 0
         self._challenges_issued = 0
         self._observations_issued = 0
@@ -94,7 +120,9 @@ class Session:
 
     def to_dict(self) -> dict:
         return {
+            "schema_version": SCHEMA_VERSION,
             "case_id": self.case_id,
+            "player_id": self.player_id,
             "discovered_clue_ids": sorted(self.discovered_clue_ids),
             "revealed_memory_ids": sorted(self.revealed_memory_ids),
             "pinned_event_ids": sorted(self.pinned_event_ids),
@@ -128,7 +156,17 @@ class Session:
 
     @classmethod
     def from_dict(cls, data: dict) -> "Session":
-        s = cls(data["case_id"])
+        # Version 1 saves (the MVP) carried no schema_version; every v1 field has a
+        # v2 default, so they migrate by loading. A save from a FUTURE schema is the
+        # one thing we must not guess at — refuse it loudly rather than load half of it.
+        version = data.get("schema_version", 1)
+        if version > SCHEMA_VERSION:
+            raise SessionLoadError(
+                f"This saved investigation was written by a newer version of the game "
+                f"(save schema v{version}, this server reads up to v{SCHEMA_VERSION}). "
+                "Update the server, or restart the case to begin a fresh investigation."
+            )
+        s = cls(data["case_id"], data.get("player_id", DEFAULT_PLAYER_ID))
         s.discovered_clue_ids = set(data.get("discovered_clue_ids", []))
         s.revealed_memory_ids = set(data.get("revealed_memory_ids", []))
         s.pinned_event_ids = set(data.get("pinned_event_ids", []))
@@ -199,12 +237,23 @@ class Session:
             self.claims[claim.claim_id] = claim
 
 
-_sessions: dict[str, Session] = {}
+# (player_id, case_id) -> Session. One process owns the store: run a single worker.
+_sessions: dict[tuple[str, str], Session] = {}
 
 # Saved investigations live beside the case data. Disabled entirely under pytest (and by
 # MYSTERY_SESSION_PERSIST=0) so tests never see each other's saves — test_isolation.py exists
 # precisely because leaking state between cases is the bug class this file attracts.
 SESSIONS_DIR = Path(__file__).parent / "data" / "sessions"
+
+_store_lock = threading.RLock()
+_player_locks: dict[str, threading.RLock] = {}
+
+
+def _lock_for(player_id: str) -> threading.RLock:
+    with _store_lock:
+        if player_id not in _player_locks:
+            _player_locks[player_id] = threading.RLock()
+        return _player_locks[player_id]
 
 
 def _persist_enabled() -> bool:
@@ -213,76 +262,297 @@ def _persist_enabled() -> bool:
     return "PYTEST_CURRENT_TEST" not in os.environ
 
 
-def _session_path(case_id: str) -> Path:
+def sanitize_player_id(raw: Optional[str]) -> str:
+    """Player ids come off the wire (X-Session-Id) and become directory names.
+
+    Anything that isn't a plain token collapses to the shared local player rather
+    than erroring: an investigation must never be lost to a malformed header, and
+    the id namespace must never reach the filesystem unfiltered.
+    """
+    if not raw:
+        return DEFAULT_PLAYER_ID
+    raw = raw.strip()
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", raw):
+        return DEFAULT_PLAYER_ID
+    return raw
+
+
+def _safe_case_component(case_id: str) -> str:
     # case_ids are generated internally (case_001, gen_<type>_<seed>_<ts>), but this path is
     # built from one, so refuse anything that could climb out of the sessions directory.
-    safe = re.sub(r"[^A-Za-z0-9_.-]", "_", case_id)
-    return SESSIONS_DIR / f"{safe}.json"
+    return re.sub(r"[^A-Za-z0-9_.-]", "_", case_id).lstrip(".")
 
+
+def _player_dir(player_id: str) -> Path:
+    return SESSIONS_DIR / sanitize_player_id(player_id)
+
+
+def _session_path(case_id: str, player_id: str = DEFAULT_PLAYER_ID) -> Path:
+    return _player_dir(player_id) / f"{_safe_case_component(case_id)}.json"
+
+
+def _meta_path(player_id: str) -> Path:
+    return _player_dir(player_id) / "meta.json"
+
+
+# ------------------------------------------------------------------ legacy layout
+# The MVP stored one global player's saves flat in data/sessions/<case_id>.json.
+# Move them under local/ once; the first *tokened* player to appear then adopts
+# local/'s investigations, because before tokens existed that browser WAS the
+# local player and must not wake up to an empty case library.
+
+_LEGACY_MIGRATED = False
+_META_FILENAMES = {"meta.json", "active_state.json"}
+
+
+def _migrate_legacy_layout() -> None:
+    global _LEGACY_MIGRATED
+    if _LEGACY_MIGRATED or not _persist_enabled() or not SESSIONS_DIR.exists():
+        _LEGACY_MIGRATED = True
+        return
+    with _store_lock:
+        local_dir = SESSIONS_DIR / DEFAULT_PLAYER_ID
+        for p in SESSIONS_DIR.iterdir():
+            if p.is_file() and p.suffix == ".json" and p.name not in _META_FILENAMES:
+                try:
+                    local_dir.mkdir(parents=True, exist_ok=True)
+                    target = local_dir / p.name
+                    if not target.exists():
+                        p.rename(target)
+                    else:
+                        p.unlink()
+                except OSError:
+                    logger.exception("Could not migrate legacy save %s", p)
+        _LEGACY_MIGRATED = True
+
+
+def _maybe_adopt_local_saves(player_id: str) -> None:
+    """Give the first tokened player the pre-token ('local') investigations."""
+    if player_id == DEFAULT_PLAYER_ID or not _persist_enabled():
+        return
+    with _store_lock:
+        player_dir = _player_dir(player_id)
+        if player_dir.exists():
+            return
+        local_dir = SESSIONS_DIR / DEFAULT_PLAYER_ID
+        marker = local_dir / "adopted_by.json"
+        if not local_dir.exists() or marker.exists():
+            return
+        saves = [p for p in local_dir.glob("*.json") if p.name not in _META_FILENAMES]
+        if not saves:
+            return
+        player_dir.mkdir(parents=True, exist_ok=True)
+        for p in saves + ([local_dir / "meta.json"] if (local_dir / "meta.json").exists() else []):
+            try:
+                p.rename(player_dir / p.name)
+            except OSError:
+                logger.exception("Could not adopt legacy save %s", p)
+        try:
+            marker.write_text(json.dumps({"adopted_by": player_id, "at": time.time()}))
+        except OSError:
+            logger.exception("Could not write adoption marker")
+
+
+# ------------------------------------------------------------------ player meta
+
+def _load_meta(player_id: str) -> dict:
+    if not _persist_enabled():
+        return dict(_meta_memory.get(sanitize_player_id(player_id), {}))
+    path = _meta_path(player_id)
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text())
+    except Exception:
+        logger.exception("Unreadable player meta for %s", player_id)
+        return {}
+
+
+def _save_meta(player_id: str, meta: dict) -> None:
+    player_id = sanitize_player_id(player_id)
+    if not _persist_enabled():
+        _meta_memory[player_id] = dict(meta)
+        return
+    with _lock_for(player_id):
+        path = _meta_path(player_id)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps({"schema_version": SCHEMA_VERSION, **meta}, indent=2))
+        tmp.replace(path)
+
+
+# Under pytest (persistence off) meta still needs to behave per-player in memory.
+_meta_memory: dict[str, dict] = {}
+
+
+def get_active_case(player_id: str) -> Optional[str]:
+    _migrate_legacy_layout()
+    _maybe_adopt_local_saves(sanitize_player_id(player_id))
+    return _load_meta(player_id).get("active_case_id")
+
+
+def set_active_case(player_id: str, case_id: str) -> None:
+    _migrate_legacy_layout()
+    meta = _load_meta(player_id)
+    meta["active_case_id"] = case_id
+    _save_meta(player_id, meta)
+
+
+# ------------------------------------------------------------------ save / load
 
 def save_session(session: Session) -> None:
     if not _persist_enabled():
         return
     try:
-        SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
-        path = _session_path(session.case_id)
-        # Write-then-rename: a crash mid-write must not leave a half-written investigation.
-        tmp = path.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(session.to_dict(), indent=2, ensure_ascii=False))
-        tmp.replace(path)
+        with _lock_for(session.player_id):
+            path = _session_path(session.case_id, session.player_id)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            # Write-then-rename: a crash mid-write must not leave a half-written investigation.
+            tmp = path.with_suffix(".json.tmp")
+            tmp.write_text(json.dumps(session.to_dict(), indent=2, ensure_ascii=False))
+            tmp.replace(path)
     except Exception:
         # Losing a save is bad; taking the player's game down to report it is worse.
-        logger.exception("Failed to save session for %s", session.case_id)
+        logger.exception(
+            "Failed to save session for %s/%s", session.player_id, session.case_id
+        )
 
 
-def _load_session(case_id: str) -> Optional[Session]:
+def _quarantine(path: Path) -> None:
+    """Set an unreadable save aside — never destroy what might be recoverable."""
+    target = path.with_name(f"{path.name}.corrupt-{int(time.time())}")
+    try:
+        path.rename(target)
+        logger.warning("Quarantined unreadable save %s -> %s", path, target.name)
+    except OSError:
+        logger.exception("Could not quarantine %s", path)
+
+
+def _load_session(case_id: str, player_id: str) -> Optional[Session]:
+    """Load a saved investigation from disk.
+
+    Returns None when there is no usable save. Raises SessionLoadError only for a
+    future-schema save (the one case where starting fresh would silently discard
+    data a newer server could still read).
+    """
     if not _persist_enabled():
         return None
-    path = _session_path(case_id)
+    _migrate_legacy_layout()
+    path = _session_path(case_id, player_id)
     if not path.exists():
         return None
     try:
-        return Session.from_dict(json.loads(path.read_text()))
+        data = json.loads(path.read_text())
     except Exception:
-        # A save written by an older schema is not worth crashing over — start the case fresh
-        # rather than wedging the player on a file they cannot see or delete.
-        logger.exception("Discarding unreadable session save for %s", case_id)
-        return None
+        logger.exception("Corrupt session save for %s/%s", player_id, case_id)
+        _quarantine(path)
+        fresh = Session(case_id, player_id)
+        fresh.recovered_from_corrupt_save = True
+        return fresh
+    try:
+        s = Session.from_dict(data)
+    except SessionLoadError:
+        raise
+    except Exception:
+        # Parsed as JSON but the fields no longer fit any schema we know: treat it
+        # like corruption — quarantine and recover — rather than wedging the player.
+        logger.exception("Unloadable session save for %s/%s", player_id, case_id)
+        _quarantine(path)
+        fresh = Session(case_id, player_id)
+        fresh.recovered_from_corrupt_save = True
+        return fresh
+    s.case_id = case_id
+    s.player_id = sanitize_player_id(player_id)
+    return s
 
 
-def get_session(case_id: str = "case_001") -> Session:
-    if case_id not in _sessions:
-        _sessions[case_id] = _load_session(case_id) or Session(case_id)
-    return _sessions[case_id]
+def peek_session(case_id: str, player_id: str = DEFAULT_PLAYER_ID) -> Optional[Session]:
+    """The in-memory session if one is loaded — never loads or creates one."""
+    return _sessions.get((sanitize_player_id(player_id), case_id))
 
 
-def reset_session(case_id: str = "case_001") -> Session:
-    _sessions[case_id] = Session(case_id)
-    if _persist_enabled():
-        _session_path(case_id).unlink(missing_ok=True)
-    return _sessions[case_id]
+def get_session(case_id: str = "case_001", player_id: str = DEFAULT_PLAYER_ID) -> Session:
+    player_id = sanitize_player_id(player_id)
+    _maybe_adopt_local_saves(player_id)
+    key = (player_id, case_id)
+    with _lock_for(player_id):
+        if key not in _sessions:
+            _sessions[key] = _load_session(case_id, player_id) or Session(case_id, player_id)
+        return _sessions[key]
+
+
+def reset_session(case_id: str = "case_001", player_id: str = DEFAULT_PLAYER_ID) -> Session:
+    player_id = sanitize_player_id(player_id)
+    key = (player_id, case_id)
+    with _lock_for(player_id):
+        _sessions[key] = Session(case_id, player_id)
+        if _persist_enabled():
+            _session_path(case_id, player_id).unlink(missing_ok=True)
+        return _sessions[key]
 
 
 def reset_session_store() -> None:
+    global _LEGACY_MIGRATED
     _sessions.clear()
+    _meta_memory.clear()
+    _LEGACY_MIGRATED = False
 
 
-def has_saved_session(case_id: str) -> bool:
-    return _persist_enabled() and _session_path(case_id).exists()
+def has_saved_session(case_id: str, player_id: str = DEFAULT_PLAYER_ID) -> bool:
+    if not _persist_enabled():
+        return False
+    _migrate_legacy_layout()
+    return _session_path(case_id, player_id).exists()
 
 
-def load_session_summary(case_id: str) -> Optional[dict]:
+def delete_investigation(case_id: str, player_id: str = DEFAULT_PLAYER_ID) -> bool:
+    """Drop one investigation — memory and disk. Returns True if anything existed."""
+    player_id = sanitize_player_id(player_id)
+    key = (player_id, case_id)
+    with _lock_for(player_id):
+        existed = key in _sessions
+        _sessions.pop(key, None)
+        if _persist_enabled():
+            path = _session_path(case_id, player_id)
+            if path.exists():
+                path.unlink()
+                existed = True
+    return existed
+
+
+def list_investigations(player_id: str = DEFAULT_PLAYER_ID) -> list[dict]:
+    """Every investigation this player has, on disk or in memory, with a summary."""
+    player_id = sanitize_player_id(player_id)
+    _migrate_legacy_layout()
+    _maybe_adopt_local_saves(player_id)
+    case_ids: set[str] = {cid for (pid, cid) in _sessions if pid == player_id}
+    if _persist_enabled():
+        player_dir = _player_dir(player_id)
+        if player_dir.exists():
+            for p in player_dir.glob("*.json"):
+                if p.name not in _META_FILENAMES and not p.name.endswith(".tmp"):
+                    case_ids.add(p.stem)
+    out = []
+    for cid in sorted(case_ids):
+        summary = load_session_summary(cid, player_id)
+        if summary is not None:
+            out.append({"case_id": cid, **summary})
+    return out
+
+
+def load_session_summary(case_id: str, player_id: str = DEFAULT_PLAYER_ID) -> Optional[dict]:
     """A cheap 'is there an investigation here?' peek for the case library.
 
     Reads the live session if the case is already loaded in memory, otherwise the save on disk.
     Returns None when the case has never been opened.
     """
-    sess = _sessions.get(case_id)
+    player_id = sanitize_player_id(player_id)
+    sess = _sessions.get((player_id, case_id))
     if sess is None:
-        if not has_saved_session(case_id):
+        if not has_saved_session(case_id, player_id):
             return None
         try:
-            data = json.loads(_session_path(case_id).read_text())
+            data = json.loads(_session_path(case_id, player_id).read_text())
         except Exception:
             return None
         return {

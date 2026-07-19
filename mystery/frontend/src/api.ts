@@ -28,10 +28,32 @@ import type {
   LlmTestResult,
 } from "./types";
 
+// Each browser is its own detective: an opaque token scopes every investigation
+// (saves, notes, active case) to this browser on the server. Generated once and
+// kept in localStorage so progress survives reloads and restarts.
+function sessionToken(): string {
+  const KEY = "mystery_session_id";
+  try {
+    let token = localStorage.getItem(KEY);
+    if (!token || !/^[A-Za-z0-9_-]{8,64}$/.test(token)) {
+      token = `p_${crypto.randomUUID().replace(/-/g, "")}`;
+      localStorage.setItem(KEY, token);
+    }
+    return token;
+  } catch {
+    // Storage unavailable (private mode); fall back to the shared local player.
+    return "local";
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
-    headers: { "Content-Type": "application/json" },
     ...init,
+    headers: {
+      "Content-Type": "application/json",
+      "X-Session-Id": sessionToken(),
+      ...(init?.headers as Record<string, string> | undefined),
+    },
   });
   if (!res.ok) {
     const detail = await res.json().catch(() => ({}));
