@@ -9,7 +9,7 @@
       "certain of himself",
       "sentimental"
     ],
-    "portrait": "\ud83c\udfa9",
+    "portrait": "🎩",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "First on the square bench every afternoon with his flask. Takes his heart medication at 17:00 with his first tea.",
@@ -60,7 +60,7 @@
       "controlled",
       "trusted"
     ],
-    "portrait": "\ud83e\ude7a",
+    "portrait": "🩺",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
     "routine_summary": "Late shift at the clinic from 16:50. Checks in on Elias most afternoons as part of her patient rounds.",
@@ -99,7 +99,12 @@
       "defensive": "/art/portraits/nadia_defensive.png",
       "cracking": "/art/portraits/nadia_cracking.png"
     },
-    "sprite_id": "sprite_ayesha_khan"
+    "sprite_id": "sprite_ayesha_khan",
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "her voice carries the unhurried warmth of someone used to talking people back to calm",
+      "deviation_cue": "The warmth has drained out of her voice. The words are the same; the bedside manner is gone."
+    }
   },
   {
     "agent_id": "agent_owen",
@@ -111,7 +116,7 @@
       "practical",
       "loyal to old friends"
     ],
-    "portrait": "\ud83d\udd28",
+    "portrait": "🔨",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Crosses the square at 18:00 on his way back from the yard. Always stops to say good afternoon to Elias.",
@@ -143,7 +148,12 @@
       "defensive": "/art/portraits/owen_defensive.png",
       "cracking": "/art/portraits/owen_cracking.png"
     },
-    "sprite_id": "sprite_carlos_gomez"
+    "sprite_id": "sprite_carlos_gomez",
+    "baseline": {
+      "habit_category": "timing",
+      "habit_text": "he leaves a workman's pause before each answer, measuring twice before he commits",
+      "deviation_cue": "The pauses have doubled. He is testing every question for load before he puts any weight on it."
+    }
   },
   {
     "agent_id": "agent_ben",
@@ -156,7 +166,7 @@
       "observant by accident",
       "under pressure"
     ],
-    "portrait": "\ud83d\udce6",
+    "portrait": "📦",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Afternoon delivery round. Passes the square several times, and cuts past the clinic on his way through.",
@@ -195,7 +205,12 @@
       "defensive": "/art/portraits/ben_defensive.png",
       "cracking": "/art/portraits/ben_cracking.png"
     },
-    "sprite_id": "sprite_ryan_park"
+    "sprite_id": "sprite_ryan_park",
+    "baseline": {
+      "habit_category": "hands",
+      "habit_text": "his hands sketch every route and parcel in the air while he talks",
+      "deviation_cue": "His hands have quit the conversation — flat on his knees while his mouth does all the work alone."
+    }
   },
   {
     "agent_id": "agent_clara",
@@ -208,7 +223,7 @@
       "guarded",
       "well-informed"
     ],
-    "portrait": "\ud83e\udde3",
+    "portrait": "🧣",
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Runs the cafe through the afternoon. The bench by the fountain is straight out of her window.",
@@ -247,7 +262,12 @@
       "defensive": "/art/portraits/clara_defensive.png",
       "cracking": "/art/portraits/clara_cracking.png"
     },
-    "sprite_id": "sprite_abigail_chen"
+    "sprite_id": "sprite_abigail_chen",
+    "baseline": {
+      "habit_category": "overexplaining",
+      "habit_text": "she rounds every answer up into a story, with one more character in it than you asked about",
+      "deviation_cue": "The stories have stopped. Every answer now is exactly as long as it has to be, and not a word longer."
+    }
   },
   {
     "agent_id": "agent_dr_haig",
@@ -259,7 +279,7 @@
       "formal",
       "disinclined to alarm"
     ],
-    "portrait": "\ud83d\udc68\u200d\u2695\ufe0f",
+    "portrait": "👨‍⚕️",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_clinic",
     "routine_summary": "Arrives at the clinic at 19:00 two days per week. Signs off Nadia's medication dispensing records.",
@@ -291,7 +311,12 @@
       "defensive": "/art/portraits/dr_haig_defensive.png",
       "cracking": "/art/portraits/dr_haig_cracking.png"
     },
-    "sprite_id": "sprite_arthur_hughes"
+    "sprite_id": "sprite_arthur_hughes",
+    "baseline": {
+      "habit_category": "overexplaining",
+      "habit_text": "he answers in careful clinical phrasing, each word chosen as if for a patient's notes",
+      "deviation_cue": "The careful phrasing has thickened into jargon — he is dictating a file at you now, not talking to you."
+    }
   },
   {
     "agent_id": "agent_ruth",
@@ -303,7 +328,7 @@
       "quiet",
       "reliable"
     ],
-    "portrait": "\u2709\ufe0f",
+    "portrait": "✉️",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Passes the square bench at 17:00 on her afternoon round. Often exchanged greetings with Elias.",
@@ -335,14 +360,19 @@
       "defensive": "/art/portraits/ruth_defensive.png",
       "cracking": "/art/portraits/ruth_cracking.png"
     },
-    "sprite_id": "sprite_sarah_whitmore"
+    "sprite_id": "sprite_sarah_whitmore",
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "she answers in the flat, even rhythm of a round walked daily, nothing out of order",
+      "deviation_cue": "The rhythm has broken. She doubles back over things she has already said, checking her own route behind her."
+    }
   },
   {
     "agent_id": "agent_bg_wren",
     "full_name": "Wren Ashby",
     "age": 61,
     "occupation": "Busker",
-    "portrait": "\ud83c\udfbb",
+    "portrait": "🎻",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Tunes the fiddle by the square until her fingers warm up, then follows the smell of coffee to the cafe pitch.",
@@ -361,7 +391,7 @@
     "full_name": "Dez Holt",
     "age": 61,
     "occupation": "Market stallholder",
-    "portrait": "\ud83e\uddfa",
+    "portrait": "🧺",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_fountain",
     "routine_summary": "Trundles his stall cart around the village testing pitches; has moved 'the perfect spot' four times this year and defends each one loudly.",
@@ -380,10 +410,10 @@
     "full_name": "Sal Ibori",
     "age": 54,
     "occupation": "Milkman",
-    "portrait": "\ud83e\udd5b",
+    "portrait": "🥛",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_owen_house",
-    "routine_summary": "Runs the milk round in strict order \u2014 cafe first, bookshop second \u2014 and rates every doorstep in the village by how promptly they bring the empties back.",
+    "routine_summary": "Runs the milk round in strict order — cafe first, bookshop second — and rates every doorstep in the village by how promptly they bring the empties back.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
@@ -399,7 +429,7 @@
     "full_name": "Cole Byrne",
     "age": 26,
     "occupation": "Window cleaner",
-    "portrait": "\ud83e\ude9f",
+    "portrait": "🪟",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_fountain",
     "routine_summary": "Works his ladder clockwise around the square; swears the clinic's windows are the only ones anyone ever thanks him for.",
@@ -418,7 +448,7 @@
     "full_name": "Effie Marsh",
     "age": 46,
     "occupation": "Dog walker",
-    "portrait": "\ud83d\udc15",
+    "portrait": "🐕",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; the terrier decides when they stop, and it always stops at the fountain.",
@@ -437,7 +467,7 @@
     "full_name": "Rosa Fenn",
     "age": 54,
     "occupation": "Groundskeeper",
-    "portrait": "\ud83c\udf3f",
+    "portrait": "🌿",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_fountain",
     "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear paths before the village wakes properly.",
@@ -456,10 +486,10 @@
     "full_name": "Birdie Voss",
     "age": 66,
     "occupation": "Street sweeper",
-    "portrait": "\ud83e\uddf9",
+    "portrait": "🧹",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_owen_house",
-    "routine_summary": "Sweeps the shopfronts in the order the village wakes \u2014 cafe, bookshop, clinic \u2014 and knows everyone's doormat better than they do.",
+    "routine_summary": "Sweeps the shopfronts in the order the village wakes — cafe, bookshop, clinic — and knows everyone's doormat better than they do.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
@@ -475,7 +505,7 @@
     "full_name": "Min Okafor",
     "age": 22,
     "occupation": "Baker's assistant",
-    "portrait": "\ud83e\udd56",
+    "portrait": "🥖",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_fountain",
     "routine_summary": "Up before the ovens, delivers the morning loaves to the cafe and the bookshop, and always keeps the misshapen one back for herself.",
@@ -494,7 +524,7 @@
     "full_name": "Tam Doyle",
     "age": 47,
     "occupation": "Postal carrier",
-    "portrait": "\ud83d\udce8",
+    "portrait": "📨",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Does the post round through the square, the bookshop and the clinic before most doors have even opened.",
@@ -513,7 +543,7 @@
     "full_name": "Gus Farrow",
     "age": 51,
     "occupation": "Newspaper seller",
-    "portrait": "\ud83d\udcf0",
+    "portrait": "📰",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_fountain",
     "routine_summary": "Sets the papers out from the fountain to the cafe and reads every front page aloud to whoever stands still long enough.",

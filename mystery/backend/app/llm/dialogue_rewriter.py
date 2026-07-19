@@ -112,6 +112,28 @@ def _sanitise(
         if re.search(pattern, text_lower) and not re.search(pattern, allowed_blob):
             return f"Contains unsupported fact: {agent.full_name.split()[0]}"
 
+    # 6. Ungrounded violence vocabulary — the invented-confession guard.
+    # A model can break character and confess on an agent's behalf ("Fine — I
+    # killed him") without using any role label or authored forbidden phrase.
+    # Words of killing are only allowed when the grounded text being rewritten
+    # (or the visible context) already uses them — an authored confession beat
+    # says "killed" and its paraphrase may too; a calm alibi answer must not
+    # suddenly acquire the word. Word-boundary match so "skilled" never trips
+    # "killed".
+    # term -> stem: the term is allowed when its stem already appears anywhere
+    # in the visible context ("murder window" in the question grounds
+    # "murdered"; an authored "killed" grounds a paraphrased "kill").
+    VIOLENCE_TERMS = {
+        "kill": "kill", "killed": "kill", "killing": "kill",
+        "murdered": "murder", "murdering": "murder",
+        "strangled": "strangl", "stabbed": "stab", "poisoned": "poison",
+        "i did it": "did it", "it was me": "it was me",
+    }
+    for term, stem in VIOLENCE_TERMS.items():
+        pattern = rf"\b{re.escape(term)}\b"
+        if re.search(pattern, text_lower) and stem not in allowed_blob:
+            return f"Contains ungrounded violence vocabulary: {term}"
+
     return None
 
 

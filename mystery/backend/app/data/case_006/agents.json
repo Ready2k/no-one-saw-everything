@@ -9,7 +9,7 @@
       "secretive",
       "generous in public"
     ],
-    "portrait": "\ud83c\udfda\ufe0f",
+    "portrait": "🏚️",
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_marcus_house",
     "routine_summary": "Evening: cocoa at his fireside at nine, every night. Rarely leaves the house after dark.",
@@ -60,7 +60,7 @@
       "patient",
       "presents as harmless"
     ],
-    "portrait": "\u2709\ufe0f",
+    "portrait": "✉️",
     "home_location_id": "loc_ruth_cottage",
     "work_location_id": "loc_village_square",
     "routine_summary": "Finishes her round by mid-afternoon. Evenings are for the garden; she grows most of what's in it from seed.",
@@ -99,7 +99,12 @@
       "defensive": "/art/portraits/ruth_defensive.png",
       "cracking": "/art/portraits/ruth_cracking.png"
     },
-    "sprite_id": "sprite_sarah_whitmore"
+    "sprite_id": "sprite_sarah_whitmore",
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "she answers in the flat, even rhythm of a round walked daily, nothing out of order",
+      "deviation_cue": "The rhythm has broken. She doubles back over things she has already said, checking her own route behind her."
+    }
   },
   {
     "agent_id": "agent_priya",
@@ -111,7 +116,7 @@
       "organised",
       "perceptive"
     ],
-    "portrait": "\ud83c\udf38",
+    "portrait": "🌸",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Keeps the bookshop accounts. Has a standing early-morning appointment with Marcus each week to go over them.",
@@ -143,7 +148,12 @@
       "defensive": "/art/portraits/priya_defensive.png",
       "cracking": "/art/portraits/priya_cracking.png"
     },
-    "sprite_id": "sprite_priya_kapoor"
+    "sprite_id": "sprite_priya_kapoor",
+    "baseline": {
+      "habit_category": "gaze",
+      "habit_text": "she watches your face while she answers, checking that the words are landing right",
+      "deviation_cue": "She has stopped checking your face. Her answers go to the table now, and stay there."
+    }
   },
   {
     "agent_id": "agent_isabella",
@@ -155,7 +165,7 @@
       "commercially focused",
       "proud"
     ],
-    "portrait": "\ud83d\udcda",
+    "portrait": "📚",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens the bookshop at nine. Deals with Marcus on business matters, and lately not happily.",
@@ -187,7 +197,12 @@
       "defensive": "/art/portraits/isabella_defensive.png",
       "cracking": "/art/portraits/isabella_cracking.png"
     },
-    "sprite_id": "sprite_isabella_rodriguez"
+    "sprite_id": "sprite_isabella_rodriguez",
+    "baseline": {
+      "habit_category": "posture",
+      "habit_text": "she sits half out of the chair, as if the next task is already calling her name",
+      "deviation_cue": "She has stopped moving. The woman with three tasks queued behind this one is sitting perfectly, unnaturally still."
+    }
   },
   {
     "agent_id": "agent_nadia",
@@ -199,7 +214,7 @@
       "analytical",
       "medically knowledgeable"
     ],
-    "portrait": "\ud83e\ude7a",
+    "portrait": "🩺",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
     "routine_summary": "Clinic nurse. Was Marcus's healthcare contact for his heart condition.",
@@ -231,7 +246,12 @@
       "defensive": "/art/portraits/nadia_defensive.png",
       "cracking": "/art/portraits/nadia_cracking.png"
     },
-    "sprite_id": "sprite_ayesha_khan"
+    "sprite_id": "sprite_ayesha_khan",
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "her voice carries the unhurried warmth of someone used to talking people back to calm",
+      "deviation_cue": "The warmth has drained out of her voice. The words are the same; the bedside manner is gone."
+    }
   },
   {
     "agent_id": "agent_elias",
@@ -242,7 +262,7 @@
       "observant in the village",
       "keeps local histories"
     ],
-    "portrait": "\ud83c\udfa9",
+    "portrait": "🎩",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Retired schoolteacher. Taught two generations of this village and remembers all of them, whether they like it or not.",
@@ -274,7 +294,12 @@
       "defensive": "/art/portraits/elias_defensive.png",
       "cracking": "/art/portraits/elias_cracking.png"
     },
-    "sprite_id": "sprite_adam_smith"
+    "sprite_id": "sprite_adam_smith",
+    "baseline": {
+      "habit_category": "timing",
+      "habit_text": "he answers before the question has quite finished, a teacher who has heard every excuse in the room",
+      "deviation_cue": "The interruptions have stopped. He waits out the whole question now, and answers only the part he has chosen."
+    }
   },
   {
     "agent_id": "agent_solicitor",
@@ -286,7 +311,7 @@
       "professional",
       "bound by confidentiality but legally compelled"
     ],
-    "portrait": "\u2696\ufe0f",
+    "portrait": "⚖️",
     "home_location_id": "loc_solicitors_office",
     "work_location_id": "loc_solicitors_office",
     "routine_summary": "Senior partner at Whittle & Cross. Handles the estate business of most of the older families in the village.",
@@ -318,17 +343,22 @@
       "defensive": "/art/portraits/solicitor_defensive.png",
       "cracking": "/art/portraits/solicitor_cracking.png"
     },
-    "sprite_id": "sprite_leo_patterson"
+    "sprite_id": "sprite_leo_patterson",
+    "baseline": {
+      "habit_category": "hands",
+      "habit_text": "he squares the papers in front of him before every answer, as though filing the question",
+      "deviation_cue": "The papers have stopped moving. He answers with his hands flat on the folder, giving nothing else to read."
+    }
   },
   {
     "agent_id": "agent_bg_sal",
     "full_name": "Sal Ibori",
     "age": 54,
     "occupation": "Milkman",
-    "portrait": "\ud83e\udd5b",
+    "portrait": "🥛",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Runs the milk round in strict order \u2014 cafe first, bookshop second \u2014 and rates every doorstep in the village by how promptly they bring the empties back.",
+    "routine_summary": "Runs the milk round in strict order — cafe first, bookshop second — and rates every doorstep in the village by how promptly they bring the empties back.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
@@ -344,7 +374,7 @@
     "full_name": "Gus Farrow",
     "age": 51,
     "occupation": "Newspaper seller",
-    "portrait": "\ud83d\udcf0",
+    "portrait": "📰",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_clinic",
     "routine_summary": "Sets the papers out from the fountain to the cafe and reads every front page aloud to whoever stands still long enough.",
@@ -363,7 +393,7 @@
     "full_name": "Rosa Fenn",
     "age": 54,
     "occupation": "Groundskeeper",
-    "portrait": "\ud83c\udf3f",
+    "portrait": "🌿",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_solicitors_office",
     "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear paths before the village wakes properly.",
@@ -382,7 +412,7 @@
     "full_name": "Wren Ashby",
     "age": 61,
     "occupation": "Busker",
-    "portrait": "\ud83c\udfbb",
+    "portrait": "🎻",
     "home_location_id": "loc_solicitors_office",
     "work_location_id": "loc_village_square",
     "routine_summary": "Tunes the fiddle by the square until her fingers warm up, then follows the smell of coffee to the cafe pitch.",
@@ -401,10 +431,10 @@
     "full_name": "Birdie Voss",
     "age": 66,
     "occupation": "Street sweeper",
-    "portrait": "\ud83e\uddf9",
+    "portrait": "🧹",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Sweeps the shopfronts in the order the village wakes \u2014 cafe, bookshop, clinic \u2014 and knows everyone's doormat better than they do.",
+    "routine_summary": "Sweeps the shopfronts in the order the village wakes — cafe, bookshop, clinic — and knows everyone's doormat better than they do.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {
@@ -420,7 +450,7 @@
     "full_name": "Tam Doyle",
     "age": 47,
     "occupation": "Postal carrier",
-    "portrait": "\ud83d\udce8",
+    "portrait": "📨",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_clinic",
     "routine_summary": "Does the post round through the square, the bookshop and the clinic before most doors have even opened.",
@@ -439,7 +469,7 @@
     "full_name": "Dez Holt",
     "age": 61,
     "occupation": "Market stallholder",
-    "portrait": "\ud83e\uddfa",
+    "portrait": "🧺",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_solicitors_office",
     "routine_summary": "Trundles his stall cart around the village testing pitches; has moved 'the perfect spot' four times this year and defends each one loudly.",
@@ -458,7 +488,7 @@
     "full_name": "Effie Marsh",
     "age": 46,
     "occupation": "Dog walker",
-    "portrait": "\ud83d\udc15",
+    "portrait": "🐕",
     "home_location_id": "loc_solicitors_office",
     "work_location_id": "loc_village_square",
     "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; the terrier decides when they stop, and it always stops at the fountain.",
@@ -477,7 +507,7 @@
     "full_name": "Min Okafor",
     "age": 22,
     "occupation": "Baker's assistant",
-    "portrait": "\ud83e\udd56",
+    "portrait": "🥖",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Up before the ovens, delivers the morning loaves to the cafe and the bookshop, and always keeps the misshapen one back for herself.",
@@ -496,7 +526,7 @@
     "full_name": "Cole Byrne",
     "age": 26,
     "occupation": "Window cleaner",
-    "portrait": "\ud83e\ude9f",
+    "portrait": "🪟",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_clinic",
     "routine_summary": "Works his ladder clockwise around the square; swears the clinic's windows are the only ones anyone ever thanks him for.",

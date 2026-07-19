@@ -451,5 +451,17 @@
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_pub"
+  },
+  {
+    "event_id": "ev_2220_priya_curtains",
+    "time": "22:20",
+    "location_id": "loc_priya_flat",
+    "agent_ids": [
+      "agent_priya"
+    ],
+    "event_type": "routine",
+    "truth_description": "The light is on at Priya's flat. She draws the curtain halfway, phone already in her hand, and settles into the chair by the window.",
+    "visibility": "public",
+    "importance": 1
   }
 ]
