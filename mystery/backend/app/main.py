@@ -56,7 +56,12 @@ app = FastAPI(title="No One Saw Everything", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5179",
+        "http://127.0.0.1:5179",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )

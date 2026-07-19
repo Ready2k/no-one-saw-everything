@@ -16,8 +16,24 @@ interface BoardString {
   by: number;
 }
 
+function caseLabel(caseId: string) {
+  return caseId.startsWith("case_") ? `Case ${caseId.split("_")[1]}` : caseId;
+}
+
+function isBehaviourNote(note: Note) {
+  if (note.player_tags?.includes("behaviour")) return true;
+  if (note.note_type !== "interview") return false;
+  return (
+    /^Read on /.test(note.title) ||
+    /\btell \((subtle|noticeable|strong)\)/.test(note.title) ||
+    /\bchanged from earlier\b|\bsame as earlier\b|\bmanner noted\b|\bnothing like earlier\b/i.test(
+      note.body
+    )
+  );
+}
+
 export default function BoardView() {
-  const { agents } = useWorld();
+  const { agents, caseOverview } = useWorld();
   const [board, setBoard] = useState<Board | null>(null);
   const [clues, setClues] = useState<CluePublic[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -135,6 +151,11 @@ export default function BoardView() {
         </svg>
       )}
       <div className="board-col">
+        <div className="board-case-slip">
+          <span>Active file</span>
+          <strong>{caseLabel(caseOverview.case_id)}</strong>
+          <span>{caseOverview.title}</span>
+        </div>
         <h2>
           Suspects{" "}
           <span className="muted small">
@@ -206,16 +227,36 @@ export default function BoardView() {
                 ))}
               </details>
             )}
-            {s.pinned_notes.length > 0 && (
-              <details open>
-                <summary>Pinned notes ({s.pinned_notes.length})</summary>
-                {s.pinned_notes.map((n) => (
-                  <p key={n.note_id} className="small">
-                    📌 {n.title}
-                  </p>
-                ))}
-              </details>
-            )}
+            {s.pinned_notes.length > 0 &&
+              (() => {
+                const behaviourNotes = s.pinned_notes.filter(isBehaviourNote);
+                const evidenceNotes = s.pinned_notes.filter((n) => !isBehaviourNote(n));
+                return (
+                  <>
+                    {behaviourNotes.length > 0 && (
+                      <details open className="behaviour-notes">
+                        <summary>Behaviour ({behaviourNotes.length})</summary>
+                        {behaviourNotes.map((n) => (
+                          <p key={n.note_id} className="small behaviour-note-line">
+                            <span>{n.title}</span>
+                            {n.body && <em>{n.body.split("\n")[0]}</em>}
+                          </p>
+                        ))}
+                      </details>
+                    )}
+                    {evidenceNotes.length > 0 && (
+                      <details open>
+                        <summary>Pinned evidence and notes ({evidenceNotes.length})</summary>
+                        {evidenceNotes.map((n) => (
+                          <p key={n.note_id} className="small">
+                            {n.title}
+                          </p>
+                        ))}
+                      </details>
+                    )}
+                  </>
+                );
+              })()}
           </div>
         ))}
       </div>

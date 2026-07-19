@@ -103,6 +103,10 @@ const SUSPICION_LABEL = Object.fromEntries(
   SUSPICION_LEVELS.map((s) => [s.value, s.label])
 ) as Record<SuspicionLevel, string>;
 
+function caseLabel(caseId: string) {
+  return caseId.startsWith("case_") ? `Case ${caseId.split("_")[1]}` : caseId;
+}
+
 interface SuspectBoardState {
   pressure: number;
   suspicion: SuspicionLevel;
@@ -237,6 +241,10 @@ function InterviewPanel({
   // The Observe action: a deliberate study of the suspect, spent one per fresh exchange.
   const [observation, setObservation] = useState<ObservationRead | null>(null);
   const [observeMsg, setObserveMsg] = useState<string | null>(null);
+  const [observedExchangeToken, setObservedExchangeToken] = useState<string | null>(null);
+  const [observeNudgeSeen, setObserveNudgeSeen] = useState(() =>
+    localStorage.getItem(`observe-nudge-seen:${caseOverview.case_id}`) === "1"
+  );
   const latestTell = lastChallenge?.observable_tells?.[0] ?? lastResult?.observable_tells?.[0];
   const [activeTellClass, setActiveTellClass] = useState("");
   const [beat, setBeat] = useState<BeatData | null>(null);
@@ -269,6 +277,19 @@ function InterviewPanel({
   // must not brand a 100%-composed, un-challenged suspect as already caught.
   const caughtInContradiction = claims.some((c) => c.player_known_status === "disputed");
   const state = interviewState(transcript.length, suspicion, pressure, caughtInContradiction);
+  const latestAgentExchange = [...transcript].reverse().find((m) => m.speaker === "agent");
+  const freshExchangeToken = [
+    transcript.length,
+    latestAgentExchange?.text ?? "",
+    lastChallenge?.challenge_id ?? "",
+  ].join(":");
+  const hasFreshAnswer = Boolean(latestAgentExchange);
+  const calmFreshObserveAvailable =
+    !isVictim &&
+    pressure < DEFENSIVE_THRESHOLD &&
+    hasFreshAnswer &&
+    observedExchangeToken !== freshExchangeToken;
+  const showObserveNudge = calmFreshObserveAvailable && !observeNudgeSeen && !observeMsg;
 
   const refresh = useCallback(() => {
     api.transcript(agentId).then((t) => {
@@ -334,6 +355,7 @@ function InterviewPanel({
     setBusy(true);
     setError(null);
     setPendingQuestion(questionText ?? null);
+    setObserveMsg(null);
     try {
       const result = await api.ask({
         agent_id: agentId,
@@ -359,6 +381,7 @@ function InterviewPanel({
     setError(null);
     setFallbackMsg(null);
     setPendingQuestion(questionText);
+    setObserveMsg(null);
     try {
       const result = await api.freeTextAsk({
         agent_id: agentId,
@@ -412,9 +435,12 @@ function InterviewPanel({
   const observeThem = async () => {
     setBusy(true);
     setObserveMsg(null);
+    localStorage.setItem(`observe-nudge-seen:${caseOverview.case_id}`, "1");
+    setObserveNudgeSeen(true);
     try {
       const obs = await api.observe(agentId);
       setObservation(obs);
+      setObservedExchangeToken(freshExchangeToken);
     } catch (e) {
       setObserveMsg(e instanceof Error ? e.message : String(e));
     } finally {
@@ -430,6 +456,7 @@ function InterviewPanel({
       body: observation.text,
       linked_agent_ids: [agentId],
       pinned_to_agent_id: agentId,
+      player_tags: ["behaviour", "observe", observation.baseline_state ?? "manner"],
     });
     setNotebookNote(`Read on ${firstName}: ${observation.text.slice(0, 90)}…`);
   };
@@ -443,6 +470,7 @@ function InterviewPanel({
       body: context ? `${tell.cue}\n— watching ${firstName} ${context}` : tell.cue,
       linked_agent_ids: [agentId],
       pinned_to_agent_id: agentId,
+      player_tags: ["behaviour", "tell", tell.category, tell.intensity],
     });
     setNotebookNote(`Pinned a read on ${firstName}`);
   };
@@ -513,6 +541,7 @@ function InterviewPanel({
     setBusy(true);
     setError(null);
     setFallbackMsg(null);
+    setObserveMsg(null);
     try {
       const result = await api.challenge({
         target_agent_id: agentId,
@@ -559,6 +588,11 @@ function InterviewPanel({
         />
       )}
       <div className="interview interrogation-main">
+        <div className="active-case-strip" title="Active case loaded by the investigation server">
+          <span>Active file</span>
+          <strong>{caseLabel(caseOverview.case_id)}</strong>
+          <span>{caseOverview.title}</span>
+        </div>
         <div className="dossier panel">
           {/* Police line-up mugshot: height-chart wall, placard, and a
               backdrop that heats up as interrogation pressure rises. */}
@@ -592,25 +626,37 @@ function InterviewPanel({
                 className="small-button observe-button"
                 onClick={observeThem}
                 disabled={busy}
-                title={`Study ${firstName} for a sharper behavioural read`}
+                title={`Study ${firstName}'s manner in this exchange`}
               >
-                👁 Observe
+                Observe manner
               </button>
+              {showObserveNudge && (
+                <span className="observe-nudge">
+                  Calm reads set a baseline.
+                </span>
+              )}
               {observeMsg && <span className="muted small observe-msg">{observeMsg}</span>}
             </div>
             {observation && (
               <div className={`observe-read observe-${observation.intensity}`}>
-                <span className="behavioural-title">
-                  Considered read
+                <div className="observe-read-head">
+                  <span className="behavioural-title">Considered read</span>
+                  <span className={`tell-tags observe-tags`}>
+                    <span>{observation.category}</span>
+                    <span>{observation.intensity}</span>
+                  </span>
                   {observation.baseline_state && (
                     <span className={`observe-baseline observe-baseline-${observation.baseline_state}`}>
                       {BASELINE_LABEL[observation.baseline_state]}
                     </span>
                   )}
-                </span>
+                </div>
                 <p>{observation.text}</p>
+                <p className="muted small observe-footnote">
+                  A change in manner is a clue to interpret, not proof.
+                </p>
                 <button type="button" className="small-button" onClick={pinObservation}>
-                  📌 Pin to notebook
+                  Pin behaviour note
                 </button>
               </div>
             )}

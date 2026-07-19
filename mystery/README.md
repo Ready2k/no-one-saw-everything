@@ -64,13 +64,16 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/uvicorn app.main:app --port 8010
 ```
 
-Frontend (React + Vite, port 5173, proxies `/api` to 8010):
+Frontend (React + Vite, port 5179, proxies `/api` to 8010):
 
 ```bash
 cd mystery/frontend
 npm install
-npm run dev
+npm run dev -- --host 127.0.0.1 --port 5179
 ```
+
+Or use `./start.sh` from the repo root. Override with `MYSTERY_FRONTEND_PORT=5181`
+or `MYSTERY_API_PORT=8011` if those ports are busy.
 
 Tests (also act as the case fairness validator):
 
