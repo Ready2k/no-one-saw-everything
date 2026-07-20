@@ -2134,12 +2134,16 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 }
 
 .ceremony-controls {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+  /* Fixed, above the step-suspense full-screen overlay (z-index 50): the view
+     container animates (transform), which traps an absolute child's z-index in
+     its own stacking context and painted these controls UNDER the overlay —
+     Next/Skip were unclickable during the suspense step. */
+  position: fixed;
+  top: 10rem;
+  right: 1.25rem;
   display: flex;
   gap: 1rem;
-  z-index: 100;
+  z-index: 300;
 }
 
 .ceremony-content {

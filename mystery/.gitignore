@@ -13,3 +13,7 @@ backend/app/data/sessions/
 backend/app/data/town/town_layout.json.bak
 backend.log
 frontend.log
+
+# Playwright E2E output
+frontend/test-results/
+frontend/playwright-report/
