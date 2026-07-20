@@ -12,6 +12,7 @@ from app.interview import answer_question, public_ask_response, examine_body
 from app.world_state import build_conversation_context, build_world_state_digest
 from app import challenge as challenge_engine
 from app.challenge import ChallengeError
+from app.dialogue_processor import humanize_response
 
 def _generic_followups(case) -> list[str]:
     """Safe, always-available on-ramps back to the grounded structured
@@ -58,9 +59,16 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
             rewritten_structured_question="Unknown"
         )
 
+    agent = next((a for a in case.agents if a.agent_id == req.agent_id), None)
+    if agent:
+        from app.dialogue_processor import apply_deflection
+        fallback_msg = apply_deflection(agent)
+    else:
+        fallback_msg = "I'm not sure what you mean. Ask me where I was, what I saw, or about a specific person or object."
+
     fallback_resp = FreeTextAskResponse(
         intent=intent,
-        fallback_message="I'm not sure what you mean. Ask me where I was, what I saw, or about a specific person or object."
+        fallback_message=fallback_msg
     )
 
     SMALL_TALK_INTENTS = ["greeting", "how_are_you", "occupation", "how_can_help", "favorite_thing", "about_me", "general_relationships", "emotions"]
@@ -69,7 +77,11 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         agent = next(a for a in case.agents if a.agent_id == req.agent_id)
         transcript = sess.transcript_for(req.agent_id)
         
+        transcript.intent_counts[intent.intent] = transcript.intent_counts.get(intent.intent, 0) + 1
+        count = transcript.intent_counts[intent.intent]
+
         answer_text = agent.small_talk.get(intent.intent, "I don't have much to say about that.")
+        answer_text = humanize_response(answer_text, agent, count)
         
         transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
         transcript.messages.append(

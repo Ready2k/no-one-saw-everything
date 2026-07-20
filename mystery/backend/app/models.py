@@ -582,6 +582,7 @@ class InterviewMessage(BaseModel):
 class InterviewTranscript(BaseModel):
     agent_id: str
     messages: list[InterviewMessage] = []
+    intent_counts: dict[str, int] = {}
 
 
 class AgentBeliefState(BaseModel):

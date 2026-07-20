@@ -28,6 +28,7 @@ from .behavioural_tells import baseline_habit, interview_tells, pressure_band
 from .llm.config import get_llm_config
 from .llm.dialogue_rewriter import rewrite_interview_answer
 from .world_state import build_conversation_context, build_world_state_digest
+from .dialogue_processor import humanize_response
 
 QUESTION_TEXT = {
     "alibi": "Where were you during the murder window, between {murder_start} and {murder_end}?",
@@ -222,6 +223,11 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
     # own voice via the LLM rather than reciting pack.default_answers
     # verbatim every time.
     config = get_llm_config()
+    transcript = session.transcript_for(req.agent_id)
+    transcript.intent_counts[req.question_type] = transcript.intent_counts.get(req.question_type, 0) + 1
+    count = transcript.intent_counts[req.question_type]
+    deterministic_answer = humanize_response(deterministic_answer, agent, count)
+
     display_answer = deterministic_answer
     llm_rewrite_used = False
     llm_rewrite_fallback = False
