@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import re
+import time
+import uuid
 from typing import Optional
 
 from contextvars import ContextVar
@@ -15,6 +17,11 @@ from pydantic import BaseModel
 import json
 import logging
 import os
+
+from .logging_config import configure_logging, request_id_var
+
+configure_logging()
+logger = logging.getLogger(__name__)
 
 from . import challenge as challenge_engine
 from . import interview as interview_engine
@@ -47,6 +54,7 @@ from .projections import (
     visible_map_events,
     build_playtest_export,
 )
+from .rate_limit import RateLimiter
 from .session import (
     DEFAULT_PLAYER_ID,
     SESSIONS_DIR,
@@ -142,12 +150,57 @@ def _activate_for_current_player(case_id: str) -> None:
 
 app = FastAPI(title="No One Saw Everything", version="0.1.0")
 
+# Comma-separated list of allowed origins; the dev-server pair remains the
+# default so `./start.sh` keeps working unconfigured. A real deployment sets
+# MYSTERY_CORS_ORIGINS to its actual frontend origin(s) — the hardcoded
+# localhost-only default silently breaks any non-dev deployment otherwise.
+_default_cors_origins = "http://localhost:5173,http://127.0.0.1:5173"
+_cors_origins = [
+    origin.strip()
+    for origin in os.getenv("MYSTERY_CORS_ORIGINS", _default_cors_origins).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def request_id_and_access_log(request: Request, call_next):
+    """Every request gets a correlation id (reusing an inbound one from a
+    reverse proxy if present) so its log lines — from any module, at any
+    depth, including exception tracebacks — can be tied together, and a
+    structured access line replaces relying on uvicorn's default format."""
+    req_id = request.headers.get("x-request-id") or uuid.uuid4().hex[:12]
+    token = request_id_var.set(req_id)
+    started = time.monotonic()
+    try:
+        try:
+            response = await call_next(request)
+        except Exception:
+            logger.exception(
+                "Unhandled exception for %s %s", request.method, request.url.path
+            )
+            raise
+        elapsed_ms = int((time.monotonic() - started) * 1000)
+        # Logged BEFORE the contextvar reset below — the whole point of
+        # request_id_var is that this line (and everything logged deeper in
+        # the call, e.g. "Session autosave failed") carries the same id.
+        logger.info(
+            "%s %s -> %s (%dms)",
+            request.method,
+            request.url.path,
+            response.status_code,
+            elapsed_ms,
+        )
+        response.headers["X-Request-Id"] = req_id
+        return response
+    finally:
+        request_id_var.reset(token)
 
 
 @app.exception_handler(SessionLoadError)
@@ -156,6 +209,69 @@ async def session_load_error_handler(request: Request, exc: SessionLoadError):
     # never a 500: the player can restart the case (POST /api/cases/activate with
     # restart=true) or run a compatible server. Nothing is deleted on this path.
     return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+
+# ---------------------------------------------------------------------------
+# Abuse hardening: request size limits + rate limiting on expensive routes
+# ---------------------------------------------------------------------------
+
+# Generous for anything a real player types (notes, free-text questions,
+# accusation reasoning) or a case-generation recipe; the one outsized body this
+# API legitimately accepts is the dev map editor's layout save, which is
+# operator-gated (ENABLE_DEV_MAP_EDITOR) and gets its own higher limit.
+_MAX_REQUEST_BYTES = int(os.getenv("MYSTERY_MAX_REQUEST_BYTES", str(256 * 1024)))
+_MAX_DEV_REQUEST_BYTES = int(os.getenv("MYSTERY_MAX_DEV_REQUEST_BYTES", str(8 * 1024 * 1024)))
+
+
+@app.middleware("http")
+async def limit_request_body_size(request: Request, call_next):
+    limit = (
+        _MAX_DEV_REQUEST_BYTES
+        if request.url.path.startswith("/api/dev/")
+        else _MAX_REQUEST_BYTES
+    )
+    declared = request.headers.get("content-length")
+    if declared is not None:
+        try:
+            if int(declared) > limit:
+                return JSONResponse(status_code=413, content={"detail": "Request body too large."})
+        except ValueError:
+            pass
+    else:
+        # No declared length (e.g. chunked transfer): read and cache the body
+        # ourselves so we can enforce the cap; downstream handlers reuse the
+        # cached body rather than re-reading the stream.
+        body = b""
+        async for chunk in request.stream():
+            body += chunk
+            if len(body) > limit:
+                return JSONResponse(status_code=413, content={"detail": "Request body too large."})
+        request._body = body  # noqa: SLF001 — Starlette's own caching mechanism
+    return await call_next(request)
+
+
+# Per-player sliding-window limits. Single-process, in-memory — consistent
+# with the session store's existing single-worker constraint (session.py).
+# LLM-backed routes cost real provider latency/money; case generation does
+# real CPU + disk work (up to 5 candidates, each validated and scored).
+_llm_rate_limiter = RateLimiter(
+    max_requests=int(os.getenv("MYSTERY_LLM_RATE_LIMIT_PER_MINUTE", "20")),
+    window_seconds=60,
+)
+_generate_rate_limiter = RateLimiter(
+    max_requests=int(os.getenv("MYSTERY_GENERATE_RATE_LIMIT_PER_MINUTE", "6")),
+    window_seconds=60,
+)
+
+
+def _enforce_rate_limit(limiter: RateLimiter, key: str, what: str) -> None:
+    if not limiter.allow(key):
+        retry_after = int(limiter.retry_after_seconds(key)) + 1
+        raise HTTPException(
+            status_code=429,
+            detail=f"Too many {what} requests — wait {retry_after}s and try again.",
+            headers={"Retry-After": str(retry_after)},
+        )
 
 
 @app.middleware("http")
@@ -193,7 +309,23 @@ async def request_context_and_autosave(request: Request, call_next):
         _current_player.reset(ctx_token)
 
 
-MYSTERY_PLAYTEST_MODE = os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "true"
+def _playtest_mode_enabled() -> bool:
+    # Read fresh on every call (matches the dev-map-editor gate below) rather than
+    # a module constant bound once at import: it must be flippable in tests, and a
+    # deploy must never be able to "accidentally" carry a stale true across a
+    # config reload. There is no client-facing way to set this — it is an
+    # operator's environment variable, not a request the frontend can send.
+    return os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "true"
+
+
+def _require_playtest_mode() -> None:
+    if not _playtest_mode_enabled():
+        raise HTTPException(
+            403,
+            "Playtest tooling is disabled on this server. Set MYSTERY_PLAYTEST_MODE=true "
+            "(operator-only; there is no in-app way to enable it) to use it.",
+        )
+
 
 @app.get("/api/config")
 def get_config():
@@ -201,7 +333,7 @@ def get_config():
 
     llm = get_llm_config()
     return {
-        "playtest_mode": MYSTERY_PLAYTEST_MODE,
+        "playtest_mode": _playtest_mode_enabled(),
         "llm_dialogue_enabled": llm.dialogue_enabled,
         "llm_generation_available": llm.configured and llm.provider != "fake",
         "llm_model": llm.model if llm.provider != "fake" else None,
@@ -212,10 +344,28 @@ def get_config():
 class LLMSettingsUpdate(BaseModel):
     provider: str  # "fake" | "auto" | "openai_compatible"
     base_url: Optional[str] = None
+    # Omitted/blank means "keep whatever key is already saved" (see
+    # update_llm_settings) — the client is never sent the real key back, so it
+    # cannot resend it, and must not be forced to erase it just to change
+    # another field like the model name.
     api_key: Optional[str] = None
     model: Optional[str] = None
     dialogue_enabled: bool = False
     beliefs_enabled: bool = False
+
+
+def _redact_saved_settings(saved) -> Optional[dict]:
+    """The saved API key must never cross the API — a GET here used to hand
+    back the plaintext secret to any client that asked. Callers only need to
+    know a key IS set (to render a masked placeholder) and its last 4 characters
+    (so the operator can recognise which key without re-reading the full thing)."""
+    if saved is None:
+        return None
+    data = saved.model_dump()
+    key = data.pop("api_key", None)
+    data["api_key_set"] = bool(key)
+    data["api_key_last4"] = key[-4:] if key and len(key) >= 4 else None
+    return data
 
 
 @app.get("/api/llm-settings")
@@ -227,7 +377,7 @@ def get_llm_settings():
     saved = load_saved_settings()
     effective = get_llm_config()
     return {
-        "saved": saved.model_dump() if saved else None,
+        "saved": _redact_saved_settings(saved),
         "effective": {
             "provider": effective.provider,
             "base_url": effective.base_url,
@@ -241,9 +391,32 @@ def get_llm_settings():
     }
 
 
+# Cheap, high-value SSRF defence: these endpoints make the SERVER issue an HTTP
+# request to a client-supplied host. Nobody's legitimate self-hosted LLM lives
+# at a cloud metadata address, so refusing those costs no real functionality
+# while closing off the most damaging class of target (credential theft from
+# the node's own cloud identity).
+_SSRF_BLOCKED_HOSTS = {
+    "169.254.169.254",  # AWS/GCP/Azure/OCI instance metadata
+    "metadata.google.internal",
+    "metadata.goog",
+    "fd00:ec2::254",  # AWS IMDS, IPv6
+}
+
+
+def _reject_ssrf_target(base_url: str) -> None:
+    from urllib.parse import urlparse
+
+    host = (urlparse(base_url).hostname or "").lower()
+    if host in _SSRF_BLOCKED_HOSTS or host.startswith("169.254."):
+        raise HTTPException(
+            400, "That address isn't a valid LLM endpoint (cloud metadata addresses are blocked)."
+        )
+
+
 @app.put("/api/llm-settings")
 def update_llm_settings(payload: LLMSettingsUpdate):
-    from .llm.config import SavedLLMSettings, save_settings, get_llm_config
+    from .llm.config import SavedLLMSettings, load_saved_settings, save_settings
 
     if payload.provider not in ("fake", "auto", "openai_compatible"):
         raise HTTPException(status_code=400, detail="Invalid provider")
@@ -252,8 +425,17 @@ def update_llm_settings(payload: LLMSettingsUpdate):
             status_code=400,
             detail="base_url and model are required for the openai_compatible provider",
         )
+    if payload.base_url:
+        _reject_ssrf_target(payload.base_url)
 
-    save_settings(SavedLLMSettings(**payload.model_dump()))
+    update = payload.model_dump()
+    if not update.get("api_key"):
+        # Blank means unchanged, not "clear the key" — the client was never
+        # given the real key back, so it has no way to resend it deliberately.
+        existing = load_saved_settings()
+        update["api_key"] = existing.api_key if existing else None
+
+    save_settings(SavedLLMSettings(**update))
 
     from .llm import discovery
     discovery.reset_cache()
@@ -272,10 +454,32 @@ def discover_llm_models(payload: ModelDiscoveryRequest):
     Custom (OpenAI-compatible) provider's Model dropdown."""
     from .llm.discovery import list_models_for_base_url
 
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
     if not payload.base_url.strip():
         raise HTTPException(status_code=400, detail="base_url is required")
+    _reject_ssrf_target(payload.base_url)
 
     models, error = list_models_for_base_url(payload.base_url.strip(), payload.api_key)
+    return {"models": models, "error": error}
+
+
+@app.post("/api/llm-settings/models/saved")
+def discover_llm_models_saved():
+    """Same as /models, but against the settings already saved on the server.
+
+    The Settings panel is never given the real api_key back (see
+    _redact_saved_settings), so it cannot resend it to re-discover models for
+    a connection the operator already saved — this runs the request
+    server-side against the stored key instead."""
+    from .llm.config import load_saved_settings
+    from .llm.discovery import list_models_for_base_url
+
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    saved = load_saved_settings()
+    if saved is None or not saved.base_url:
+        raise HTTPException(status_code=400, detail="No saved endpoint to query.")
+
+    models, error = list_models_for_base_url(saved.base_url, saved.api_key)
     return {"models": models, "error": error}
 
 
@@ -285,24 +489,15 @@ class LlmTestRequest(BaseModel):
     model: str
 
 
-@app.post("/api/llm-settings/test")
-def test_llm_settings(payload: LlmTestRequest):
-    """Sends a real chat completion request to the given endpoint/model so the
-    Settings panel can prove the LLM is actually generating a response, rather
-    than just resolving a reachable model list."""
+def _run_llm_test(base_url: str, api_key: Optional[str], model: str) -> dict:
     from .llm.config import normalize_base_url
     from .llm.client import OpenAICompatibleLLMClient
     import time
     import uuid
 
-    if not payload.base_url.strip() or not payload.model.strip():
-        raise HTTPException(status_code=400, detail="base_url and model are required")
-
-    base_url = normalize_base_url(payload.base_url.strip())
+    base_url = normalize_base_url(base_url.strip())
     nonce = uuid.uuid4().hex[:6]
-    client = OpenAICompatibleLLMClient(
-        base_url=base_url, api_key=payload.api_key, model=payload.model.strip()
-    )
+    client = OpenAICompatibleLLMClient(base_url=base_url, api_key=api_key, model=model.strip())
 
     started = time.monotonic()
     try:
@@ -328,6 +523,34 @@ def test_llm_settings(payload: LlmTestRequest):
     return {"ok": True, "reply": reply, "elapsed_ms": elapsed_ms, "nonce": nonce}
 
 
+@app.post("/api/llm-settings/test")
+def test_llm_settings(payload: LlmTestRequest):
+    """Sends a real chat completion request to the given endpoint/model so the
+    Settings panel can prove the LLM is actually generating a response, rather
+    than just resolving a reachable model list."""
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    if not payload.base_url.strip() or not payload.model.strip():
+        raise HTTPException(status_code=400, detail="base_url and model are required")
+    _reject_ssrf_target(payload.base_url)
+
+    return _run_llm_test(payload.base_url, payload.api_key, payload.model)
+
+
+@app.post("/api/llm-settings/test/saved")
+def test_llm_settings_saved():
+    """Same as /test, but against the settings already saved on the server —
+    see discover_llm_models_saved for why this exists instead of resending
+    the (never-returned) real api_key."""
+    from .llm.config import load_saved_settings
+
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    saved = load_saved_settings()
+    if saved is None or not saved.base_url or not saved.model:
+        raise HTTPException(status_code=400, detail="No saved endpoint to test.")
+
+    return _run_llm_test(saved.base_url, saved.api_key, saved.model)
+
+
 @app.post("/api/llm-settings/probe")
 def probe_llm_settings():
     """Runs auto-detection now (bypassing the cache) so the Settings panel can
@@ -335,6 +558,7 @@ def probe_llm_settings():
     provider='auto'."""
     from .llm.discovery import detect_llm
 
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
     detected = detect_llm(force=True)
     if detected is None:
         return {"found": False}
@@ -797,6 +1021,11 @@ def ask(req: AskRequest):
 
 @app.post("/api/interview/free-text")
 def free_text_ask(req: FreeTextAskRequest):
+    # Every free-text ask runs through the LLM client abstraction (intent
+    # classification, and potentially the open-ended responder) even under the
+    # default no-network 'fake' provider — rate-limit uniformly rather than
+    # branching on which provider happens to be configured.
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "free-text question")
     case = case_data()
     sess = session()
     target = next((a for a in case.agents if a.agent_id == req.agent_id), None)
@@ -1091,7 +1320,21 @@ def update_markers(payload: MarkerUpdate):
 
 @app.get("/api/session/log")
 def get_telemetry_log():
+    _require_playtest_mode()
     return session().event_log
+
+
+@app.get("/api/session/telemetry/durable")
+def get_durable_telemetry_log():
+    """The full telemetry history for this (player, case) across every reset
+    and restart — unlike /api/session/log (the current attempt's in-memory
+    copy, cleared by reset_session), this reads the append-only log that
+    survives both."""
+    _require_playtest_mode()
+    from .telemetry import read_durable_log
+
+    return read_durable_log(current_player_id(), _effective_case_id())
+
 
 @app.get("/api/session/hints")
 def get_hints():
@@ -1108,6 +1351,7 @@ def get_hints():
 
 @app.get("/api/session/playtest-summary")
 def get_playtest_summary():
+    _require_playtest_mode()
     from .llm.config import get_llm_config
 
     case = case_data()
@@ -1147,6 +1391,7 @@ def get_playtest_summary():
 
 @app.get("/api/session/playtest-export")
 def get_playtest_export():
+    _require_playtest_mode()
     case = case_data()
     sess = session()
     return build_playtest_export(sess, case, include_reveal=sess.accusation is not None)
@@ -1273,6 +1518,10 @@ def generate(req: GenerateCaseRequest):
     from .generator import generate_case, TEMPLATES_DIR
     from .validator import validate_case
     from .case_store import register_case
+
+    # Up to 5 candidates, each generated, validated, and quality-scored — real
+    # CPU and disk work regardless of whether an LLM is configured.
+    _enforce_rate_limit(_generate_rate_limiter, current_player_id(), "case generation")
 
     # case_type names a template file and ends up inside the generated case id
     # (a future path component) — it must be a known template, nothing else.

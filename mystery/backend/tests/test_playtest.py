@@ -21,7 +21,10 @@ FORBIDDEN_KEYS = [
 ]
 
 @pytest.fixture(autouse=True)
-def setup_golden_case():
+def setup_golden_case(monkeypatch):
+    # These are operator/playtest-only surfaces, gated behind MYSTERY_PLAYTEST_MODE
+    # (see test_playtest_gating.py for the gate itself) — enable it for this file.
+    monkeypatch.setenv("MYSTERY_PLAYTEST_MODE", "true")
     client.post("/api/cases/activate", json={"case_id": "case_001"})
     yield
 

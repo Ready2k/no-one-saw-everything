@@ -45,3 +45,23 @@ phase's scope. Each entry says where it lives and why it was deferred.
 - **Distinct authored baselines for generated (`gen_*`) cases** — the generator
   reuses the template's baseline manners; per-identity manners would need a
   generation phase.
+
+## Ops (Phase 5 follow-ups)
+
+- **Shipped case data and mutable/generated data share one directory**
+  (`app/data/`: `case_001..007`, `templates/`, `sessions/`, `telemetry/`,
+  `gen_*` generated cases, and `llm_settings.json` all live side by side).
+  The Docker volume therefore has to mount the whole directory to persist
+  investigations, which means a rebuilt image with new/updated shipped cases
+  does not reach an existing deployment's volume (Docker only seeds an empty
+  volume). Splitting shipped content into a read-only path baked into the
+  image and mutable/generated content into a separate mounted path would fix
+  this cleanly, but touches `case_store.py`'s `DATA_DIR` resolution broadly
+  enough that it warranted its own pass rather than folding into ops
+  hardening. See `docs/deployment.md`.
+- **`docker compose up --build` was not run in this environment** (no Docker
+  daemon available in the sandbox this work was done in — CLI present,
+  nothing to talk to). The Dockerfiles/compose were validated statically
+  (`docker compose config`, path/COPY-source checks, `.dockerignore` added to
+  prevent host `node_modules`/`.venv` leaking into the images) but need a
+  real build-and-run pass before being trusted for a production cutover.

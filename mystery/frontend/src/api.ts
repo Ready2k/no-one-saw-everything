@@ -314,6 +314,14 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+  // Re-run discovery/test against whatever is already saved server-side —
+  // the client is never given the real api_key back, so it cannot resend it.
+  discoverSavedLlmModels: () =>
+    request<{ models: string[]; error: string | null }>("/api/llm-settings/models/saved", {
+      method: "POST",
+    }),
+  testSavedLlm: () =>
+    request<LlmTestResult>("/api/llm-settings/test/saved", { method: "POST" }),
   getPlaytestSummary: () => request<PlaytestSummary>("/api/session/playtest-summary"),
   getPlaytestExport: () => request<any>("/api/session/playtest-export"),
   submitFeedback: (payload: Feedback) => request<{ status: string }>("/api/session/feedback", {
