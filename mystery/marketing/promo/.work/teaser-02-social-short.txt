@@ -1,0 +1,6 @@
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/short_01.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/short_02.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/short_03.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/short_04.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/short_05.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/short_06.mp4'
