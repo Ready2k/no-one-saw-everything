@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEscapeToClose } from "../useEscapeToClose";
 
 interface Detective101ModalProps {
   onClose: () => void;
@@ -597,6 +598,7 @@ const SECTIONS: Section[] = [
 ];
 
 export default function Detective101Modal({ onClose }: Detective101ModalProps) {
+  useEscapeToClose(onClose);
   const [sectionId, setSectionId] = useState(SECTIONS[0].id);
   const active = SECTIONS.find((s) => s.id === sectionId) ?? SECTIONS[0];
 
@@ -632,6 +634,7 @@ export default function Detective101Modal({ onClose }: Detective101ModalProps) {
               <button
                 key={s.id}
                 className={s.id === sectionId ? "manual-toc-item active" : "manual-toc-item"}
+                aria-current={s.id === sectionId ? "page" : undefined}
                 onClick={() => setSectionId(s.id)}
               >
                 <span className="manual-toc-icon">{s.icon}</span>

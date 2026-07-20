@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import type { LlmSettingsResponse, LlmProbeResult, LlmTestResult } from "../types";
+import { useEscapeToClose } from "../useEscapeToClose";
 
 interface LlmSettingsModalProps {
   onClose: () => void;
@@ -9,6 +10,7 @@ interface LlmSettingsModalProps {
 type Provider = "fake" | "auto" | "openai_compatible";
 
 export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
+  useEscapeToClose(onClose);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);

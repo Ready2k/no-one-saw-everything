@@ -3,6 +3,19 @@
 Items found during the production-hardening phases that were out of the active
 phase's scope. Each entry says where it lives and why it was deferred.
 
+## UX (Phase 6 follow-ups)
+
+- **Native `alert()`/`confirm()` dialogs** are used for confirmations and
+  errors in `CaseLibraryModal.tsx`, `LandingPage.tsx` (abandon/restart case),
+  `RankBadge.tsx` (clear detective record), and `mapEditor/DevMapEditor.tsx`
+  (unsaved-changes guard). They're unstyled, block the whole page, and read
+  nothing like the rest of the game's presentation. A themed confirm-dialog
+  component would fix this cleanly across all ~9 call sites; deferred because
+  it's a new shared component plus a rewiring pass, bigger than the rest of
+  the accessibility work done in this phase (universal reduced-motion rule,
+  keyboard-equivalent hidden-object search, modal Escape-to-close, ARIA on the
+  accusation dropdown).
+
 ## Correctness / design debt
 
 - **`GET /api/challenge/suggestions?reveal=true` mutates state on a GET**

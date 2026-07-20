@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, lazy, Suspense, useContext, useEffect, useState } from "react";
 import { api } from "./api";
 import type { AgentPublic, CaseOverview, HintsResponse, LocationPublic } from "./types";
 import Intro from "./views/Intro";
@@ -19,8 +19,13 @@ import TopBar from "./components/TopBar";
 import { useToast } from "./components/Toast";
 import { audioManager } from "./audio";
 import { markCaseStarted } from "./progress";
-import DevMapEditor from "./views/DevMapEditor";
-import AmbientTownPreview from "./views/AmbientTownPreview";
+// Dev-only tools (canvas map studio, ambient-town art preview): each is its
+// own separate URL path, mutually exclusive with the actual game, and the
+// map editor alone is ~5000 lines. Lazy-loading them keeps that entire code
+// path out of every player's initial bundle — it only downloads if someone
+// actually navigates to /dev/map-editor or /dev/ambient-town.
+const DevMapEditor = lazy(() => import("./views/DevMapEditor"));
+const AmbientTownPreview = lazy(() => import("./views/AmbientTownPreview"));
 
 export interface World {
   caseOverview: CaseOverview;
@@ -122,14 +127,22 @@ export default function App() {
 
   const isDevMapEditor = currentPath === "/dev/map-editor" || currentPath.endsWith("/dev/map-editor") || window.location.hash === "#/dev/map-editor";
   if (isDevMapEditor) {
-    return <DevMapEditor />;
+    return (
+      <Suspense fallback={<div className="app-loading">Loading map editor…</div>}>
+        <DevMapEditor />
+      </Suspense>
+    );
   }
   const isAmbientTownPreview =
     currentPath === "/dev/ambient-town" ||
     currentPath.endsWith("/dev/ambient-town") ||
     window.location.hash === "#/dev/ambient-town";
   if (isAmbientTownPreview) {
-    return <AmbientTownPreview />;
+    return (
+      <Suspense fallback={<div className="app-loading">Loading preview…</div>}>
+        <AmbientTownPreview />
+      </Suspense>
+    );
   }
 
   const [world, setWorld] = useState<World | null>(null);

@@ -16,6 +16,49 @@
 
 * { box-sizing: border-box; }
 
+/* Visible only to assistive tech / when focused — standard accessible-name pattern. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Universal reduced-motion floor. The stylesheet has ~20 individually authored
+   entrance/beat/tell animations (view transitions, the notebook page-flip
+   sequence, challenge "VS" slams, hotspot pulses, the recording-dot blink...),
+   each with its own hand-placed override below — which is exactly how a few
+   of them ended up NOT overridden (an easy thing to miss one at a time as the
+   stylesheet grows). This is the WCAG-standard backstop: it forces every
+   animation and transition, anywhere, to complete in one near-instant cycle
+   instead of looping or playing out — a real resting state, not a frozen
+   mid-frame, and it catches anything the specific overrides below don't (or
+   won't, for animations authored after this comment). The specific overrides
+   are kept alongside it where they also reset a lingering visual property
+   (opacity/transform) that this alone wouldn't touch. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   margin: 0;
   background:
@@ -2120,6 +2163,30 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
 @keyframes pulse-glint {
   0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
   100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+/* Keyboard-equivalent search target: the mouse finds a hotspot by dragging the
+   lens over it, which has no keyboard equivalent on its own. This sits at the
+   same coordinates, invisible and inert to the mouse (pointer-events: none —
+   dragging/panning through this area is completely unaffected), but a real,
+   focusable, Enter/Space-activatable <button> for keyboard users, with a
+   visible focus ring so a sighted keyboard user can see where they are. */
+.hotspot-kb-target {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 6%;
+  min-height: 6%;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  pointer-events: none;
+  cursor: default;
+}
+.hotspot-kb-target:focus-visible {
+  outline: 3px solid var(--accent, #d8a24a);
+  outline-offset: 2px;
+  background: rgba(216, 162, 74, 0.18);
 }
 
 /* --- Accusation Ceremony --- */

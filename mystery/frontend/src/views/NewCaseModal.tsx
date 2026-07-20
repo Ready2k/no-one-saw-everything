@@ -2,6 +2,7 @@ import { CaseMeta } from "../App";
 import { api } from "../api";
 import { clearCaseStarted } from "../progress";
 import { clearRewindBriefingSeen } from "./RewindIntro";
+import { useEscapeToClose } from "../useEscapeToClose";
 
 interface NewCaseModalProps {
   cases: CaseMeta[];
@@ -12,6 +13,7 @@ interface NewCaseModalProps {
 const introSeenKey = (caseId: string) => `mystery_intro_seen_${caseId}`;
 
 export default function NewCaseModal({ cases, activeCaseId, onClose }: NewCaseModalProps) {
+  useEscapeToClose(onClose);
   const handleSelectCase = async (newCaseId: string) => {
     if (newCaseId === activeCaseId) {
       alert("This case is already active.");

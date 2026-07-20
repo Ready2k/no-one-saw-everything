@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../api";
+import { useEscapeToClose } from "../useEscapeToClose";
 
 interface GenerateCaseModalProps {
   onClose: () => void;
@@ -8,6 +9,7 @@ interface GenerateCaseModalProps {
 }
 
 export default function GenerateCaseModal({ onClose, onSuccess, initialRecipe }: GenerateCaseModalProps) {
+  useEscapeToClose(onClose);
   const [step, setStep] = useState<"config" | "summary">("config");
   const [numSuspects, setNumSuspects] = useState<number>(initialRecipe?.num_suspects ?? 7);
   const [numLocations, setNumLocations] = useState<number>(initialRecipe?.num_locations ?? 8);

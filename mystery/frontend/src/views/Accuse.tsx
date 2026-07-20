@@ -36,6 +36,23 @@ export default function Accuse() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Escape closes the dropdown and returns focus to its trigger — the
+  // standard listbox-popup keyboard contract, and without it a keyboard user
+  // has no way to back out short of tabbing all the way through every
+  // suspect option.
+  const dropdownTriggerRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setDropdownOpen(false);
+        dropdownTriggerRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [dropdownOpen]);
+
   const [motive, setMotive] = useState("");
   const [method, setMethod] = useState("");
   const [opportunity, setOpportunity] = useState("");
@@ -90,11 +107,15 @@ export default function Accuse() {
         </p>
 
         <label className="field">
-          <span>Who killed Marcus Bell?</span>
+          <span id="accuse-suspect-label">Who killed {caseOverview.victim.full_name}?</span>
           <div className="custom-select" ref={dropdownRef} style={{ position: "relative" }}>
             <button
+              ref={dropdownTriggerRef}
               type="button"
               className="custom-select-trigger"
+              aria-haspopup="listbox"
+              aria-expanded={dropdownOpen}
+              aria-labelledby="accuse-suspect-label"
               onClick={() => {
                 sfx.click();
                 setDropdownOpen(!dropdownOpen);
@@ -113,16 +134,19 @@ export default function Accuse() {
               )}
             </button>
             {dropdownOpen && (
-              <div className="custom-select-dropdown panel">
+              <div className="custom-select-dropdown panel" role="listbox" aria-label="Suspects">
                 {living.map((a) => (
                   <button
                     key={a.agent_id}
                     type="button"
+                    role="option"
+                    aria-selected={accused === a.agent_id}
                     className={`custom-select-option ${accused === a.agent_id ? "selected" : ""}`}
                     onClick={() => {
                       sfx.click();
                       setAccused(a.agent_id);
                       setDropdownOpen(false);
+                      dropdownTriggerRef.current?.focus();
                     }}
                   >
                     <Portrait agent={a} size="small" />
