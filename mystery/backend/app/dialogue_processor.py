@@ -112,6 +112,10 @@ def default_small_talk_line(agent: Agent, intent: str) -> str:
         if agent.conflict_avoidance > 0.65:
             return "I'd rather keep things calm than make a show of how I feel."
         return "I don't make a show of it, but today's been hard on everyone."
+    if intent == "how_are_you":
+        if agent.conflict_avoidance > 0.65:
+            return "As well as can be expected, I suppose. I'd rather just get on with it."
+        return "Shaken, if I'm honest. It's not every day something like this happens."
     return "I don't have much to say about that."
 
 

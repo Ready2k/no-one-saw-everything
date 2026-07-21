@@ -91,6 +91,29 @@ def _open_ended_reply(
     )
 
 
+def _record_fallback_and_return(
+    sess, req: FreeTextAskRequest, fallback_resp: FreeTextAskResponse
+) -> FreeTextAskResponse:
+    """A canned deflection (no LLM configured, or nothing grounded to answer
+    with) previously never touched the transcript at all — every other reply
+    path records both sides of the exchange, but this one silently skipped
+    it. That meant a suspect's own conversation history had gaps exactly
+    where the player asked something the engine couldn't answer, which is
+    precisely where a later pronoun follow-up ("when did you last see
+    them?") most needs that history to disambiguate who "them" is."""
+    transcript = sess.transcript_for(req.agent_id)
+    transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
+    transcript.messages.append(
+        InterviewMessage(
+            speaker="agent",
+            text=fallback_resp.fallback_message or "",
+            llm_rewrite_used=False,
+            llm_rewrite_fallback=False,
+        )
+    )
+    return fallback_resp
+
+
 def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse:
     if req.agent_id == case.case.victim_id:
         resp = examine_body(case, sess, req.question)
@@ -105,7 +128,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
     if not any(a.agent_id == req.agent_id for a in case.agents):
         raise HTTPException(404, "No such agent")
 
-    intent = classify_question(req.question, case, sess)
+    intent = classify_question(req.question, case, sess, agent_id=req.agent_id)
     if not intent:
         try:
             intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
@@ -217,7 +240,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
     if intent.intent == "fallback_unknown":
         config = get_llm_config()
         if not config.dialogue_enabled:
-            return fallback_resp
+            return _record_fallback_and_return(sess, req, fallback_resp)
         return _open_ended_reply(case, sess, req, intent)
 
     if intent.intent in ["contradiction", "explicit_challenge"]:
@@ -330,11 +353,11 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
                 # rewrite model is available.
                 if get_llm_config().dialogue_enabled:
                     return _open_ended_reply(case, sess, req, intent)
-                return fallback_resp
+                return _record_fallback_and_return(sess, req, fallback_resp)
     if ask_req.question_type == "location" and not ask_req.topic_location_id:
         if get_llm_config().dialogue_enabled:
             return _open_ended_reply(case, sess, req, intent)
-        return fallback_resp
+        return _record_fallback_and_return(sess, req, fallback_resp)
         
     resp = answer_question(case, sess, ask_req)
     pub_resp = public_ask_response(resp)
