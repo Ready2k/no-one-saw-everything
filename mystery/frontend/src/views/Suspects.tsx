@@ -352,6 +352,7 @@ function InterviewPanel({
     extra: Record<string, string> = {},
     questionText?: string
   ) => {
+    sfx.questionSend();
     setBusy(true);
     setError(null);
     setPendingQuestion(questionText ?? null);
@@ -377,6 +378,7 @@ function InterviewPanel({
   const submitFreeText = async () => {
     if (!freeText.trim()) return;
     const questionText = freeText.trim();
+    sfx.questionSend();
     setBusy(true);
     setError(null);
     setFallbackMsg(null);
@@ -433,6 +435,7 @@ function InterviewPanel({
   /** Spend an action watching them. The backend 409s until there is a fresh
    *  exchange to watch — that refusal is shown to the player as-is. */
   const observeThem = async () => {
+    sfx.evidenceInspect();
     setBusy(true);
     setObserveMsg(null);
     localStorage.setItem(`observe-nudge-seen:${caseOverview.case_id}`, "1");
@@ -450,6 +453,7 @@ function InterviewPanel({
 
   const pinObservation = async () => {
     if (!observation) return;
+    sfx.pencilScratch();
     await api.createNote({
       note_type: "interview",
       title: `Read on ${firstName}`,
@@ -464,6 +468,7 @@ function InterviewPanel({
   /** Pin a strong behavioural read where it becomes evidence-adjacent: on the
    *  suspect's page of the notebook, with the moment it was seen. */
   const pinTell = async (tell: ObservableTell, context?: string) => {
+    sfx.pencilScratch();
     await api.createNote({
       note_type: "interview",
       title: `${firstName}: ${tell.category} tell (${tell.intensity})`,
@@ -477,6 +482,7 @@ function InterviewPanel({
 
   const noteFromAnswer = async () => {
     if (!lastResult) return;
+    sfx.pencilScratch();
     await api.createNote({
       note_type: "interview",
       title: `${agent.full_name}: ${lastResult.answer_text.slice(0, 70)}…`,
@@ -491,6 +497,7 @@ function InterviewPanel({
   };
 
   const revealHint = async () => {
+    sfx.evidenceInspect();
     setBusy(true);
     try {
       const r = await api.challengeSuggestions(agentId, true);
@@ -538,6 +545,7 @@ function InterviewPanel({
     evidenceIds?: string[],
     testimonyIds?: string[]
   ) => {
+    sfx.questionSend();
     setBusy(true);
     setError(null);
     setFallbackMsg(null);
@@ -1217,7 +1225,7 @@ function AutopsyPanel({
   const [sheetFolded, setSheetFolded] = useState(false);
 
   const toggleSheet = () => {
-    sfx.paperSlide();
+    sfx.sheetPull();
     setSheetFolded((f) => !f);
   };
 

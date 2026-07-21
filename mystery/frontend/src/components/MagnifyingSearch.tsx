@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { MapBounds, ClueHotspot } from "../types";
 import CaseAtmosphere from "./CaseAtmosphere";
+import { sfx } from "../sfx";
 
 type SearchTool = "lens" | "raking" | "scale";
 
@@ -293,6 +294,7 @@ export function MagnifyingSearch({
                   className={activeTool === tool.id ? "active" : ""}
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (activeTool !== tool.id) sfx.lensAdjust();
                     setActiveTool(tool.id);
                   }}
                   title={`${tool.readout}. Visual aid only.`}
@@ -309,26 +311,26 @@ export function MagnifyingSearch({
             background: "rgba(0,0,0,0.6)", padding: 4, borderRadius: 6, border: "1px solid rgba(255,255,255,0.2)"
           }}>
             <div />
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, -1); }}>↑</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(0, -1); }}>↑</button>
             <div />
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(-1, 0); }}>←</button>
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); setPanOffset({x:0, y:0}); }}>◎</button>
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(1, 0); }}>→</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(-1, 0); }}>←</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); setPanOffset({x:0, y:0}); }}>◎</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(1, 0); }}>→</button>
             <div />
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, 1); }}>↓</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(0, 1); }}>↓</button>
             <div />
           </div>
 
           <div className="zoom-controls">
             <button
-              onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.max(1, zoomLevel - 0.5)); }}
+              onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); setZoomLevel(Math.max(1, zoomLevel - 0.5)); }}
               disabled={zoomLevel <= 1}
             >
               -
             </button>
             <div className="zoom-level">{zoomLevel.toFixed(1)}x</div>
             <button
-              onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.min(3, zoomLevel + 0.5)); }}
+              onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); setZoomLevel(Math.min(3, zoomLevel + 0.5)); }}
               disabled={zoomLevel >= 3}
             >
               +

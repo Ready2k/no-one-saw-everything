@@ -9,6 +9,7 @@ import EventMarker from "./EventMarker";
 import MapLightOverlay from "./MapLightOverlay";
 import SemanticMapObject from "./SemanticMapObject";
 import CaseAtmosphere from "./CaseAtmosphere";
+import { sfx } from "../sfx";
 
 // Positions are stored in map-image pixels; we place everything with
 // percentages so the map can scale responsively.
@@ -301,6 +302,7 @@ export default function VisualMap({
   const resetView = () => {
     const el = viewportRef.current;
     if (!el) return;
+    sfx.mapSelect();
     smooth.current = true;
     const next = defaultViewForMode(el.clientWidth, el.clientHeight);
     setView(clampView(next.scale, next.tx, next.ty));
@@ -308,6 +310,7 @@ export default function VisualMap({
   const zoomButton = (factor: number) => () => {
     const el = viewportRef.current;
     if (!el) return;
+    sfx.mapSelect();
     const rect = el.getBoundingClientRect();
     zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, factor);
   };
@@ -344,7 +347,7 @@ export default function VisualMap({
         </button>
         <button 
           type="button" 
-          onClick={() => setShowLabels(s => !s)} 
+          onClick={() => { sfx.mapSelect(); setShowLabels(s => !s); }} 
           title={showLabels ? "Hide labels" : "Show labels"}
           style={{ fontSize: '1rem', marginTop: '4px', opacity: showLabels ? 1 : 0.5 }}
         >
@@ -532,7 +535,10 @@ export default function VisualMap({
                     top: pct(labelPos.y, height),
                     transform: `translate(-50%, -50%) scale(${1 / view.scale})`,
                   }}
-                  onClick={() => onSelectLocation(loc.location_id)}
+                  onClick={() => {
+                    sfx.mapSelect();
+                    onSelectLocation(loc.location_id);
+                  }}
                   onMouseEnter={() => setHoveredLocationId(loc.location_id)}
                   onMouseLeave={() =>
                     setHoveredLocationId((prev) => (prev === loc.location_id ? null : prev))
@@ -566,7 +572,10 @@ export default function VisualMap({
                 y={0}
                 zoomCompensation={1 / view.scale}
                 selected={selectedEventId === e.event_id}
-                onClick={() => onSelectEvent(e)}
+                onClick={() => {
+                  sfx.mapSelect();
+                  onSelectEvent(e);
+                }}
               />
             </div>
           );
@@ -590,7 +599,10 @@ export default function VisualMap({
               stale={Number.isFinite(pin.staleMinutes) && pin.staleMinutes > 10}
               lastSeen={pin.lastSeenTime}
               onClick={() => {
-                if (!pin.agent.is_background) onSelectAgent(pin.agent.agent_id);
+                if (!pin.agent.is_background) {
+                  sfx.mapSelect();
+                  onSelectAgent(pin.agent.agent_id);
+                }
               }}
             />
           </div>

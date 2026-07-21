@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import type { ClaimPublic, CluePublic } from "../types";
 import { useUiNav, useWorld } from "../App";
 import { evidenceArt } from "../evidenceArt";
+import { sfx } from "../sfx";
 
 export function ClueCard({ clue, isNew }: { clue: CluePublic; isNew?: boolean }) {
   const { jumpToMap } = useUiNav();
@@ -13,7 +14,14 @@ export function ClueCard({ clue, isNew }: { clue: CluePublic; isNew?: boolean })
   return (
     <div className={`clue-card ${isNew ? "new" : ""}`}>
       {evidenceImage && (
-        <button className="evidence-plate" type="button" onClick={() => setEvidenceOpen(true)}>
+        <button
+          className="evidence-plate"
+          type="button"
+          onClick={() => {
+            sfx.evidenceInspect();
+            setEvidenceOpen(true);
+          }}
+        >
           <img src={evidenceImage} alt="" />
           <span>Examine recovered evidence</span>
         </button>
@@ -27,7 +35,10 @@ export function ClueCard({ clue, isNew }: { clue: CluePublic; isNew?: boolean })
           <button
             className="clue-map-link"
             title="View on the map"
-            onClick={() => jumpToMap({ locationId: mapLocationId, eventId: mapEventId })}
+            onClick={() => {
+              sfx.mapSelect();
+              jumpToMap({ locationId: mapLocationId, eventId: mapEventId });
+            }}
           >
             🗺 map
           </button>
@@ -50,7 +61,7 @@ function EvidenceViewer({ title, imageUrl, onClose }: { title: string; imageUrl:
       <section className="evidence-viewer" role="dialog" aria-modal="true" aria-label={`Examine ${title}`} onClick={(event) => event.stopPropagation()}>
         <div className="evidence-viewer-head">
           <div><span>Evidence examination</span><h3>{title}</h3></div>
-          <button type="button" onClick={onClose}>Close</button>
+          <button type="button" onClick={() => { sfx.click(); onClose(); }}>Close</button>
         </div>
         <div
           className="evidence-viewer-stage"

@@ -213,4 +213,66 @@ export const sfx = {
       q: 0.8,
     });
   },
+
+  lensAdjust() {
+    if (throttled("lensAdjust")) return;
+    if (audioManager.playUi("lens_adjust")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 1500, freqTo: 2200, duration: 0.12, volume: 0.04, type: "triangle" });
+  },
+
+  mapSelect() {
+    if (throttled("mapSelect")) return;
+    if (audioManager.playUi("map_select")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 620, freqTo: 300, duration: 0.12, volume: 0.06, type: "triangle" });
+  },
+
+  sheetPull() {
+    if (throttled("sheetPull")) return;
+    if (audioManager.playUi("sheet_pull")) return;
+    const c = ctx();
+    if (!c) return;
+    noiseSwish(c, {
+      duration: 0.35,
+      volume: 0.05,
+      filter: "bandpass",
+      freqFrom: 900,
+      freqTo: 260,
+      q: 0.7,
+    });
+  },
+
+  evidenceInspect() {
+    if (throttled("evidenceInspect")) return;
+    if (audioManager.playUi("evidence_inspect")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 740, freqTo: 900, duration: 0.18, volume: 0.04, type: "triangle" });
+  },
+
+  questionSend() {
+    if (throttled("questionSend")) return;
+    if (audioManager.playUi("question_send")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 880, freqTo: 440, duration: 0.14, volume: 0.04, type: "triangle" });
+  },
+
+  locationShift() {
+    if (throttled("locationShift")) return;
+    if (audioManager.playUi("location_shift")) return;
+    const c = ctx();
+    if (!c) return;
+    noiseSwish(c, {
+      duration: 0.42,
+      volume: 0.04,
+      filter: "lowpass",
+      freqFrom: 700,
+      freqTo: 140,
+      q: 0.5,
+    });
+  },
 };

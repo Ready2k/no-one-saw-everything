@@ -32,6 +32,12 @@
     "page_turn": "/audio/ui/page_turn.wav",
     "pin_push": "/audio/ui/pin_push.wav",
     "stamp_thunk": "/audio/ui/stamp_thunk.wav",
-    "pencil_scratch": "/audio/ui/pencil_scratch.wav"
+    "pencil_scratch": "/audio/ui/pencil_scratch.wav",
+    "lens_adjust": "/audio/ui/lens_adjust.wav",
+    "map_select": "/audio/ui/map_select.wav",
+    "sheet_pull": "/audio/ui/sheet_pull.wav",
+    "evidence_inspect": "/audio/ui/evidence_inspect.wav",
+    "question_send": "/audio/ui/question_send.wav",
+    "location_shift": "/audio/ui/location_shift.wav"
   }
 }

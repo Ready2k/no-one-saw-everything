@@ -3,6 +3,7 @@ import type { LocationPublic, MapReplayData } from "../types";
 import { cinematicsEnabled } from "../settings";
 import { getMapInfo } from "../map/mapInfo";
 import MapCrop from "./MapCrop";
+import { sfx } from "../sfx";
 
 const TRANSITION_MS = 600; // spec: ≤600ms, always skippable
 
@@ -26,6 +27,7 @@ export default function LocationTransition({
   const [mapData, setMapData] = useState<MapReplayData | null>(null);
 
   useEffect(() => {
+    sfx.locationShift();
     if (!location.illustration) {
       // Usually already cached by an earlier view; a slow first fetch just
       // means the shot shows the name card alone.
