@@ -10,6 +10,17 @@ FRONTEND_LOG="$SCRIPT_DIR/frontend.log"
 BACKEND_PORT="${MYSTERY_API_PORT:-8010}"
 FRONTEND_PORT="${MYSTERY_FRONTEND_PORT:-5179}"
 
+# Do not claim success while pointing a new frontend at some unrelated API
+# already using the default port. This commonly happens when several local
+# worktrees are open at once.
+for port in "$BACKEND_PORT" "$FRONTEND_PORT"; do
+  if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "Port $port is already in use. Choose clean ports, for example:"
+    echo "  MYSTERY_API_PORT=8011 MYSTERY_FRONTEND_PORT=5181 ./start.sh"
+    exit 1
+  fi
+done
+
 # ── Backend ──────────────────────────────────────────────────────────────────
 echo "▶  Starting backend..."
 

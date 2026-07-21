@@ -8,6 +8,7 @@ import AgentSprite from "./AgentSprite";
 import EventMarker from "./EventMarker";
 import MapLightOverlay from "./MapLightOverlay";
 import SemanticMapObject from "./SemanticMapObject";
+import CaseAtmosphere from "./CaseAtmosphere";
 
 // Positions are stored in map-image pixels; we place everything with
 // percentages so the map can scale responsively.
@@ -71,6 +72,7 @@ export default function VisualMap({
   const { width, height } = data.map;
   const isCanonicalOverworld = data.visual?.mode === "canonical_overworld";
   const isCanonicalPilot = data.visual?.mode === "canonical_pilot" || isCanonicalOverworld;
+  const isCaseArt = data.visual?.mode === "case_art";
   const artworkFrameStyle = data.visual?.mode === "canonical_pilot"
     ? {
         left: "33.333%",
@@ -365,7 +367,11 @@ export default function VisualMap({
           <div className="visual-map-image-frame">
             {(() => {
               const tiles = mapImageTiles(data.map, view.scale);
-              const artStyle = isCanonicalPilot ? { filter: "saturate(0.96) brightness(1.08)" } : undefined;
+              const artStyle = isCanonicalPilot
+                ? { filter: "saturate(0.96) brightness(1.08)" }
+                : isCaseArt
+                  ? { filter: "saturate(0.92) brightness(1.16) contrast(0.98)" }
+                  : undefined;
               if (tiles) {
                 return (
                   <div className="visual-map-image" style={artStyle} role="img" aria-label="Village map">
@@ -407,6 +413,7 @@ export default function VisualMap({
                 }}
               />
             )}
+            <CaseAtmosphere caseId={data.case_id} />
           </div>
         </div>
 

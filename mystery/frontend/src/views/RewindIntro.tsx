@@ -54,6 +54,7 @@ const CASE_002_ART = "/art/case_002";
 const CASE_002_INTRO_ART = `${CASE_002_ART}/intro`;
 const CASE_004_ART = "/art/case_004";
 const CASE_004_INTRO_ART = `${CASE_004_ART}/intro`;
+const CASE_005_ART = "/art/case_005";
 const TOWN_INTERIORS = "/art/town/interiors_hd";
 const TOWN_INTERIORS_INTRO = `${TOWN_INTERIORS}/intro`;
 const TOWN_PLACES = "/art/town/places_hd";
@@ -209,6 +210,19 @@ const CASE_004_PLACES: PlaceReconstruction[] = [
   },
 ];
 
+const CASE_005_PLACES: PlaceReconstruction[] = [
+  {
+    id: "case-005-village-alley",
+    displayName: "The Village & Rear Alley",
+    matchedLine: "Hobbs Cafe, the square, and the alley behind it.",
+    exteriorSrc: `${CASE_005_ART}/overhead/village_overhead_dawn.png`,
+    interiorSrc: `${CASE_005_ART}/overhead/rear_alley_overhead_dawn.png`,
+    focus: { x: 48, y: 55 },
+    description:
+      "A wet village waking slowly. Behind the cafe, one narrow service route holds the scene the square could not see.",
+  },
+];
+
 // Auto-advance pacing (ms). Cast and brief wait for the player.
 const TITLE_HOLD = 4200;
 const GLIMPSE_HOLD = 4600;
@@ -283,7 +297,9 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
         ? CASE_001_PLACES
         : c.case_id === "case_004"
           ? CASE_004_PLACES
-          : [];
+          : c.case_id === "case_005"
+            ? CASE_005_PLACES
+            : [];
     for (const place of places) {
       urls.add(place.exteriorSrc);
       urls.add(place.interiorSrc);
@@ -304,7 +320,9 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
           ? CASE_001_PLACES
           : c.case_id === "case_004"
             ? CASE_004_PLACES
-            : [];
+            : c.case_id === "case_005"
+              ? CASE_005_PLACES
+              : [];
       for (const place of places) {
         introBeats.push({ kind: "place-reconstruct", place });
       }

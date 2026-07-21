@@ -108,6 +108,23 @@ export default function AccusationCeremony({
     setStep("complete");
   };
 
+  // The opening card deliberately fills the screen, so give it a few clear
+  // ways forward instead of relying on the small controls in the corner.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (step !== "suspense") return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        skip();
+      } else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        nextStep();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex, steps.length, step]);
+
   const markers = useMemo(() => {
     if (!mapData) return [];
     return markersAt(mapData.events, t);
@@ -140,8 +157,21 @@ export default function AccusationCeremony({
 
       <div className={`ceremony-content step-${step}`}>
         {step === "suspense" && (
-          <div className="ceremony-suspense fade-in">
-            <h1>The truth is revealed...</h1>
+          <div className="ceremony-suspense fade-in" onClick={nextStep}>
+            <div>
+              <p className="ceremony-suspense-kicker">CASE CLOSED</p>
+              <h1>The truth is revealed...</h1>
+              <button
+                className="primary ceremony-suspense-action"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  nextStep();
+                }}
+              >
+                Reveal the case <span aria-hidden="true">▸</span>
+              </button>
+              <p className="ceremony-suspense-hint">Click anywhere to continue · Esc to skip</p>
+            </div>
           </div>
         )}
 

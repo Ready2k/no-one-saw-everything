@@ -372,7 +372,7 @@ def map_replay(
     accusation has been submitted (the reveal gate).
     """
     from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
-    from .town_map import canonical_map_definition, map_config, map_payload
+    from .town_map import map_config, map_definition_for_case, map_payload
 
     case = case_data()
     sess = session()
@@ -380,7 +380,7 @@ def map_replay(
     # Migrated cases use the reusable canonical HD map contract; unmigrated
     # cases preserve the legacy fallback art and coordinates.
     if map_config(case.case.case_id):
-        map_definition = canonical_map_definition()
+        map_definition = map_definition_for_case(case.case.case_id)
         map_asset = map_definition["asset"]
         map_image = map_definition["image"]
         map_width = map_definition["width"]
@@ -446,6 +446,28 @@ def map_replay(
 # Evidence inspection
 # ---------------------------------------------------------------------------
 
+# Case 005's generated location art has deliberate search zones.  These values
+# are percentages within the individual illustration, and are presentation-only:
+# they never make an undiscovered clue visible until the inspection endpoint has
+# authorised it.  Body-specific findings remain in the autopsy flow instead.
+CASE_005_ILLUSTRATION_HOTSPOTS: dict[tuple[str, str], tuple[float, float, float]] = {
+    ("loc_clara_flat", "clue_mortgage_deed"): (47.0, 45.0, 7.0),
+    ("loc_clara_flat", "clue_property_register"): (42.0, 48.0, 7.0),
+    ("loc_clara_flat", "clue_clara_called_owen"): (17.0, 65.0, 6.5),
+    ("loc_clara_flat", "clue_whitfield_is_nobody"): (45.0, 45.0, 6.5),
+    ("loc_clara_flat", "clue_capacity_certificate"): (52.0, 48.0, 6.5),
+    ("loc_rear_alley", "clue_clara_committee_note"): (43.0, 61.0, 7.0),
+    ("loc_rear_alley", "clue_belt_weapon"): (81.0, 75.0, 7.5),
+    ("loc_rear_alley", "clue_staged_fire"): (44.0, 60.0, 6.5),
+    ("loc_owen_house", "clue_owen_ash_boots"): (35.0, 67.0, 7.0),
+    ("loc_owen_house", "clue_col_carried_the_deed"): (17.0, 48.0, 6.5),
+    ("loc_owen_house", "clue_col_cctv_arrival"): (85.0, 68.0, 7.5),
+    ("loc_owen_house", "clue_belt_hook_gap"): (19.0, 42.0, 6.5),
+    ("loc_owen_house", "clue_yard_books"): (18.0, 48.0, 6.5),
+    ("loc_back_lane", "clue_back_lane"): (51.0, 72.0, 8.0),
+    ("loc_hobbs_cafe", "clue_clara_second_page"): (56.0, 53.0, 7.0),
+}
+
 @app.post("/api/inspect")
 def inspect(req: InspectRequest):
     if not req.location_id:
@@ -477,6 +499,11 @@ def inspect(req: InspectRequest):
             
         x = d.x
         y = d.y
+        radius = d.radius if d.radius is not None else 8.0
+        authored_hotspot = CASE_005_ILLUSTRATION_HOTSPOTS.get((req.location_id, clue.clue_id)) \
+            if case.case.case_id == "case_005" else None
+        if authored_hotspot:
+            x, y, radius = authored_hotspot
         if x is None or y is None:
             seed_str = f"{case.case.case_id}:{req.location_id}:{clue.clue_id}"
             digest = hashlib.md5(seed_str.encode("utf-8")).hexdigest()
@@ -487,7 +514,7 @@ def inspect(req: InspectRequest):
             "clue_id": clue.clue_id,
             "x": x,
             "y": y,
-            "radius": d.radius if d.radius is not None else 8.0,
+            "radius": radius,
             "discovery_text": d.discovery_text,
             "title": clue.title,
         })

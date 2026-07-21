@@ -180,8 +180,8 @@ export default function App() {
       audioManager.stopAmbient();
       return;
     }
-    audioManager.playAmbient("investigation");
-  }, [mode, showIntro, tab]);
+    audioManager.playAmbient(world?.caseOverview.case_id === "case_005" ? "case_005_rain" : "investigation");
+  }, [mode, showIntro, tab, world?.caseOverview.case_id]);
 
   useEffect(() => {
     if (!world || mode !== "investigation" || showIntro) return;
