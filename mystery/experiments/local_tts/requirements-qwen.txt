@@ -1,0 +1,8 @@
+# Qwen3-TTS engine (Apache-2.0). CUDA recommended (RTX 2070+); MPS/CPU are
+# unofficial and slow. First use downloads the model from Hugging Face
+# (0.6B CustomVoice ≈ 2.5 GB). Optional: flash-attn on CUDA for less VRAM.
+-r requirements.txt
+qwen-tts
+torch>=2.2
+numpy
+soundfile
