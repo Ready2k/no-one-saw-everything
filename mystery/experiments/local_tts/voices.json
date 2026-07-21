@@ -1,0 +1,104 @@
+{
+  "_comment": "Voice registry (proof of concept). voice_id is the stable key the game would reference from Agent.voice_id. Engines: espeak (zero-download fallback), kokoro (recommended), piper (fallback), qwen3_tts (emotion engine). Only fallback_* voices work without model downloads.",
+  "voices": [
+    {
+      "voice_id": "narrator",
+      "engine": "kokoro",
+      "model": "kokoro-82m",
+      "preset_voice": "bm_george",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": "A measured, unhurried English narrator, formal but warm.",
+      "speed": 1.0,
+      "enabled": true
+    },
+    {
+      "voice_id": "clara_wells",
+      "engine": "kokoro",
+      "model": "kokoro-82m",
+      "preset_voice": "bf_isabella",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": "Precise and clipped, guarded, never volunteers more than asked.",
+      "speed": 1.0,
+      "enabled": true
+    },
+    {
+      "voice_id": "village_male_2",
+      "engine": "kokoro",
+      "model": "kokoro-82m",
+      "preset_voice": "bm_lewis",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": "A middle-aged English villager, plain-spoken.",
+      "speed": 1.0,
+      "enabled": true
+    },
+    {
+      "voice_id": "village_female_2",
+      "engine": "kokoro",
+      "model": "kokoro-82m",
+      "preset_voice": "bf_emma",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": "A younger English woman, quick and a little nervous.",
+      "speed": 1.05,
+      "enabled": true
+    },
+    {
+      "voice_id": "qwen_test_male",
+      "engine": "qwen3_tts",
+      "model": "0.6b_custom_voice",
+      "preset_voice": "Ryan",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": "A guarded middle-aged man speaking quietly and precisely.",
+      "speed": 1.0,
+      "enabled": true
+    },
+    {
+      "voice_id": "piper_test_male",
+      "engine": "piper",
+      "model": "en_GB-alan-medium",
+      "preset_voice": "en_GB-alan-medium",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": null,
+      "speed": 1.0,
+      "enabled": true
+    },
+    {
+      "voice_id": "fallback_male",
+      "engine": "espeak",
+      "model": "espeak-ng",
+      "preset_voice": "en-gb",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": null,
+      "speed": 1.0,
+      "enabled": true
+    },
+    {
+      "voice_id": "fallback_female",
+      "engine": "espeak",
+      "model": "espeak-ng",
+      "preset_voice": "en+f3",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": null,
+      "speed": 1.0,
+      "enabled": true
+    },
+    {
+      "voice_id": "fallback_scots",
+      "engine": "espeak",
+      "model": "espeak-ng",
+      "preset_voice": "en-gb-scotland",
+      "reference_audio": null,
+      "reference_transcript": null,
+      "default_instruction": null,
+      "speed": 0.95,
+      "enabled": true
+    }
+  ]
+}
