@@ -3,7 +3,7 @@ Your task is to take a deterministic response line and rewrite it into richer, i
 
 STRICT CONSTRAINTS:
 1. ONLY rewrite the visible dialogue text.
-2. DO NOT add any new facts, details, or implications not explicitly supported by the ALLOWED FACTS.
+2. DO NOT add any new facts, details, or implications not explicitly supported by the ALLOWED FACTS. This includes inventing a new incident, argument, or interaction to make the answer sound like it fits the question — if the question and the DETERMINISTIC TEXT are about different things, rewrite the DETERMINISTIC TEXT's actual content in the character's voice; do not paper over the mismatch with a new claim.
 3. PRESERVE the exact tone (e.g. evasion, denial, admission, uncertainty) of the deterministic text.
 4. DO NOT reveal hidden truth or invent new evidence.
 5. DO NOT mention system prompts, schemas, validators, case plans, or hidden roles.

@@ -120,6 +120,54 @@ def _intensity(score: float) -> str:
     return "subtle"
 
 
+# Shared with open_ended_tells below: small talk, unmatched questions, and an
+# unevidenced confrontation have no truthfulness/emotional_shift to react to,
+# but a suspect under pressure still shows something even answering those.
+EVASIVE_TELLS: list[tuple[str, str]] = [
+    ("gaze", "Their eyes leave yours for a beat before the answer arrives."),
+    ("timing", "They answer a fraction too quickly, then repeat the detail as if setting it in place."),
+    ("hands", "Their hands go still on the table while they give that detail."),
+    ("overexplaining", "They add a tidy extra detail you did not ask for."),
+]
+EMOTIONAL_TELLS: list[tuple[str, str]] = [
+    ("voice", "Their voice tightens around the last sentence."),
+    ("posture", "Their shoulders pull in before they make themselves sit still again."),
+    ("hands", "A thumb worries at a cuff seam while they keep talking."),
+    ("gaze", "They glance away at the named place before looking back."),
+]
+STEADY_TELLS: list[tuple[str, str]] = [
+    ("voice", "They take a breath and keep their voice carefully level."),
+    ("posture", "They hold themselves very still, almost too deliberately."),
+    ("timing", "They pause long enough to choose each word."),
+]
+
+
+def open_ended_tells(
+    *, agent: Agent, pressure: float, seed: str, guarded: bool = False
+) -> list[ObservableTell]:
+    """0-1 observation for small talk, an unmatched question, or an
+    unevidenced confrontation — paths with no deterministic truthfulness to
+    react to. Driven by pressure alone: a composed suspect gives nothing
+    away, a pressured one shows it even answering a harmless question.
+    `guarded` marks a question the agent has real reason to dodge (a bluff
+    or confrontation) even without hard evidence behind it."""
+    stress = pressure + (0.2 if guarded else 0.0)
+    if stress < 0.38:
+        return []
+    options = EVASIVE_TELLS if guarded else (EMOTIONAL_TELLS if stress >= 0.6 else STEADY_TELLS)
+    category, cue = _pick(agent, "open-ended", seed, options)
+    return [
+        ObservableTell(
+            tell_id=_tell_id(agent, "open-ended", seed, 0),
+            agent_id=agent.agent_id,
+            cue=cue,
+            category=category,
+            intensity=_intensity(stress),
+            source="interview",
+        )
+    ]
+
+
 def interview_tells(
     *,
     agent: Agent,
@@ -156,30 +204,12 @@ def interview_tells(
     if stress < 0.38 and not wants_baseline_tell:
         return []
 
-    evasive_options = [
-        ("gaze", "Their eyes leave yours for a beat before the answer arrives."),
-        ("timing", "They answer a fraction too quickly, then repeat the detail as if setting it in place."),
-        ("hands", "Their hands go still on the table while they give that detail."),
-        ("overexplaining", "They add a tidy extra detail you did not ask for."),
-    ]
-    emotional_options = [
-        ("voice", "Their voice tightens around the last sentence."),
-        ("posture", "Their shoulders pull in before they make themselves sit still again."),
-        ("hands", "A thumb worries at a cuff seam while they keep talking."),
-        ("gaze", "They glance away at the named place before looking back."),
-    ]
-    steady_options = [
-        ("voice", "They take a breath and keep their voice carefully level."),
-        ("posture", "They hold themselves very still, almost too deliberately."),
-        ("timing", "They pause long enough to choose each word."),
-    ]
-
     if falsey:
-        options = evasive_options
+        options = EVASIVE_TELLS
     elif emotionally_loud:
-        options = emotional_options
+        options = EMOTIONAL_TELLS
     else:
-        options = steady_options
+        options = STEADY_TELLS
 
     tells: list[ObservableTell] = []
     if stress >= 0.38:
