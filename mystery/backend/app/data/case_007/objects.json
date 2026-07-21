@@ -1,0 +1,84 @@
+[
+  {
+    "object_id": "obj_owl_doorstop",
+    "name": "Cast-iron owl doorstop",
+    "description": "A heavy cast-iron owl that props the stockroom's alley door open on delivery days. Priya trips over it often enough to know exactly where it lives.",
+    "is_weapon": true,
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_bookshop_back",
+    "access_rules": ["staff"],
+    "touched_by_agent_ids": ["agent_priya", "agent_elias", "agent_marcus"],
+    "last_seen_time": "20:55",
+    "hidden_state": "wiped_clean_and_set_on_wrong_side_of_door",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_notebook_1994",
+    "name": "Elias's 1994 notebook",
+    "description": "One exercise book among forty: the 1994 volume, labelled in Elias's careful hand. The year Thomas Hobbs died and the bill of sale surfaced.",
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_village_square",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_elias", "agent_marcus"],
+    "last_seen_time": "21:01",
+    "hidden_state": "hidden_in_cup_crate_under_cafe_stall",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_bill_of_sale",
+    "name": "Framed bill of sale",
+    "description": "The bill of sale for Hobbs Cafe, dated a month before Thomas Hobbs died, hanging framed in Marcus's study.",
+    "normal_location_id": "loc_marcus_study",
+    "final_location_id": "loc_marcus_study",
+    "access_rules": ["owner"],
+    "touched_by_agent_ids": ["agent_marcus"],
+    "last_seen_time": "19:00",
+    "hidden_state": "recent_letter_folded_behind_frame_backing",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_grey_coat",
+    "name": "Grey wool overcoat",
+    "description": "Marcus's long grey overcoat, worn to the fair against the November cold. Half the village would know that squared-off walk anywhere.",
+    "normal_location_id": "loc_marcus_house",
+    "final_location_id": "loc_village_square",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_marcus"],
+    "last_seen_time": "20:59",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_painted_lantern",
+    "name": "Hand-painted lantern",
+    "description": "A hand-built lantern painted with sweet peas, wrapped in a delivery blanket. Something small is taped inside the little door.",
+    "normal_location_id": "loc_rear_alley",
+    "final_location_id": "loc_village_square",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_ben"],
+    "last_seen_time": "20:49",
+    "hidden_state": "stowed_under_tombola_table",
+    "clue_relevance": "red_herring"
+  },
+  {
+    "object_id": "obj_programme_card",
+    "name": "Ceremony programme",
+    "description": "The fair's ceremony programme, annotated in Elias's hand. Under the nine o'clock reading he has written a title of his own.",
+    "normal_location_id": "loc_elias_house",
+    "final_location_id": "loc_bookshop_back",
+    "access_rules": [],
+    "touched_by_agent_ids": ["agent_elias"],
+    "last_seen_time": "20:52",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_archive_boxes",
+    "name": "Archive boxes",
+    "description": "Elias Grant's donation to the new village archive: forty years of exercise books boxed by year, waiting for shelves in the bookshop stockroom.",
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_bookshop_back",
+    "access_rules": ["staff", "keyholder"],
+    "touched_by_agent_ids": ["agent_elias", "agent_isabella", "agent_priya"],
+    "last_seen_time": "20:52",
+    "clue_relevance": "context"
+  }
+]

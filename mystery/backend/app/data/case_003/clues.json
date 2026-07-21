@@ -1,0 +1,584 @@
+{
+  "clues": [
+    {
+      "clue_id": "clue_solicitor_appointment",
+      "title": "Solicitor appointment card in Elias's pocket",
+      "clue_type": "document",
+      "description": "Found in Elias's coat pocket: a card from Whittle & Cross confirming an 18:30 appointment 're: will amendment, final signature.' Elias had made arrangements to change his will this evening.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_elias_bench"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_elias"
+      ],
+      "linked_object_ids": [
+        "obj_solicitor_appointment"
+      ]
+    },
+    {
+      "clue_id": "clue_elias_notebook",
+      "title": "'Nadia will not be pleased'",
+      "clue_type": "document",
+      "description": "Elias's notebook, yesterday's entry: 'Called W&C — 18:30 appointment confirmed. Nadia will not be pleased, but it is my estate and not the clinic's to decide.' He was removing the clinic from his will — and he knew Nadia would object.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_elias_bench"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_elias"
+      ],
+      "linked_object_ids": [
+        "obj_elias_notebook"
+      ]
+    },
+    {
+      "clue_id": "clue_clinic_bequest_letter",
+      "title": "Original bequest — clinic as beneficiary",
+      "clue_type": "document",
+      "description": "In the clinic filing cabinet: a letter from Elias two years ago directing his cottage estate to the clinic fund on his death. Nadia's initials mark the file — she was involved in establishing this arrangement.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clinic"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_elias"
+      ],
+      "linked_object_ids": [
+        "obj_clinic_bequest_letter"
+      ]
+    },
+    {
+      "clue_id": "clue_dispensary_log_altered",
+      "title": "Dispensary log — altered digoxin entry",
+      "clue_type": "physical_evidence",
+      "description": "Monday's dispensary log shows a digoxin entry crossed out and rewritten in different ink — the surrounding entries are all in Nadia's usual blue biro; the correction uses black. The rewritten dosage is lower than what was originally recorded.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clinic_dispensary"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_means"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_object_ids": [
+        "obj_dispensary_log"
+      ]
+    },
+    {
+      "clue_id": "clue_extra_capsules",
+      "title": "Two unknown capsules in the pill organiser",
+      "clue_type": "physical_evidence",
+      "description": "The pill organiser recovered from under the bench: the Tuesday afternoon compartment contains two pale yellow capsules among Elias's usual white tablets. His prescription is for white digoxin 0.125mg tablets. The colour mismatch is obvious, and the pale capsules appear to be a higher-dose formulation.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_elias_bench",
+        "required_prior_clue_ids": [
+          "clue_nadia_pill_handoff"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_means",
+        "conc_method"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_object_ids": [
+        "obj_pill_bottle"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_pill_handoff",
+      "title": "Nadia handed Elias the pills at 17:05",
+      "clue_type": "witness_statement",
+      "description": "Ruth saw Nadia cross the square at 17:05 and give Elias something small from her hand. Elias took it with his tea. Ruth thought nothing of it — it was Nadia's routine.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ruth",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_ruth"
+      ],
+      "linked_event_ids": [
+        "ev_0705_nadia_checks_elias"
+      ]
+    },
+    {
+      "clue_id": "clue_ruth_pill_sighting",
+      "title": "Ruth saw Elias take the pills",
+      "clue_type": "witness_statement",
+      "description": "Ruth specifically recalls watching Elias swallow the pills — he tipped his head back and drank from his flask straight after. She thought it sweet that the nurse looked after him personally.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ruth",
+        "question_type": "evidence",
+        "required_prior_clue_ids": [
+          "clue_nadia_pill_handoff"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_ruth",
+        "agent_elias",
+        "agent_nadia"
+      ],
+      "linked_event_ids": [
+        "ev_0705_nadia_checks_elias"
+      ]
+    },
+    {
+      "clue_id": "clue_ruth_elias_wave",
+      "title": "Elias was healthy at 17:00",
+      "clue_type": "witness_statement",
+      "description": "Ruth passed Elias at 17:00 — he waved his flask at her in his usual greeting. He was perfectly alert. He died within twenty-one minutes of Nadia's visit.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ruth",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_ruth"
+      ],
+      "linked_event_ids": [
+        "ev_0700_ruth_round"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_posture",
+      "title": "Elias's hand on his chest at 17:15",
+      "clue_type": "observation",
+      "description": "Ben passed the bench at 17:15 and noticed Elias had one hand pressed to his chest. Elias's posture had changed — he was leaning rather than sitting upright. Ben assumed he was evening chill.",
+      "strength": "weak",
+      "reliability": 0.65,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_method"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_elias"
+      ],
+      "linked_event_ids": [
+        "ev_0715_ben_round"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_budget_notes",
+      "title": "Nadia's estate budget projections",
+      "clue_type": "document",
+      "description": "Hidden in a locked drawer in the clinic: Nadia's personal notebook. A page at the back is headed 'Estate update — Elias', followed by projected clinic renovations and equipment purchases, all funded by the expected bequest — the amounts run into six figures. Below them, in her own hand: the dates she has already stood up in front of the trust and the district board and promised the new treatment room. She has put her name to it. If the money vanishes, so does her standing.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clinic",
+        "required_prior_clue_ids": [
+          "clue_clinic_bequest_letter"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_object_ids": [
+        "obj_nadia_notebook"
+      ]
+    },
+    {
+      "clue_id": "clue_dr_haig_prescription",
+      "title": "Elias's prescription — correct dosage on file",
+      "clue_type": "document",
+      "description": "Dr. Haig's prescription file for Elias Grant: 0.125mg digoxin once daily. Two 0.25mg capsules would deliver four times his safe dose — fatal given his existing cardiac condition.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_dr_haig",
+        "question_type": "evidence"
+      },
+      "supports_conclusion_ids": [
+        "conc_method",
+        "conc_nadia_means"
+      ],
+      "linked_agent_ids": [
+        "agent_dr_haig",
+        "agent_elias"
+      ]
+    },
+    {
+      "clue_id": "clue_clara_slumped_observation",
+      "title": "Elias appeared to be asleep at 17:30",
+      "clue_type": "observation",
+      "description": "Clara noticed from the cafe window at 17:30 that Elias looked oddly slumped on his bench. She assumed he'd dozed off — he often did on warm afternoons. She did not go out to check.",
+      "strength": "weak",
+      "reliability": 0.7,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_clara",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_method"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_elias"
+      ],
+      "linked_event_ids": [
+        "ev_0730_clara_opens"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_complaint_letter",
+      "title": "Elias's complaint letter about Ben",
+      "clue_type": "document",
+      "description": "A draft complaint in Elias's coat says Ben forged delivery signatures and left clinic supplies unattended. Elias planned to give it to Ben's depot manager after the solicitor appointment unless Ben apologised in writing. Losing the route would cost Ben his job.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_elias_bench"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_elias"
+      ],
+      "linked_object_ids": [
+        "obj_ben_complaint_letter"
+      ]
+    },
+    {
+      "clue_id": "clue_clara_ben_argument",
+      "title": "Clara saw Ben argue with Elias",
+      "clue_type": "witness_statement",
+      "description": "Clara saw Ben stop at Elias's bench at 16:44. She could not hear every word, but Ben looked upset and Elias tapped a folded letter against his knee before Ben walked away.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_clara",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_ben",
+        "agent_elias"
+      ],
+      "linked_event_ids": [
+        "ev_0644_ben_argument"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_clinic_delivery",
+      "title": "Ben entered the clinic frontage before Nadia opened",
+      "clue_type": "witness_statement",
+      "description": "Clara saw Ben slip into the clinic doorway with a delivery pouch at 16:48, just before Nadia opened the waiting room. This gives Ben a suspicious-looking connection to the clinic, though not to the locked dispensary.",
+      "strength": "medium",
+      "reliability": 0.75,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_clara",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_ben"
+      ],
+      "linked_event_ids": [
+        "ev_0648_ben_clinic_delivery"
+      ]
+    },
+    {
+      "clue_id": "clue_clinic_delivery_manifest",
+      "title": "Ben never signed into the dispensary",
+      "clue_type": "document",
+      "description": "The clinic delivery manifest confirms Ben dropped a sealed pouch at reception at 16:48. The locked dispensary sign-in sheet has no entry for him, and the dispensary door log shows only Nadia's access before 17:05.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clinic",
+        "required_prior_clue_ids": [
+          "clue_ben_clinic_delivery"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_nadia"
+      ],
+      "linked_object_ids": [
+        "obj_clinic_delivery_manifest"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_alibi",
+      "title": "Ben's round is corroborated",
+      "clue_type": "witness_statement",
+      "description": "Ben's delivery receipts, timestamped by three separate shopkeepers, place him away from the clinic after 16:50 and at the square only briefly at 17:15 — too late to have tampered with the pills after Nadia brought the organiser out from the locked dispensary.",
+      "strength": "strong",
+      "reliability": 0.9,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_ben"
+      ]
+    },
+    {
+      "clue_id": "clue_dispensary_cabinet_log",
+      "title": "Controlled-drugs cabinet — signed out at 16:30",
+      "clue_type": "physical_evidence",
+      "description": "The dispensary's controlled-drugs cabinet keeps its own book, separate from the dispensing log — every opening is signed and timed by the key-holder. Tuesday, 16:30: two digoxin 0.25mg capsules drawn, signed 'N. Cole'. There is no patient on the clinic list prescribed 0.25mg. Nadia holds the only key, and she signed for the exact capsules found in Elias's Tuesday compartment.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clinic_dispensary",
+        "required_prior_clue_ids": [
+          "clue_dispensary_log_altered"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_nadia_means",
+        "conc_nadia_opportunity",
+        "conc_nadia_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia"
+      ],
+      "linked_object_ids": [
+        "obj_dispensary_log"
+      ],
+      "linked_location_ids": [
+        "loc_clinic_dispensary"
+      ]
+    },
+    {
+      "clue_id": "clue_haig_practice_debt",
+      "title": "The practice runs on the bequest too",
+      "clue_type": "document",
+      "description": "The clinic's accounts, in Dr. Haig's hand: the practice is running at a loss and the five-year plan is underwritten entirely by 'the Grant legacy'. Haig is a partner, not a salaried GP. If Elias's estate went elsewhere, it was not only the treatment room that vanished — it was Haig's practice.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clinic"
+      },
+      "supports_conclusion_ids": [
+        "conc_haig_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_dr_haig"
+      ],
+      "linked_location_ids": [
+        "loc_clinic"
+      ]
+    },
+    {
+      "clue_id": "clue_haig_county_surgery",
+      "title": "Haig was at the county surgery",
+      "clue_type": "witness_statement",
+      "description": "Dr. Haig attends this clinic at 19:00, two days a week. On Tuesday afternoon he was at the county surgery forty minutes away, running a list of eleven patients until 18:30 — timed, initialled, and witnessed by a receptionist and eleven people who were sitting in front of him. He was not in the village when Elias died.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_dr_haig"
+      },
+      "supports_conclusion_ids": [
+        "conc_haig_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_dr_haig"
+      ]
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "conc_nadia_motive",
+      "type": "motive",
+      "summary": "Elias had directed his cottage estate to the clinic in his will — an arrangement Nadia managed and depended on. He was changing it this afternoon. Nadia's budget projections show how much she had invested in this bequest.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_solicitor_appointment",
+        "clue_elias_notebook",
+        "clue_clinic_bequest_letter",
+        "clue_nadia_budget_notes"
+      ]
+    },
+    {
+      "conclusion_id": "conc_nadia_means",
+      "type": "means",
+      "summary": "Nadia had access to and knowledge of digoxin, prepared Elias's pills unsupervised, and falsified the dispensary log to conceal the overdose.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_dispensary_log_altered",
+        "clue_extra_capsules",
+        "clue_dr_haig_prescription"
+      ]
+    },
+    {
+      "conclusion_id": "conc_nadia_opportunity",
+      "type": "opportunity",
+      "summary": "Nadia was the last person to see Elias alive. She handed him the pill organiser at 17:05. He was healthy at 17:00 and dead by 17:21 — entirely within Nadia's window of contact.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_nadia_pill_handoff",
+        "clue_ruth_pill_sighting",
+        "clue_ruth_elias_wave"
+      ]
+    },
+    {
+      "conclusion_id": "conc_method",
+      "type": "method",
+      "summary": "Elias died of digoxin overdose at 17:21. The extra capsules in the pill organiser were not his prescription. His collapse followed Nadia's pill handoff by sixteen minutes.",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_extra_capsules",
+        "clue_dr_haig_prescription",
+        "clue_ben_posture",
+        "clue_clara_slumped_observation"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_red_herring",
+      "type": "red_herring",
+      "summary": "Ben had an immediate job-threatening conflict with Elias over forged delivery signatures, and he briefly entered the clinic frontage before Nadia opened. Suspicious on the surface.",
+      "target_agent_id": "agent_ben",
+      "supported_by_clue_ids": [
+        "clue_ben_complaint_letter",
+        "clue_clara_ben_argument",
+        "clue_ben_clinic_delivery"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_innocent",
+      "type": "innocence_anchor",
+      "summary": "Ben had motive and a brief clinic-frontage visit, but the manifest and dispensary sign-in clear him: he never entered the locked dispensary, and his receipts account for him after Nadia brought out the organiser.",
+      "target_agent_id": "agent_ben",
+      "supported_by_clue_ids": [
+        "clue_ben_alibi",
+        "clue_clinic_delivery_manifest"
+      ]
+    },
+    {
+      "conclusion_id": "conc_nadia_false_alibi",
+      "type": "false_alibi",
+      "summary": "Nadia's account is that she simply followed her routine. But she signed two 0.25mg capsules out of the controlled-drugs cabinet at 16:30 for a patient who does not exist, altered the dispensing log to hide the draw, and then carried the organiser to Elias herself.",
+      "target_agent_id": "agent_nadia",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_dispensary_cabinet_log",
+        "clue_dispensary_log_altered",
+        "clue_extra_capsules",
+        "clue_nadia_pill_handoff"
+      ]
+    },
+    {
+      "conclusion_id": "conc_haig_red_herring",
+      "type": "red_herring",
+      "summary": "Dr. Haig is a partner in a clinic running at a loss against the Grant legacy, and he holds a dispensary key. Elias's change of will would have cost him his practice.",
+      "target_agent_id": "agent_dr_haig",
+      "supported_by_clue_ids": [
+        "clue_haig_practice_debt",
+        "clue_dr_haig_prescription"
+      ]
+    },
+    {
+      "conclusion_id": "conc_haig_innocent",
+      "type": "innocence_anchor",
+      "summary": "Haig was running a patient list at the county surgery, forty minutes away, until 18:30.",
+      "target_agent_id": "agent_dr_haig",
+      "supported_by_clue_ids": [
+        "clue_haig_county_surgery"
+      ]
+    }
+  ]
+}

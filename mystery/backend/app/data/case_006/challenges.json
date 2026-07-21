@@ -1,0 +1,119 @@
+[
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_home_all_evening",
+    "evidence_clue_ids": [
+      "clue_ruth_visit_evening"
+    ],
+    "outcome": "reframe",
+    "response_text": "I did go to Marcus's house. In the early evening. I had a registered letter he hadn't collected. I left it inside using my key and came straight back. That was around six. I was home by half six.",
+    "emotional_shift": "adjusted",
+    "pressure_delta": 0.15,
+    "sets_claim_status": "reframed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ruth_letter_visit",
+        "summary": "Ruth now claims she visited Marcus at 18:00 to leave a registered letter, not for a confrontation.",
+        "claim_type": "statement",
+        "truthfulness": "false"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_vial_harmless",
+    "evidence_clue_ids": [
+      "clue_vial_in_ash",
+      "clue_foxglove_harvest"
+    ],
+    "outcome": "deflect",
+    "response_text": "I make plant waters. I told you. Foxglove flowers are beautiful — I wasn't extracting poison. This is speculation.",
+    "emotional_shift": "controlled",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_vial_harmless",
+    "evidence_clue_ids": [
+      "clue_vial_in_ash",
+      "clue_pharmacy_book",
+      "clue_foxglove_harvest",
+      "clue_cocoa_residue"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "You have a book and a vial and a mug. That is circumstantial. I had a key to his house — yes. I grow foxgloves — yes. But knowing how something might be done is not the same as doing it.",
+    "emotional_shift": "fighting_hard",
+    "pressure_delta": 0.4,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_home_all_evening",
+    "evidence_clue_ids": [
+      "clue_birth_certificate",
+      "clue_whittle_Ruth_reference",
+      "clue_vial_in_ash",
+      "clue_cocoa_residue"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "He had the certificate all along. I thought... I thought he'd destroyed his copy years ago. He kept it. Hidden in a book, like a pressed flower. And he still couldn't bring himself to say it out loud. He called me 'the postwoman' to his solicitor. After everything. You have what you need. I'm not going to make this easier for you.",
+    "emotional_shift": "hollow_defeat",
+    "pressure_delta": 0.7,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ruth_implicit_admission",
+        "summary": "Ruth acknowledges the birth certificate, Marcus's knowledge of their relationship, and her sense of grievance — an implicit admission without confession.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_home_all_evening",
+    "evidence_clue_ids": [
+      "clue_birth_certificate",
+      "clue_ruth_key"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "Henry Bell was my father.\n\nHe was not married to my mother, and so I was not a Bell, and so I was not anything. Marcus was four years old when I was born and he lived in that house and I lived in a rented room in Pikelet Row with a woman who cleaned it.\n\nDo you know what I have done for thirty-one years? I have carried that family's post up that path. Every morning. Rain, ice, the lot. Registered letters, solicitors' letters, birthday cards from people who were allowed to be related to him. And he would come to the door in his dressing gown and he would say — every single time, thirty-one years — 'Morning, Mrs Calder.'\n\nMrs Calder.\n\nHe was not a cruel man. That is what nobody will print. He was not cruel, he simply never once wondered. It costs a person nothing to never wonder.\n\nSo when Whittle's letter went through my hands — and it did go through my hands, that is what the post is — and I saw he was signing the whole of it over to a nephew in Carlisle who came at Christmas, I thought: no. Not this. I have been patient in a way that would frighten you.\n\nThe foxgloves are from my own garden. I grew them from seed. I have been growing them for years, detective, and I want you to understand that I did not grow them for this — I grew them because they are beautiful and they came up every June and I liked them.\n\nAnd then one June I looked at them and I thought: well.\n\nYou can put the cuffs on now. I have got my coat.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ruth_confession",
+        "summary": "Ruth admits she is Henry Bell's daughter and Marcus's half-sister, that she let herself into his house with her own key, and that she poisoned his cocoa with foxglove extract she grew herself.",
+        "claim_type": "statement",
+        "time_reference": "18:30",
+        "location_reference_id": "loc_marcus_house",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ruth",
+    "challenged_claim_id": "claim_ruth_vial_harmless",
+    "evidence_clue_ids": [
+      "clue_vial_in_ash",
+      "clue_birth_certificate"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "Henry Bell was my father.\n\nHe was not married to my mother, and so I was not a Bell, and so I was not anything. Marcus was four years old when I was born and he lived in that house and I lived in a rented room in Pikelet Row with a woman who cleaned it.\n\nDo you know what I have done for thirty-one years? I have carried that family's post up that path. Every morning. Rain, ice, the lot. Registered letters, solicitors' letters, birthday cards from people who were allowed to be related to him. And he would come to the door in his dressing gown and he would say — every single time, thirty-one years — 'Morning, Mrs Calder.'\n\nMrs Calder.\n\nHe was not a cruel man. That is what nobody will print. He was not cruel, he simply never once wondered. It costs a person nothing to never wonder.\n\nSo when Whittle's letter went through my hands — and it did go through my hands, that is what the post is — and I saw he was signing the whole of it over to a nephew in Carlisle who came at Christmas, I thought: no. Not this. I have been patient in a way that would frighten you.\n\nThe foxgloves are from my own garden. I grew them from seed. I have been growing them for years, detective, and I want you to understand that I did not grow them for this — I grew them because they are beautiful and they came up every June and I liked them.\n\nAnd then one June I looked at them and I thought: well.\n\nYou can put the cuffs on now. I have got my coat.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ruth_confession",
+        "summary": "Ruth admits she is Henry Bell's daughter and Marcus's half-sister, that she let herself into his house with her own key, and that she poisoned his cocoa with foxglove extract she grew herself.",
+        "claim_type": "statement",
+        "time_reference": "18:30",
+        "location_reference_id": "loc_marcus_house",
+        "truthfulness": "true"
+      }
+    ]
+  }
+]

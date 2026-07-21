@@ -3,78 +3,105 @@
 
 {% block content %}
 <style>
-  :root { --blue: #1d5089; --blue-light: #ebf3fb; --border: #e3e3e0; --text: #222; --sub: #888; --bg: #fafaf8; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  :root {
+    --primary: rgba(29, 80, 137, 1);
+    --primary-hover: rgba(22, 64, 110, 1);
+    --bg: #f4f6f8;
+    --surface: rgba(255, 255, 255, 0.75);
+    --border: rgba(255, 255, 255, 0.6);
+    --text: #222;
+    --sub: #666;
+    --shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+    --backdrop: blur(12px);
+    --radius: 16px;
+    --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
   *, *::before, *::after { box-sizing: border-box; }
-  body { background: var(--bg); }
+  body { 
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    margin: 0;
+    min-height: 100vh;
+  }
 
-  .sl-wrap  { max-width: 1100px; margin: 24px auto; padding: 0 16px; font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-  .sl-top   { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
-  .sl-h1    { font-size: 22px; font-weight: 500; margin: 0; }
+  .sl-wrap  { max-width: 1100px; margin: 24px auto; padding: 20px 16px; }
+  .sl-top   { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; }
+  .sl-h1    { font-size: 24px; font-weight: 600; margin: 0; }
   .sl-sub   { font-size: 14px; color: var(--sub); margin: 0; flex: 1; }
-  .sl-btn   { padding: 7px 16px; border: none; border-radius: 8px; background: var(--blue); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
-  .sl-btn:hover { background: #16406e; }
-  .sl-btn-sec { background: #fff; color: var(--blue); border: 1px solid var(--blue); }
-  .sl-btn-sec:hover { background: var(--blue-light); }
+  .sl-btn   { padding: 8px 18px; border: none; border-radius: 8px; background: var(--primary); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: var(--transition); }
+  .sl-btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(29, 80, 137, 0.2); }
+  .sl-btn-sec { background: rgba(255, 255, 255, 0.8); color: var(--text); border: 1px solid rgba(0,0,0,0.1); }
+  .sl-btn-sec:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-  .sl-back  { font-size: 13px; color: var(--blue); text-decoration: none; margin-bottom: 12px; display: inline-block; }
-  .sl-back:hover { text-decoration: underline; }
+  .sl-back  { 
+      display: inline-flex; align-items: center; margin-bottom: 25px; color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; transition: var(--transition); padding: 6px 12px; border-radius: 20px; background: rgba(29, 80, 137, 0.05); 
+  }
+  .sl-back:hover { background: rgba(29, 80, 137, 0.1); transform: translateX(-2px); }
 
   /* Card grid */
-  .sl-grid  { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-  .sl-card  { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; }
-  .sl-card-hdr { display: flex; align-items: center; gap: 10px; }
-  .sl-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .sl-name   { font-size: 15px; font-weight: 500; }
-  .sl-age    { font-size: 12px; color: var(--sub); }
-  .sl-traits { font-size: 12px; color: #555; font-style: italic; }
-  .sl-bio    { font-size: 13px; color: #444; line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
-  .sl-card-actions { display: flex; gap: 8px; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
-  .sl-card-actions button { font-size: 12px; padding: 4px 12px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: #fff; color: #444; }
-  .sl-card-actions .edit-btn  { color: var(--blue); border-color: var(--blue); }
-  .sl-card-actions .edit-btn:hover  { background: var(--blue-light); }
-  .sl-card-actions .dupe-btn:hover  { background: #f5f5f5; }
-  .sl-card-actions .del-btn   { color: #c0392b; border-color: #c0392b; }
-  .sl-card-actions .del-btn:hover   { background: #fff5f5; }
+  .sl-grid  { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .sl-card  { 
+      background: var(--surface); backdrop-filter: var(--backdrop); -webkit-backdrop-filter: var(--backdrop); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition);
+  }
+  .sl-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: rgba(255,255,255,0.8); }
+  .sl-card-hdr { display: flex; align-items: center; gap: 12px; }
+  .sl-avatar { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #457fca); color: #fff; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(29, 80, 137, 0.2); }
+  .sl-name   { font-size: 16px; font-weight: 600; }
+  .sl-age    { font-size: 13px; color: var(--sub); }
+  .sl-traits { font-size: 13px; color: #555; font-style: italic; }
+  .sl-bio    { font-size: 13px; color: #444; line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+  .sl-card-actions { display: flex; gap: 8px; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .sl-card-actions button { flex: 1; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); background: rgba(255, 255, 255, 0.7); color: #444; transition: var(--transition); font-family: inherit; }
+  .sl-card-actions .edit-btn  { color: var(--primary); border-color: rgba(29, 80, 137, 0.3); }
+  .sl-card-actions .edit-btn:hover  { background: var(--primary); color: white; }
+  .sl-card-actions .dupe-btn:hover  { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  .sl-card-actions .del-btn   { color: #d32f2f; border-color: rgba(211, 47, 47, 0.3); }
+  .sl-card-actions .del-btn:hover   { background: #d32f2f; color: white; }
 
   /* Empty state */
-  .sl-empty { text-align: center; padding: 60px 20px; color: var(--sub); font-size: 15px; }
-  .sl-empty h3 { font-size: 18px; font-weight: 400; color: #aaa; margin-bottom: 8px; }
+  .sl-empty { text-align: center; padding: 60px 20px; color: var(--sub); font-size: 15px; background: rgba(255,255,255,0.4); border-radius: 16px; border: 1px dashed var(--border); }
+  .sl-empty h3 { font-size: 18px; font-weight: 500; color: #888; margin-bottom: 12px; }
 
-  /* Edit / Create panel (inline drawer below the card) */
-  .sl-form-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; }
-  .sl-form-wrap h2 { font-size: 16px; font-weight: 500; margin: 0 0 14px; }
-  .sl-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
-  .sl-field { margin-bottom: 12px; }
-  .sl-field label { font-size: 12px; color: var(--sub); display: block; margin-bottom: 3px; }
+  /* Edit / Create panel */
+  .sl-form-wrap { background: var(--surface); backdrop-filter: var(--backdrop); -webkit-backdrop-filter: var(--backdrop); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; margin-bottom: 24px; box-shadow: var(--shadow); }
+  .sl-form-wrap h2 { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+  .sl-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .sl-field { margin-bottom: 16px; }
+  .sl-field label { font-size: 13px; font-weight: 500; color: var(--sub); display: block; margin-bottom: 6px; }
   .sl-field input, .sl-field textarea, .sl-field select {
-    width: 100%; border: 1px solid #ccc; border-radius: 6px;
-    padding: 6px 10px; font-size: 13px; font-family: inherit; }
-  .sl-field textarea { min-height: 62px; resize: vertical; }
-  .sl-field input[type=number] { width: 90px; }
+    width: 100%; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;
+    padding: 10px 12px; font-size: 14px; font-family: inherit; background: rgba(255, 255, 255, 0.9); transition: var(--transition); }
+  .sl-field input:focus, .sl-field textarea:focus, .sl-field select:focus {
+    outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(29, 80, 137, 0.15); background: #fff;
+  }
+  .sl-field textarea { min-height: 80px; resize: vertical; }
   .sl-field.full { grid-column: 1 / -1; }
-  .sl-form-actions { display: flex; gap: 10px; margin-top: 6px; align-items: center; }
-  .sl-msg { font-size: 13px; color: #2a7a2a; }
-  .sl-err { font-size: 13px; color: #c0392b; }
+  .sl-form-actions { display: flex; gap: 12px; margin-top: 10px; align-items: center; }
+  .sl-msg { font-size: 14px; font-weight: 500; color: #2e7d32; }
+  .sl-err { font-size: 14px; font-weight: 500; color: #d32f2f; }
 
   /* Cog section */
-  .sl-cog-toggle { font-size: 12px; color: var(--sub); cursor: pointer; margin: 8px 0 4px; user-select: none; display: flex; align-items: center; gap: 5px; grid-column: 1 / -1; }
-  .sl-cog-toggle:hover { color: #444; }
-  .sl-cog-body { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; grid-column: 1 / -1; margin-bottom: 6px; }
-  .sl-cog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 14px; }
-  .sl-hint { position: relative; display: inline-block; width: 14px; height: 14px; line-height: 14px; text-align: center; border-radius: 50%; background: #e0ddd8; color: #666; font-size: 10px; cursor: default; }
+  .sl-cog-toggle { font-size: 13px; font-weight: 500; color: var(--sub); cursor: pointer; margin: 12px 0 8px; user-select: none; display: flex; align-items: center; gap: 6px; grid-column: 1 / -1; transition: var(--transition); }
+  .sl-cog-toggle:hover { color: var(--primary); }
+  .sl-cog-body { display: none; background: rgba(255,255,255,0.4); border: 1px solid var(--border); border-radius: 12px; padding: 16px; grid-column: 1 / -1; margin-bottom: 10px; }
+  .sl-cog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 16px; }
+  .sl-hint { position: relative; display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 50%; background: rgba(0,0,0,0.1); color: #666; font-size: 11px; cursor: default; }
   .sl-hint::after { content: attr(data-tip); display: none; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
-    background: #333; color: #fff; padding: 5px 8px; border-radius: 4px; font-size: 11px; line-height: 1.3; white-space: nowrap; z-index: 1000; }
+    background: #333; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; line-height: 1.4; white-space: nowrap; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
   .sl-hint:hover::after { display: block; }
 
   /* Import-from-run section */
-  .sl-runs-hdr { font-size: 16px; font-weight: 500; margin: 28px 0 10px; }
-  .sl-runs-list { display: flex; flex-direction: column; gap: 8px; }
-  .sl-run-row { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .sl-run-name { font-size: 13px; font-weight: 500; min-width: 160px; }
-  .sl-run-personas { display: flex; gap: 6px; flex-wrap: wrap; }
-  .sl-import-btn { font-size: 12px; padding: 4px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--blue); background: #fff; color: var(--blue); }
-  .sl-import-btn:hover { background: var(--blue-light); }
-  .sl-import-btn[disabled] { color: #999; border-color: var(--border); cursor: default; background: #f5f5f5; }
+  .sl-runs-hdr { font-size: 18px; font-weight: 600; margin: 36px 0 16px; }
+  .sl-runs-list { display: flex; flex-direction: column; gap: 10px; }
+  .sl-run-row { background: var(--surface); backdrop-filter: var(--backdrop); -webkit-backdrop-filter: var(--backdrop); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: var(--transition); }
+  .sl-run-row:hover { transform: translateX(2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-color: rgba(255,255,255,0.8); }
+  .sl-run-name { font-size: 14px; font-weight: 600; min-width: 180px; }
+  .sl-run-personas { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sl-import-btn { font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 8px; cursor: pointer; border: 1px solid var(--primary); background: rgba(255,255,255,0.8); color: var(--primary); transition: var(--transition); font-family: inherit; }
+  .sl-import-btn:hover { background: var(--primary); color: white; transform: translateY(-1px); box-shadow: 0 2px 6px rgba(29, 80, 137, 0.2); }
+  .sl-import-btn[disabled] { color: #999; border-color: rgba(0,0,0,0.1); cursor: not-allowed; background: rgba(0,0,0,0.05); box-shadow: none; transform: none; }
 </style>
 
 <div class="sl-wrap">
@@ -104,7 +131,13 @@
     {% for p in profiles %}
     <div class="sl-card" id="sl-card-{{ p.slug }}" data-slug="{{ p.slug }}">
       <div class="sl-card-hdr">
-        <div class="sl-avatar">{{ p.name|first }}</div>
+        <div class="sl-avatar">
+          {% if p.image_name %}
+            <img src="{% static 'assets/characters/profile/'|add:p.image_name|add:'.png' %}" alt="{{ p.name }}" style="width:100%; height:100%; border-radius:12px; object-fit:cover;" onerror="this.onerror=null; this.parentNode.innerHTML='{{ p.name|first }}';" />
+          {% else %}
+            {{ p.name|first }}
+          {% endif %}
+        </div>
         <div>
           <div class="sl-name">{{ p.name }}</div>
           <div class="sl-age">{% if p.age %}Age {{ p.age }}{% endif %}{% if p.age and p.lifestyle %} · {% endif %}{{ p.lifestyle|truncatechars:40 }}</div>

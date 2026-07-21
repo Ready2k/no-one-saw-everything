@@ -1,0 +1,142 @@
+"""Render the original the_ville.tmx tilemap to a static PNG.
+
+One-off build tool for the map replay layer: composites the visual tile
+layers (skipping logic/marker layers) and writes a PNG to
+mystery/frontend/public/map/the_ville.png at the tileset's native
+resolution (no resampling — a resize here would smooth the flat-color
+pixel art, and that softness then gets baked in permanently, showing up
+as blur once the frontend's map-replay zoom stretches it further).
+Coordinates used by the game are in the 719x513 reference space; percentage
+-based placement is resolution-independent so this stays in sync regardless
+of the output's actual pixel dimensions.
+
+Usage: python3 mystery/scripts/render_map.py
+"""
+
+from __future__ import annotations
+
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+from PIL import Image
+
+REPO = Path(__file__).resolve().parents[2]
+TMX = REPO / "environment/frontend_server/static_dirs/assets/the_ville/visuals/the_ville.tmx"
+OUT = REPO / "mystery/frontend/public/map/the_ville.png"
+VILLAGE_B = TMX.parent / "map_assets/cute_rpg_word_VXAce/tilesets/CuteRPG_Village_B.png"
+
+VISUAL_LAYERS = [
+    "Bottom Ground",
+    "Exterior Ground",
+    "Exterior Decoration L1",
+    "Exterior Decoration L2",
+    "Interior Ground",
+    "Wall",
+    "Interior Furniture L1",
+    "Interior Furniture L2 ",  # trailing space is in the tmx
+    "Foreground L1",
+    "Foreground L2",
+]
+
+FLIP_H = 0x80000000
+FLIP_V = 0x40000000
+FLIP_D = 0x20000000
+
+
+def main() -> None:
+    root = ET.parse(TMX).getroot()
+    width = int(root.get("width"))
+    height = int(root.get("height"))
+    tile_w = int(root.get("tilewidth"))
+    tile_h = int(root.get("tileheight"))
+
+    # Load tilesets: firstgid -> (image, columns)
+    tilesets = []
+    for ts in root.findall("tileset"):
+        img_el = ts.find("image")
+        sheet = Image.open(TMX.parent / img_el.get("source")).convert("RGBA")
+        tilesets.append((int(ts.get("firstgid")), sheet, sheet.width // tile_w))
+    tilesets.sort(key=lambda t: t[0], reverse=True)
+
+    tile_cache: dict[int, Image.Image] = {}
+
+    def tile_image(gid: int) -> Image.Image | None:
+        if gid in tile_cache:
+            return tile_cache[gid]
+        raw = gid & ~(FLIP_H | FLIP_V | FLIP_D)
+        for firstgid, sheet, columns in tilesets:
+            if raw >= firstgid:
+                index = raw - firstgid
+                tx = (index % columns) * tile_w
+                ty = (index // columns) * tile_h
+                tile = sheet.crop((tx, ty, tx + tile_w, ty + tile_h))
+                if gid & FLIP_D:
+                    tile = tile.transpose(Image.Transpose.TRANSPOSE)
+                if gid & FLIP_H:
+                    tile = tile.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+                if gid & FLIP_V:
+                    tile = tile.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+                tile_cache[gid] = tile
+                return tile
+        return None
+
+    canvas = Image.new("RGBA", (width * tile_w, height * tile_h), (24, 26, 33, 255))
+    layers = {l.get("name"): l for l in root.findall("layer")}
+    for name in VISUAL_LAYERS:
+        layer = layers.get(name)
+        if layer is None:
+            print(f"warning: layer {name!r} not found, skipping")
+            continue
+        cells = [int(v) for v in layer.find("data").text.replace("\n", "").split(",")]
+        for i, gid in enumerate(cells):
+            if gid == 0:
+                continue
+            tile = tile_image(gid)
+            if tile is None:
+                continue
+            x = (i % width) * tile_w
+            y = (i // width) * tile_h
+            canvas.paste(tile, (x, y), tile)
+        print(f"composited {name}")
+
+    stamp_village_square(canvas)
+
+    canvas.convert("RGB").save(OUT, optimize=True)
+    print(f"wrote {OUT} ({canvas.width}x{canvas.height})")
+
+
+def stamp_village_square(canvas: Image.Image) -> None:
+    """Add the stone fountain and benches the game's village square describes.
+
+    loc_village_square / loc_fountain promise "a stone fountain, benches",
+    but that patch of the ville plaza is empty ground in the source tilemap,
+    so stamp the sprites from CuteRPG_Village_B onto the render. Positions
+    are map pixels; the arrangement is centred on loc_fountain's marker
+    ((370, 184) in the 719x513 reference space ~= (2305, 1145) here), and
+    loc_fountain's map_bounds in case data / map_layout.py hug it.
+    """
+    sheet = Image.open(VILLAGE_B).convert("RGBA")
+
+    def sprite(box: tuple[int, int, int, int]) -> Image.Image:
+        s = sheet.crop(box)
+        return s.crop(s.getbbox())
+
+    fountain = sprite((448, 160, 512, 224))  # octagonal stone basin, 2x2 tiles
+    bench_front = sprite((352, 192, 416, 224))  # slat-back bench, front view
+    bench_plain = sprite((352, 224, 416, 256))  # backless bench, front view
+    bench_side = sprite((320, 192, 352, 256))  # bench, side view
+
+    overlays = [
+        (fountain, (2273, 1113)),
+        (bench_front, (2277, 1075)),  # north
+        (bench_plain, (2275, 1191)),  # south
+        (bench_side, (2235, 1117)),  # west
+        (bench_side, (2351, 1117)),  # east
+    ]
+    for img, pos in overlays:
+        canvas.alpha_composite(img, pos)
+    print(f"stamped village square ({len(overlays)} sprites)")
+
+
+if __name__ == "__main__":
+    main()

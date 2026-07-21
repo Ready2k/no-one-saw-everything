@@ -1,0 +1,345 @@
+{
+  "version": "living_town_b2_all_cases_v2",
+  "purpose": "Painted B2 town exterior tile fitting cases 001-006 on one living town map. Uses v1 geography as canonical bounds while replacing the wilderness/composite look with an integrated village base.",
+  "base": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_clean.png",
+  "outputs": {
+    "clean": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+    "annotated": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_annotated.png",
+    "interior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior.png",
+    "interior_annotated": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior_annotated.png",
+    "clean_without_fauna": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_clean.png",
+    "fauna": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png"
+  },
+  "tile_size": 32,
+  "grid": {
+    "cols": 64,
+    "rows": 48
+  },
+  "locations": [
+    {
+      "id": "loc_lake",
+      "label": "Lover's Lake",
+      "kind": "zone",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 28,
+      "cases": [
+        "case_004"
+      ]
+    },
+    {
+      "id": "loc_woodland",
+      "label": "Whispering Woodland",
+      "kind": "zone",
+      "x": 0,
+      "y": 28,
+      "w": 10,
+      "h": 20,
+      "cases": [
+        "case_004"
+      ]
+    },
+    {
+      "id": "loc_meadow",
+      "label": "Green Meadow",
+      "kind": "zone",
+      "x": 29,
+      "y": 33,
+      "w": 17,
+      "h": 11,
+      "cases": [
+        "case_004"
+      ]
+    },
+    {
+      "id": "loc_village_square",
+      "label": "Village Square",
+      "kind": "zone",
+      "x": 22,
+      "y": 15,
+      "w": 23,
+      "h": 16,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_004",
+        "case_005",
+        "case_006"
+      ]
+    },
+    {
+      "id": "loc_fountain",
+      "label": "Fountain",
+      "kind": "landmark",
+      "x": 31,
+      "y": 21,
+      "w": 4,
+      "h": 4,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_004",
+        "case_005"
+      ]
+    },
+    {
+      "id": "loc_rear_alley",
+      "label": "Rear Alley",
+      "kind": "zone",
+      "x": 28,
+      "y": 2,
+      "w": 24,
+      "h": 7,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_005"
+      ]
+    },
+    {
+      "id": "loc_bookshop",
+      "label": "Reed & Bell",
+      "x": 16,
+      "y": 8,
+      "w": 10,
+      "h": 9,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_005",
+        "case_006"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/bookshop_small_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_bookshop_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_hobbs_cafe",
+      "label": "Hobbs Cafe",
+      "x": 27,
+      "y": 8,
+      "w": 10,
+      "h": 8,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_005"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/cafe_small_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/hobbs_cafe_b2_native_medium.png"
+    },
+    {
+      "id": "loc_marcus_house",
+      "label": "Marcus House",
+      "x": 39,
+      "y": 7,
+      "w": 11,
+      "h": 9,
+      "cases": [
+        "case_001",
+        "case_006"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/house_large_study_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_marcus_house_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_fishery",
+      "label": "Fishery",
+      "x": 2,
+      "y": 8,
+      "w": 10,
+      "h": 8,
+      "cases": [
+        "case_004"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/fishery_worksite_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_fishery_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_pub",
+      "label": "Mallet & Crown",
+      "x": 8,
+      "y": 18,
+      "w": 13,
+      "h": 11,
+      "cases": [
+        "case_004"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/pub_small_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_pub_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_clinic",
+      "label": "Clinic",
+      "x": 45,
+      "y": 17,
+      "w": 10,
+      "h": 9,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_004",
+        "case_005",
+        "case_006"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/clinic_small_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_clinic_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_owen_house",
+      "label": "Owen Yard",
+      "x": 53,
+      "y": 20,
+      "w": 11,
+      "h": 12,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_004",
+        "case_005"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/house_yard_workshop_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_owen_house_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_ben_flat",
+      "label": "Ben Flat",
+      "x": 6,
+      "y": 35,
+      "w": 9,
+      "h": 10,
+      "cases": [
+        "case_004"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/ben_newsagent_flat_exterior_variant_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_ben_flat_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_priya_flat",
+      "label": "Priya Flat",
+      "x": 16,
+      "y": 34,
+      "w": 10,
+      "h": 9,
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_004",
+        "case_006"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/flats_two_storey_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_priya_flat_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_elias_house",
+      "label": "Elias Cottage",
+      "x": 28,
+      "y": 34,
+      "w": 8,
+      "h": 9,
+      "cases": [
+        "case_001",
+        "case_004"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/cottage_small_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_elias_house_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_solicitors_office",
+      "label": "Solicitors",
+      "x": 40,
+      "y": 35,
+      "w": 10,
+      "h": 9,
+      "cases": [
+        "case_006"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/solicitors_office_small_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_solicitors_office_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_ruth_cottage",
+      "label": "Ruth Cottage",
+      "x": 52,
+      "y": 34,
+      "w": 11,
+      "h": 10,
+      "cases": [
+        "case_006"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/ruth_cottage_foxglove_exterior_variant_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_ruth_cottage_b2_native_stamp.png"
+    },
+    {
+      "id": "loc_nadia_flat",
+      "label": "Nadia Flat",
+      "x": 54,
+      "y": 7,
+      "w": 10,
+      "h": 9,
+      "cases": [
+        "case_001"
+      ],
+      "source_asset": "/art/town/buildings/generated_exteriors_v1/flats_two_storey_v1_exterior_canonical_alpha.png",
+      "b2_stamp_asset": "/art/town/buildings/b2_native_v1/loc_nadia_flat_b2_native_stamp.png"
+    }
+  ],
+  "source_reference": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_generated_source.png",
+  "art_direction_notes": [
+    "V2 is the preferred exterior visual direction: painted as a compact town tile, not buildings stamped onto the blank countryside tile.",
+    "Town square, fountain, rear alley, fishery, lake edge, woodland, meadow/gardens, yards, lanes, lamps, fences, and thresholds are integrated into one painted pass.",
+    "Location bounds remain canonical grid targets for runtime hints, click/zoom regions, and the future B2 interior/cutaway tile; exact roof silhouettes may vary slightly from these boxes.",
+    "V2 bounds were adjusted from the v1 blueprint to match the integrated painted tile more closely.",
+    "Interior V2 is a matched open-roof/cutaway tile at the same camera distance as the exterior, intended for zoom-image swaps rather than per-room HD inspection.",
+    "Surrounding building-bearing tiles A1, A2, A3, B3, C1, and C3 were repainted as V2 siblings to match the centre tile art style, apparent scale, and building treatment. B1 and C2 remain the original landscape tiles for now.",
+    "Fauna pass adds subtle map-scale fish, ridge goats/sheep, and small forest animals. The fauna exterior set is now the default runtime mosaic; non-fauna V2 files remain available as clean baselines."
+  ],
+  "mosaic_v2_tiles": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A1_living_town_v2_fauna.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A2_living_town_v2_fauna.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A3_living_town_v2_fauna.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B1_living_town_v2_fauna.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B3_living_town_v2_fauna.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C1_living_town_v2_fauna.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C2_living_town_v2_fauna.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C3_living_town_v2_fauna.png"
+  },
+  "source_reference_interior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior_generated_source.png",
+  "zoom_pair": {
+    "exterior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+    "interior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_interior.png",
+    "camera": "same 2048x1536 B2 tile framing, same isometric distance, matching location bounds",
+    "intended_runtime_use": "Map Replay/evidence reconstruction zoom-image counterpart for B2 exterior."
+  },
+  "mosaic_v2_tiles_without_fauna": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A1_living_town_v2.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A2_living_town_v2.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_A3_living_town_v2.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B1_living_town_v2_fauna.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_clean.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B3_living_town_v2.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C1_living_town_v2.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C2_living_town_v2_fauna.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C3_living_town_v2.png"
+  },
+  "fauna_pass": {
+    "purpose": "Add living-town wildlife details without changing map geometry.",
+    "details": [
+      "fish glints and ripple rings in sea/lake/stream tiles",
+      "mountain sheep/goats on rocky ridge and cliff tiles",
+      "small deer, foxes, rabbits, and birds in forest/meadow edges"
+    ],
+    "contact_sheet": "/art/town/tiles_3x3_hd/planning/town_overworld_3x3_living_town_v2_fauna_contact.png"
+  },
+  "time_of_day_manifest": "/art/town/tiles_3x3_hd/living_town_v2/time_of_day/time_of_day_manifest.json",
+  "case_state_overlays_manifest": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/case_state_overlays_manifest.json",
+  "ambient_sprites_manifest": "/art/town/tiles_3x3_hd/living_town_v2/ambient_sprites/ambient_sprites_manifest.json",
+  "remastered_master_manifest": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_manifest.json",
+  "remastered_zoom_manifest": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_full_master_remaster_v5_zoom_interior_v8_hobbs_cafe_manifest.json"
+}

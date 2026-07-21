@@ -1,0 +1,108 @@
+[
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_routine",
+    "evidence_clue_ids": [
+      "clue_extra_capsules"
+    ],
+    "outcome": "deflect",
+    "response_text": "Those capsules are not mine. Someone put them there. Ben Carter was in the clinic frontage with a delivery pouch before opening, and Elias was threatening his job. Ask who had a reason to panic.",
+    "emotional_shift": "controlled_alarm",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_log_correction",
+    "evidence_clue_ids": [
+      "clue_dispensary_log_altered",
+      "clue_extra_capsules"
+    ],
+    "outcome": "deflect",
+    "response_text": "A correction in a different ink is not evidence of anything except running out of a pen. Medical records are amended constantly. I corrected a transcription error.",
+    "emotional_shift": "defensive_certainty",
+    "pressure_delta": 0.25,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_accepted_change",
+    "evidence_clue_ids": [
+      "clue_nadia_budget_notes",
+      "clue_solicitor_appointment"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "...I had made plans. Of course I had made plans. Six figures. A new treatment room. Equipment that could save lives. And Elias was going to give it all to a nephew he'd barely spoken to in twenty years because he got sentimental over Christmas. I was devastated. That is not the same as — I did not do this.",
+    "emotional_shift": "raw",
+    "pressure_delta": 0.4,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_nadia_devastated",
+        "summary": "Nadia admits being devastated by Elias's will change but insists it did not drive her to act.",
+        "claim_type": "statement",
+        "truthfulness": "false"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_tamper_deflect",
+    "evidence_clue_ids": [
+      "clue_dispensary_log_altered",
+      "clue_extra_capsules",
+      "clue_dr_haig_prescription"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "You have my logs, my notes, and a dying man's organiser. I know how it looks. I know exactly how it looks. But you cannot prove I put those capsules there. You cannot prove that.",
+    "emotional_shift": "cornered",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_routine",
+    "evidence_clue_ids": [
+      "clue_extra_capsules",
+      "clue_dispensary_log_altered",
+      "clue_nadia_budget_notes"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "Sit down. If you are going to do this, I would rather you did it sitting down.\n\nI have worked in that clinic for eleven years. Eleven years of a broken autoclave and a waiting list and sending people to the county hospital to be seen by a stranger in three months' time. Elias put his name to that bequest himself. He offered. He sat in my chair and he said, Nadia, when I'm gone you'll have your treatment room. And I built everything round it. The five-year plan is in my handwriting.\n\nAnd then a nephew turned up at Christmas. A nephew. Twenty years of nothing and then a card and a visit and suddenly the estate should stay in the family.\n\nSo yes. I drew the digoxin. I wrote the log to cover the draw. I put two capsules in the Tuesday compartment and I carried the organiser out into the square and I put it into his hand.\n\nHe said thank you. He always said thank you.\n\nAnd I stood there and I watched him drink his tea, and I told myself I was doing arithmetic — one old man against everyone who walks through that door for the next thirty years — and the arithmetic was correct, and I would like you to tell me why that is not enough.\n\n...It isn't, is it. I have known that since about four o'clock.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_nadia_confession",
+        "summary": "Nadia admits she drew the digoxin, falsified the dispensary log, loaded two capsules into Elias's Tuesday compartment and handed him the organiser herself.",
+        "claim_type": "statement",
+        "time_reference": "17:05",
+        "location_reference_id": "loc_elias_bench",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_nadia",
+    "challenged_claim_id": "claim_nadia_tamper_deflect",
+    "evidence_clue_ids": [
+      "clue_dispensary_cabinet_log"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "Sit down. If you are going to do this, I would rather you did it sitting down.\n\nI have worked in that clinic for eleven years. Eleven years of a broken autoclave and a waiting list and sending people to the county hospital to be seen by a stranger in three months' time. Elias put his name to that bequest himself. He offered. He sat in my chair and he said, Nadia, when I'm gone you'll have your treatment room. And I built everything round it. The five-year plan is in my handwriting.\n\nAnd then a nephew turned up at Christmas. A nephew. Twenty years of nothing and then a card and a visit and suddenly the estate should stay in the family.\n\nSo yes. I drew the digoxin. I wrote the log to cover the draw. I put two capsules in the Tuesday compartment and I carried the organiser out into the square and I put it into his hand.\n\nHe said thank you. He always said thank you.\n\nAnd I stood there and I watched him drink his tea, and I told myself I was doing arithmetic — one old man against everyone who walks through that door for the next thirty years — and the arithmetic was correct, and I would like you to tell me why that is not enough.\n\n...It isn't, is it. I have known that since about four o'clock.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_nadia_confession",
+        "summary": "Nadia admits she drew the digoxin, falsified the dispensary log, loaded two capsules into Elias's Tuesday compartment and handed him the organiser herself.",
+        "claim_type": "statement",
+        "time_reference": "17:05",
+        "location_reference_id": "loc_elias_bench",
+        "truthfulness": "true"
+      }
+    ]
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "version": "living_town_v2_full_master_remaster_v5_clean_generated",
+  "purpose": "Clean split of the base generated full master map, with no B2 post-compositing. This is the preferred QA candidate after v2-v4 B2 preservation overlays introduced artifacts.",
+  "coordinate_space": {
+    "full_map_width": 6144,
+    "full_map_height": 4608,
+    "tile_width": 2048,
+    "tile_height": 1536,
+    "cols": 3,
+    "rows": 3
+  },
+  "source_generation": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_generated_source.png",
+  "clean_generated_master": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_clean_generated_master.png",
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_clean_generated_contact.png",
+  "tile_urls": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A1_living_town_remaster_v5_clean_generated.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A2_living_town_remaster_v5_clean_generated.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A3_living_town_remaster_v5_clean_generated.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B1_living_town_remaster_v5_clean_generated.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B3_living_town_remaster_v5_clean_generated.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C1_living_town_remaster_v5_clean_generated.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C2_living_town_remaster_v5_clean_generated.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C3_living_town_remaster_v5_clean_generated.png"
+  },
+  "b2_policy": "No post-generation B2 locking is applied in this candidate. The base generated master is kept intact because later B2 compositing passes caused visible artifacts. If exact B2 preservation is mandatory, it should be solved by a new full-map edit/generation pass, not by broad post-compositing.",
+  "runtime_notes": [
+    "This folder is non-destructive and is not promoted into Map Replay by itself.",
+    "Use tile_urls to preview the 3x3 grid rendered from the clean generated master.",
+    "Ambient placements use the same 6144x4608 coordinate space."
+  ]
+}

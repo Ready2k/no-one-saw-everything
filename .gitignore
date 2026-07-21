@@ -106,6 +106,8 @@ ENV/
 environment/frontend_server/storage/Claude_*/
 environment/frontend_server/storage/James_*/
 environment/frontend_server/storage/*-run-*/
+environment/frontend_server/storage/July1*/
+environment/frontend_server/storage/Mu*/
 environment/frontend_server/storage/StopTest_*/
 
 # Launcher runtime state

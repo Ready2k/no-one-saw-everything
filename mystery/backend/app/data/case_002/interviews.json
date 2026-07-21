@@ -1,0 +1,540 @@
+[
+  {
+    "agent_id": "agent_priya",
+    "default_answers": {
+      "alibi": "I was in the stockroom all lunchtime. It was a big delivery — boxes everywhere. I barely came out.",
+      "timeline": "Stockroom from eleven. Sorting, shelving. I didn't hear anything unusual.",
+      "last_seen_victim": "Half twelve, briefly, when she arrived. She went straight to the back. I didn't disturb her.",
+      "relationship": "Isabella gave me everything. This job, this life. I can't believe she's gone.",
+      "evidence": "I don't know what that could mean.",
+      "location": "I don't have much reason to go back there. That's Isabella's space."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "I remember the day we met. I was just looking for a chance, and they took a leap of faith on me. I owe them so much for giving me a start when no one else would.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "She was demanding. Precise. If a shelf was crooked by half an inch, she'd see it from the doorway and make you feel six years old. But she also trusted me with more than anyone ever had. That's the worst of it. She could make you feel chosen and judged in the same breath.",
+        "answer_type": "claim",
+        "truthfulness": "mistaken",
+        "emotional_shift": "controlled",
+        "claims": [
+          {
+            "claim_id": "claim_priya_relationship",
+            "summary": "Priya acknowledges tension with Isabella lately but frames it as ordinary workplace pressure.",
+            "claim_type": "relationship",
+            "truthfulness": "mistaken"
+          }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "I was in the stockroom from eleven until Nadia came through. Sorting the week's delivery on my own — there was a mix-up with the invoice but I got it sorted. I heard Nadia come in and went through to see what was happening. That's when I understood.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "quiet_grief",
+        "claims": [
+          {
+            "claim_id": "claim_priya_stockroom_all_morning",
+            "summary": "Priya claims she was in the stockroom from 11:00 until Nadia arrived at 13:15.",
+            "claim_type": "alibi",
+            "time_reference": "11:00",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "false",
+            "about_agent_id": "agent_priya",
+            "time_to": "13:15"
+          }
+        ],
+        "suggested_followups": [
+          "Did you hear anything from the back room?",
+          "When exactly did you sign the delivery invoice?"
+        ],
+        "reveals_clue_ids": [
+          "clue_priya_stockroom_claim"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "12:30",
+        "time_to": "13:00",
+        "answer_text": "That whole stretch I was in the stockroom. I put some music on quietly — through one earphone, so I could hear if Isabella needed me. She didn't call out. I didn't check on her. I should have.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "regretful",
+        "claims": [
+          {
+            "claim_id": "claim_priya_stockroom_all_morning",
+            "summary": "Priya claims she was in the stockroom from 11:00 until Nadia arrived at 13:15.",
+            "claim_type": "alibi",
+            "time_reference": "11:00",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "false",
+            "about_agent_id": "agent_priya",
+            "time_to": "13:15"
+          }
+        ]
+      },
+      {
+        "question_type": "last_seen_victim",
+        "answer_text": "She came in around half twelve — earlier than usual. She said good morning and went through to the back. She sounded like herself. Normal. Nothing in her voice that would have told me...anything.",
+        "answer_type": "claim",
+        "truthfulness": "false",
+        "emotional_shift": "careful_sadness",
+        "claims": [
+          {
+            "claim_id": "claim_priya_last_saw_isabella",
+            "summary": "Priya claims she last saw Isabella when she arrived at 12:32 and heard nothing further.",
+            "claim_type": "sighting",
+            "time_reference": "12:32",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "false"
+          }
+        ],
+        "suggested_followups": [
+          "Was anything said about documents or the solicitor?"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_forged_document",
+        "answer_text": "That document? Isabella signed it herself. I was there. She was... satisfied with the arrangement. Whoever says otherwise is wrong.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "brittle",
+        "claims": [
+          {
+            "claim_id": "claim_priya_signature_genuine",
+            "summary": "Priya insists Isabella signed the partnership document herself.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_scarf_thread",
+        "answer_text": "My scarf? I wore it this afternoon, it catches on everything in that stockroom — shelves, corners. A thread on a door latch means nothing. I go through that back door all the time for deliveries.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "sharp",
+        "claims": [
+          {
+            "claim_id": "claim_priya_scarf_routine",
+            "summary": "Priya claims the thread on the rear latch is from routine deliveries, not the murder.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_invoice_discrepancy",
+        "answer_text": "The driver left before I got the chance to sign. I went out to catch him and we did it at the van — he must have logged the time wrong on his copy. Happens all the time.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_priya_invoice_explanation",
+            "summary": "Priya says the timestamp mismatch is the driver's error.",
+            "claim_type": "statement",
+            "truthfulness": "false"
+          }
+        ]
+      },
+      {
+        "question_type": "location",
+        "topic_location_id": "loc_bookshop_back",
+        "answer_text": "I didn't go into the back room this afternoon — that was Isabella's private space and she hadn't called for me. I respected that boundary.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "composed",
+        "claims": [
+          {
+            "claim_id": "claim_priya_not_in_back",
+            "summary": "Priya denies entering the bookshop back room this afternoon.",
+            "claim_type": "statement",
+            "location_reference_id": "loc_bookshop_back",
+            "truthfulness": "false",
+            "about_agent_id": "agent_priya",
+            "asserts_presence": false,
+            "time_reference": "12:35",
+            "time_to": "12:50"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_ben_argument_glimpse",
+        "answer_text": "Ben was in the front for seconds. He caught a fragment and built a story around it. Isabella was upset with me, yes, but I never crossed that doorway. People hear one sharp sentence and imagine the rest.",
+        "answer_type": "denial",
+        "truthfulness": "false",
+        "emotional_shift": "frayed"
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_owen",
+    "default_answers": {
+      "alibi": "My yard. All morning. Concrete to pour — doesn't wait for anyone.",
+      "timeline": "Yard from eleven. Danny and Lee were with me until half past one.",
+      "last_seen_victim": "Couple of days ago. She sent me another letter — her solicitor, third reminder. Like I hadn't heard the first two.",
+      "relationship": "She lent me money and enjoyed reminding me of it. I'm not going to pretend it was friendly.",
+      "evidence": "You'd need to be more specific.",
+      "location": "I've got no business at that bookshop."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "We first met over a job. The roof was leaking and I came to patch it. We shook hands on a fair price, and that was the start of a long working relationship. It's a shame how things turned out.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "reflective",
+        "claims": [],
+        "reveals_clue_ids": [],
+        "reveals_memory_ids": [],
+        "suggested_followups": []
+      },
+      {
+        "question_type": "relationship",
+        "answer_text": "She played the benefactor but she watched every penny. The loan wasn't a favour, it was leverage. I was behind on the repayment and she knew it. But I didn't kill her. I shouted at Marcus over money — that didn't end in murder either. Some of us solve things with words.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "defensive",
+        "claims": [
+          {
+            "claim_id": "claim_owen_debt_admitted",
+            "summary": "Owen admits he owed Isabella money and was behind on repayment.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ],
+        "suggested_followups": [
+          "How did you two first meet?"
+        ],
+        "min_ask_count": 0
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "I was pouring a concrete base in my yard from eleven this afternoon. Danny Marsh and Lee Tuck were with me. Concrete sets when it sets — you can't leave it. We finished around half past one. Ask them both.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "steady",
+        "claims": [
+          {
+            "claim_id": "claim_owen_yard",
+            "summary": "Owen was pouring concrete with two workers from 11:00 to approximately 13:30.",
+            "claim_type": "alibi",
+            "time_reference": "11:00",
+            "location_reference_id": "loc_owen_house",
+            "truthfulness": "true",
+            "about_agent_id": "agent_owen",
+            "time_to": "13:30"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_yard_alibi"
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_owen_debt_folder",
+        "answer_text": "Yes, that's my file. She kept everything. Third reminder this week — she was going to hand it to Whittle & Cross today, she said. Nice timing for someone, isn't it. Just not me.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "grim",
+        "reveals_clue_ids": [
+          "clue_owen_yard_alibi"
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_elias",
+    "default_answers": {
+      "alibi": "The bench, as always. Ten-forty until the fuss started.",
+      "timeline": "I can tell you who went where all lunchtime from that bench. My memory's perfectly good.",
+      "last_seen_victim": "Isabella, going into the bookshop around half twelve. Earlier than usual.",
+      "relationship": "Fine woman. Ran a tight ship. She and I never had a cross word.",
+      "evidence": "Ask me something specific.",
+      "location": "I see the square better than anyone."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "12:20",
+        "time_to": "13:00",
+        "answer_text": "Owen was prowling past the bookshop around twenty-five past twelve, waving a bit of paper. He stood at the window for a good ten seconds — I thought he was going to go in. He didn't. Then Isabella arrived at half past, went straight in. Nothing unusual until the carrying-on inside.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "animated",
+        "claims": [
+          {
+            "claim_id": "claim_elias_owen_window",
+            "summary": "Elias says Owen paused at the bookshop window at 12:25 before walking on.",
+            "claim_type": "sighting",
+            "time_reference": "12:25",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "true",
+            "about_agent_id": "agent_owen"
+          },
+          {
+            "claim_id": "claim_elias_isabella_arrival",
+            "summary": "Elias confirms Isabella arrived at 12:32, earlier than her usual time.",
+            "claim_type": "sighting",
+            "time_reference": "12:32",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_owen_bookshop_pass",
+          "clue_isabella_early_arrival"
+        ],
+        "suggested_followups": [
+          "Did you see Priya leave or re-enter the bookshop?"
+        ]
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Bench, ten-forty. I saw Priya arrive at the bookshop at eleven on the dot — she's like a clock, that one. Then the postwoman. Then Owen making a face at the window. Then Isabella. Then nothing until Nadia ran out.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "precise",
+        "claims": [
+          {
+            "claim_id": "claim_elias_morning_account",
+            "summary": "Elias's full lunchtime account: Priya at 11:00, Ruth at 11:10, Owen at 12:25, Isabella at 12:32.",
+            "claim_type": "sighting",
+            "time_reference": "12:32",
+            "location_reference_id": "loc_village_square",
+            "truthfulness": "true"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_nadia",
+    "default_answers": {
+      "alibi": "At the clinic until I went to the bookshop just after one.",
+      "timeline": "Clinic all lunchtime. I stop by the bookshop sometimes to borrow reference books.",
+      "last_seen_victim": "Yesterday, briefly, at the clinic door. She looked distracted.",
+      "relationship": "Neighbours for years. Professional respect.",
+      "evidence": "I can tell you what I observed at the scene.",
+      "location": "I know the back room well — Isabella lets me use her anatomy texts."
+    },
+    "rules": [
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_staged_breakin",
+        "answer_text": "The glass. Yes. I noticed that immediately. When a window is broken from outside, the force carries the shards inward — you get the largest pieces inside. Here it was the reverse: the big fragments were inside. Someone broke that pane from in the room and then tried to make it look like a break-in. Basic physics.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "measured",
+        "reveals_clue_ids": [
+          "clue_staged_breakin"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_nadia_glass_analysis",
+            "summary": "Nadia observes the glass distribution proves the window was broken from the inside.",
+            "claim_type": "statement",
+            "truthfulness": "true"
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_scarf_thread",
+        "answer_text": "The green thread on the door latch — yes, I noticed it before I touched anything. Emerald green. Fine wool. I can't tell you whose it is, but it didn't come from outside.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "precise"
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "12:30",
+        "time_to": "13:15",
+        "answer_text": "I was at the clinic until one-ten. I walked over to borrow a book. Priya said Isabella was in the back. I went through. I wish she'd been right.",
+        "answer_type": "claim",
+        "truthfulness": "true"
+      },
+      {
+        "question_type": "timeline",
+        "answer_text": "Ben Carter? He was here. Quarter to one, near enough — I signed his book myself, it'll be in the goods-in. He stood at that counter complaining about a parcel that had gone to the wrong stack for a good two or three minutes.\n\nSo whatever you think he was doing at twenty to one, he was doing it on the other side of the square from that back room.",
+        "reveals_clue_ids": [
+          "clue_ben_clinic_docket"
+        ],
+        "claims": []
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_ruth",
+    "default_answers": {
+      "alibi": "My round. I do the same streets every morning. I can give you the times.",
+      "timeline": "I'm methodical. I know exactly where I was and when.",
+      "last_seen_victim": "I don't often speak to her. I just deliver the post.",
+      "relationship": "Nothing beyond deliveries. She tips at Christmas.",
+      "evidence": "Tell me what you're looking at.",
+      "location": "I know every house and door on this round."
+    },
+    "rules": [
+      {
+        "question_type": "timeline",
+        "time_from": "11:00",
+        "time_to": "12:00",
+        "answer_text": "I delivered to the bookshop at eleven-ten. Sealed letter from Whittle & Cross — I remember because it's a solicitor's franking, you notice those. Pushed it through the slot and moved on. Nothing unusual.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "factual",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_letter_time",
+            "summary": "Ruth delivered the Whittle & Cross letter at 11:10, sealed.",
+            "claim_type": "statement",
+            "time_reference": "11:10",
+            "location_reference_id": "loc_bookshop",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_ruth_post_sighting"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "12:35",
+        "time_to": "13:00",
+        "answer_text": "I was back along the rear alley finishing up at about twenty to one. I heard something from the back of the bookshop — a bang, like a chair going over. I thought nothing of it. Then at about ten-to, I noticed the back window was broken and there was a bit of thread on the door latch. Green. I only thought to mention it when the fuss started.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "troubled",
+        "claims": [
+          {
+            "claim_id": "claim_ruth_crash",
+            "summary": "Ruth heard a crash at about 12:40 from the bookshop back room, and later noticed a broken window and green thread on the rear latch.",
+            "claim_type": "sighting",
+            "time_reference": "12:40",
+            "location_reference_id": "loc_rear_alley",
+            "truthfulness": "true"
+          }
+        ],
+        "reveals_clue_ids": [
+          "clue_crash_sound",
+          "clue_scarf_thread"
+        ],
+        "suggested_followups": [
+          "What did the thread look like?",
+          "Was the rear door open or shut?"
+        ]
+      }
+    ]
+  },
+  {
+    "agent_id": "agent_ben",
+    "default_answers": {
+      "alibi": "My round, as per usual. Van by the square from half eleven.",
+      "timeline": "Square, deliveries, van. Same as every day.",
+      "last_seen_victim": "Last proper conversation? Yesterday, when she signed for a parcel.",
+      "relationship": "She was all right to me. Bit cool, but fair.",
+      "evidence": "Couldn't help you there.",
+      "location": "I go everywhere."
+    },
+    "rules": [
+      {
+        "question_type": "relationship",
+        "min_ask_count": 1,
+        "answer_text": "Priya and me? We got into the habit of taking coffee when my round crossed hers. She'd been wound tight all week, talking like one conversation was going to decide the rest of her life. I thought she meant asking Isabella for more responsibility. Maybe I was kidding myself.",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "emotional_shift": "guarded",
+        "claims": [],
+        "reveals_memory_ids": [
+          "mem_ben_priya_restless"
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "12:48",
+        "time_to": "13:05",
+        "answer_text": "Around ten-to I was in the alley for an empty crate and noticed the back pane was broken. Odd — most of the glass was inside, on the sill, not out in the alley where you'd expect it.",
+        "reveals_clue_ids": [
+          "clue_ben_broken_window"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_ben_window",
+            "summary": "Ben noticed the broken bookshop back window at about 12:50, most of the glass fallen inward.",
+            "claim_type": "sighting",
+            "time_reference": "12:50",
+            "location_reference_id": "loc_rear_alley"
+          }
+        ]
+      },
+      {
+        "question_type": "timeline",
+        "time_from": "12:30",
+        "time_to": "12:47",
+        "answer_text": "A couple of minutes before the bang — call it twenty-two to — I stepped into the front shop with a parcel that had landed in the wrong stack. Through the counter door I saw Priya in the back room, right up by Isabella's desk, and Isabella said, proper sharp, 'You do not get to decide this for me.' I left the parcel and got out of there.",
+        "reveals_clue_ids": [
+          "clue_ben_argument_glimpse"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_ben_argument_glimpse",
+            "summary": "Ben saw Priya near Isabella's desk in the back room at about 12:38 and heard Isabella snap at her.",
+            "claim_type": "sighting",
+            "time_reference": "12:38",
+            "location_reference_id": "loc_bookshop_back",
+            "about_agent_id": "agent_priya",
+            "asserts_presence": true
+          }
+        ]
+      },
+      {
+        "question_type": "evidence",
+        "topic_clue_id": "clue_staged_breakin",
+        "answer_text": "The glass? Yeah, now that you ask — there was some in the alley, sure, but the biggest bit was still inside on the sill and there were more jagged pieces in the room than there ought to have been. I remember thinking: if someone smashed their way in, why's the room keeping the worst of it?",
+        "answer_type": "claim",
+        "truthfulness": "true",
+        "reveals_clue_ids": [
+          "clue_staged_breakin"
+        ]
+      },
+      {
+        "question_type": "alibi",
+        "answer_text": "Where was I at twenty to one? ...On the round. Somewhere. I don't clock in and out, mate.\n\nAnd yes — all right — me and Priya. We've been seeing each other. I didn't say because it's nobody's business and because I knew exactly how it'd sound the second I told you what I saw through that door. Which is why I nearly didn't tell you at all, and I've been sick about it since.",
+        "reveals_clue_ids": [
+          "clue_ben_no_alibi"
+        ],
+        "claims": [
+          {
+            "claim_id": "claim_ben_on_the_round",
+            "summary": "Ben says he was 'somewhere on the round' at the time of the murder and admits concealing his relationship with Priya.",
+            "claim_type": "alibi",
+            "time_reference": "12:43",
+            "truthfulness": "true",
+            "about_agent_id": "agent_ben"
+          }
+        ]
+      }
+    ]
+  }
+]

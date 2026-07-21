@@ -1,0 +1,22 @@
+{
+  "case_id": "case_005",
+  "case_type": "cover_up",
+  "title": "The Rear Alley Fire",
+  "status": "locked",
+  "victim_id": "agent_clara",
+  "killer_id": "agent_owen",
+  "motive_summary": "Marcus Bell's estate called in Owen Price's £8,000 debt, and Owen forged a mortgage charging Hobbs Cafe — Clara's home — against it, to save his yard and the four men who worked in it. Clara found the fraud and told him she was going to report it. She had also written him a way out, on a second page he never read.",
+  "method": "strangulation",
+  "weapon_id": "obj_owen_belt",
+  "murder_location_id": "loc_rear_alley",
+  "time_of_death": "07:09",
+  "discovery_time": "07:31",
+  "discovered_by": "agent_ben",
+  "discovery_location_id": "loc_rear_alley",
+  "sim_start_time": "06:00",
+  "murder_window": [
+    "07:00",
+    "07:20"
+  ],
+  "overview_text": "07:31 — Ben Carter, delivering the cafe's linen twenty-one minutes late, finds a fire smouldering in the rear alley behind Hobbs Cafe and Clara Wells dead beside the bins. The fire was lit to destroy something and it failed: the morning was damp and the crates were wet through. Clara was due at that door at seven, as she was every morning of her life. The morning can be rewound from 06:00."
+}

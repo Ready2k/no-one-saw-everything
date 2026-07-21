@@ -1,0 +1,126 @@
+{
+  "manifest_version": "town_asset_manifest_v1",
+  "asset_id": "town_canonical_v1",
+  "source": {
+    "kind": "bespoke_generated_and_cleaned",
+    "generator": "OpenAI image generation",
+    "license": "project-owned generated artwork",
+    "external_assets": false,
+    "notes": "Neutral daylight full overworld base; runtime lighting remains code-driven."
+  },
+  "canvas": {
+    "width": 6144,
+    "height": 4608,
+    "tile_size": 32,
+    "grid": { "cols": 192, "rows": 144 },
+    "origin": "north_west",
+    "note": "Dimensions of the full overworld PNG. It is a 3x3 composition of 64x48 tile cells."
+  },
+  "canonical_world": {
+    "cols": 192,
+    "rows": 144,
+    "tile_size": 32,
+    "width": 6144,
+    "height": 4608,
+    "origin": "north_west",
+    "base_image_placement": "full_world",
+    "world_tile_offset": { "x": 64, "y": 48 },
+    "note": "The saved source of truth (backend/app/data/town/town_layout.json) uses this 192x144 world. The main investigation town remains in the centre 64x48 cell, so previous centre-cell local coordinates still convert to world coordinates by adding world_tile_offset."
+  },
+  "overworld_asset": {
+    "file": "town_canonical_v2_overworld_day.png",
+    "width": 6144,
+    "height": 4608,
+    "cells": {
+      "north_west": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A1_living_town_remaster_v5_clean_generated.png",
+      "north": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A2_living_town_remaster_v5_clean_generated.png",
+      "north_east": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A3_living_town_remaster_v5_clean_generated.png",
+      "west": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B1_living_town_remaster_v5_clean_generated.png",
+      "center": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.png",
+      "east": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B3_living_town_remaster_v5_clean_generated.png",
+      "south_west": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C1_living_town_remaster_v5_clean_generated.png",
+      "south": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C2_living_town_remaster_v5_clean_generated.png",
+      "south_east": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_C3_living_town_remaster_v5_clean_generated.png"
+    },
+    "settlement_cells": ["north_west", "north_east", "south_west"],
+    "landscape_cells": ["north", "west", "east", "south", "south_east"],
+    "interior_variants": {
+      "center_all_cases": "tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png",
+      "center_current": "tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png"
+    },
+    "zoom_swap": {
+      "threshold": 3.2,
+      "center_zoomed_out": "tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.png",
+      "center_zoomed_in": "tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.png"
+    },
+    "settlement_policy": "Only three of the eight surrounding cells contain external-view settlements; no surrounding cell uses cutaway interiors."
+  },
+  "layers": [
+    { "id": "base_terrain", "file": "town_canonical_v2_overworld_day.png", "runtime": "static" },
+    { "id": "legacy_centre_town", "file": "town_canonical_v1_day.png", "runtime": "reference_only" },
+    { "id": "case_004_overlay", "file": "/art/case_004/case_004_overlay_v1.png", "runtime": "case_selected", "status": "intentionally_empty_and_unwired" },
+    { "id": "evidence_markers", "runtime": "visual.object_visuals", "discovery_gated": true },
+    { "id": "runtime_lighting", "runtime": "lightingTint(minutesOfDay)" },
+    { "id": "local_light_overlays", "runtime": "visual.light_overlays", "time_gated": true }
+  ],
+  "local_light_assets": {
+    "light_streetlamp_pool": { "runtime": "css_gradient", "blend": "screen", "purpose": "streetlamp pools after dark" },
+    "light_window_warm": { "runtime": "css_gradient", "blend": "screen", "purpose": "occupied warm house windows" },
+    "light_window_cool": { "runtime": "css_gradient", "blend": "screen", "purpose": "clinic/office after-hours windows" },
+    "light_pub_window_glow": { "runtime": "css_gradient", "blend": "screen", "purpose": "pub frontage while open" },
+    "light_fireplace_glow": { "runtime": "css_gradient", "blend": "screen", "purpose": "interior hearth/emissive props" }
+  },
+  "locations": {
+    "loc_village_square": { "x": 18, "y": 14, "w": 28, "h": 16 },
+    "loc_fountain": { "x": 27, "y": 17, "w": 10, "h": 9 },
+    "loc_pub": { "x": 18, "y": 30, "w": 11, "h": 10 },
+    "loc_ben_flat": { "x": 4, "y": 34, "w": 10, "h": 5 },
+    "loc_priya_flat": { "x": 4, "y": 39, "w": 10, "h": 5 },
+    "loc_elias_house": { "x": 43, "y": 37, "w": 8, "h": 7 },
+    "loc_owen_house": { "x": 53, "y": 34, "w": 6, "h": 13 },
+    "loc_clinic": { "x": 46, "y": 17, "w": 9, "h": 8 }
+  },
+  "location_function_tags": {
+    "loc_village_square": { "display_name": "Village Square", "function_tag": "public_square", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external" },
+    "loc_fountain": { "display_name": "Village Fountain", "function_tag": "fountain", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external" },
+    "loc_elias_bench": { "display_name": "Elias's Bench", "function_tag": "bench", "building_role": "landmark", "case_ids": ["case_003"], "zoom_behavior": "external" },
+    "loc_hobbs_cafe": { "display_name": "Hobbs Cafe", "function_tag": "cafe", "building_role": "business", "case_ids": ["case_001", "case_002", "case_003", "case_005"], "zoom_behavior": "external_to_internal" },
+    "loc_cafe_kitchen": { "display_name": "Cafe Kitchen", "function_tag": "kitchen", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal" },
+    "loc_cafe_storage": { "display_name": "Cafe Storage Room", "function_tag": "storage", "building_role": "service_room", "case_ids": ["case_001"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal" },
+    "loc_clara_flat": { "display_name": "Clara's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_003", "case_005"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal" },
+    "loc_bookshop": { "display_name": "Reed & Bell Bookshop", "function_tag": "bookshop", "building_role": "business", "case_ids": ["case_001", "case_002", "case_005", "case_006"], "zoom_behavior": "external_to_internal" },
+    "loc_bookshop_back": { "display_name": "Bookshop Back Room", "function_tag": "back_office", "building_role": "service_room", "case_ids": ["case_002"], "parent_location_id": "loc_bookshop", "zoom_behavior": "internal" },
+    "loc_rear_alley": { "display_name": "Rear Alley", "function_tag": "service_alley", "building_role": "exterior_service", "case_ids": ["case_001", "case_002", "case_005"], "zoom_behavior": "external" },
+    "loc_clinic": { "display_name": "Village Clinic", "function_tag": "clinic", "building_role": "public_service", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006"], "zoom_behavior": "external_to_internal" },
+    "loc_clinic_dispensary": { "display_name": "Clinic Dispensary", "function_tag": "dispensary", "building_role": "service_room", "case_ids": ["case_003"], "parent_location_id": "loc_clinic", "zoom_behavior": "internal" },
+    "loc_marcus_house": { "display_name": "Marcus Bell's House", "function_tag": "house", "building_role": "residence", "case_ids": ["case_001", "case_006"], "zoom_behavior": "external_to_internal" },
+    "loc_marcus_study": { "display_name": "Marcus's Study", "function_tag": "study", "building_role": "private_room", "case_ids": ["case_006"], "parent_location_id": "loc_marcus_house", "zoom_behavior": "internal" },
+    "loc_owen_house": { "display_name": "Owen Price's House & Yard", "function_tag": "house_and_yard", "building_role": "residence_workyard", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005"], "zoom_behavior": "external_to_internal" },
+    "loc_pub": { "display_name": "The Mallet & Crown", "function_tag": "pub", "building_role": "business", "case_ids": ["case_004"], "zoom_behavior": "external_to_internal" },
+    "loc_ben_flat": { "display_name": "Ben's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_004"], "zoom_behavior": "internal" },
+    "loc_priya_flat": { "display_name": "Priya's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_002", "case_004", "case_006"], "zoom_behavior": "internal" },
+    "loc_nadia_flat": { "display_name": "Nadia's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001"], "zoom_behavior": "internal" },
+    "loc_elias_house": { "display_name": "Elias's Cottage", "function_tag": "cottage", "building_role": "residence", "case_ids": ["case_001", "case_004"], "zoom_behavior": "external_to_internal" },
+    "loc_ruth_cottage": { "display_name": "Ruth's Cottage", "function_tag": "cottage", "building_role": "residence_garden", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal" },
+    "loc_solicitors_office": { "display_name": "Whittle & Cross Solicitors", "function_tag": "solicitors_office", "building_role": "office", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal" },
+    "loc_fishery": { "display_name": "Fishery", "function_tag": "fishery", "building_role": "exterior_worksite", "case_ids": ["case_004"], "zoom_behavior": "external" },
+    "loc_lake": { "display_name": "Lover's Lake", "function_tag": "lake", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external" },
+    "loc_woodland": { "display_name": "Whispering Woodland", "function_tag": "woodland", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external" },
+    "loc_meadow": { "display_name": "Green Meadow", "function_tag": "meadow", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external" }
+  },
+  "case_004": {
+    "overlay_file": "/art/case_004/case_004_overlay_v1.png",
+    "visible_locations": [
+      "loc_village_square",
+      "loc_fountain",
+      "loc_pub",
+      "loc_ben_flat",
+      "loc_priya_flat",
+      "loc_elias_house",
+      "loc_owen_house",
+      "loc_clinic"
+    ],
+    "evidence_render_policy": "existing discovery state only",
+    "object_anchor_source": "backend/app/data/town/town_layout.json"
+  }
+}

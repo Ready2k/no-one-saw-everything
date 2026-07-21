@@ -1,0 +1,4 @@
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/trailer_01.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/trailer_02.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/trailer_03.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/trailer_04.mp4'

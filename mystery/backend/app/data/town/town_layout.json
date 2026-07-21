@@ -1,0 +1,1297 @@
+{
+  "version": "town_layout_editor_v2",
+  "grid": {
+    "cols": 192,
+    "rows": 144,
+    "tile_size": 32
+  },
+  "canonical_locations": {
+    "loc_village_square": {
+      "bounds": {
+        "x": 91.5,
+        "y": 66,
+        "w": 15.5,
+        "h": 14.5
+      },
+      "mode": "exterior",
+      "notes": "Central square plaza",
+      "bounds_internal": {
+        "x": 92,
+        "y": 65.5,
+        "w": 17,
+        "h": 16
+      }
+    },
+    "loc_fountain": {
+      "bounds": {
+        "x": 95,
+        "y": 70,
+        "w": 7,
+        "h": 6
+      },
+      "mode": "exterior",
+      "notes": "Fountain",
+      "bounds_internal": {
+        "x": 95.5,
+        "y": 69.5,
+        "w": 6.5,
+        "h": 6
+      }
+    },
+    "loc_marcus_house": {
+      "bounds": {
+        "x": 104.5,
+        "y": 57,
+        "w": 6.5,
+        "h": 3,
+        "rotation": 37
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 106.8,
+        "y": 54.7,
+        "w": 6.2,
+        "h": 7.2,
+        "rotation": -75
+      }
+    },
+    "loc_marcus_study": {
+      "bounds": {
+        "x": 106.5,
+        "y": 55.5,
+        "w": 4,
+        "h": 1.5,
+        "rotation": 36
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 110.5,
+        "y": 56.5,
+        "w": 4,
+        "h": 3,
+        "rotation": 118
+      }
+    },
+    "loc_hobbs_cafe": {
+      "bounds": {
+        "x": 93,
+        "y": 55.5,
+        "w": 7,
+        "h": 8.5,
+        "rotation": -42
+      },
+      "mode": "exterior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 91.3,
+        "y": 59.1,
+        "w": 9.2,
+        "h": 4.8,
+        "rotation": 21.5
+      }
+    },
+    "loc_cafe_kitchen": {
+      "bounds": {
+        "x": 94.5,
+        "y": 58.5,
+        "w": 3.5,
+        "h": 2.5,
+        "rotation": 48
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 93.5,
+        "y": 57.4,
+        "w": 7,
+        "h": 2,
+        "rotation": 21
+      }
+    },
+    "loc_cafe_storage": {
+      "bounds": {
+        "x": 100.5,
+        "y": 56.5,
+        "w": 2,
+        "h": 5,
+        "rotation": 67
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 100.9,
+        "y": 54.5,
+        "w": 5.5,
+        "h": 3.5,
+        "rotation": -57.5
+      }
+    },
+    "loc_clinic": {
+      "bounds": {
+        "x": 110.4,
+        "y": 65.5,
+        "w": 8.2,
+        "h": 8.5,
+        "rotation": 6.5
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 111,
+        "y": 65.5,
+        "w": 6.5,
+        "h": 6.5,
+        "rotation": 2
+      }
+    },
+    "loc_clinic_dispensary": {
+      "bounds": {
+        "x": 112.5,
+        "y": 67.5,
+        "w": 4,
+        "h": 5,
+        "rotation": 93
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 111,
+        "y": 67,
+        "w": 6,
+        "h": 3.5,
+        "rotation": 1
+      }
+    },
+    "loc_bookshop": {
+      "bounds": {
+        "x": 81.7,
+        "y": 59.9,
+        "w": 5,
+        "h": 4,
+        "rotation": 18
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 81.8,
+        "y": 57.6,
+        "w": 6,
+        "h": 7,
+        "rotation": 26
+      }
+    },
+    "loc_bookshop_back": {
+      "bounds": {
+        "x": 111.5,
+        "y": 60.5,
+        "w": 4,
+        "h": 3,
+        "rotation": 35
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 83.5,
+        "y": 58.5,
+        "w": 3.5,
+        "h": 2.5,
+        "rotation": 25
+      }
+    },
+    "loc_rear_alley": {
+      "bounds": {
+        "x": 95.5,
+        "y": 52,
+        "w": 22.5,
+        "h": 2,
+        "rotation": 17
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 104,
+        "y": 53,
+        "w": 13,
+        "h": 1,
+        "rotation": 13
+      }
+    },
+    "loc_pub": {
+      "bounds": {
+        "x": 74,
+        "y": 67.8,
+        "w": 10,
+        "h": 10,
+        "rotation": 29
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 74,
+        "y": 69,
+        "w": 10.5,
+        "h": 8.5,
+        "rotation": 31
+      }
+    },
+    "loc_owen_house": {
+      "bounds": {
+        "x": 119.5,
+        "y": 71,
+        "w": 11.5,
+        "h": 11.5,
+        "rotation": 2
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 119,
+        "y": 71,
+        "w": 12.5,
+        "h": 12.5,
+        "rotation": 4
+      }
+    },
+    "loc_elias_house": {
+      "bounds": {
+        "x": 91,
+        "y": 85,
+        "w": 8,
+        "h": 6.3,
+        "rotation": 29
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 91.6,
+        "y": 84.5,
+        "w": 7,
+        "h": 5,
+        "rotation": 30
+      }
+    },
+    "loc_clara_flat": {
+      "bounds": {
+        "x": 95,
+        "y": 53.5,
+        "w": 6,
+        "h": 4.5,
+        "rotation": 32
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 94.1,
+        "y": 49.5,
+        "w": 8,
+        "h": 5.5,
+        "rotation": 21
+      }
+    },
+    "loc_ben_flat": {
+      "bounds": {
+        "x": 67.4,
+        "y": 83.9,
+        "w": 8,
+        "h": 9.5,
+        "rotation": 13
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 68.6,
+        "y": 84.5,
+        "w": 5,
+        "h": 5,
+        "rotation": 25
+      }
+    },
+    "loc_priya_flat": {
+      "bounds": {
+        "x": 77.5,
+        "y": 83.3,
+        "w": 9.5,
+        "h": 8.5
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 77.6,
+        "y": 83.1,
+        "w": 8.8,
+        "h": 5.7,
+        "rotation": 1
+      }
+    },
+    "loc_nadia_flat": {
+      "bounds": {
+        "x": 121,
+        "y": 56,
+        "w": 6,
+        "h": 4.5,
+        "rotation": 36
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 119.5,
+        "y": 56.5,
+        "w": 8.5,
+        "h": 6,
+        "rotation": 15
+      }
+    },
+    "loc_ruth_cottage": {
+      "bounds": {
+        "x": 119.5,
+        "y": 85.5,
+        "w": 8.5,
+        "h": 8,
+        "rotation": 27
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 119.3,
+        "y": 85.6,
+        "w": 8.8,
+        "h": 8.5,
+        "rotation": 27.5
+      }
+    },
+    "loc_solicitors_office": {
+      "bounds": {
+        "x": 106.5,
+        "y": 86,
+        "w": 9,
+        "h": 6.5,
+        "rotation": 26
+      },
+      "mode": "interior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 107.6,
+        "y": 85.9,
+        "w": 6.5,
+        "h": 6.2,
+        "rotation": 21
+      }
+    },
+    "loc_elias_bench": {
+      "bounds": {
+        "x": 88.5,
+        "y": 72,
+        "w": 3,
+        "h": 2,
+        "rotation": -55
+      },
+      "mode": "exterior",
+      "notes": "",
+      "bounds_internal": {
+        "x": 88.5,
+        "y": 72.5,
+        "w": 3,
+        "h": 1.5,
+        "rotation": -60.5
+      }
+    },
+    "loc_fishery": {
+      "bounds": {
+        "x": 63,
+        "y": 59,
+        "w": 12,
+        "h": 8
+      },
+      "mode": "exterior",
+      "notes": "Fishery",
+      "bounds_internal": {
+        "x": 63,
+        "y": 59,
+        "w": 11,
+        "h": 7
+      }
+    },
+    "loc_lake": {
+      "bounds": {
+        "x": 15,
+        "y": 47,
+        "w": 47,
+        "h": 33
+      },
+      "mode": "exterior",
+      "notes": "Lover's Lake",
+      "bounds_internal": {
+        "x": 6,
+        "y": 48,
+        "w": 56,
+        "h": 33
+      }
+    },
+    "loc_woodland": {
+      "bounds": {
+        "x": 121,
+        "y": 104,
+        "w": 71,
+        "h": 39
+      },
+      "mode": "exterior",
+      "notes": "Whispering Woodland",
+      "bounds_internal": {
+        "x": 117,
+        "y": 96,
+        "w": 62,
+        "h": 48
+      }
+    },
+    "loc_meadow": {
+      "bounds": {
+        "x": 71,
+        "y": 97,
+        "w": 38,
+        "h": 47
+      },
+      "mode": "exterior",
+      "notes": "Green Meadow",
+      "bounds_internal": {
+        "x": 70,
+        "y": 97,
+        "w": 39,
+        "h": 46
+      }
+    },
+    "loc_back_lane": {
+      "bounds": {
+        "x": 121,
+        "y": 67,
+        "w": 12,
+        "h": 2
+      },
+      "mode": "exterior",
+      "notes": "Rutted service lane between Owen's yard and the rear alley.",
+      "bounds_internal": {
+        "x": 122,
+        "y": 65,
+        "w": 12,
+        "h": 2
+      }
+    }
+  },
+  "case_overrides": {
+    "case_004": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_pub",
+        "loc_ben_flat",
+        "loc_priya_flat",
+        "loc_elias_house",
+        "loc_owen_house",
+        "loc_clinic",
+        "loc_fishery",
+        "loc_lake",
+        "loc_woodland",
+        "loc_meadow"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_fountain_stone": {
+          "location_id": "loc_fountain",
+          "anchor": {
+            "x": 101,
+            "y": 73
+          },
+          "semantic_asset_id": "obj_fountain_coping_stone",
+          "render_policy": "discovery_gated"
+        },
+        "obj_mud_bootprint": {
+          "location_id": "loc_fountain",
+          "anchor": {
+            "x": 100,
+            "y": 74.5
+          },
+          "semantic_asset_id": "obj_muddy_bootprint",
+          "render_policy": "discovery_gated"
+        },
+        "obj_fred_lighter": {
+          "location_id": "loc_fountain",
+          "anchor": {
+            "x": 99.5,
+            "y": 73.2
+          },
+          "semantic_asset_id": "obj_pub_lighter",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_owen_pub_receipt": {
+          "location_id": "loc_fountain",
+          "anchor": {
+            "x": 100.6,
+            "y": 72.8
+          },
+          "semantic_asset_id": "obj_pub_receipt",
+          "render_policy": "discovery_gated"
+        },
+        "obj_pub_ledger": {
+          "location_id": "loc_pub",
+          "anchor": {
+            "x": 79,
+            "y": 72
+          },
+          "semantic_asset_id": "obj_pub_ledger",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_blackmail_letters": {
+          "location_id": "loc_ben_flat",
+          "anchor": {
+            "x": 70.5,
+            "y": 87
+          },
+          "semantic_asset_id": "obj_blackmail_letters",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_arson_clipping": {
+          "location_id": "loc_ben_flat",
+          "anchor": {
+            "x": 71.5,
+            "y": 87.2
+          },
+          "semantic_asset_id": "obj_arson_clipping",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_ben_phone": {
+          "location_id": "loc_ben_flat",
+          "anchor": {
+            "x": 72.5,
+            "y": 88
+          },
+          "semantic_asset_id": "obj_phone",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_ben_jacket_mud": {
+          "location_id": "loc_ben_flat",
+          "anchor": {
+            "x": 71.2,
+            "y": 89
+          },
+          "semantic_asset_id": "obj_muddy_jacket",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    },
+    "case_001": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_elias_bench",
+        "loc_hobbs_cafe",
+        "loc_cafe_kitchen",
+        "loc_cafe_storage",
+        "loc_rear_alley",
+        "loc_bookshop",
+        "loc_clinic",
+        "loc_marcus_house",
+        "loc_marcus_study",
+        "loc_owen_house",
+        "loc_clara_flat",
+        "loc_priya_flat",
+        "loc_nadia_flat",
+        "loc_elias_house"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_isabella_note": {
+          "location_id": "loc_cafe_storage",
+          "anchor": {
+            "x": 101.2,
+            "y": 58.400000000000006
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_till_weight": {
+          "location_id": "loc_cafe_kitchen",
+          "anchor": {
+            "x": 96,
+            "y": 60
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_blue_coat": {
+          "location_id": "loc_cafe_kitchen",
+          "anchor": {
+            "x": 95.5,
+            "y": 59.5
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_ledger_page": {
+          "location_id": "loc_cafe_storage",
+          "anchor": {
+            "x": 101.8,
+            "y": 58.599999999999994
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_loan_ledger": {
+          "location_id": "loc_marcus_study",
+          "anchor": {
+            "x": 108.5,
+            "y": 56.25
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_partnership_letter": {
+          "location_id": "loc_cafe_storage",
+          "anchor": {
+            "x": 102.4,
+            "y": 58.3
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    },
+    "case_002": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_elias_bench",
+        "loc_bookshop",
+        "loc_bookshop_back",
+        "loc_rear_alley",
+        "loc_hobbs_cafe",
+        "loc_clinic",
+        "loc_owen_house",
+        "loc_priya_flat"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_letter_opener": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 114.3,
+            "y": 62.9
+          },
+          "semantic_asset_id": "obj_letter_opener",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_forged_document": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 113.8,
+            "y": 62.3
+          },
+          "semantic_asset_id": "obj_forged_document",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_broken_window_glass": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 114.9,
+            "y": 61.8
+          },
+          "semantic_asset_id": "obj_broken_window",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_priya_scarf": {
+          "location_id": "loc_bookshop",
+          "anchor": {
+            "x": 85.6,
+            "y": 61.8
+          },
+          "semantic_asset_id": "obj_priya_scarf",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_solicitor_letter": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 113.5,
+            "y": 63.1
+          },
+          "semantic_asset_id": "obj_solicitor_letter",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_owen_debt_folder": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 114,
+            "y": 63.5
+          },
+          "semantic_asset_id": "obj_owen_debt_folder",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_stockroom_invoice": {
+          "location_id": "loc_bookshop",
+          "anchor": {
+            "x": 86.4,
+            "y": 62.5
+          },
+          "semantic_asset_id": "obj_delivery_invoice",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    },
+    "case_003": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_clinic",
+        "loc_clinic_dispensary",
+        "loc_fountain",
+        "loc_hobbs_cafe",
+        "loc_owen_house",
+        "loc_clara_flat",
+        "loc_elias_bench"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_pill_bottle": {
+          "location_id": "loc_elias_bench",
+          "anchor": {
+            "x": 89.7,
+            "y": 73.3
+          },
+          "semantic_asset_id": "obj_pill_organiser",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_dispensary_log": {
+          "location_id": "loc_clinic_dispensary",
+          "anchor": {
+            "x": 113.8,
+            "y": 68.7
+          },
+          "semantic_asset_id": "obj_dispensary_log",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_solicitor_appointment": {
+          "location_id": "loc_elias_bench",
+          "anchor": {
+            "x": 89.4,
+            "y": 73.1
+          },
+          "semantic_asset_id": "obj_appointment_card",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_clinic_bequest_letter": {
+          "location_id": "loc_clinic",
+          "anchor": {
+            "x": 113.2,
+            "y": 66.5
+          },
+          "semantic_asset_id": "obj_bequest_letter",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_elias_notebook": {
+          "location_id": "loc_elias_bench",
+          "anchor": {
+            "x": 90,
+            "y": 73
+          },
+          "semantic_asset_id": "obj_elias_notebook",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_ben_complaint_letter": {
+          "location_id": "loc_elias_bench",
+          "anchor": {
+            "x": 90.2,
+            "y": 73.2
+          },
+          "semantic_asset_id": "obj_complaint_letter",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_clinic_delivery_manifest": {
+          "location_id": "loc_clinic",
+          "anchor": {
+            "x": 114,
+            "y": 65.5
+          },
+          "semantic_asset_id": "obj_delivery_manifest",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_nadia_notebook": {
+          "location_id": "loc_clinic",
+          "anchor": {
+            "x": 112.6,
+            "y": 69.2
+          },
+          "semantic_asset_id": "obj_patient_notes",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    },
+    "case_005": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_rear_alley",
+        "loc_hobbs_cafe",
+        "loc_clara_flat",
+        "loc_owen_house",
+        "loc_clinic",
+        "loc_bookshop",
+        "loc_fountain",
+        "loc_back_lane",
+        "loc_elias_bench"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_owen_belt": {
+          "location_id": "loc_rear_alley",
+          "anchor": {
+            "x": 110.3,
+            "y": 53.4
+          },
+          "semantic_asset_id": "obj_leather_belt",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_mortgage_deed": {
+          "location_id": "loc_clara_flat",
+          "anchor": {
+            "x": 102,
+            "y": 52.2
+          },
+          "semantic_asset_id": "obj_mortgage_deed",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_clara_note": {
+          "location_id": "loc_rear_alley",
+          "anchor": {
+            "x": 104.7,
+            "y": 52.4
+          },
+          "semantic_asset_id": "obj_committee_note",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_burn_accelerant": {
+          "location_id": "loc_rear_alley",
+          "anchor": {
+            "x": 110.9,
+            "y": 53.5
+          },
+          "semantic_asset_id": "obj_fire_accelerant",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_col_log": {
+          "location_id": "loc_owen_house",
+          "anchor": {
+            "x": 123.8,
+            "y": 77
+          },
+          "semantic_asset_id": "obj_delivery_log",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_owen_boot_mud": {
+          "location_id": "loc_owen_house",
+          "anchor": {
+            "x": 119.7,
+            "y": 80.5
+          },
+          "semantic_asset_id": "obj_ashy_boots",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_property_register": {
+          "location_id": "loc_clara_flat",
+          "anchor": {
+            "x": 97.3,
+            "y": 53.4
+          },
+          "semantic_asset_id": "obj_property_register",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_clara_notebook": {
+          "location_id": "loc_hobbs_cafe",
+          "anchor": {
+            "x": 93,
+            "y": 61.4
+          },
+          "semantic_asset_id": "obj_clara_notebook",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_yard_books": {
+          "location_id": "loc_owen_house",
+          "anchor": {
+            "x": 123.5,
+            "y": 73.2
+          },
+          "semantic_asset_id": "obj_yard_books",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    },
+    "case_006": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_marcus_house",
+        "loc_marcus_study",
+        "loc_ruth_cottage",
+        "loc_bookshop",
+        "loc_clinic",
+        "loc_solicitors_office",
+        "loc_priya_flat"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_cocoa_mug": {
+          "location_id": "loc_marcus_house",
+          "anchor": {
+            "x": 109.4,
+            "y": 59.8
+          },
+          "semantic_asset_id": "obj_cocoa_mug",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_digitalis_vial": {
+          "location_id": "loc_ruth_cottage",
+          "anchor": {
+            "x": 123.4,
+            "y": 89.6
+          },
+          "semantic_asset_id": "obj_digitalis_vial",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_foxglove_garden": {
+          "location_id": "loc_ruth_cottage",
+          "anchor": {
+            "x": 120.1,
+            "y": 87.4
+          },
+          "semantic_asset_id": "obj_foxglove",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_birth_certificate": {
+          "location_id": "loc_marcus_study",
+          "anchor": {
+            "x": 112.3,
+            "y": 58
+          },
+          "semantic_asset_id": "obj_birth_certificate",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_revised_will": {
+          "location_id": "loc_marcus_study",
+          "anchor": {
+            "x": 110.5,
+            "y": 56.8
+          },
+          "semantic_asset_id": "obj_revised_will",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_burnt_document": {
+          "location_id": "loc_marcus_study",
+          "anchor": {
+            "x": 111.8,
+            "y": 57.7
+          },
+          "semantic_asset_id": "obj_burnt_document",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_elias_memory": {
+          "location_id": "loc_village_square",
+          "anchor": {
+            "x": 91.8,
+            "y": 72.2
+          },
+          "semantic_asset_id": "clue_memory_bell_girl",
+          "render_policy": "debug_only",
+          "external": false
+        },
+        "obj_ruth_key": {
+          "location_id": "loc_ruth_cottage",
+          "anchor": {
+            "x": 122.8,
+            "y": 89
+          },
+          "semantic_asset_id": "obj_spare_key",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    },
+    "case_007": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_elias_bench",
+        "loc_hobbs_cafe",
+        "loc_cafe_kitchen",
+        "loc_rear_alley",
+        "loc_bookshop",
+        "loc_bookshop_back",
+        "loc_clinic",
+        "loc_marcus_house",
+        "loc_marcus_study",
+        "loc_owen_house",
+        "loc_clara_flat",
+        "loc_priya_flat",
+        "loc_nadia_flat",
+        "loc_elias_house"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_owl_doorstop": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 86,
+            "y": 61
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_notebook_1994": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 85,
+            "y": 59
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_archive_boxes": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 86,
+            "y": 60
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_painted_lantern": {
+          "location_id": "loc_rear_alley",
+          "anchor": {
+            "x": 105,
+            "y": 52
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    }
+  },
+  "tile_layers": {
+    "props": {
+      "tiles": []
+    }
+  },
+  "prop_instances": {},
+  "building_instances": [],
+  "lights": {
+    "square_lamp_west": {
+      "location_id": "loc_village_square",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 89.8438,
+      "y": 69.2812,
+      "width": 1.3125,
+      "height": 1.3125,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.55
+    },
+    "square_lamp_clinic": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 119.75,
+      "y": 49.5625,
+      "width": 1,
+      "height": 1,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.5,
+      "x_internal": 105.25,
+      "y_internal": 62.5625,
+      "width_internal": 3,
+      "height_internal": 2
+    },
+    "pub_window_left": {
+      "location_id": "loc_pub",
+      "semantic_asset_id": "light_window_warm",
+      "x": 78.1875,
+      "y": 72.1562,
+      "width": 1.125,
+      "height": 1.0312000000000001,
+      "from": "17:30",
+      "to": "23:15",
+      "opacity": 0.78,
+      "x_internal": 77.0625,
+      "y_internal": 70.7812,
+      "width_internal": 2.4375,
+      "height_internal": 2.4375,
+      "semantic_asset_id_internal": "light_fireplace_glow",
+      "opacity_internal": 0.8
+    },
+    "pub_window_right": {
+      "location_id": "loc_pub",
+      "semantic_asset_id": "light_window_warm",
+      "x": 80.1875,
+      "y": 75.3438,
+      "width": 1.125,
+      "height": 1.0312000000000001,
+      "from": "17:30",
+      "to": "23:15",
+      "opacity": 0.78,
+      "x_internal": 80.0625,
+      "y_internal": 76.125,
+      "width_internal": 1.5625,
+      "height_internal": 1.4062,
+      "opacity_internal": 0.55
+    },
+    "elias_bedroom_window": {
+      "location_id": "loc_elias_house",
+      "semantic_asset_id": "light_window_warm",
+      "x": 94.125,
+      "y": 86.4062,
+      "width": 0.9687999999999999,
+      "height": 0.875,
+      "from": "22:00",
+      "to": "05:30",
+      "opacity": 0.7,
+      "x_internal": 94.4375,
+      "y_internal": 86.1562,
+      "width_internal": 1.0312000000000001,
+      "height_internal": 0.7188000000000001,
+      "opacity_internal": 0.72
+    },
+    "ben_flat_window": {
+      "location_id": "loc_ben_flat",
+      "semantic_asset_id": "light_window_warm",
+      "x": 70.5938,
+      "y": 85.8125,
+      "width": 1.8125,
+      "height": 1.8125,
+      "from": "21:30",
+      "to": "01:00",
+      "opacity": 0.65,
+      "x_internal": 70.5938,
+      "y_internal": 86.5,
+      "width_internal": 2.1875,
+      "height_internal": 1.7188,
+      "opacity_internal": 0.6
+    },
+    "priya_flat_window": {
+      "location_id": "loc_priya_flat",
+      "semantic_asset_id": "light_window_warm",
+      "x": 84.4062,
+      "y": 85.5625,
+      "width": 0.8125,
+      "height": 0.8125,
+      "from": "21:00",
+      "to": "23:30",
+      "opacity": 0.62,
+      "x_internal": 84.4375,
+      "y_internal": 89.25,
+      "width_internal": 1.1875,
+      "height_internal": 1.7188,
+      "opacity_internal": 0.6
+    },
+    "clinic_after_hours_light": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_window_cool",
+      "x": 98.5625,
+      "y": 72.75,
+      "width": 1.3437999999999999,
+      "height": 0.875,
+      "from": "18:00",
+      "to": "06:00",
+      "opacity": 0.55,
+      "x_internal": 115.7188,
+      "y_internal": 71,
+      "width_internal": 1.875,
+      "height_internal": 1.7188,
+      "opacity_internal": 0.5
+    },
+    "light_streetlamp_pool_693765": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 106.25,
+      "y": 70.5625,
+      "width": 1,
+      "height": 1,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.5,
+      "x_internal": 94.75,
+      "y_internal": 56.0625,
+      "width_internal": 5,
+      "height_internal": 5
+    },
+    "light_streetlamp_pool_699108": {
+      "location_id": "loc_clinic",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 115.75,
+      "y": 71.0625,
+      "width": 2,
+      "height": 2,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.5,
+      "x_internal": 88.75,
+      "y_internal": 47.0625,
+      "width_internal": 4,
+      "height_internal": 3
+    },
+    "light_streetlamp_pool_803137": {
+      "location_id": "loc_village_square",
+      "semantic_asset_id": "light_streetlamp_pool",
+      "x": 88.8438,
+      "y": 47.2812,
+      "width": 1.5,
+      "height": 1.3125,
+      "from": "19:30",
+      "to": "06:30",
+      "opacity": 0.55,
+      "x_internal": 114.8438,
+      "y_internal": 44.7812,
+      "width_internal": 3.3125,
+      "height_internal": 3.3125
+    }
+  },
+  "ambient_sprites": {}
+}

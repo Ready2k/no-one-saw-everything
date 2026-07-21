@@ -1,0 +1,877 @@
+[
+  {
+    "event_id": "ev_0600_marcus_wakes",
+    "time": "06:00",
+    "location_id": "loc_marcus_study",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "routine",
+    "truth_description": "Marcus rises early and takes his coffee into the study.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_0615_marcus_ledger",
+    "time": "06:15",
+    "location_id": "loc_marcus_study",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Marcus works through the cafe ledger in his study and slips a torn page into his coat pocket.",
+    "player_description": "A light is on in Marcus Bell's study.",
+    "visibility": "private",
+    "object_ids": [
+      "obj_ledger_page",
+      "obj_loan_ledger"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_ledger_page"
+    ]
+  },
+  {
+    "event_id": "ev_0630_clara_opens",
+    "time": "06:30",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "routine",
+    "truth_description": "Clara comes down from her flat and starts prepping the cafe: chairs down, machine on, float counted.",
+    "visibility": "public",
+    "importance": 3
+  },
+  {
+    "event_id": "ev_0640_elias_bench",
+    "time": "06:40",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias takes his usual bench in the square with a flask of tea, facing the cafe.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_0645_marcus_arrives",
+    "time": "06:45",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_clara"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Marcus arrives at the cafe. He and Clara exchange a few stiff words; the room goes quiet when he checks the till.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_elias"
+    ],
+    "importance": 6,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_0650_nadia_shift",
+    "time": "06:50",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "routine",
+    "truth_description": "Nadia opens up the clinic for the early shift.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_0700_priya_stockroom",
+    "time": "07:00",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_priya"
+    ],
+    "event_type": "routine",
+    "truth_description": "Priya lets herself into the bookshop to sort the morning delivery in the stockroom.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_0705_owen_argument",
+    "time": "07:05",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_owen",
+      "agent_marcus"
+    ],
+    "event_type": "argument",
+    "truth_description": "Owen confronts Marcus outside the cafe. Voices rise fast — money, a deadline, the committee. Owen jabs a finger at Marcus's chest before storming off.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_elias",
+      "agent_nadia",
+      "agent_clara"
+    ],
+    "audible_to_agent_ids": [
+      "agent_elias",
+      "agent_nadia"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_owen_argument"
+    ]
+  },
+  {
+    "event_id": "ev_0715_owen_yard",
+    "time": "07:15",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Owen returns to his yard to wait for a timber delivery. The driver is late, leaving Owen alone and fuming until 08:05.",
+    "visibility": "public",
+    "importance": 4,
+    "linked_clue_ids": [
+      "clue_owen_delayed_delivery"
+    ]
+  },
+  {
+    "event_id": "ev_0720_isabella_note",
+    "time": "07:20",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_marcus"
+    ],
+    "event_type": "object_drop",
+    "truth_description": "Isabella strides into the cafe, presses a folded note into Marcus's hand without a word, and leaves.",
+    "player_description": "Isabella enters the cafe briefly and hands Marcus something small, then leaves without ordering.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_clara",
+      "agent_elias"
+    ],
+    "object_ids": [
+      "obj_isabella_note"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_isabella_note"
+    ]
+  },
+  {
+    "event_id": "ev_0730_ben_round",
+    "time": "07:30",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "movement",
+    "truth_description": "Ben parks his van by the square and starts his delivery round, crates stacked on a trolley.",
+    "visibility": "public",
+    "importance": 3,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0736_till_weight",
+    "time": "07:36",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Clara tidies the counter, moving the brass till weight onto the receipt pile.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_marcus"
+    ],
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_till_weight_missing"
+    ]
+  },
+  {
+    "event_id": "ev_0740_marcus_summons",
+    "time": "07:40",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_marcus",
+      "agent_clara"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Marcus tells Clara, quietly: 'Storage room, before we open. Last chance to say it in your own words.'",
+    "player_description": "Marcus speaks to Clara in a low voice near the kitchen door. A phrase drifts through the open window: '...storage room, before we open...'",
+    "visibility": "public_partial",
+    "audible_to_agent_ids": [
+      "agent_nadia"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_nadia_overheard"
+    ]
+  },
+  {
+    "event_id": "ev_0740_isabella_clinic",
+    "time": "07:40",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_nadia"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Isabella arrives at the clinic, tense and pale. Nadia is dealing with a patient, leaving Isabella alone in the empty waiting room until 08:00.",
+    "visibility": "public",
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_isabella_clinic"
+    ]
+  },
+  {
+    "event_id": "ev_0744_clara_exits",
+    "time": "07:44",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "departure",
+    "truth_description": "Clara takes her blue coat and slips out of the cafe's front door, turning towards the square.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_elias"
+    ],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 7
+  },
+  {
+    "event_id": "ev_0745_ben_priya_meet",
+    "time": "07:45",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_ben",
+      "agent_priya"
+    ],
+    "event_type": "private_meeting",
+    "truth_description": "Ben and Priya meet behind the bookshop's back door, out of sight, talking in whispers.",
+    "player_description": "Two figures stand close together at the bookshop end of the alley, mostly hidden by the bins.",
+    "visibility": "private",
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_ben_priya_meeting"
+    ]
+  },
+  {
+    "event_id": "ev_0747_blue_coat",
+    "time": "07:47",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "movement",
+    "truth_description": "Clara, in her blue coat, cuts from the square into the rear alley and stops by the cafe's rear door.",
+    "player_description": "A figure in a blue coat enters the rear alley from the square and moves towards the cafe's rear door.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_ben"
+    ],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_ben_sighting"
+    ],
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_rear_alley"
+  },
+  {
+    "event_id": "ev_0752_marcus_storage",
+    "time": "07:52",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_marcus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Marcus walks through the kitchen into the storage room carrying his coat, the ledger page in the pocket. He unlatches the rear door and leaves it on the latch — he is expecting Clara to come to it, as he told her to.",
+    "player_description": "Marcus is no longer visible in the cafe front.",
+    "visibility": "private",
+    "object_ids": [
+      "obj_ledger_page",
+      "obj_partnership_letter",
+      "obj_isabella_note"
+    ],
+    "importance": 8
+  },
+  {
+    "event_id": "ev_0753_clara_rear_door",
+    "time": "07:53",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "movement",
+    "truth_description": "Clara enters the storage room through the rear door, the till weight in her coat pocket.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0756_murder",
+    "time": "07:56",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_clara",
+      "agent_marcus"
+    ],
+    "event_type": "murder",
+    "truth_description": "The confrontation turns. Marcus says the committee will hear everything at nine. Clara strikes him with the till weight.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 10
+  },
+  {
+    "event_id": "ev_0756_sound",
+    "time": "07:56",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [],
+    "event_type": "sound",
+    "truth_description": "The blow is audible in the alley as a dull thud.",
+    "player_description": "A dull thud is heard from inside the cafe's back rooms.",
+    "visibility": "public_partial",
+    "audible_to_agent_ids": [
+      "agent_ben",
+      "agent_priya"
+    ],
+    "importance": 8,
+    "linked_clue_ids": [
+      "clue_storage_sound"
+    ]
+  },
+  {
+    "event_id": "ev_0758_rear_door",
+    "time": "07:58",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "movement",
+    "truth_description": "Clara slips out of the rear door, pulls it shut, and walks quickly up the alley towards the square, one hand pressed into her coat pocket.",
+    "player_description": "The cafe's rear door opens briefly. A figure leaves carrying something small and walks quickly towards the square.",
+    "visibility": "public_partial",
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9,
+    "linked_clue_ids": [
+      "clue_rear_door"
+    ],
+    "from_location_id": "loc_cafe_storage",
+    "to_location_id": "loc_rear_alley"
+  },
+  {
+    "event_id": "ev_0759_ben_priya_leave",
+    "time": "07:59",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_ben",
+      "agent_priya"
+    ],
+    "event_type": "departure",
+    "truth_description": "Ben and Priya separate hurriedly — Priya back through the bookshop's rear door, Ben around to his van.",
+    "player_description": "The two figures at the bookshop end of the alley separate and leave in different directions.",
+    "visibility": "public_partial",
+    "importance": 5
+  },
+  {
+    "event_id": "ev_0800_cafe_opens",
+    "time": "08:00",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "routine",
+    "truth_description": "Clara re-enters through the front, hangs her coat in the kitchen, and unlocks the cafe doors two minutes late, visibly flushed.",
+    "player_description": "Clara opens the cafe doors, slightly late, looking flustered.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_elias"
+    ],
+    "object_ids": [
+      "obj_blue_coat"
+    ],
+    "importance": 7
+  },
+  {
+    "event_id": "ev_0802_weight_hidden",
+    "time": "08:02",
+    "location_id": "loc_cafe_kitchen",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "Clara rinses the till weight at the kitchen sink and pushes it down into the mop bucket.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_till_weight"
+    ],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0803_elias_coffee",
+    "time": "08:03",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_elias",
+      "agent_clara"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias comes in for his usual coffee. Clara fumbles his change; he remarks that she looks like she's seen a ghost.",
+    "visibility": "public",
+    "importance": 5
+  },
+  {
+    "event_id": "ev_0805_isabella_arrives",
+    "time": "08:05",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_isabella"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Isabella arrives for her 8 o'clock meeting with Marcus and takes a table, drumming her fingers.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_clara",
+      "agent_elias"
+    ],
+    "importance": 6
+  },
+  {
+    "event_id": "ev_0810_isabella_asks",
+    "time": "08:10",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_clara"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Isabella demands to know where Marcus is. Clara, not meeting her eyes, says he's probably out the back.",
+    "visibility": "public",
+    "visible_to_agent_ids": [
+      "agent_elias"
+    ],
+    "importance": 7
+  },
+  {
+    "event_id": "ev_0605_tam_round",
+    "time": "06:05",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam crosses the square with a satchel of post, whistling under his breath.",
+    "visibility": "public",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0610_rosa_fountain",
+    "time": "06:10",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Rosa kneels by the fountain flowerbeds, snipping back the night's dead heads.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_0625_tam_bookshop",
+    "time": "06:25",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Tam drops a bundle of letters through the bookshop's post slot.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_0640_tam_clinic",
+    "time": "06:40",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Tam leaves the clinic's post on the front step and heads back towards the square.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_0700_rosa_departs",
+    "time": "07:00",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "departure",
+    "truth_description": "Rosa gathers her clippings basket and heads back across the square.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0705_tam_square",
+    "time": "07:05",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam finishes his round at the square, satchel empty, and settles onto a bench for a break.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0720_rosa_bench",
+    "time": "07:20",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa wheels her barrow around the square, tidying the bench borders.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_0750_rosa_fountain",
+    "time": "07:50",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa returns to the fountain beds to finish trimming the far side.",
+    "visibility": "public",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_0812_discovery",
+    "time": "08:12",
+    "location_id": "loc_cafe_storage",
+    "agent_ids": [
+      "agent_isabella",
+      "agent_marcus"
+    ],
+    "event_type": "body_discovery",
+    "truth_description": "Isabella pushes through the kitchen into the storage room and finds Marcus dead on the floor. Her scream empties the square.",
+    "player_description": "Isabella finds Marcus Bell dead in the storage room. Her scream is heard across the square.",
+    "visibility": "public",
+    "importance": 10
+  },
+  {
+    "event_id": "ev_bg_min_0",
+    "time": "06:02",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Min crosses the square balancing a tray of loaves, still warm enough to steam.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_min_1",
+    "time": "06:27",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min leaves the cafe's bread order on the step and pockets the misshapen loaf for herself.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_min_2",
+    "time": "06:52",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min drops the bookshop's single seeded loaf through to the stockroom and waves at the window.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_sal_0",
+    "time": "06:09",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Sal sets the cafe's milk crate down with a rattle and squints at yesterday's empties.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_sal_1",
+    "time": "06:42",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "Sal leaves two bottles on the bookshop step and notes, with approval, that the empties were out on time.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_cole_0",
+    "time": "06:16",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Cole props his ladder against the bookshop front and starts on the glass.",
+    "importance": 2,
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_cole_1",
+    "time": "06:41",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole wipes down the clinic windows, whistling along to the radio inside.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_cole_2",
+    "time": "07:06",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole squeegees the yard office window at Owen Price's place; nobody's home yet to smear it again.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_dez_0",
+    "time": "06:23",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Dez trundles his stall cart past the clinic, eyeing the forecourt like a man measuring it.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_dez_1",
+    "time": "06:48",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "movement",
+    "truth_description": "Dez pauses his cart by Owen's timber yard to price up an offcut for a new stall shelf.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_dez_2",
+    "time": "07:13",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "movement",
+    "truth_description": "Dez sets his stall cart down at the fountain — this week's 'perfect spot' — and starts laying out his wares.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_effie_0",
+    "time": "06:30",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Effie is towed past Owen's yard by the terrier, two other leads tangling behind her.",
+    "importance": 2,
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_effie_1",
+    "time": "06:55",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "The terrier halts the whole expedition at the fountain, as it always does, and Effie waits it out.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_effie_2",
+    "time": "07:20",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Effie crosses the square with the dogs finally in step, nodding to the bench as she passes.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_gus_0",
+    "time": "06:37",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Gus stacks the morning papers by the fountain and reads the front page aloud to nobody in particular.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_gus_1",
+    "time": "07:02",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus works the square with his papers, announcing the headline to anyone slower than him.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_gus_2",
+    "time": "07:27",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus leaves the cafe's two reserved papers folded on the windowsill, headline out.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_wren_0",
+    "time": "06:44",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Wren tunes the fiddle by the square bench — more pegs than playing, this early.",
+    "importance": 2,
+    "to_location_id": "loc_village_square"
+  },
+  {
+    "event_id": "ev_bg_wren_1",
+    "time": "07:17",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "movement",
+    "truth_description": "Wren sets up a pitch near the cafe and lets the fiddle wander through something slow.",
+    "importance": 2,
+    "from_location_id": "loc_village_square",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_birdie_0",
+    "time": "06:51",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Birdie sweeps the cafe's front step in short, exact strokes, and tuts at the state of the gutter.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_birdie_1",
+    "time": "07:16",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie moves her broom along to the bookshop step, chasing yesterday's leaves out of the doorway.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_birdie_2",
+    "time": "07:41",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie finishes at the clinic step and inspects the whole street's morning work over her shoulder.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_clinic"
+  }
+]

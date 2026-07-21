@@ -1,0 +1,160 @@
+[
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_stockroom_all_morning",
+    "evidence_clue_ids": [
+      "clue_invoice_discrepancy"
+    ],
+    "outcome": "deflect",
+    "response_text": "The driver logged the time wrong on his copy — happens constantly. I signed at twelve-ten when he came back to the door. The gap you're seeing isn't a gap, it's a clerical error.",
+    "emotional_shift": "tense",
+    "pressure_delta": 0.15,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_not_in_back",
+    "evidence_clue_ids": [
+      "clue_scarf_thread"
+    ],
+    "outcome": "deflect",
+    "response_text": "A thread. On a door I use for deliveries. My scarf catches on everything in that building — the shelf edges, the stock trolley. You can't put me in a room based on a single fibre.",
+    "emotional_shift": "sharp",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_not_in_back",
+    "evidence_clue_ids": [
+      "clue_scarf_thread",
+      "clue_priya_scarf_missing_thread"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "...Fine. I was near the back door. I went to check whether an order had arrived from outside — I thought I heard something. I looked out, saw nothing, came back. That's all. I didn't go in.",
+    "emotional_shift": "rattled",
+    "pressure_delta": 0.3,
+    "sets_claim_status": "reframed",
+    "new_claims": [
+      {
+        "claim_id": "claim_priya_checked_back_door",
+        "summary": "Priya now admits she went to the rear door but claims she only looked out, not in.",
+        "claim_type": "alibi",
+        "time_reference": "12:42",
+        "location_reference_id": "loc_bookshop_back",
+        "truthfulness": "false",
+        "about_agent_id": "agent_priya"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_signature_genuine",
+    "evidence_clue_ids": [
+      "clue_forged_document",
+      "clue_solicitor_letter"
+    ],
+    "outcome": "deflect",
+    "response_text": "The signature is hers. I witnessed it. Whatever a solicitor says about letter-loops, I know what I saw. Isabella could have shaky handwriting on a bad day — she wasn't well.",
+    "emotional_shift": "brittle",
+    "pressure_delta": 0.25,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_stockroom_all_morning",
+    "evidence_clue_ids": [
+      "clue_crash_sound",
+      "clue_invoice_discrepancy"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "I... I want a moment. Please. I need to think about what I'm saying. I didn't do anything to Isabella. You have to believe that. Whatever else you think you've found, I didn't — I wouldn't —",
+    "emotional_shift": "close_to_breaking",
+    "pressure_delta": 0.4,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_not_in_back",
+    "evidence_clue_ids": [
+      "clue_ben_argument_glimpse"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "He saw me from the doorway for a second, that's all. Isabella had called me through to accuse me of things she didn't understand. We argued. I left. That doesn't make me a murderer.",
+    "emotional_shift": "rattled",
+    "pressure_delta": 0.25,
+    "sets_claim_status": "reframed",
+    "new_claims": [
+      {
+        "claim_id": "claim_priya_argument_only",
+        "summary": "Priya now admits she argued with Isabella in the back room but claims she left before anything violent happened.",
+        "claim_type": "alibi",
+        "time_reference": "12:38",
+        "location_reference_id": "loc_bookshop_back",
+        "truthfulness": "false",
+        "about_agent_id": "agent_priya"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_yard",
+    "evidence_clue_ids": [
+      "clue_owen_bookshop_pass"
+    ],
+    "outcome": "reframe",
+    "response_text": "I walked past the bookshop on my way to the builders' merchants at twelve-twenty. I stopped for half a second to see if Isabella was in — I wanted a word before I got her solicitor's next letter. She wasn't at the window. I kept walking. I was back in my yard by half past at the latest.",
+    "emotional_shift": "steady",
+    "pressure_delta": 0.1,
+    "sets_claim_status": "confirmed",
+    "reveals_clue_ids": [
+      "clue_owen_yard_alibi"
+    ]
+  },
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_not_in_back",
+    "evidence_clue_ids": [
+      "clue_forged_document",
+      "clue_ben_argument_glimpse"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "...All right.\n\nYou want to know why I signed her name. Because she was never going to sign it herself. Marcus gave me that expansion — gave it, in writing, because he thought I had earned it — and Isabella would have had it in front of solicitors until I was fifty. Sixteen years I have shelved her books and balanced her till and been grateful. Grateful for every single thing I was handed. So I stopped waiting to be handed one.\n\nShe found the loop on the R. Of course she did. She can see a crooked shelf from the doorway.\n\nAnd she didn't call the police. She didn't call anyone. She gave me until half past one to go to Whittle's myself and say it in my own words. She was being kind to me. That is the part I— that is the part you will not understand.\n\nThen she reached for the telephone.\n\nI want it written down that I did not decide to pick it up. My hand was already round it. ...I'd like to stop now, please.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.45,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_priya_confession",
+        "summary": "Priya admits she forged Isabella's signature on the transfer, that Isabella gave her until 13:30 to confess, and that she struck her when Isabella reached for the telephone.",
+        "claim_type": "statement",
+        "time_reference": "12:43",
+        "location_reference_id": "loc_bookshop_back",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_priya",
+    "challenged_claim_id": "claim_priya_stockroom_all_morning",
+    "evidence_clue_ids": [
+      "clue_forged_document",
+      "clue_scarf_thread"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "...All right.\n\nYou want to know why I signed her name. Because she was never going to sign it herself. Marcus gave me that expansion — gave it, in writing, because he thought I had earned it — and Isabella would have had it in front of solicitors until I was fifty. Sixteen years I have shelved her books and balanced her till and been grateful. Grateful for every single thing I was handed. So I stopped waiting to be handed one.\n\nShe found the loop on the R. Of course she did. She can see a crooked shelf from the doorway.\n\nAnd she didn't call the police. She didn't call anyone. She gave me until half past one to go to Whittle's myself and say it in my own words. She was being kind to me. That is the part I— that is the part you will not understand.\n\nThen she reached for the telephone.\n\nI want it written down that I did not decide to pick it up. My hand was already round it. ...I'd like to stop now, please.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.45,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_priya_confession",
+        "summary": "Priya admits she forged Isabella's signature on the transfer, that Isabella gave her until 13:30 to confess, and that she struck her when Isabella reached for the telephone.",
+        "claim_type": "statement",
+        "time_reference": "12:43",
+        "location_reference_id": "loc_bookshop_back",
+        "truthfulness": "true"
+      }
+    ]
+  }
+]

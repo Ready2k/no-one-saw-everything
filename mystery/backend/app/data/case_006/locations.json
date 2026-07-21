@@ -1,0 +1,188 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The heart of the village. Marcus's house is on the north side.",
+    "connected_location_ids": [
+      "loc_marcus_house",
+      "loc_bookshop",
+      "loc_clinic",
+      "loc_ruth_cottage"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3176,
+      "y": 2344
+    },
+    "map_bounds": {
+      "x": 2928,
+      "y": 2112,
+      "width": 496,
+      "height": 464
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_marcus_house",
+    "name": "Marcus Bell's House",
+    "description": "A large Georgian house on the square's north side. Ground floor has a sitting room with a fireside armchair where Marcus is found. The kitchen is where the cocoa was prepared.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_marcus_study"
+    ],
+    "access_rules": [
+      "owner",
+      "invited"
+    ],
+    "visibility_type": "private",
+    "murder_suitable": true,
+    "map_position": {
+      "x": 3448,
+      "y": 1872
+    },
+    "map_bounds": {
+      "x": 3344,
+      "y": 1824,
+      "width": 208,
+      "height": 96,
+      "rotation": 37
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_marcus_study",
+    "name": "Marcus's Study",
+    "description": "A book-lined study behind the sitting room. Contains the estate papers, the old family photograph, and the solicitor's draft will. The fireplace shows recent ash.",
+    "connected_location_ids": [
+      "loc_marcus_house"
+    ],
+    "access_rules": [
+      "owner",
+      "invited"
+    ],
+    "visibility_type": "private",
+    "murder_suitable": false,
+    "map_position": {
+      "x": 3472,
+      "y": 1800
+    },
+    "map_bounds": {
+      "x": 3408,
+      "y": 1776,
+      "width": 128,
+      "height": 48,
+      "rotation": 36
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_ruth_cottage",
+    "name": "Ruth's Cottage",
+    "description": "Ruth's small cottage on the far side of the square. The garden has a large stand of foxglove \u2014 digitalis purpurea.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 3960,
+      "y": 2864
+    },
+    "map_bounds": {
+      "x": 3824,
+      "y": 2736,
+      "width": 272,
+      "height": 256,
+      "rotation": 27
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Reed & Bell Bookshop",
+    "description": "Isabella's bookshop. A key location for motive \u2014 Marcus was revising his will to redirect her shares.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 2694,
+      "y": 1981
+    },
+    "map_bounds": {
+      "x": 2614,
+      "y": 1917,
+      "width": 160,
+      "height": 128,
+      "rotation": 18
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "Nadia's clinic. Marcus was a patient. His medical records show his cardiac history.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3664,
+      "y": 2232
+    },
+    "map_bounds": {
+      "x": 3533,
+      "y": 2096,
+      "width": 262,
+      "height": 272,
+      "rotation": 6.5
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_solicitors_office",
+    "name": "Whittle & Cross Solicitors",
+    "description": "The solicitor's office on the edge of the village. Mr. Whittle holds the new will.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3552,
+      "y": 2856
+    },
+    "map_bounds": {
+      "x": 3408,
+      "y": 2752,
+      "width": 288,
+      "height": 208,
+      "rotation": 26
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_priya_flat",
+    "name": "Priya's Flat",
+    "description": "Priya's flat, two streets from the square.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 2632,
+      "y": 2802
+    },
+    "map_bounds": {
+      "x": 2480,
+      "y": 2666,
+      "width": 304,
+      "height": 272
+    },
+    "visual_layer": "interior"
+  }
+]

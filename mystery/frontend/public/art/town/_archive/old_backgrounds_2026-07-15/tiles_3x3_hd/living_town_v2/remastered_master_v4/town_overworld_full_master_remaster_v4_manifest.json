@@ -1,0 +1,175 @@
+{
+  "version": "living_town_v2_full_master_remaster_v4_b2_alpha_locked",
+  "purpose": "Grid-safe remastered master split into 9 tiles, preserving current B2 building pixels via transparent stamp alpha masks only.",
+  "coordinate_space": {
+    "full_map_width": 6144,
+    "full_map_height": 4608,
+    "tile_width": 2048,
+    "tile_height": 1536,
+    "cols": 3,
+    "rows": 3
+  },
+  "source_generation": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_full_master_remaster_v4_generated_source.png",
+  "generated_scaled_master": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_full_master_remaster_v4_generated_scaled.png",
+  "b2_alpha_locked_master": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_full_master_remaster_v4_b2_alpha_locked.png",
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_full_master_remaster_v4_b2_alpha_locked_contact.png",
+  "b2_alpha_lock_inpaint_mask": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_B2_alpha_lock_inpaint_mask_v4.png",
+  "locked_b2_source": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.png",
+  "locked_b2_policy": "B2 building pixels are copied from the current authored B2 tile through transparent stamp alpha masks. No broad terrain rectangles are copied, keeping the split grid safe at B2 boundaries.",
+  "stamp_placements": [
+    {
+      "id": "loc_bookshop",
+      "label": "Reed & Bell",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_bookshop_b2_native_stamp.png",
+      "x": 553,
+      "y": 207,
+      "width": 345,
+      "height": 327,
+      "match_score": 0.8527136445045471
+    },
+    {
+      "id": "loc_hobbs_cafe",
+      "label": "Hobbs Cafe",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/hobbs_cafe_b2_native_medium.png",
+      "x": 834,
+      "y": 238,
+      "width": 410,
+      "height": 300,
+      "match_score": 0.8214298486709595
+    },
+    {
+      "id": "loc_marcus_house",
+      "label": "Marcus House",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_marcus_house_b2_native_stamp.png",
+      "x": 1204,
+      "y": 179,
+      "width": 380,
+      "height": 327,
+      "match_score": 0.9245114922523499
+    },
+    {
+      "id": "loc_fishery",
+      "label": "Fishery",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_fishery_b2_native_stamp.png",
+      "x": 209,
+      "y": 154,
+      "width": 371,
+      "height": 226,
+      "match_score": 0.8116188049316406
+    },
+    {
+      "id": "loc_pub",
+      "label": "Mallet & Crown",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_pub_b2_native_stamp.png",
+      "x": 349,
+      "y": 495,
+      "width": 380,
+      "height": 409,
+      "match_score": 0.8436620831489563
+    },
+    {
+      "id": "loc_clinic",
+      "label": "Clinic",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_clinic_b2_native_stamp.png",
+      "x": 1368,
+      "y": 479,
+      "width": 311,
+      "height": 327,
+      "match_score": 0.8514624238014221
+    },
+    {
+      "id": "loc_owen_house",
+      "label": "Owen Yard",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_owen_house_b2_native_stamp.png",
+      "x": 1639,
+      "y": 734,
+      "width": 408,
+      "height": 377,
+      "match_score": 0.8503644466400146
+    },
+    {
+      "id": "loc_ben_flat",
+      "label": "Ben Flat",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_ben_flat_b2_native_stamp.png",
+      "x": 180,
+      "y": 1049,
+      "width": 294,
+      "height": 302,
+      "match_score": 0.8807915449142456
+    },
+    {
+      "id": "loc_priya_flat",
+      "label": "Priya Flat",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_priya_flat_b2_native_stamp.png",
+      "x": 469,
+      "y": 998,
+      "width": 311,
+      "height": 286,
+      "match_score": 0.8863949179649353
+    },
+    {
+      "id": "loc_elias_house",
+      "label": "Elias Cottage",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_elias_house_b2_native_stamp.png",
+      "x": 854,
+      "y": 1029,
+      "width": 276,
+      "height": 286,
+      "match_score": 0.8895125985145569
+    },
+    {
+      "id": "loc_solicitors_office",
+      "label": "Solicitors",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_solicitors_office_b2_native_stamp.png",
+      "x": 1264,
+      "y": 1105,
+      "width": 331,
+      "height": 259,
+      "match_score": 0.8840587139129639
+    },
+    {
+      "id": "loc_ruth_cottage",
+      "label": "Ruth Cottage",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_ruth_cottage_b2_native_stamp.png",
+      "x": 1608,
+      "y": 1059,
+      "width": 408,
+      "height": 339,
+      "match_score": 0.8838245868682861
+    },
+    {
+      "id": "loc_nadia_flat",
+      "label": "Nadia Flat",
+      "stamp_asset": "/art/town/buildings/b2_native_v1/loc_nadia_flat_b2_native_stamp.png",
+      "x": 1710,
+      "y": 190,
+      "width": 241,
+      "height": 245,
+      "match_score": 0.8257374167442322
+    }
+  ],
+  "fountain_region": {
+    "id": "loc_fountain",
+    "pixel_box": [
+      978,
+      658,
+      1134,
+      814
+    ]
+  },
+  "tile_urls": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_A1_living_town_remaster_v4_b2_alpha_locked.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_A2_living_town_remaster_v4_b2_alpha_locked.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_A3_living_town_remaster_v4_b2_alpha_locked.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_B1_living_town_remaster_v4_b2_alpha_locked.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_B2_living_town_remaster_v4_b2_alpha_locked.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_B3_living_town_remaster_v4_b2_alpha_locked.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_C1_living_town_remaster_v4_b2_alpha_locked.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_C2_living_town_remaster_v4_b2_alpha_locked.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v4/town_overworld_C3_living_town_remaster_v4_b2_alpha_locked.png"
+  },
+  "runtime_notes": [
+    "Prefer this v4 set for promotion over v2/v3. It keeps B2 buildings via alpha masks while avoiding B2 terrain crossover into surrounding grid tiles.",
+    "Ambient placements use the same 6144x4608 coordinate space."
+  ]
+}

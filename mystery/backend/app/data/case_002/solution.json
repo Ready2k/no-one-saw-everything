@@ -1,0 +1,109 @@
+{
+  "killer_id": "agent_priya",
+  "motive": {
+    "canonical": "Priya forged Isabella's signature on the partnership transfer documents and killed Isabella to prevent her exposing the forgery to the solicitor.",
+    "concept_groups": [
+      [
+        "forge",
+        "forged",
+        "fake",
+        "faked",
+        "signature",
+        "document",
+        "signed",
+        "falsified"
+      ],
+      [
+        "partnership",
+        "transfer",
+        "expansion",
+        "bookshop",
+        "inheritance"
+      ],
+      [
+        "solicitor",
+        "expose",
+        "reveal",
+        "discover",
+        "found out",
+        "letter",
+        "whittle"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with the brass letter opener on Isabella's desk, in the bookshop back room.",
+    "concept_groups": [
+      [
+        "blunt",
+        "struck",
+        "strike",
+        "hit",
+        "bludgeon",
+        "blow",
+        "beat",
+        "impact"
+      ],
+      [
+        "letter opener",
+        "opener",
+        "brass",
+        "desk"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Priya was with Isabella in the back room during the murder window. Ben saw them arguing by Isabella's desk, the invoice gap breaks Priya's stockroom alibi, and the green thread proves she used the rear exit.",
+    "concept_groups": [
+      [
+        "ben",
+        "argument",
+        "arguing",
+        "desk",
+        "telephone",
+        "together"
+      ],
+      [
+        "stockroom",
+        "no alibi",
+        "unaccounted",
+        "gap",
+        "invoice"
+      ],
+      [
+        "scarf",
+        "thread",
+        "green",
+        "latch",
+        "rear door"
+      ],
+      [
+        "back room",
+        "office",
+        "behind counter"
+      ]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_forged_document",
+    "clue_solicitor_letter",
+    "clue_ben_argument_glimpse",
+    "clue_scarf_thread",
+    "clue_invoice_discrepancy",
+    "clue_staged_breakin",
+    "clue_letter_opener_wiped"
+  ],
+  "explanation": "Correct. Priya Shah killed Isabella Reed. Priya had forged Isabella's signature on the bookshop partnership transfer after Marcus Bell named her his successor — she didn't trust Isabella to agree. When the solicitor's letter arrived at 11:10 confirming Isabella had discovered the forgery and booked a 13:30 appointment, Priya read it first and understood her window was closing. Ben's glimpse through the counter door places Priya and Isabella together in the back room at 12:38, mid-argument, with Isabella by the telephone. Minutes later, when Isabella reached for that telephone, Priya seized the Victorian letter opener and struck her. She staged a break-in by smashing the window pane from inside — but the glass fell the wrong way. Her scarf snagged on the rear latch as she fled through the alley, and the invoice timestamp proves her stockroom alibi is false.",
+  "epilogues": {
+    "agent_priya": "She signed her statement in her own hand, and the signature was nothing like the one on the transfer. She asked, twice, whether Ben had been told yet. Nobody had the heart to answer her.",
+    "agent_ben": "He worked out what his own evidence had done about a week later, on his round, somewhere between the clinic and the square. He finished the round. He always finishes the round. He does not take his coffee at Hobbs any more.",
+    "agent_isabella": "The expansion went ahead. Her solicitors found the second signature was genuine after all — Marcus really had meant it for Priya — and the shop passed to a cousin in Leeds who has never once opened it before ten.",
+    "agent_owen": "He paid Isabella's estate every penny, in instalments, on time. He tells people he was a suspect for about an hour and a half. He rounds up.",
+    "agent_nadia": "She was right about the glass, and she has never once said so.",
+    "agent_ruth": "She still does the round. The bookshop is third, and she still notices the franking on a solicitor's letter, and she has never stopped wishing she had knocked.",
+    "agent_elias": "He maintains he suspected the quiet one all along. He did not. He suspected Owen, loudly, to anyone who would sit down."
+  }
+}

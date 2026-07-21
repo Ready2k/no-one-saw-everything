@@ -1,0 +1,12 @@
+The previous CasePlan failed validation.
+
+Validation Errors:
+{errors}
+
+Original Plan:
+{original_plan}
+
+Allowed Roles: {VICTIM_ID}, {KILLER_ID}, {RH1_ID}, {RH2_ID}, {WITNESS1_ID}, {WITNESS2_ID}, {WITNESS3_ID}, {WITNESS4_ID}
+Allowed Clue Types: document, physical_evidence, observation, witness_statement, confession, object_trail
+
+Please fix the errors and return a corrected CasePlan JSON.

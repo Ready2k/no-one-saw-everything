@@ -1,0 +1,24 @@
+{
+  "case_id": "gen_blackmail_16481_1783460672",
+  "case_type": "blackmail",
+  "title": "The Masquerade of Lies",
+  "status": "locked",
+  "victim_id": "agent_isabella",
+  "killer_id": "agent_elias",
+  "motive_summary": "Exposure/Reputational Damage: The victim was killed because they were about to expose a deeply damaging secret that threatened the killer\u2019s carefully constructed life.",
+  "method": "blunt_force",
+  "weapon_id": "obj_till_weight",
+  "murder_location_id": "loc_priya_flat",
+  "time_of_death": "10:35",
+  "discovery_time": "10:51",
+  "discovered_by": "agent_marcus",
+  "discovery_location_id": "loc_priya_flat",
+  "sim_start_time": "08:39",
+  "murder_window": [
+    "10:24",
+    "10:39"
+  ],
+  "overview_text": "The discovery was made in Priya's Flat. The air is thick with stale cigarette smoke and the smell of damp wool. Isabella Reed lies slumped near a stack of forgotten props from the ill-fated prank, having succumbed to trauma inflicted by Brass till weight. Marcus Bell found the body during what appeared to be an impromptu gathering of friends who were trying desperately to salvage the ruined evening and gloss over their collective failures. Everything about the scene feels staged\u2014a messy tableau of embarrassment covering a cold, brutal act.",
+  "scene_description": "The discovery was made in Priya's Flat. The air is thick with stale cigarette smoke and the smell of damp wool. Isabella Reed lies slumped near a stack of forgotten props from the ill-fated prank, having succumbed to trauma inflicted by Brass till weight. Marcus Bell found the body during what appeared to be an impromptu gathering of friends who were trying desperately to salvage the ruined evening and gloss over their collective failures. Everything about the scene feels staged\u2014a messy tableau of embarrassment covering a cold, brutal act.",
+  "cause_of_death_observed": null
+}

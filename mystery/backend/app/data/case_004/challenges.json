@@ -1,0 +1,126 @@
+[
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_home_evening",
+    "evidence_clue_ids": [
+      "clue_nadia_night_sighting"
+    ],
+    "outcome": "deflect",
+    "response_text": "Nadia saw me in the square? Nadia needs her eyes tested. I was home.",
+    "emotional_shift": "sharp",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_home_evening",
+    "evidence_clue_ids": [
+      "clue_nadia_night_sighting",
+      "clue_elias_fleeing_figure"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "...I stepped out for air. That's all. I was feeling rough after finding Dad's stuff. I walked around the square. I didn't see Owen. I didn't touch anyone.",
+    "emotional_shift": "cornered",
+    "pressure_delta": 0.35,
+    "sets_claim_status": "reframed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_walked_square",
+        "summary": "Ben now admits he went to the square 'for air' but denies seeing or touching Owen.",
+        "claim_type": "alibi",
+        "time_reference": "23:00",
+        "location_reference_id": "loc_village_square",
+        "truthfulness": "false",
+        "about_agent_id": "agent_ben"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_barely_knew_owen",
+    "evidence_clue_ids": [
+      "clue_blackmail_letters"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "He ruined my father. Twelve years — twelve years of payments because of something that was an accident. Dad lived with it his whole life. He died afraid Owen would still come after us. You want to know why I'm upset? That's why.",
+    "emotional_shift": "raw_grief",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_motive_revealed",
+        "summary": "Ben admits the blackmail and his father's suffering, but does not yet admit to the confrontation at the fountain.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_walked_square",
+    "evidence_clue_ids": [
+      "clue_blackmail_letters",
+      "clue_jacket_mud",
+      "clue_bootprint"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "I went to the fountain. I confronted him. He laughed at me. He said my dad had come to him — that he'd asked for it. And then he turned away and I — I had the stone in my hand and I don't remember deciding. I remember dropping it.",
+    "emotional_shift": "breaking",
+    "pressure_delta": 0.7,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_confession",
+        "summary": "Ben admits confronting Owen at the fountain and striking him with the stone.",
+        "claim_type": "statement",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_home_evening",
+    "evidence_clue_ids": [
+      "clue_priya_false_alibi",
+      "clue_jacket_mud"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "He laughed.\n\nThat's what you want, isn't it. That's the bit. I stood there with my dad's letters in my hand — twenty years of them, twenty years of please Owen and I can't this month Owen — and I said his name, and he looked at what I was holding, and he laughed.\n\nNot a cruel laugh. That's the thing I can't get past. It wasn't even cruel. It was the laugh you do when someone brings up something from ages ago that stopped mattering to you. He said, 'Christ, is that still going round?' Like it was a story. Like my father was a story he'd half forgotten.\n\nMy dad hanged himself in a garage in Cardiff and this man could not remember why.\n\nAnd there was a stone off the coping, loose, right by my hand. I've been trying to tell you for two days that I meant to do it, because it would be easier if I had. I didn't. I picked it up because he laughed, and then he was on the ground and it was very quiet.\n\nPriya knew nothing. Write that down first, before anything else I've said. She lied for me because I told her I'd been walking. She thinks I'm a decent man. Don't let her go on thinking it — it isn't fair on her, carrying that.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_confession",
+        "summary": "Ben admits he confronted Owen at the fountain with his father's blackmail letters, and struck him with a loose coping stone when Owen laughed at him.",
+        "claim_type": "statement",
+        "time_reference": "23:14",
+        "location_reference_id": "loc_fountain",
+        "truthfulness": "true"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_walked_square",
+    "evidence_clue_ids": [
+      "clue_blackmail_letters",
+      "clue_ben_boots_match"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "He laughed.\n\nThat's what you want, isn't it. That's the bit. I stood there with my dad's letters in my hand — twenty years of them, twenty years of please Owen and I can't this month Owen — and I said his name, and he looked at what I was holding, and he laughed.\n\nNot a cruel laugh. That's the thing I can't get past. It wasn't even cruel. It was the laugh you do when someone brings up something from ages ago that stopped mattering to you. He said, 'Christ, is that still going round?' Like it was a story. Like my father was a story he'd half forgotten.\n\nMy dad hanged himself in a garage in Cardiff and this man could not remember why.\n\nAnd there was a stone off the coping, loose, right by my hand. I've been trying to tell you for two days that I meant to do it, because it would be easier if I had. I didn't. I picked it up because he laughed, and then he was on the ground and it was very quiet.\n\nPriya knew nothing. Write that down first, before anything else I've said. She lied for me because I told her I'd been walking. She thinks I'm a decent man. Don't let her go on thinking it — it isn't fair on her, carrying that.",
+    "emotional_shift": "broken",
+    "pressure_delta": 0.5,
+    "sets_claim_status": "disputed",
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_confession",
+        "summary": "Ben admits he confronted Owen at the fountain with his father's blackmail letters, and struck him with a loose coping stone when Owen laughed at him.",
+        "claim_type": "statement",
+        "time_reference": "23:14",
+        "location_reference_id": "loc_fountain",
+        "truthfulness": "true"
+      }
+    ]
+  }
+]

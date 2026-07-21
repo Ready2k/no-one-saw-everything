@@ -1,0 +1,90 @@
+{
+  "manifest_version": "case_art_manifest_v1",
+  "case_id": "case_004",
+  "base_asset": "/art/town/town_canonical_v2_overworld_day.png",
+  "overlay_asset": "/art/case_004/case_004_overlay_v1.png",
+  "fog_asset": null,
+  "fog_status": "not_supported_by_current_renderer",
+  "layout_source": "backend/app/data/town/town_layout.json",
+  "layout_schema": "town_layout_editor_v2",
+  "canonical_world": {
+    "cols": 192,
+    "rows": 144,
+    "tile_size": 32,
+    "width": 6144,
+    "height": 4608,
+    "origin": "north_west"
+  },
+  "base_image_frame": {
+    "note": "The current base art is a full 6144x4608 overworld matching the 192x144 canonical world. The main investigation town remains in the centre 64x48 tile cell, so a canonical world tile (tx,ty) maps to centre-town local tile (tx-64, ty-48) for the saved Case 004 core locations.",
+    "image_width": 6144,
+    "image_height": 4608,
+    "image_grid": { "cols": 192, "rows": 144 },
+    "world_tile_offset": { "x": 64, "y": 48 }
+  },
+  "case_assets": {
+    "fountain_closeup": {
+      "asset": "/art/case_004/fountain_closeup.png",
+      "width": 1254,
+      "height": 1254,
+      "role": "case-specific fountain closeup",
+      "style_reference": "pixel-art moonlit fountain square with crisp stonework, flowers, lanterns, water detail, missing coping, and discovery-scene clues"
+    },
+    "fountain_daylight_map": {
+      "asset": "/art/case_004/fountain_daylight_map.png",
+      "width": 2048,
+      "height": 1536,
+      "role": "developer/editor wide map reference for Case 004",
+      "source": "regenerated from attached style reference plus canonical town layout reference",
+      "lighting": "neutral daylight base; no baked clue state"
+    },
+    "fountain_midnight_map": {
+      "asset": "/art/case_004/fountain_midnight_map.png",
+      "width": 2048,
+      "height": 1536,
+      "role": "developer/editor midnight wide map reference for Case 004",
+      "source": "regenerated from attached style reference plus canonical town layout reference",
+      "lighting": "moonlit reference only; runtime map lighting remains code-driven"
+    }
+  },
+  "tile_contract": { "cols": 192, "rows": 144, "tile_size": 32 },
+  "runtime_lighting": "frontend/src/map/lighting.ts",
+  "local_light_overlays": {
+    "source": "visual.light_overlays",
+    "renderer": "frontend/src/components/MapLightOverlay.tsx",
+    "render_when": "currentMinutes is within each overlay's from/to clock range",
+    "blend": "screen",
+    "policy": "Ambient occupancy and civic lighting only; no hidden culprit silhouettes or unearned clue state.",
+    "case_004_examples": [
+      "square_lamp_west",
+      "square_lamp_clinic",
+      "pub_front_windows",
+      "elias_bedroom_window",
+      "ben_flat_window",
+      "priya_flat_window",
+      "clinic_after_hours_light"
+    ]
+  },
+  "evidence_markers": {
+    "source": "visual.object_visuals",
+    "render_when": "safe_to_render === true",
+    "hidden_state": "suppressed",
+    "priority_objects": [
+      "obj_fountain_stone",
+      "obj_mud_bootprint",
+      "obj_ben_jacket_mud",
+      "obj_fred_lighter",
+      "obj_pub_ledger",
+      "obj_blackmail_letters",
+      "obj_arson_clipping",
+      "obj_ben_phone",
+      "obj_owen_pub_receipt"
+    ]
+  },
+  "environmental_zones": {
+    "note": "loc_lake, loc_fishery, loc_woodland, and other exterior regions now sit over painted full-overworld terrain. Decorative terrain carries no evidence; evidence remains discovery-gated via visual.object_visuals.",
+    "code_driven": []
+  },
+  "overlay_status": "intentionally_empty_and_unwired",
+  "notes": "The transparent overlay carries no baked case state. Every Case 004 change (missing fountain coping, muddy bootprint, broken glass, moved objects) is a discovery-gated evidence anchor, so baking any of it into an always-on overlay would leak undiscovered clues. Case-specific visual state therefore stays projection- and discovery-gated via visual.object_visuals; the overlay PNG is retained as a reserved layer slot but is not currently composited by the renderer."
+}

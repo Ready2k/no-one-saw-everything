@@ -1,0 +1,488 @@
+[
+  {
+    "event_id": "ev_0600_nadia_learns",
+    "time": "16:00",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "Nadia arrives at the clinic early. She opens the filing cabinet and re-reads the bequest letter, then sits still for several minutes. She already knew last night — Elias told her he was 'reconsidering the arrangement' at his Monday check-in. She spent the night deciding.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_clinic_bequest_letter"
+    ],
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0630_nadia_dispensary",
+    "time": "16:30",
+    "location_id": "loc_clinic_dispensary",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "Nadia prepares Elias's Tuesday pill compartment, adding two digoxin 0.25mg capsules — four times his prescribed 0.125mg dose, enough to trigger fatal arrhythmia given his existing condition. She amends the dispensary log to mask the extra draw.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_pill_bottle",
+      "obj_dispensary_log"
+    ],
+    "importance": 10,
+    "linked_clue_ids": [
+      "clue_dispensary_log_altered",
+      "clue_extra_capsules"
+    ]
+  },
+  {
+    "event_id": "ev_0640_elias_arrives",
+    "time": "16:40",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias arrives at his bench with his flask. He sets his notebook on his knee and glances at the solicitor's card in his pocket. He looks content.",
+    "visibility": "public",
+    "object_ids": [
+      "obj_elias_notebook",
+      "obj_solicitor_appointment"
+    ],
+    "importance": 4
+  },
+  {
+    "event_id": "ev_0644_ben_argument",
+    "time": "16:44",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_ben",
+      "agent_elias"
+    ],
+    "event_type": "argument",
+    "truth_description": "Ben stops at Elias's bench and asks him not to send a complaint to the courier depot. Elias refuses. He says forged delivery signatures are not a harmless mistake and that Ben will be lucky to keep his job. Ben leaves angry and embarrassed.",
+    "player_description": "Ben Carter stops by Elias's bench. Their conversation is low and tense; Ben walks away red-faced.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_clara"
+    ],
+    "object_ids": [
+      "obj_ben_complaint_letter"
+    ],
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_ben_complaint_letter",
+      "clue_clara_ben_argument"
+    ]
+  },
+  {
+    "event_id": "ev_0648_ben_clinic_delivery",
+    "time": "16:48",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "movement",
+    "truth_description": "Ben drops a sealed delivery pouch through the clinic reception hatch while the waiting room is still dark. He does not enter the locked dispensary, but the delivery log later proves he was briefly inside the clinic frontage before Nadia officially opened.",
+    "player_description": "Ben cuts into the clinic doorway with a delivery pouch, then leaves almost immediately.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_clara"
+    ],
+    "object_ids": [
+      "obj_clinic_delivery_manifest"
+    ],
+    "importance": 6,
+    "linked_clue_ids": [
+      "clue_ben_clinic_delivery",
+      "clue_clinic_delivery_manifest"
+    ]
+  },
+  {
+    "event_id": "ev_0650_nadia_shift",
+    "time": "16:50",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "routine",
+    "truth_description": "Nadia opens the clinic for the late-afternoon surgery, appearing normal. She unlocks the waiting room, brings Elias's organiser out from the locked dispensary, and turns on the lights.",
+    "visibility": "public",
+    "importance": 2
+  },
+  {
+    "event_id": "ev_0700_ruth_round",
+    "time": "17:00",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ruth"
+    ],
+    "event_type": "routine",
+    "truth_description": "Ruth passes Elias on the bench. He waves his flask at her. He looks perfectly healthy.",
+    "player_description": "The postwoman nods to the old man on the bench. He raises his flask.",
+    "visibility": "public",
+    "importance": 5,
+    "linked_clue_ids": [
+      "clue_ruth_elias_wave"
+    ]
+  },
+  {
+    "event_id": "ev_0705_nadia_checks_elias",
+    "time": "17:05",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_nadia",
+      "agent_elias"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Nadia crosses the square to check on Elias as part of her usual routine. She hands him the weekly pill organiser as always. He thanks her warmly and takes his Tuesday afternoon pills with a sip of tea. She watches him swallow.",
+    "player_description": "Nadia crosses from the clinic and has a brief word with Elias on the bench. She gives him something small.",
+    "visibility": "public_partial",
+    "visible_to_agent_ids": [
+      "agent_ruth"
+    ],
+    "object_ids": [
+      "obj_pill_bottle"
+    ],
+    "importance": 10,
+    "linked_clue_ids": [
+      "clue_nadia_pill_handoff",
+      "clue_ruth_pill_sighting"
+    ]
+  },
+  {
+    "event_id": "ev_0710_nadia_returns",
+    "time": "17:10",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "return",
+    "truth_description": "Nadia returns to the clinic and sits at the reception desk. She picks up a patient file and stares at it without reading.",
+    "visibility": "public",
+    "importance": 4
+  },
+  {
+    "event_id": "ev_0715_ben_round",
+    "time": "17:15",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "movement",
+    "truth_description": "Ben cuts across the square on his round. He glances at Elias on the bench — Elias is still upright, flask in hand, but his free hand is now pressed to his chest. Ben slows, then keeps walking, not wanting another confrontation.",
+    "player_description": "Ben passes the square bench. The old man is still sitting, but something about his posture looks off. Ben hesitates, then keeps going.",
+    "visibility": "public",
+    "importance": 7,
+    "linked_clue_ids": [
+      "clue_ben_posture"
+    ]
+  },
+  {
+    "event_id": "ev_0720_elias_distress",
+    "time": "17:20",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "medical_event",
+    "truth_description": "Elias sets down his flask. His heartbeat is wildly irregular. He tries to call out but cannot. His hand knocks the pill organiser from the bench before he slumps sideways.",
+    "player_description": "The man on the bench sags sideways. His flask spills, and a small plastic pill organiser drops beneath the bench. No one is nearby.",
+    "visibility": "public_partial",
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0721_death",
+    "time": "17:21",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "murder",
+    "truth_description": "Cardiac arrest from digoxin toxicity. Elias dies on the bench.",
+    "visibility": "hidden",
+    "object_ids": [
+      "obj_pill_bottle"
+    ],
+    "importance": 10
+  },
+  {
+    "event_id": "ev_0730_clara_opens",
+    "time": "17:30",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "routine",
+    "truth_description": "Clara wipes down the cafe tables before the afternoon lull. She glances out at the square. She notices Elias seems slumped oddly on the bench but assumes he has nodded off.",
+    "player_description": "Clara is clearing tables in the cafe. Through the window, Elias appears to be asleep on the bench.",
+    "visibility": "public",
+    "importance": 5,
+    "linked_clue_ids": [
+      "clue_clara_slumped_observation"
+    ]
+  },
+  {
+    "event_id": "ev_0800_owen_discovery",
+    "time": "18:00",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_owen",
+      "agent_elias"
+    ],
+    "event_type": "body_discovery",
+    "truth_description": "Owen crosses the square on his usual afternoon route and claps Elias on the shoulder. Elias falls. Owen sees the spilled tea and the open pill organiser under the bench before he shouts for help — the square empties and fills again in seconds.",
+    "player_description": "Owen Price reaches the bench and shakes Elias's shoulder. The old man falls sideways. Tea has spilled across the stone, and a pill organiser lies open under the bench. Owen's shout brings people running.",
+    "visibility": "public",
+    "importance": 10
+  },
+  {
+    "event_id": "ev_bg_wren_0",
+    "time": "16:02",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Wren is by Bench by the Fountain, busking for the afternoon crowd.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_wren_1",
+    "time": "16:22",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "movement",
+    "truth_description": "Wren is at Owen Price's House & Yard, collecting coins from her violin case.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_dez_0",
+    "time": "16:09",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Dez stops by Owen Price's House & Yard, calling out prices at the stall.",
+    "importance": 2,
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_dez_1",
+    "time": "16:29",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "movement",
+    "truth_description": "At Bench by the Fountain, Dez is haggling with a customer.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_sal_0",
+    "time": "16:16",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Sal stops by Bench by the Fountain, collecting the empties.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_sal_1",
+    "time": "16:36",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "At Owen Price's House & Yard, Sal is settling milk accounts door to door.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_cole_0",
+    "time": "16:23",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Cole passes Owen Price's House & Yard, polishing the shopfront glass.",
+    "importance": 2,
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_cole_1",
+    "time": "16:43",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole stops by Bench by the Fountain, moving his ladder to the next building.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_effie_0",
+    "time": "16:30",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "At Bench by the Fountain, Effie is walking a pair of dogs past.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_effie_1",
+    "time": "16:50",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Effie is by Owen Price's House & Yard, throwing a stick for the dog.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_rosa_0",
+    "time": "16:07",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Rosa passes Owen Price's House & Yard, trimming the hedges.",
+    "importance": 2,
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_rosa_1",
+    "time": "16:27",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa stops by Bench by the Fountain, raking the paths.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_birdie_0",
+    "time": "16:14",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Birdie is at Bench by the Fountain, sweeping out the gutters.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_birdie_1",
+    "time": "16:34",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie passes Owen Price's House & Yard, picking up stray litter.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_min_0",
+    "time": "16:21",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Min is at Owen Price's House & Yard, fetching sacks of flour.",
+    "importance": 2,
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_min_1",
+    "time": "16:41",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min passes Bench by the Fountain, handing out the last of the lunch rolls.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_tam_0",
+    "time": "16:28",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "At Bench by the Fountain, Tam is finishing a post round.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_tam_1",
+    "time": "16:48",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam is by Owen Price's House & Yard, emptying the postbox.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_gus_0",
+    "time": "16:05",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Gus is by Owen Price's House & Yard, hawking the midday edition.",
+    "importance": 2,
+    "to_location_id": "loc_owen_house"
+  },
+  {
+    "event_id": "ev_bg_gus_1",
+    "time": "16:25",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus is at Bench by the Fountain, restocking his paper rack.",
+    "importance": 2,
+    "from_location_id": "loc_owen_house",
+    "to_location_id": "loc_fountain"
+  }
+]

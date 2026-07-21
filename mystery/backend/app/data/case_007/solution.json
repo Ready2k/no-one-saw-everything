@@ -1,0 +1,47 @@
+{
+  "killer_id": "agent_marcus",
+  "motive": {
+    "canonical": "Marcus's ownership of Hobbs Cafe rests on a bill of sale he forged thirty years ago — Elias's 1994 notebook recorded him practising Thomas Hobbs' signature, and Elias gave him until the nine o'clock reading to sign the cafe to the village trust or be exposed.",
+    "concept_groups": [
+      ["forg", "trace", "traced", "fake", "faked", "copied", "signature", "counterfeit"],
+      ["hobbs", "bill of sale", "deed", "cafe", "ownership", "apprentice", "bookkeeper"],
+      ["notebook", "1994", "archive", "reading", "expose", "exposed", "diary", "notebooks", "page"],
+      ["silence", "silenced", "secret", "cover", "ultimatum", "trust", "blackmail", "before the reading"]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "A single blow from behind with the stockroom's cast-iron owl doorstop, at 20:52.",
+    "concept_groups": [
+      ["blunt", "struck", "strike", "hit", "bludgeon", "blow", "beat", "from behind"],
+      ["doorstop", "owl", "iron", "cast-iron"]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Marcus left the stall on a fake cup errand, cut through his own kitchen and the dark alley to the stockroom's unbolted rear door — where Elias had invited him — and was back at the ladle by nine, empty-handed.",
+    "concept_groups": [
+      ["stockroom", "bookshop", "back door", "rear door", "alley", "rear", "unbolted"],
+      ["cups", "cup errand", "left the stall", "stepped away", "away from the stall", "gone from the stall", "nineteen minutes"],
+      ["lie", "lied", "lying", "false", "made up", "never fetched", "empty-handed", "no cups", "false alibi", "fake alibi", "cover"]
+    ],
+    "min_groups": 2
+  },
+  "key_clue_ids": [
+    "clue_notebook_found",
+    "clue_ben_grey_coat",
+    "clue_marcus_cups_gap",
+    "clue_cider_residue",
+    "clue_bill_of_sale"
+  ],
+  "explanation": "Correct. Marcus Bell killed Elias Grant — the man who taught him, the man who saw everything, and the only man alive who knew what Marcus's whole life stood on. Thirty years ago, as Thomas Hobbs' apprentice bookkeeper, Marcus traced the dying man's signature against the schoolhouse glass until his wrist learned it, and the forged bill of sale made Hobbs Cafe his. Elias watched him do it and wrote it down without understanding — until this spring, when he sorted forty years of notebooks for the village archive and re-read the autumn of 1994. He gave Marcus a merciful ultimatum: sign the cafe to the village trust, or the archive would read the page at nine o'clock. At the fair Elias told him, over the cider urn, 'You know which page' — the words Nadia heard — and left the stockroom's alley door unbolted for him. At 20:40 Marcus handed Clara the ladle, said 'cups', went through his own dark kitchen and down the alley — the grey coat Ben saw at 20:44 — and into the stockroom. When Elias refused any price and turned his back, Marcus struck him once with the owl doorstop: the 20:52 thud Isabella heard from twenty feet away. He wiped the owl with cider-sticky hands, set it down on the wrong side of the door, carried the 1994 volume out under his coat, and was back at the stall by nine — empty-handed, out of breath, hiding the notebook in the crate of spare cups while the village called for a man who was never late. Owen was in the clinic hiding a burn, Isabella never passed her own counter, and Ben's secret was a ring taped inside a lantern. No one saw everything. But Clara counted the minutes, Ben knew the walk, Nadia kept the words, Priya knew where the owl lives — and together, they saw enough.",
+  "epilogues": {
+    "agent_marcus": "He asked for two things at the station: a receipt for the notebook, and that the cafe's accounts be audited publicly, line by line. 'You'll find them true,' he said, and they were — thirty years of honest arithmetic on one crooked line. The cafe went to the village trust by Christmas after all. The sign still says Hobbs.",
+    "agent_clara": "Clara runs the cafe for the trust now. She kept the urn and the ladle from the fair, and she opens at seven sharp, to the penny, out of something she won't call loyalty any more but hasn't found a new word for either.",
+    "agent_isabella": "Isabella shelved the archive alone, every volume, 1994 included — donated to the collection by order of the court, which she found she approved of. When the catalogue was finished she read the bailiff year aloud herself, at the lectern, to whoever came. Curation, she said, is a fine word for fear. Elias Grant, she added, was right about nearly everything, which was the most infuriating thing about him.",
+    "agent_owen": "Owen's burn healed into a story he now tells against himself at every fair, pan in hand, at volume. The committee asked him to quote for proper archive shelving. He built it in oak — actual oak, receipts stapled to the invoice — and carved a small owl into the end panel where he thought nobody would notice. Everybody noticed.",
+    "agent_priya": "Priya said yes. At the next lantern lighting, a year to the night, with the whole square watching sweet peas rise over the fountain. She keeps the archive keys now, and she still bolts the alley door herself at closing — but the owl has been retired to the front window, where it watches the square. She felt it had earned a view.",
+    "agent_ben": "Ben finally got to be the one who showed her. He tells the story wrong on purpose these days — three weekends becomes five, the shed gets colder every telling — because Priya corrects him word-perfect every time, and being corrected by someone who was paying attention turns out to be his favourite thing in the world.",
+    "agent_nadia": "Nadia broke two confidences that week — Owen's burn and a dead man's ultimatum — and has slept soundly on both. She visits Marcus's trial dates the way she'd visit a chronic patient: regularly, without sentiment, keeping her own notes. Somebody in this village, she says, ought to go on writing things down."
+  }
+}
