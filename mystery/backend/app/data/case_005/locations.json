@@ -1,0 +1,233 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The open heart of the village. The cafe fronts the square. The rear alley entrance is visible from the bench.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_rear_alley",
+      "loc_clinic",
+      "loc_owen_house",
+      "loc_fountain"
+    ],
+    "visibility_type": "public",
+    "camera_coverage": false,
+    "map_position": {
+      "x": 724,
+      "y": 352
+    },
+    "map_bounds": {
+      "x": 515,
+      "y": 250,
+      "width": 420,
+      "height": 230
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_rear_alley",
+    "name": "Rear Alley",
+    "description": "The narrow service alley behind the cafe and bookshop. Bins, crates, a linen delivery bay. The alley is where Clara is found. A small fire was set near the bins \u2014 it scorched the crate stack and a section of wall before dying out.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_hobbs_cafe",
+      "loc_bookshop",
+      "loc_back_lane"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_village_square"
+    ],
+    "murder_suitable": true,
+    "map_position": {
+      "x": 650,
+      "y": 545
+    },
+    "map_bounds": {
+      "x": 610,
+      "y": 430,
+      "width": 78,
+      "height": 260,
+      "rotation": 0
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_hobbs_cafe",
+    "name": "Hobbs Cafe",
+    "description": "The village cafe. Clara's workplace. The rear door opens onto the alley.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_rear_alley"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 820,
+      "y": 695
+    },
+    "map_bounds": {
+      "x": 696,
+      "y": 496,
+      "width": 270,
+      "height": 290,
+      "rotation": 0
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_clara_flat",
+    "name": "Flat above Hobbs Cafe",
+    "description": "Clara's flat above the cafe. Found to contain documents about the property title.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 805,
+      "y": 566
+    },
+    "map_bounds": {
+      "x": 740,
+      "y": 510,
+      "width": 150,
+      "height": 110,
+      "rotation": 0
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_owen_house",
+    "name": "Owen Price's House & Yard",
+    "description": "Owen's house and builder's yard. His supposed alibi location.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_back_lane"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 1190,
+      "y": 760
+    },
+    "map_bounds": {
+      "x": 1045,
+      "y": 590,
+      "width": 340,
+      "height": 340,
+      "rotation": 0
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "Nadia's workplace. She crosses between the square and clinic at 07:00.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 980,
+      "y": 360
+    },
+    "map_bounds": {
+      "x": 885,
+      "y": 280,
+      "width": 190,
+      "height": 170,
+      "rotation": 0
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Reed & Bell Bookshop",
+    "description": "The bookshop, adjacent to the rear alley.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_rear_alley"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 385,
+      "y": 505
+    },
+    "map_bounds": {
+      "x": 260,
+      "y": 388,
+      "width": 250,
+      "height": 230,
+      "rotation": 0
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_fountain",
+    "name": "Fountain",
+    "description": "The stone fountain in the square.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 714,
+      "y": 348
+    },
+    "map_bounds": {
+      "x": 650,
+      "y": 292,
+      "width": 128,
+      "height": 112
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_elias_bench",
+    "name": "Elias's Bench",
+    "description": "The specific bench in the village square where Elias always sits, facing the square, watching everyone who crosses it.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_fountain"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 796,
+      "y": 365
+    },
+    "map_bounds": {
+      "x": 750,
+      "y": 336,
+      "width": 105,
+      "height": 58,
+      "rotation": 0
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_back_lane",
+    "name": "The Back Lane",
+    "description": "A rutted service lane running behind the yards and the cafe's rear wall. No windows overlook it. It is the one way across the village that the square cannot see, and half the village has forgotten it is there.",
+    "connected_location_ids": [
+      "loc_owen_house",
+      "loc_rear_alley"
+    ],
+    "visibility_type": "public",
+    "camera_coverage": false,
+    "map_position": {
+      "x": 1050,
+      "y": 610
+    },
+    "map_bounds": {
+      "x": 920,
+      "y": 570,
+      "width": 310,
+      "height": 80
+    },
+    "visual_layer": "exterior"
+  }
+]
