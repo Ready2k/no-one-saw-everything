@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 from app.question_classifier import classify_question
 from app.llm.question_intent_classifier import classify_question_intent_llm
 from app.llm.config import get_llm_config
-from app.llm.dialogue_rewriter import generate_open_ended_response
+from app.llm.dialogue_rewriter import generate_open_ended_response, rewrite_interview_answer
 from app.interview import answer_question, public_ask_response, examine_body
 from app.world_state import build_conversation_context, build_world_state_digest
 from app import challenge as challenge_engine
@@ -28,6 +28,55 @@ def _generic_followups(case) -> list[str]:
         f"What was your relationship with {victim_name}?",
         f"When did you last see {victim_name}?",
     ]
+
+
+def _open_ended_reply(case, sess, req: FreeTextAskRequest, intent: QuestionIntent) -> FreeTextAskResponse:
+    """Let the agent improvise an in-character reply with no deterministic
+    ground truth to rewrite — used both for genuinely unmatched questions and
+    for a confrontation/bluff with no evidence behind it, so a suspect reacts
+    (denial, suspicion, irritation) instead of a flat meta-message. Guarded by
+    the same forbidden-facts list and sanitiser as every grounded rewrite."""
+    agent = next(a for a in case.agents if a.agent_id == req.agent_id)
+    pressure = sess.pressure_for(req.agent_id)
+    transcript = sess.transcript_for(req.agent_id)
+    recent_exchange = build_conversation_context(sess, agent)
+
+    result = generate_open_ended_response(
+        case=case,
+        agent=agent,
+        question_text=req.question,
+        pressure_level=pressure,
+        recent_exchange=recent_exchange or None,
+        world_state=build_world_state_digest(case, sess, req.agent_id) or None,
+    )
+
+    transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
+    transcript.messages.append(
+        InterviewMessage(
+            speaker="agent",
+            text=result.rewritten_text,
+            llm_rewrite_used=True,
+            llm_rewrite_fallback=result.fallback_used,
+            llm_rewrite_fallback_reason=result.fallback_reason,
+        )
+    )
+
+    return FreeTextAskResponse(
+        intent=intent,
+        answer={
+            "question_text": req.question,
+            "answer_text": result.rewritten_text,
+            "deterministic_answer_text": result.rewritten_text,
+            "answer_type": "open_ended",
+            "emotional_shift": None,
+            "new_claims": [],
+            "revealed_clues": [],
+            "suggested_followups": _generic_followups(case),
+            "llm_rewrite_used": True,
+            "llm_rewrite_fallback": result.fallback_used,
+            "llm_rewrite_fallback_reason": result.fallback_reason,
+        },
+    )
 
 
 def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse:
@@ -76,36 +125,73 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
     if intent.intent in SMALL_TALK_INTENTS:
         agent = next(a for a in case.agents if a.agent_id == req.agent_id)
         transcript = sess.transcript_for(req.agent_id)
-        
+
         transcript.intent_counts[intent.intent] = transcript.intent_counts.get(intent.intent, 0) + 1
         count = transcript.intent_counts[intent.intent]
 
-        answer_text = agent.small_talk.get(intent.intent, "I don't have much to say about that.")
-        answer_text = humanize_response(answer_text, agent, count)
-        
+        deterministic_text = agent.small_talk.get(intent.intent, "I don't have much to say about that.")
+        deterministic_text = humanize_response(deterministic_text, agent, count)
+
+        display_text = deterministic_text
+        llm_rewrite_used = False
+        llm_rewrite_fallback = False
+        llm_rewrite_fallback_reason = None
+
+        # Small talk had no ground truth to rewrite from and always played the
+        # same one or two canned lines verbatim — the LLM rewrite path was
+        # skipped entirely regardless of configuration, so a friendly
+        # rapport-building question always got a flat, robotic non-answer.
+        # Route it through the same trusted rewrite+sanitiser used for every
+        # other grounded answer, with the canned line as both the ground
+        # truth and the only allowed fact, so it stays exactly as safe.
+        config = get_llm_config()
+        if config.dialogue_enabled:
+            is_repeat = any(
+                m.speaker == "agent" and m.deterministic_text == deterministic_text
+                for m in transcript.messages
+            )
+            rewrite_result = rewrite_interview_answer(
+                case=case,
+                agent=agent,
+                question_text=req.question,
+                deterministic_text=deterministic_text,
+                allowed_facts=[deterministic_text],
+                pressure_level=sess.pressure_for(req.agent_id),
+                recent_exchange=build_conversation_context(sess, agent) or None,
+                emotion="neutral",
+                world_state=build_world_state_digest(case, sess, req.agent_id) or None,
+                is_repeat=is_repeat,
+            )
+            display_text = rewrite_result.rewritten_text
+            llm_rewrite_used = True
+            llm_rewrite_fallback = rewrite_result.fallback_used
+            llm_rewrite_fallback_reason = rewrite_result.fallback_reason
+
         transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
         transcript.messages.append(
             InterviewMessage(
                 speaker="agent",
-                text=answer_text,
-                llm_rewrite_used=False,
-                llm_rewrite_fallback=False,
+                text=display_text,
+                deterministic_text=deterministic_text,
+                llm_rewrite_used=llm_rewrite_used,
+                llm_rewrite_fallback=llm_rewrite_fallback,
+                llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,
             )
         )
         return FreeTextAskResponse(
             intent=intent,
             answer={
                 "question_text": req.question,
-                "answer_text": answer_text,
-                "deterministic_answer_text": answer_text,
+                "answer_text": display_text,
+                "deterministic_answer_text": deterministic_text,
                 "answer_type": "small_talk",
                 "emotional_shift": None,
                 "new_claims": [],
                 "revealed_clues": [],
                 "suggested_followups": _generic_followups(case),
-                "llm_rewrite_used": False,
-                "llm_rewrite_fallback": False,
-                "llm_rewrite_fallback_reason": None,
+                "llm_rewrite_used": llm_rewrite_used,
+                "llm_rewrite_fallback": llm_rewrite_fallback,
+                "llm_rewrite_fallback_reason": llm_rewrite_fallback_reason,
             },
         )
 
@@ -114,49 +200,8 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         config = get_llm_config()
         if not config.dialogue_enabled:
             return fallback_resp
+        return _open_ended_reply(case, sess, req, intent)
 
-        agent = next(a for a in case.agents if a.agent_id == req.agent_id)
-        pressure = sess.pressure_for(req.agent_id)
-        transcript = sess.transcript_for(req.agent_id)
-        recent_exchange = build_conversation_context(sess, agent)
-
-        result = generate_open_ended_response(
-            case=case,
-            agent=agent,
-            question_text=req.question,
-            pressure_level=pressure,
-            recent_exchange=recent_exchange or None,
-            world_state=build_world_state_digest(case, sess, req.agent_id) or None,
-        )
-
-        transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
-        transcript.messages.append(
-            InterviewMessage(
-                speaker="agent",
-                text=result.rewritten_text,
-                llm_rewrite_used=True,
-                llm_rewrite_fallback=result.fallback_used,
-                llm_rewrite_fallback_reason=result.fallback_reason,
-            )
-        )
-
-        return FreeTextAskResponse(
-            intent=intent,
-            answer={
-                "question_text": req.question,
-                "answer_text": result.rewritten_text,
-                "deterministic_answer_text": result.rewritten_text,
-                "answer_type": "open_ended",
-                "emotional_shift": None,
-                "new_claims": [],
-                "revealed_clues": [],
-                "suggested_followups": _generic_followups(case),
-                "llm_rewrite_used": True,
-                "llm_rewrite_fallback": result.fallback_used,
-                "llm_rewrite_fallback_reason": result.fallback_reason,
-            },
-        )
-        
     if intent.intent in ["contradiction", "explicit_challenge"]:
         if not intent.referenced_clue_id:
             for rule in case.challenge_rules:
@@ -214,6 +259,13 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
                                     evidence_title=clue.title if clue else ""
                                 )
                             )
+        # No evidence backs this up — a bluff, or a reference the player made
+        # that has no scripted rule. Still worth an in-character reaction
+        # (denial, suspicion) rather than a flat UI hint, when a rewrite
+        # model is available; otherwise keep the original meta message so
+        # the player still knows to use the Challenge button.
+        if get_llm_config().dialogue_enabled:
+            return _open_ended_reply(case, sess, req, intent)
         return FreeTextAskResponse(
             intent=intent,
             fallback_message="That sounds like something to challenge directly. Use the Challenge button if you have evidence."
