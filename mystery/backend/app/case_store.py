@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import re
+from contextvars import ContextVar
 from functools import lru_cache
 from pathlib import Path
 
@@ -46,6 +48,18 @@ def _load_json(case_dir: Path, name: str):
     return json.loads((case_dir / name).read_text())
 
 
+_CASE_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}")
+
+
+def is_safe_case_id(case_id: str) -> bool:
+    """Case ids become path components under DATA_DIR; anything else is an attack.
+
+    Generated internally they are `case_00N` / `gen_<type>_<seed>_<ts>`, but several
+    endpoints accept them off the wire — a `..` segment must never reach Path joins.
+    """
+    return bool(_CASE_ID_RE.fullmatch(case_id)) and ".." not in case_id
+
+
 class CaseLoadError(Exception):
     def __init__(self, load_status: str, message: str):
         super().__init__(message)
@@ -84,6 +98,8 @@ def normalize_case_metadata(raw_metadata: dict | None) -> dict:
 @lru_cache(maxsize=8)
 def load_case_from_disk(case_id: str) -> CaseData:
     """Loads a static, hand-authored case or procedurally generated case from the data directory."""
+    if not is_safe_case_id(case_id):
+        raise CaseLoadError("missing_case_data", f"Invalid case id: {case_id!r}")
     case_dir = DATA_DIR / case_id
     if case_id.startswith("case_") and not case_dir.is_dir():
         case_dir = Path(__file__).parent / "data" / case_id
@@ -209,34 +225,52 @@ def list_all_cases() -> list[dict[str, str]]:
     return cases
 
 
-_ACTIVE_START_TIME: str | None = None
+# The reference point for midnight wrapping in minutes(). A ContextVar, not a module
+# global: two concurrent requests can be playing different cases (a 07:30 morning case
+# and case_004's 22:00 night case), and each request must wrap times against its own
+# case's clock. The request middleware sets this from the resolved active case; code
+# running outside a request (tests, generators) sets it explicitly.
+_ACTIVE_START_TIME: ContextVar[str | None] = ContextVar("mystery_start_time", default=None)
 
 
 def set_active_start_time(start_time: str) -> None:
-    global _ACTIVE_START_TIME
-    _ACTIVE_START_TIME = start_time
+    _ACTIVE_START_TIME.set(start_time)
 
 
 def minutes(hhmm: str) -> int:
     h, m = hhmm.split(":")
     mins = int(h) * 60 + int(m)
-    
-    global _ACTIVE_START_TIME
-    if _ACTIVE_START_TIME:
-        sh, sm = _ACTIVE_START_TIME.split(":")
+
+    start = _ACTIVE_START_TIME.get()
+    if start:
+        sh, sm = start.split(":")
         start_mins = int(sh) * 60 + int(sm)
         if mins < start_mins:
             mins += 1440
-            
+
     return mins
 
 
+class CaseDeleteError(Exception):
+    """Refusing to delete: the message says why and is safe to surface."""
+
+
 def delete_case_from_disk(case_id: str) -> None:
-    """Removes the case from data directory and registry."""
+    """Removes a *generated* case from the data directory and registry.
+
+    Hand-authored cases (case_001..) are shipped content and must never be deletable
+    over the API; and case_id is wire input, so it must be validated before it comes
+    anywhere near a recursive delete.
+    """
+    if not is_safe_case_id(case_id):
+        raise CaseDeleteError("Invalid case id.")
+    if not case_id.startswith("gen_"):
+        raise CaseDeleteError("Only generated cases (gen_*) can be deleted.")
+
     if case_id in _GENERATED_CASES:
         del _GENERATED_CASES[case_id]
     load_case_from_disk.cache_clear()
-    
+
     case_dir = DATA_DIR / case_id
     if case_dir.is_dir():
         import shutil

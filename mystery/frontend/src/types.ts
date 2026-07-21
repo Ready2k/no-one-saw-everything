@@ -524,7 +524,10 @@ export interface Config {
 export interface LlmSettingsSaved {
   provider: "fake" | "auto" | "openai_compatible";
   base_url: string | null;
-  api_key: string | null;
+  // The real key is never sent to the client — only whether one is saved,
+  // and its last 4 characters so the operator can recognise it.
+  api_key_set: boolean;
+  api_key_last4: string | null;
   model: string | null;
   dialogue_enabled: boolean;
 }

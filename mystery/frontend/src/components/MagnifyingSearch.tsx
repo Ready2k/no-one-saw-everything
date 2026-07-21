@@ -283,6 +283,12 @@ export function MagnifyingSearch({
       onMouseUp={handlePointerUp}
       onClick={handleClick}
     >
+      {adjustedClues.length > 0 && (
+        <span className="sr-only">
+          {adjustedClues.length} unsearched spot{adjustedClues.length === 1 ? "" : "s"} here —
+          press Tab to reach them, then Enter to search.
+        </span>
+      )}
       {!isPortrait && (
         <>
           <div className="investigation-kit" aria-label="Investigation tools">
@@ -389,7 +395,7 @@ export function MagnifyingSearch({
       {(!isPortrait || sheetFolded) && adjustedClues.map(c => {
          const isActive = activeHotspot?.clue_id === c.clue_id;
          return (
-           <div 
+           <div
              key={c.clue_id}
              className={`hotspot-hint ${isActive ? "active" : ""}`}
              style={{
@@ -399,6 +405,30 @@ export function MagnifyingSearch({
            />
          )
       })}
+
+      {/* Keyboard-equivalent path: dragging the lens to find a hotspot has no
+          keyboard equivalent, so each still-hidden clue also gets a real,
+          focusable button at the same spot — invisible and inert to the
+          mouse (see .hotspot-kb-target), everything to Tab + Enter/Space. */}
+      {(!isPortrait || sheetFolded) &&
+        adjustedClues.map((c, i) => (
+          <button
+            key={`kb-${c.clue_id}`}
+            type="button"
+            className="hotspot-kb-target"
+            style={{
+              left: `${c.x}%`,
+              top: `${c.y}%`,
+              width: `${Math.max(c.radius, 6)}%`,
+              height: `${Math.max(c.radius, 6)}%`,
+            }}
+            aria-label={`Search spot ${i + 1} of ${adjustedClues.length}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDiscover(c.clue_id);
+            }}
+          />
+        ))}
 
       {mousePos && dim.w > 0 && (
         <div

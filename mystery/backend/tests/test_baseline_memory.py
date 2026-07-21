@@ -94,8 +94,10 @@ def test_baseline_habit_is_seeded_identity_not_truth():
 def test_first_answer_after_entering_a_band_carries_the_comparison_once():
     _raise_clara_pressure_to_cornered()  # P=0.47, band 2, banked at band 0
     sess = get_session("case_001")
-    habit_category = sess.baselines["agent_clara"].habit_category
-    expected_cue = BASELINE_DEVIATION_CUES[habit_category]
+    baseline = sess.baselines["agent_clara"]
+    # Clara has an authored deviation cue (all principals do now); the stock
+    # category cue is only the fallback for unauthored agents.
+    expected_cue = baseline.deviation_cue or BASELINE_DEVIATION_CUES[baseline.habit_category]
 
     first = _ask("agent_clara", "relationship")
     cues = [t["cue"] for t in first["observable_tells"]]
@@ -114,7 +116,8 @@ def test_comparison_lands_even_on_a_flat_answer():
     _raise_clara_pressure_to_cornered()
     resp = _ask("agent_clara", "location", topic_location_id="loc_bakery")
     sess = get_session("case_001")
-    expected_cue = BASELINE_DEVIATION_CUES[sess.baselines["agent_clara"].habit_category]
+    baseline = sess.baselines["agent_clara"]
+    expected_cue = baseline.deviation_cue or BASELINE_DEVIATION_CUES[baseline.habit_category]
     assert expected_cue in [t["cue"] for t in resp["observable_tells"]]
 
 

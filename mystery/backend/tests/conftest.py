@@ -11,6 +11,11 @@ def _restore_golden_case():
     # Tests that activate generated cases also shift the global time-wrap
     # base; restore it alongside the active case id.
     set_active_start_time(get_case("case_001").case.sim_start_time)
+    # The rate limiters are process-lifetime singletons (deliberately — they
+    # protect a running server across many requests); reset them per test or
+    # a test late in the suite inherits quota already spent by earlier ones.
+    main._llm_rate_limiter.reset()
+    main._generate_rate_limiter.reset()
 
 
 @pytest.fixture(autouse=True)

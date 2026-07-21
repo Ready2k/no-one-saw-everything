@@ -50,6 +50,8 @@ function SpritePortrait({
     <span
       className={`portrait portrait-sprite portrait-${size}`}
       title={name}
+      role="img"
+      aria-label={name}
       style={{
         backgroundImage: `url(/map/sprites/${spriteAsset})`,
         backgroundSize: `${SHEET_COLS * 100}% ${SHEET_ROWS * 100}%`,
@@ -98,6 +100,13 @@ export default function Portrait({
     );
   }
 
-  // Priority 3: legacy emoji fallback
-  return <span className={`portrait portrait-${size}`}>{agent.portrait}</span>;
+  // Priority 3: legacy emoji fallback — a generic themed icon (☕, 🧣, 📦...),
+  // not a distinguishing likeness. Every call site pairs this with the
+  // character's name as visible text, so it's decorative: hidden from
+  // assistive tech rather than announced as if it identified anyone.
+  return (
+    <span className={`portrait portrait-${size}`} aria-hidden="true">
+      {agent.portrait}
+    </span>
+  );
 }

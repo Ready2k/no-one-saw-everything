@@ -1,0 +1,56 @@
+# One-command production deploy:
+#   docker compose up --build
+# Frontend on http://localhost:8080, proxying /api to the backend container.
+# See docs/deployment.md for every MYSTERY_* environment variable.
+
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      # Provider is "fake" (no network, deterministic templates only) unless
+      # you configure one — see docs/deployment.md for the full LLM section.
+      MYSTERY_LLM_PROVIDER: ${MYSTERY_LLM_PROVIDER:-fake}
+      MYSTERY_LLM_BASE_URL: ${MYSTERY_LLM_BASE_URL:-}
+      MYSTERY_LLM_API_KEY: ${MYSTERY_LLM_API_KEY:-}
+      MYSTERY_LLM_MODEL: ${MYSTERY_LLM_MODEL:-}
+      MYSTERY_LLM_DIALOGUE_ENABLED: ${MYSTERY_LLM_DIALOGUE_ENABLED:-false}
+      MYSTERY_LLM_TIMEOUT_SECONDS: ${MYSTERY_LLM_TIMEOUT_SECONDS:-60}
+      # The frontend container reaches the backend over the compose network,
+      # not the browser, so this only matters if something ELSE (a second
+      # frontend origin, a direct API caller) needs CORS too.
+      MYSTERY_CORS_ORIGINS: ${MYSTERY_CORS_ORIGINS:-http://localhost:8080}
+      MYSTERY_PLAYTEST_MODE: ${MYSTERY_PLAYTEST_MODE:-false}
+      ENABLE_DEV_MAP_EDITOR: ${ENABLE_DEV_MAP_EDITOR:-false}
+      MYSTERY_LOG_JSON: ${MYSTERY_LOG_JSON:-true}
+      MYSTERY_LOG_LEVEL: ${MYSTERY_LOG_LEVEL:-INFO}
+    volumes:
+      # Everything mutable AND everything shipped lives under app/data/ (case
+      # bundles, sessions/, telemetry/, generated gen_* cases, and
+      # llm_settings.json all share this one directory — see case_store.py).
+      # Mounting the whole thing means a fresh named volume is seeded from the
+      # image's shipped cases on first run, and every later run persists
+      # investigations across container recreation. The tradeoff: rebuilding
+      # the image with NEW/updated shipped cases will NOT update an existing
+      # deployment's volume automatically (Docker only seeds an empty
+      # volume) — start a fresh volume (or docker cp the new case dirs in) to
+      # pick up shipped-content changes. See PRODUCTION_TODO.md.
+      - mystery_data:/app/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8010/api/config')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mystery_data:

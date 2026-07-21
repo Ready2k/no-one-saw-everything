@@ -9,7 +9,7 @@
       "proud",
       "fair but unforgiving"
     ],
-    "portrait": "\u2615",
+    "portrait": "☕",
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Up at six, reviews the books in his study, at the cafe by a quarter to seven to oversee opening.",
@@ -71,7 +71,7 @@
       "proud",
       "guarded"
     ],
-    "portrait": "\ud83e\udde3",
+    "portrait": "🧣",
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Lives above the cafe. Down by half six to prep, opens the doors at eight sharp.",
@@ -105,6 +105,10 @@
       "defensive": "/art/portraits/clara_defensive.png",
       "cracking": "/art/portraits/clara_cracking.png"
     },
+    "baseline": {
+      "habit_category": "overexplaining",
+      "habit_text": "she rounds every answer up into a story, with one more character in it than you asked about",
+      "deviation_cue": "The stories have stopped. Every answer now is exactly as long as it has to be, and not a word longer."
     "small_talk": {
       "greeting": "Yes, Detective?",
       "how_are_you": "I'm managing. We all have jobs to do, despite... everything.",
@@ -126,7 +130,7 @@
       "chatty",
       "bad at secrets"
     ],
-    "portrait": "\ud83d\udce6",
+    "portrait": "📦",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Morning delivery round through the square and rear alley; usually cadges a coffee when the cafe opens.",
@@ -160,6 +164,10 @@
       "defensive": "/art/portraits/ben_defensive.png",
       "cracking": "/art/portraits/ben_cracking.png"
     },
+    "baseline": {
+      "habit_category": "hands",
+      "habit_text": "his hands sketch every route and parcel in the air while he talks",
+      "deviation_cue": "His hands have quit the conversation — flat on his knees while his mouth does all the work alone."
     "small_talk": {
       "greeting": "Oh, hey there Detective!",
       "how_are_you": "Bit rattled to be honest! It's not every day this kind of thing happens.",
@@ -181,7 +189,7 @@
       "wounded",
       "composed"
     ],
-    "portrait": "\ud83d\udcda",
+    "portrait": "📚",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens the bookshop at nine; mornings are for paperwork and coffee at Hobbs.",
@@ -214,6 +222,10 @@
       "defensive": "/art/portraits/isabella_defensive.png",
       "cracking": "/art/portraits/isabella_cracking.png"
     },
+    "baseline": {
+      "habit_category": "posture",
+      "habit_text": "she sits half out of the chair, as if the next task is already calling her name",
+      "deviation_cue": "She has stopped moving. The woman with three tasks queued behind this one is sitting perfectly, unnaturally still."
     "small_talk": {
       "greeting": "Good day, Detective.",
       "how_are_you": "I am composed, thank you. Though the atmosphere is undeniably tense.",
@@ -235,7 +247,7 @@
       "hot-tempered",
       "proud"
     ],
-    "portrait": "\ud83d\udd28",
+    "portrait": "🔨",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "In the timber yard from early; takes deliveries around half seven.",
@@ -262,6 +274,10 @@
       "defensive": "/art/portraits/owen_defensive.png",
       "cracking": "/art/portraits/owen_cracking.png"
     },
+    "baseline": {
+      "habit_category": "timing",
+      "habit_text": "he leaves a workman's pause before each answer, measuring twice before he commits",
+      "deviation_cue": "The pauses have doubled. He is testing every question for load before he puts any weight on it."
     "small_talk": {
       "greeting": "What now?",
       "how_are_you": "I'm busy, that's how I am. Got a yard to run.",
@@ -283,7 +299,7 @@
       "kind",
       "conflict-averse"
     ],
-    "portrait": "\ud83c\udf38",
+    "portrait": "🌸",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens up the bookshop stockroom early, then shelves new deliveries.",
@@ -324,6 +340,10 @@
       "defensive": "/art/portraits/priya_defensive.png",
       "cracking": "/art/portraits/priya_cracking.png"
     },
+    "baseline": {
+      "habit_category": "gaze",
+      "habit_text": "she watches your face while she answers, checking that the words are landing right",
+      "deviation_cue": "She has stopped checking your face. Her answers go to the table now, and stay there."
     "small_talk": {
       "greeting": "Oh, um... hello, Detective.",
       "how_are_you": "I'm... okay, I think. It's just all a bit frightening.",
@@ -345,7 +365,7 @@
       "practical",
       "discreet"
     ],
-    "portrait": "\ud83e\ude7a",
+    "portrait": "🩺",
     "home_location_id": "loc_nadia_flat",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift at the clinic; crosses the square a few times each morning.",
@@ -372,6 +392,10 @@
       "defensive": "/art/portraits/nadia_defensive.png",
       "cracking": "/art/portraits/nadia_cracking.png"
     },
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "her voice carries the unhurried warmth of someone used to talking people back to calm",
+      "deviation_cue": "The warmth has drained out of her voice. The words are the same; the bedside manner is gone."
     "small_talk": {
       "greeting": "Detective. Can I help you?",
       "how_are_you": "I am quite alright. In my line of work, you learn to compartmentalise.",
@@ -393,7 +417,7 @@
       "certain of himself",
       "harmless"
     ],
-    "portrait": "\ud83c\udfa9",
+    "portrait": "🎩",
     "home_location_id": "loc_elias_house",
     "work_location_id": "loc_village_square",
     "routine_summary": "First on the square bench every morning with a flask and opinions.",
@@ -427,6 +451,10 @@
       "defensive": "/art/portraits/elias_defensive.png",
       "cracking": "/art/portraits/elias_cracking.png"
     },
+    "baseline": {
+      "habit_category": "timing",
+      "habit_text": "he answers before the question has quite finished, a teacher who has heard every excuse in the room",
+      "deviation_cue": "The interruptions have stopped. He waits out the whole question now, and answers only the part he has chosen."
     "small_talk": {
       "greeting": "Ah, the authorities. Step into my office\u2014well, my bench.",
       "how_are_you": "Never better, Detective. The village hasn't seen this much excitement in decades!",
@@ -447,7 +475,7 @@
       "quiet",
       "early riser"
     ],
-    "portrait": "\ud83c\udf3f",
+    "portrait": "🌿",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_fountain",
     "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear alley before the village wakes properly.",
@@ -471,7 +499,7 @@
       "brisk",
       "punctual"
     ],
-    "portrait": "\ud83d\udce8",
+    "portrait": "📨",
     "home_location_id": "loc_rear_alley",
     "work_location_id": "loc_village_square",
     "routine_summary": "Does the morning post round through the square, the bookshop and the clinic before most doors have even opened.",
@@ -491,7 +519,7 @@
     "full_name": "Min Okafor",
     "age": 22,
     "occupation": "Baker's assistant",
-    "portrait": "\ud83e\udd56",
+    "portrait": "🥖",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Up before the ovens, delivers the morning loaves to the cafe and the bookshop, and always keeps the misshapen one back for herself.",
@@ -510,10 +538,10 @@
     "full_name": "Sal Ibori",
     "age": 54,
     "occupation": "Milkman",
-    "portrait": "\ud83e\udd5b",
+    "portrait": "🥛",
     "home_location_id": "loc_hobbs_cafe",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Runs the milk round in strict order \u2014 cafe first, bookshop second \u2014 and rates every doorstep in the village by how promptly they bring the empties back.",
+    "routine_summary": "Runs the milk round in strict order — cafe first, bookshop second — and rates every doorstep in the village by how promptly they bring the empties back.",
     "is_background": true,
     "pronoun": "he",
     "portrait_art": {
@@ -529,7 +557,7 @@
     "full_name": "Cole Byrne",
     "age": 26,
     "occupation": "Window cleaner",
-    "portrait": "\ud83e\ude9f",
+    "portrait": "🪟",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_clinic",
     "routine_summary": "Works his ladder clockwise around the square; swears the clinic's windows are the only ones anyone ever thanks him for.",
@@ -548,7 +576,7 @@
     "full_name": "Dez Holt",
     "age": 61,
     "occupation": "Market stallholder",
-    "portrait": "\ud83e\uddfa",
+    "portrait": "🧺",
     "home_location_id": "loc_clinic",
     "work_location_id": "loc_owen_house",
     "routine_summary": "Trundles his stall cart around the village testing pitches; has moved 'the perfect spot' four times this year and defends each one loudly.",
@@ -567,7 +595,7 @@
     "full_name": "Effie Marsh",
     "age": 46,
     "occupation": "Dog walker",
-    "portrait": "\ud83d\udc15",
+    "portrait": "🐕",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_fountain",
     "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; the terrier decides when they stop, and it always stops at the fountain.",
@@ -586,7 +614,7 @@
     "full_name": "Gus Farrow",
     "age": 51,
     "occupation": "Newspaper seller",
-    "portrait": "\ud83d\udcf0",
+    "portrait": "📰",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_village_square",
     "routine_summary": "Sets the papers out from the fountain to the cafe and reads every front page aloud to whoever stands still long enough.",
@@ -605,7 +633,7 @@
     "full_name": "Wren Ashby",
     "age": 61,
     "occupation": "Busker",
-    "portrait": "\ud83c\udfbb",
+    "portrait": "🎻",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Tunes the fiddle by the square until her fingers warm up, then follows the smell of coffee to the cafe pitch.",
@@ -624,10 +652,10 @@
     "full_name": "Birdie Voss",
     "age": 66,
     "occupation": "Street sweeper",
-    "portrait": "\ud83e\uddf9",
+    "portrait": "🧹",
     "home_location_id": "loc_hobbs_cafe",
     "work_location_id": "loc_bookshop",
-    "routine_summary": "Sweeps the shopfronts in the order the village wakes \u2014 cafe, bookshop, clinic \u2014 and knows everyone's doormat better than they do.",
+    "routine_summary": "Sweeps the shopfronts in the order the village wakes — cafe, bookshop, clinic — and knows everyone's doormat better than they do.",
     "is_background": true,
     "pronoun": "she",
     "portrait_art": {

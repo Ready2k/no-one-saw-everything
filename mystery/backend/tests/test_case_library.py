@@ -250,9 +250,14 @@ def test_list_cases_when_one_case_folder_is_corrupted():
     client.delete(f"/api/generated_cases/{case_id2}")
 
 def test_deleting_nonexistent_generated_case():
-    r = client.delete("/api/generated_cases/nonexistent_case_12345")
+    # Deleting a generated case that never existed is idempotent...
+    r = client.delete("/api/generated_cases/gen_nonexistent_12345")
     assert r.status_code == 200
     assert r.json()["status"] == "deleted"
+    # ...but anything outside the gen_* namespace (hand-authored cases, traversal
+    # attempts) is refused outright — DELETE reaches shutil.rmtree.
+    r = client.delete("/api/generated_cases/nonexistent_case_12345")
+    assert r.status_code == 400
 
 def test_activating_missing_generated_case():
     r = client.post("/api/generated_cases/nonexistent_case_12345/activate")

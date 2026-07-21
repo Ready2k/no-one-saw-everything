@@ -503,5 +503,53 @@
     "importance": 2,
     "from_location_id": "loc_clinic",
     "to_location_id": "loc_solicitors_office"
+  },
+  {
+    "event_id": "ev_1840_elias_square",
+    "time": "18:40",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias takes his slow evening turn about the square, reading the parish noticeboard twice over, nodding to anyone who passes.",
+    "visibility": "public",
+    "importance": 1
+  },
+  {
+    "event_id": "ev_0645_elias_bench",
+    "time": "06:45",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "First light. Elias settles onto his bench in the square with a flask, exactly where the village expects to find him.",
+    "visibility": "public",
+    "importance": 1
+  },
+  {
+    "event_id": "ev_1820_nadia_locks_clinic",
+    "time": "18:20",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "routine",
+    "truth_description": "Nadia finishes the evening list at the clinic, checks the dispensary lock twice, and pockets the keys.",
+    "visibility": "public",
+    "importance": 1
+  },
+  {
+    "event_id": "ev_2040_nadia_callout",
+    "time": "20:40",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "departure",
+    "truth_description": "Nadia's car pulls out past the square at speed, headed for the top road — a callout, by the way she takes the corner.",
+    "visibility": "public",
+    "importance": 2
   }
 ]

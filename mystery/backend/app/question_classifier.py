@@ -41,14 +41,42 @@ def classify_question(question: str, case: CaseData, session: Session) -> Option
             )
             
     # 4. Relationship
-    if any(phrase in q_norm for phrase in ["know", "relationship", "how did you feel about", "first met", "how you met"]):
+    RELATIONSHIP_PHRASES = [
+        "know", "relationship", "how did you feel about", "feel about", "first met",
+        "how you met", "get along", "get on with", "got along", "got on with",
+        "on good terms", "on bad terms", "think of", "think about", "friends with",
+        "friendly with", "close to", "close with", "trust",
+    ]
+    # "where"/"when" questions are about whereabouts even if they mention knowing
+    # someone ("do you know where Clara was?") — leave those to the later rules.
+    if (
+        any(phrase in q_norm for phrase in RELATIONSHIP_PHRASES)
+        and "where" not in q_norm.split()
+        and "when" not in q_norm.split()
+    ):
         victim = next((a for a in case.agents if a.is_victim), None)
-        if victim and (normalize_text(victim.full_name.split()[0]) in q_norm or "him" in q_norm or "her" in q_norm or "them" in q_norm or "victim" in q_norm or "deceased" in q_norm):
+        victim_mentioned = victim and (
+            normalize_text(victim.full_name.split()[0]) in q_norm
+            or "him" in q_norm.split() or "her" in q_norm.split() or "them" in q_norm.split()
+            or "victim" in q_norm or "deceased" in q_norm
+        )
+        if victim_mentioned:
             return QuestionIntent(
                 intent="relationship",
                 confidence=0.85,
                 **refs,
                 rewritten_structured_question="What was your relationship with the victim?"
+            )
+        # A relationship question about another villager. The grounded engine only
+        # answers relationship-with-the-victim, so route this to the open-ended
+        # path (or its honest fallback) — never to a location that happens to be
+        # named after the person ("Elias" is not "Elias Grant's House").
+        if refs.get("referenced_agent_id"):
+            return QuestionIntent(
+                intent="fallback_unknown",
+                confidence=0.6,
+                **refs,
+                rewritten_structured_question="What do you make of them?",
             )
             
     # 5. Explicit Challenge or Contradiction
@@ -61,7 +89,10 @@ def classify_question(question: str, case: CaseData, session: Session) -> Option
                 rewritten_structured_question="I challenge you on this."
             )
 
-    if any(phrase in q_norm for phrase in ["why did", "how come", "but you said", "but they said", "someone said", "someone saw"]):
+    if any(phrase in q_norm for phrase in [
+        "why did", "how come", "but you said", "but they said", "someone said",
+        "someone saw", "says you", "said you", "saw you", "claims you", "claimed you",
+    ]):
         # If there's a referenced agent, or referenced clue, might be contradiction
         if refs.get("referenced_agent_id") or refs.get("referenced_clue_id"):
             return QuestionIntent(

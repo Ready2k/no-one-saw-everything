@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import type { LlmSettingsResponse, LlmProbeResult, LlmTestResult } from "../types";
+import { useEscapeToClose } from "../useEscapeToClose";
 
 interface LlmSettingsModalProps {
   onClose: () => void;
@@ -9,6 +10,7 @@ interface LlmSettingsModalProps {
 type Provider = "fake" | "auto" | "openai_compatible";
 
 export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
+  useEscapeToClose(onClose);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,11 +40,15 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
         const saved = res.saved;
         setProvider((saved?.provider as Provider) ?? "fake");
         setBaseUrl(saved?.base_url ?? "");
-        setApiKey(saved?.api_key ?? "");
+        // The server never sends the real key back (see LlmSettingsSaved) —
+        // leave the field blank; the placeholder shows a saved key exists.
+        setApiKey("");
         setModel(saved?.model ?? "");
         setDialogueEnabled(saved?.dialogue_enabled ?? false);
         if (saved?.provider === "openai_compatible" && saved.base_url) {
-          fetchModels(saved.base_url, saved.api_key ?? "");
+          // Refresh the model list against the saved connection server-side,
+          // without ever handling its key in the browser.
+          fetchModels({ useSaved: true });
         }
       })
       .catch((err) => setError(String(err)))
@@ -50,16 +56,17 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchModels = async (urlOverride?: string, keyOverride?: string) => {
-    const url = (urlOverride ?? baseUrl).trim();
-    if (!url) return;
+  const fetchModels = async (opts?: { useSaved?: boolean }) => {
     setModelsLoading(true);
     setModelsError(null);
     try {
-      const res = await api.discoverLlmModels({
-        base_url: url,
-        api_key: (keyOverride ?? apiKey).trim() || undefined,
-      });
+      const res = opts?.useSaved
+        ? await api.discoverSavedLlmModels()
+        : await (async () => {
+            const url = baseUrl.trim();
+            if (!url) return { models: [], error: null };
+            return api.discoverLlmModels({ base_url: url, api_key: apiKey.trim() || undefined });
+          })();
       setModelOptions(res.models);
       if (res.models.length === 0) {
         setModelsError(res.error ?? "No models found at this endpoint.");
@@ -91,11 +98,21 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
     setTesting(true);
     setTestResult(null);
     try {
-      const res = await api.testLlm({
-        base_url: baseUrl.trim(),
-        api_key: apiKey.trim() || undefined,
-        model: model.trim(),
-      });
+      // Blank key + fields unchanged from the saved connection: test the
+      // saved config server-side rather than sending an empty key, which
+      // would test as "no auth" even though a real key is stored.
+      const usingSavedKey =
+        !apiKey.trim() &&
+        data?.saved?.api_key_set &&
+        baseUrl.trim() === (data.saved.base_url ?? "") &&
+        model.trim() === (data.saved.model ?? "");
+      const res = usingSavedKey
+        ? await api.testSavedLlm()
+        : await api.testLlm({
+            base_url: baseUrl.trim(),
+            api_key: apiKey.trim() || undefined,
+            model: model.trim(),
+          });
       setTestResult(res);
     } catch (err: any) {
       setTestResult({ ok: false, error: String(err) });
@@ -184,10 +201,14 @@ export default function LlmSettingsModal({ onClose }: LlmSettingsModalProps) {
                   <label>API Key (optional)</label>
                   <input
                     type="password"
-                    placeholder="leave blank if not required"
+                    placeholder={
+                      data?.saved?.api_key_set
+                        ? `Saved (••••${data.saved.api_key_last4 ?? "????"}) — leave blank to keep`
+                        : "leave blank if not required"
+                    }
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
-                    onBlur={() => fetchModels()}
+                    onBlur={() => apiKey.trim() && fetchModels()}
                     disabled={saving}
                     autoComplete="off"
                   />

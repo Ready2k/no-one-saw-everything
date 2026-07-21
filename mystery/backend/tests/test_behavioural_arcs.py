@@ -116,13 +116,17 @@ def test_authored_baselines_describe_behaviour_not_guilt(case_id):
         )
 
 
-def test_case_007_principals_have_distinct_authored_manners():
-    """Marcus is the model arc; the rest are tuned against him. Distinct means
-    distinct texts — two agents may share a category, never a manner."""
-    case = get_case("case_007")
+@pytest.mark.parametrize("case_id", CASE_IDS)
+def test_principals_have_distinct_authored_manners(case_id):
+    """Marcus (case_007) is the model arc; every case's principals are held to
+    the same bar. Distinct means distinct texts — two agents may share a
+    category, never a manner. A recurring villager may keep their manner across
+    cases (same person, same habit); within one case every manner is unique."""
+    case = get_case(case_id)
     specs = {a.agent_id: a.baseline for a in _living_principals(case)}
-    assert all(specs.values()), "every living case_007 principal should have an authored baseline"
+    missing = [aid for aid, s in specs.items() if s is None]
+    assert not missing, f"{case_id}: no authored baseline for {missing}"
     habits = [s.habit_text for s in specs.values()]
     cues = [s.deviation_cue for s in specs.values()]
-    assert len(set(habits)) == len(habits), "duplicated habit_text"
-    assert len(set(cues)) == len(cues), "duplicated deviation_cue"
+    assert len(set(habits)) == len(habits), f"{case_id}: duplicated habit_text"
+    assert len(set(cues)) == len(cues), f"{case_id}: duplicated deviation_cue"

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../api";
+import { useEscapeToClose } from "../useEscapeToClose";
 
 interface CaseLibraryModalProps {
   onClose: () => void;
@@ -8,6 +9,7 @@ interface CaseLibraryModalProps {
 }
 
 export default function CaseLibraryModal({ onClose, activeCaseId, onDuplicate }: CaseLibraryModalProps) {
+  useEscapeToClose(onClose);
   const [cases, setCases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

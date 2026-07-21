@@ -223,7 +223,12 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
     
     if intent.intent in ["alibi", "timeline", "last_seen_victim", "relationship", "location"]:
         ask_req.question_type = intent.intent
-        ask_req.time_reference = intent.referenced_time
+        # The referenced time may come from an LLM classifier; anything that
+        # isn't a clean HH:MM is dropped (the timeline ask then degrades to an
+        # alibi question below) rather than crashing time arithmetic later.
+        import re as _re
+        t = (intent.referenced_time or "").strip()
+        ask_req.time_reference = t if _re.fullmatch(r"([01]?\d|2[0-3]):[0-5]\d", t) else None
         ask_req.topic_location_id = intent.referenced_location_id
     elif intent.intent == "evidence":
         ask_req.question_type = "evidence"

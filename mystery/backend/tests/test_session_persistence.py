@@ -119,5 +119,6 @@ def test_a_corrupt_save_does_not_wedge_the_case(persistent):
 def test_save_is_atomic(persistent):
     """Write-then-rename: no half-written investigation is ever left behind."""
     session_mod.save_session(_worked_case())
-    assert not list(persistent.glob("*.tmp")), "a temp file was left behind"
-    json.loads((persistent / "case_001.json").read_text())  # must be complete, valid JSON
+    assert not list(persistent.rglob("*.tmp")), "a temp file was left behind"
+    # Saves are per-player: the tokenless default player is "local".
+    json.loads((persistent / "local" / "case_001.json").read_text())  # complete, valid JSON

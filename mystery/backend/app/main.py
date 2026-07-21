@@ -8,11 +8,20 @@ import time
 import uuid
 from typing import Optional
 
+from contextvars import ContextVar
+
 from fastapi import FastAPI, HTTPException, Body, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+import json
 import logging
 import os
+
+from .logging_config import configure_logging, request_id_var
+
+configure_logging()
+logger = logging.getLogger(__name__)
 
 from . import challenge as challenge_engine
 from . import interview as interview_engine
@@ -45,48 +54,278 @@ from .projections import (
     visible_map_events,
     build_playtest_export,
 )
-from .session import get_session, reset_session, save_session, has_saved_session
+from .rate_limit import RateLimiter
+from .session import (
+    DEFAULT_PLAYER_ID,
+    SESSIONS_DIR,
+    SessionLoadError,
+    delete_investigation,
+    get_active_case,
+    get_session,
+    has_saved_session,
+    list_investigations,
+    peek_session,
+    reset_session,
+    sanitize_player_id,
+    save_session,
+    set_active_case,
+    _persist_enabled,
+)
 from .case_store import get_case as fetch_case
 from .telemetry import log_telemetry_event
 
-ACTIVE_CASE_ID = "case_001"
+# Which case a request is playing is per-player state (X-Session-Id header), stored in
+# the player's meta file. This module-level id is only the *default* for players who
+# have never chosen a case (and for tokenless clients such as curl and the tests) —
+# it is restored from disk at startup so a restart no longer silently reverts to case_001.
+_ACTIVE_STATE_FILE = SESSIONS_DIR / "active_state.json"
+
+
+def _restore_default_active_case() -> str:
+    if _persist_enabled():
+        try:
+            case_id = json.loads(_ACTIVE_STATE_FILE.read_text()).get("active_case_id")
+            if case_id:
+                fetch_case(case_id)  # must still exist and load
+                return case_id
+        except Exception:
+            logging.getLogger(__name__).warning(
+                "Could not restore active case from %s; defaulting to case_001",
+                _ACTIVE_STATE_FILE,
+            )
+    return "case_001"
+
+
+ACTIVE_CASE_ID = _restore_default_active_case()
 
 from .case_store import set_active_start_time
-set_active_start_time(fetch_case(ACTIVE_CASE_ID).case.sim_start_time)
+
+# The player id for the request being handled right now, set by middleware from the
+# X-Session-Id header. A ContextVar so concurrent requests each see their own player.
+_current_player: ContextVar[str] = ContextVar("mystery_player", default=DEFAULT_PLAYER_ID)
+
+
+def current_player_id() -> str:
+    return _current_player.get()
+
+
+def _effective_case_id(player_id: str | None = None) -> str:
+    """The case this player is playing: their own durable choice, else the process default."""
+    pid = player_id if player_id is not None else current_player_id()
+    chosen = get_active_case(pid)
+    if chosen:
+        try:
+            fetch_case(chosen)
+            return chosen
+        except Exception:
+            # Their chosen case has been deleted from disk; fall back rather than 500.
+            logging.getLogger(__name__).warning(
+                "Player %s's active case %s no longer loads; falling back", pid, chosen
+            )
+    return ACTIVE_CASE_ID
+
+
+def _persist_default_active_case(case_id: str) -> None:
+    if not _persist_enabled():
+        return
+    try:
+        SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+        tmp = _ACTIVE_STATE_FILE.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps({"active_case_id": case_id}))
+        tmp.replace(_ACTIVE_STATE_FILE)
+    except Exception:
+        logging.getLogger(__name__).exception("Could not persist active case")
+
+
+def _activate_for_current_player(case_id: str) -> None:
+    """Make case_id the current player's durable active case."""
+    global ACTIVE_CASE_ID
+    player_id = current_player_id()
+    set_active_case(player_id, case_id)
+    if player_id == DEFAULT_PLAYER_ID:
+        # Tokenless clients share the process default; keep it durable too.
+        ACTIVE_CASE_ID = case_id
+        _persist_default_active_case(case_id)
+
 
 app = FastAPI(title="No One Saw Everything", version="0.1.0")
 
+# Comma-separated list of allowed origins; the dev-server pair remains the
+# default so `./start.sh` keeps working unconfigured. A real deployment sets
+# MYSTERY_CORS_ORIGINS to its actual frontend origin(s) — the hardcoded
+# localhost-only default silently breaks any non-dev deployment otherwise.
+_default_cors_origins = "http://localhost:5173,http://127.0.0.1:5173"
+_cors_origins = [
+    origin.strip()
+    for origin in os.getenv("MYSTERY_CORS_ORIGINS", _default_cors_origins).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5179",
-        "http://127.0.0.1:5179",
-    ],
+    allow_origins=_cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
 @app.middleware("http")
-async def persist_session_after_writes(request: Request, call_next):
-    """Save the active investigation after anything that could have changed it.
+async def request_id_and_access_log(request: Request, call_next):
+    """Every request gets a correlation id (reusing an inbound one from a
+    reverse proxy if present) so its log lines — from any module, at any
+    depth, including exception tracebacks — can be tied together, and a
+    structured access line replaces relying on uvicorn's default format."""
+    req_id = request.headers.get("x-request-id") or uuid.uuid4().hex[:12]
+    token = request_id_var.set(req_id)
+    started = time.monotonic()
+    try:
+        try:
+            response = await call_next(request)
+        except Exception:
+            logger.exception(
+                "Unhandled exception for %s %s", request.method, request.url.path
+            )
+            raise
+        elapsed_ms = int((time.monotonic() - started) * 1000)
+        # Logged BEFORE the contextvar reset below — the whole point of
+        # request_id_var is that this line (and everything logged deeper in
+        # the call, e.g. "Session autosave failed") carries the same id.
+        logger.info(
+            "%s %s -> %s (%dms)",
+            request.method,
+            request.url.path,
+            response.status_code,
+            elapsed_ms,
+        )
+        response.headers["X-Request-Id"] = req_id
+        return response
+    finally:
+        request_id_var.reset(token)
+
+
+@app.exception_handler(SessionLoadError)
+async def session_load_error_handler(request: Request, exc: SessionLoadError):
+    # A saved investigation that cannot be used is a 409 with a plain explanation,
+    # never a 500: the player can restart the case (POST /api/cases/activate with
+    # restart=true) or run a compatible server. Nothing is deleted on this path.
+    return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+
+# ---------------------------------------------------------------------------
+# Abuse hardening: request size limits + rate limiting on expensive routes
+# ---------------------------------------------------------------------------
+
+# Generous for anything a real player types (notes, free-text questions,
+# accusation reasoning) or a case-generation recipe; the one outsized body this
+# API legitimately accepts is the dev map editor's layout save, which is
+# operator-gated (ENABLE_DEV_MAP_EDITOR) and gets its own higher limit.
+_MAX_REQUEST_BYTES = int(os.getenv("MYSTERY_MAX_REQUEST_BYTES", str(256 * 1024)))
+_MAX_DEV_REQUEST_BYTES = int(os.getenv("MYSTERY_MAX_DEV_REQUEST_BYTES", str(8 * 1024 * 1024)))
+
+
+@app.middleware("http")
+async def limit_request_body_size(request: Request, call_next):
+    limit = (
+        _MAX_DEV_REQUEST_BYTES
+        if request.url.path.startswith("/api/dev/")
+        else _MAX_REQUEST_BYTES
+    )
+    declared = request.headers.get("content-length")
+    if declared is not None:
+        try:
+            if int(declared) > limit:
+                return JSONResponse(status_code=413, content={"detail": "Request body too large."})
+        except ValueError:
+            pass
+    else:
+        # No declared length (e.g. chunked transfer): read and cache the body
+        # ourselves so we can enforce the cap; downstream handlers reuse the
+        # cached body rather than re-reading the stream.
+        body = b""
+        async for chunk in request.stream():
+            body += chunk
+            if len(body) > limit:
+                return JSONResponse(status_code=413, content={"detail": "Request body too large."})
+        request._body = body  # noqa: SLF001 — Starlette's own caching mechanism
+    return await call_next(request)
+
+
+# Per-player sliding-window limits. Single-process, in-memory — consistent
+# with the session store's existing single-worker constraint (session.py).
+# LLM-backed routes cost real provider latency/money; case generation does
+# real CPU + disk work (up to 5 candidates, each validated and scored).
+_llm_rate_limiter = RateLimiter(
+    max_requests=int(os.getenv("MYSTERY_LLM_RATE_LIMIT_PER_MINUTE", "20")),
+    window_seconds=60,
+)
+_generate_rate_limiter = RateLimiter(
+    max_requests=int(os.getenv("MYSTERY_GENERATE_RATE_LIMIT_PER_MINUTE", "6")),
+    window_seconds=60,
+)
+
+
+def _enforce_rate_limit(limiter: RateLimiter, key: str, what: str) -> None:
+    if not limiter.allow(key):
+        retry_after = int(limiter.retry_after_seconds(key)) + 1
+        raise HTTPException(
+            status_code=429,
+            detail=f"Too many {what} requests — wait {retry_after}s and try again.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+
+@app.middleware("http")
+async def request_context_and_autosave(request: Request, call_next):
+    """Resolve the requesting player, then save their investigation after any write.
 
     An investigation is hours of work and used to live only in this process — restarting the
     backend threw away every clue, claim, note and transcript. Doing this in middleware rather
     than at each call site means a new mutating endpoint cannot forget to save.
     """
-    response = await call_next(request)
-    if request.method in ("POST", "PATCH", "PUT", "DELETE") and response.status_code < 400:
+    player_id = sanitize_player_id(request.headers.get("x-session-id"))
+    ctx_token = _current_player.set(player_id)
+    try:
+        # Time-of-day wrapping must follow the case this request is actually playing
+        # (case_004 runs 22:00–23:45; case_001 mornings).
         try:
-            save_session(get_session(ACTIVE_CASE_ID))
+            set_active_start_time(
+                fetch_case(_effective_case_id(player_id)).case.sim_start_time
+            )
         except Exception:
-            logging.getLogger(__name__).exception("Session autosave failed")
-    return response
+            logging.getLogger(__name__).exception("Could not resolve case start time")
+        response = await call_next(request)
+        if request.method in ("POST", "PATCH", "PUT", "DELETE") and response.status_code < 400:
+            try:
+                # Re-resolve: the request itself may have switched the active case.
+                # Only persist a session that is actually loaded — autosave must not
+                # resurrect an investigation the request just deleted.
+                sess = peek_session(_effective_case_id(player_id), player_id)
+                if sess is not None:
+                    save_session(sess)
+            except Exception:
+                logging.getLogger(__name__).exception("Session autosave failed")
+        return response
+    finally:
+        _current_player.reset(ctx_token)
 
 
-MYSTERY_PLAYTEST_MODE = os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "true"
+def _playtest_mode_enabled() -> bool:
+    # Read fresh on every call (matches the dev-map-editor gate below) rather than
+    # a module constant bound once at import: it must be flippable in tests, and a
+    # deploy must never be able to "accidentally" carry a stale true across a
+    # config reload. There is no client-facing way to set this — it is an
+    # operator's environment variable, not a request the frontend can send.
+    return os.getenv("MYSTERY_PLAYTEST_MODE", "false").lower() == "true"
+
+
+def _require_playtest_mode() -> None:
+    if not _playtest_mode_enabled():
+        raise HTTPException(
+            403,
+            "Playtest tooling is disabled on this server. Set MYSTERY_PLAYTEST_MODE=true "
+            "(operator-only; there is no in-app way to enable it) to use it.",
+        )
+
 
 @app.get("/api/config")
 def get_config():
@@ -94,7 +333,7 @@ def get_config():
 
     llm = get_llm_config()
     return {
-        "playtest_mode": MYSTERY_PLAYTEST_MODE,
+        "playtest_mode": _playtest_mode_enabled(),
         "llm_dialogue_enabled": llm.dialogue_enabled,
         "llm_generation_available": llm.configured and llm.provider != "fake",
         "llm_model": llm.model if llm.provider != "fake" else None,
@@ -105,10 +344,28 @@ def get_config():
 class LLMSettingsUpdate(BaseModel):
     provider: str  # "fake" | "auto" | "openai_compatible"
     base_url: Optional[str] = None
+    # Omitted/blank means "keep whatever key is already saved" (see
+    # update_llm_settings) — the client is never sent the real key back, so it
+    # cannot resend it, and must not be forced to erase it just to change
+    # another field like the model name.
     api_key: Optional[str] = None
     model: Optional[str] = None
     dialogue_enabled: bool = False
     beliefs_enabled: bool = False
+
+
+def _redact_saved_settings(saved) -> Optional[dict]:
+    """The saved API key must never cross the API — a GET here used to hand
+    back the plaintext secret to any client that asked. Callers only need to
+    know a key IS set (to render a masked placeholder) and its last 4 characters
+    (so the operator can recognise which key without re-reading the full thing)."""
+    if saved is None:
+        return None
+    data = saved.model_dump()
+    key = data.pop("api_key", None)
+    data["api_key_set"] = bool(key)
+    data["api_key_last4"] = key[-4:] if key and len(key) >= 4 else None
+    return data
 
 
 @app.get("/api/llm-settings")
@@ -120,7 +377,7 @@ def get_llm_settings():
     saved = load_saved_settings()
     effective = get_llm_config()
     return {
-        "saved": saved.model_dump() if saved else None,
+        "saved": _redact_saved_settings(saved),
         "effective": {
             "provider": effective.provider,
             "base_url": effective.base_url,
@@ -134,9 +391,32 @@ def get_llm_settings():
     }
 
 
+# Cheap, high-value SSRF defence: these endpoints make the SERVER issue an HTTP
+# request to a client-supplied host. Nobody's legitimate self-hosted LLM lives
+# at a cloud metadata address, so refusing those costs no real functionality
+# while closing off the most damaging class of target (credential theft from
+# the node's own cloud identity).
+_SSRF_BLOCKED_HOSTS = {
+    "169.254.169.254",  # AWS/GCP/Azure/OCI instance metadata
+    "metadata.google.internal",
+    "metadata.goog",
+    "fd00:ec2::254",  # AWS IMDS, IPv6
+}
+
+
+def _reject_ssrf_target(base_url: str) -> None:
+    from urllib.parse import urlparse
+
+    host = (urlparse(base_url).hostname or "").lower()
+    if host in _SSRF_BLOCKED_HOSTS or host.startswith("169.254."):
+        raise HTTPException(
+            400, "That address isn't a valid LLM endpoint (cloud metadata addresses are blocked)."
+        )
+
+
 @app.put("/api/llm-settings")
 def update_llm_settings(payload: LLMSettingsUpdate):
-    from .llm.config import SavedLLMSettings, save_settings, get_llm_config
+    from .llm.config import SavedLLMSettings, load_saved_settings, save_settings
 
     if payload.provider not in ("fake", "auto", "openai_compatible"):
         raise HTTPException(status_code=400, detail="Invalid provider")
@@ -145,8 +425,17 @@ def update_llm_settings(payload: LLMSettingsUpdate):
             status_code=400,
             detail="base_url and model are required for the openai_compatible provider",
         )
+    if payload.base_url:
+        _reject_ssrf_target(payload.base_url)
 
-    save_settings(SavedLLMSettings(**payload.model_dump()))
+    update = payload.model_dump()
+    if not update.get("api_key"):
+        # Blank means unchanged, not "clear the key" — the client was never
+        # given the real key back, so it has no way to resend it deliberately.
+        existing = load_saved_settings()
+        update["api_key"] = existing.api_key if existing else None
+
+    save_settings(SavedLLMSettings(**update))
 
     from .llm import discovery
     discovery.reset_cache()
@@ -165,10 +454,32 @@ def discover_llm_models(payload: ModelDiscoveryRequest):
     Custom (OpenAI-compatible) provider's Model dropdown."""
     from .llm.discovery import list_models_for_base_url
 
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
     if not payload.base_url.strip():
         raise HTTPException(status_code=400, detail="base_url is required")
+    _reject_ssrf_target(payload.base_url)
 
     models, error = list_models_for_base_url(payload.base_url.strip(), payload.api_key)
+    return {"models": models, "error": error}
+
+
+@app.post("/api/llm-settings/models/saved")
+def discover_llm_models_saved():
+    """Same as /models, but against the settings already saved on the server.
+
+    The Settings panel is never given the real api_key back (see
+    _redact_saved_settings), so it cannot resend it to re-discover models for
+    a connection the operator already saved — this runs the request
+    server-side against the stored key instead."""
+    from .llm.config import load_saved_settings
+    from .llm.discovery import list_models_for_base_url
+
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    saved = load_saved_settings()
+    if saved is None or not saved.base_url:
+        raise HTTPException(status_code=400, detail="No saved endpoint to query.")
+
+    models, error = list_models_for_base_url(saved.base_url, saved.api_key)
     return {"models": models, "error": error}
 
 
@@ -178,6 +489,7 @@ class LlmTestRequest(BaseModel):
     model: str
 
 
+def _run_llm_test(base_url: str, api_key: Optional[str], model: str) -> dict:
 # SECURITY NOTE: base_url is user-supplied and used to make HTTP requests.
 # In a hosted/multi-user deployment, validate against an allowlist to prevent SSRF.
 @app.post("/api/llm-settings/test")
@@ -188,14 +500,9 @@ def test_llm_settings(payload: LlmTestRequest):
     from .llm.config import normalize_base_url
     from .llm.client import OpenAICompatibleLLMClient
 
-    if not payload.base_url.strip() or not payload.model.strip():
-        raise HTTPException(status_code=400, detail="base_url and model are required")
-
-    base_url = normalize_base_url(payload.base_url.strip())
+    base_url = normalize_base_url(base_url.strip())
     nonce = uuid.uuid4().hex[:6]
-    client = OpenAICompatibleLLMClient(
-        base_url=base_url, api_key=payload.api_key, model=payload.model.strip()
-    )
+    client = OpenAICompatibleLLMClient(base_url=base_url, api_key=api_key, model=model.strip())
 
     started = time.monotonic()
     try:
@@ -221,6 +528,34 @@ def test_llm_settings(payload: LlmTestRequest):
     return {"ok": True, "reply": reply, "elapsed_ms": elapsed_ms, "nonce": nonce}
 
 
+@app.post("/api/llm-settings/test")
+def test_llm_settings(payload: LlmTestRequest):
+    """Sends a real chat completion request to the given endpoint/model so the
+    Settings panel can prove the LLM is actually generating a response, rather
+    than just resolving a reachable model list."""
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    if not payload.base_url.strip() or not payload.model.strip():
+        raise HTTPException(status_code=400, detail="base_url and model are required")
+    _reject_ssrf_target(payload.base_url)
+
+    return _run_llm_test(payload.base_url, payload.api_key, payload.model)
+
+
+@app.post("/api/llm-settings/test/saved")
+def test_llm_settings_saved():
+    """Same as /test, but against the settings already saved on the server —
+    see discover_llm_models_saved for why this exists instead of resending
+    the (never-returned) real api_key."""
+    from .llm.config import load_saved_settings
+
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    saved = load_saved_settings()
+    if saved is None or not saved.base_url or not saved.model:
+        raise HTTPException(status_code=400, detail="No saved endpoint to test.")
+
+    return _run_llm_test(saved.base_url, saved.api_key, saved.model)
+
+
 @app.post("/api/llm-settings/probe")
 def probe_llm_settings():
     """Runs auto-detection now (bypassing the cache) so the Settings panel can
@@ -228,6 +563,7 @@ def probe_llm_settings():
     provider='auto'."""
     from .llm.discovery import detect_llm
 
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
     detected = detect_llm(force=True)
     if detected is None:
         return {"found": False}
@@ -240,12 +576,27 @@ def probe_llm_settings():
     }
 
 
+_HHMM_RE = re.compile(r"([01]?\d|2[0-3]):[0-5]\d")
+
+
+def _validate_time_param(value: Optional[str], param_name: str) -> Optional[str]:
+    """Times come off the wire and go straight into arithmetic; a malformed one
+    must be a polite 400, not a ValueError deep in the projection layer."""
+    if value is None:
+        return None
+    if not _HHMM_RE.fullmatch(value.strip()):
+        raise HTTPException(
+            400, f"'{value}' isn't a time the village clock understands — use HH:MM."
+        )
+    return value.strip()
+
+
 def case_data():
-    return fetch_case(ACTIVE_CASE_ID)
+    return fetch_case(_effective_case_id())
 
 
 def session():
-    return get_session(ACTIVE_CASE_ID)
+    return get_session(_effective_case_id(), current_player_id())
 
 
 # ---------------------------------------------------------------------------
@@ -281,10 +632,12 @@ def get_cases():
     from .case_store import list_all_cases
     from .session import load_session_summary
 
+    active = _effective_case_id()
+    player = current_player_id()
     cases = list_all_cases()
     for c in cases:
-        c["progress"] = load_session_summary(c["case_id"])
-        c["is_active"] = c["case_id"] == ACTIVE_CASE_ID
+        c["progress"] = load_session_summary(c["case_id"], player)
+        c["is_active"] = c["case_id"] == active
     return cases
 
 
@@ -310,6 +663,8 @@ def get_events(
     location_id: Optional[str] = None,
     agent_id: Optional[str] = None,
 ):
+    time_from = _validate_time_param(time_from, "time_from")
+    time_to = _validate_time_param(time_to, "time_to")
     events = visible_events(case_data(), time_from, time_to, location_id, agent_id)
     for e in events:
         e["pinned"] = e["event_id"] in session().pinned_event_ids
@@ -374,6 +729,8 @@ def map_replay(
     from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
     from .town_map import map_config, map_definition_for_case, map_payload
 
+    start = _validate_time_param(start, "start")
+    end = _validate_time_param(end, "end")
     case = case_data()
     sess = session()
 
@@ -542,6 +899,17 @@ def discover_clue(req: DiscoverClueRequest):
     clue = next((c for c in case.clues if c.clue_id == req.clue_id), None)
     if not clue:
         raise HTTPException(404, "No such clue")
+    # The clue graph is the fairness contract: a gated clue cannot be claimed by
+    # guessing its id before its prerequisite discoveries have been made.
+    unmet = [
+        p
+        for p in clue.discoverability.required_prior_clue_ids
+        if p not in sess.discovered_clue_ids
+    ]
+    if unmet and clue.clue_id not in sess.discovered_clue_ids:
+        raise HTTPException(
+            409, "Something about this doesn't add up yet — you're missing the context to see it."
+        )
     if clue.clue_id not in sess.discovered_clue_ids:
         sess.discovered_clue_ids.add(clue.clue_id)
         log_telemetry_event(sess, "clue_discovered", {"clue_id": clue.clue_id, "source": "magnifying_glass"})
@@ -670,6 +1038,8 @@ def ask(req: AskRequest):
         raise HTTPException(400, "This person isn't part of the investigation.")
     if req.question_type == "timeline" and not req.time_reference:
         raise HTTPException(400, "timeline questions need time_reference")
+    if req.time_reference:
+        req.time_reference = _validate_time_param(req.time_reference, "time_reference")
     if req.question_type == "evidence":
         if req.topic_clue_id and req.topic_clue_id not in sess.discovered_clue_ids:
             raise HTTPException(400, "You can only ask about evidence you have discovered.")
@@ -687,8 +1057,18 @@ def ask(req: AskRequest):
 
 @app.post("/api/interview/free-text")
 def free_text_ask(req: FreeTextAskRequest):
+    # Every free-text ask runs through the LLM client abstraction (intent
+    # classification, and potentially the open-ended responder) even under the
+    # default no-network 'fake' provider — rate-limit uniformly rather than
+    # branching on which provider happens to be configured.
+    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "free-text question")
     case = case_data()
     sess = session()
+    target = next((a for a in case.agents if a.agent_id == req.agent_id), None)
+    if target is None:
+        raise HTTPException(404, "No such agent")
+    if target.is_background:
+        raise HTTPException(400, "This person isn't part of the investigation.")
     from app.free_text_api import handle_free_text
     resp = handle_free_text(req, case, sess)
     log_telemetry_event(sess, "free_text_question_asked", {"agent_id": req.agent_id})
@@ -698,6 +1078,9 @@ def free_text_ask(req: FreeTextAskRequest):
 
 @app.get("/api/interview/{agent_id}")
 def transcript(agent_id: str):
+    case = case_data()
+    if not any(a.agent_id == agent_id for a in case.agents):
+        raise HTTPException(404, "No such agent")
     sess = session()
     t = sess.transcripts.get(agent_id)
     return t.messages if t else []
@@ -777,6 +1160,9 @@ def observe(req: ObserveRequest):
 
 @app.get("/api/interview/{agent_id}/observations")
 def observations(agent_id: str):
+    case = case_data()
+    if not any(a.agent_id == agent_id for a in case.agents):
+        raise HTTPException(404, "No such agent")
     return session().observations.get(agent_id, [])
 
 
@@ -936,6 +1322,12 @@ def delete_note(note_id: str):
 
 @app.post("/api/suspicion")
 def set_suspicion(payload: SuspicionUpdate):
+    case = case_data()
+    agent = next((a for a in case.agents if a.agent_id == payload.agent_id), None)
+    if agent is None:
+        raise HTTPException(404, "No such agent")
+    if agent.is_victim or agent.is_background:
+        raise HTTPException(400, "Suspicion belongs on the living members of the village.")
     sess = session()
     sess.suspicion[payload.agent_id] = payload.level
     log_telemetry_event(sess, "marker_updated", {"agent_id": payload.agent_id, "type": "suspicion", "level": payload.level})
@@ -944,6 +1336,8 @@ def set_suspicion(payload: SuspicionUpdate):
 from .models import MarkerUpdate
 @app.post("/api/session/markers")
 def update_markers(payload: MarkerUpdate):
+    if not payload.element_id or len(payload.element_id) > 120:
+        raise HTTPException(400, "That isn't a board element the markers can stick to.")
     sess = session()
     if payload.element_id not in sess.case_board_markers:
         sess.case_board_markers[payload.element_id] = []
@@ -962,7 +1356,21 @@ def update_markers(payload: MarkerUpdate):
 
 @app.get("/api/session/log")
 def get_telemetry_log():
+    _require_playtest_mode()
     return session().event_log
+
+
+@app.get("/api/session/telemetry/durable")
+def get_durable_telemetry_log():
+    """The full telemetry history for this (player, case) across every reset
+    and restart — unlike /api/session/log (the current attempt's in-memory
+    copy, cleared by reset_session), this reads the append-only log that
+    survives both."""
+    _require_playtest_mode()
+    from .telemetry import read_durable_log
+
+    return read_durable_log(current_player_id(), _effective_case_id())
+
 
 @app.get("/api/session/hints")
 def get_hints():
@@ -979,6 +1387,7 @@ def get_hints():
 
 @app.get("/api/session/playtest-summary")
 def get_playtest_summary():
+    _require_playtest_mode()
     from .llm.config import get_llm_config
 
     case = case_data()
@@ -1018,6 +1427,7 @@ def get_playtest_summary():
 
 @app.get("/api/session/playtest-export")
 def get_playtest_export():
+    _require_playtest_mode()
     case = case_data()
     sess = session()
     return build_playtest_export(sess, case, include_reveal=sess.accusation is not None)
@@ -1114,16 +1524,49 @@ def status():
 
 @app.post("/api/session/reset")
 def reset():
-    reset_session(ACTIVE_CASE_ID)
+    reset_session(_effective_case_id(), current_player_id())
     return {"reset": True}
+
+
+# ---------------------------------------------------------------------------
+# Investigations (per-player saves)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/session/investigations")
+def get_investigations():
+    """Every investigation the requesting player has, with progress summaries."""
+    return {
+        "active_case_id": _effective_case_id(),
+        "investigations": list_investigations(current_player_id()),
+    }
+
+
+@app.delete("/api/session/investigations/{case_id}")
+def delete_player_investigation(case_id: str):
+    """Drop the requesting player's investigation of one case (the case itself stays)."""
+    if not delete_investigation(case_id, current_player_id()):
+        raise HTTPException(404, "You have no investigation of that case.")
+    return {"deleted": True}
 
 
 @app.post("/api/cases/generate")
 def generate(req: GenerateCaseRequest):
-    from .generator import generate_case
+    from .generator import generate_case, TEMPLATES_DIR
     from .validator import validate_case
     from .case_store import register_case
-    global ACTIVE_CASE_ID
+
+    # Up to 5 candidates, each generated, validated, and quality-scored — real
+    # CPU and disk work regardless of whether an LLM is configured.
+    _enforce_rate_limit(_generate_rate_limiter, current_player_id(), "case generation")
+
+    # case_type names a template file and ends up inside the generated case id
+    # (a future path component) — it must be a known template, nothing else.
+    known_types = {p.stem for p in TEMPLATES_DIR.glob("*.json")}
+    if req.case_type not in known_types:
+        raise HTTPException(
+            400,
+            f"Unknown case type '{req.case_type[:40]}'. Available: {', '.join(sorted(known_types))}.",
+        )
 
     has_creative = (
         (req.custom_theme and req.custom_theme.strip()) or 
@@ -1205,12 +1648,13 @@ def generate(req: GenerateCaseRequest):
     # Activate session if requested and valid
     active_session_id = None
     if req.activate and val_result["valid"]:
-        ACTIVE_CASE_ID = new_case.case.case_id
+        new_case_id = new_case.case.case_id
+        _activate_for_current_player(new_case_id)
         set_active_start_time(new_case.case.sim_start_time)
         # A fresh activation always means a fresh investigation — otherwise
         # re-generating the same (type, seed) resurrects a stale session.
-        reset_session(ACTIVE_CASE_ID)
-        active_session_id = ACTIVE_CASE_ID
+        reset_session(new_case_id, current_player_id())
+        active_session_id = new_case_id
 
     # Validation messages are developer-oriented and can reference the hidden
     # killer; redact identity before they cross the API.
@@ -1254,32 +1698,122 @@ class ActivateCaseRequest(BaseModel):
 @app.post("/api/cases/activate")
 def activate_case(req: ActivateCaseRequest):
     from .case_store import _GENERATED_CASES, load_case_from_disk
-    global ACTIVE_CASE_ID
-    
+
     # Validate case exists in store
     if req.case_id not in _GENERATED_CASES:
         try:
             load_case_from_disk(req.case_id)
         except Exception:
             raise HTTPException(status_code=404, detail="Case not found")
-            
-    ACTIVE_CASE_ID = req.case_id
-    set_active_start_time(fetch_case(ACTIVE_CASE_ID).case.sim_start_time)
+
+    _activate_for_current_player(req.case_id)
+    set_active_start_time(fetch_case(req.case_id).case.sim_start_time)
 
     # Opening a case RESUMES it. This used to call reset_session() unconditionally, so switching
     # cases — or coming back to one tomorrow — silently destroyed the investigation, which is why
     # the case library had to warn "your current progress will be lost". Starting over is now an
     # explicit choice.
     if req.restart:
-        sess = reset_session(ACTIVE_CASE_ID)
+        sess = reset_session(req.case_id, current_player_id())
     else:
-        sess = get_session(ACTIVE_CASE_ID)
+        sess = get_session(req.case_id, current_player_id())
 
-    return {
-        "active_session_id": ACTIVE_CASE_ID,
+    response = {
+        "active_session_id": req.case_id,
         "resumed": bool(sess.discovered_clue_ids or sess.claims or sess.notes),
         "discovered_clue_count": len(sess.discovered_clue_ids),
         "accused": sess.accusation is not None,
+    }
+    if sess.recovered_from_corrupt_save:
+        # Say it once, at the moment they open the case — not silently.
+        response["recovered_from_corrupt_save"] = True
+        response["save_notice"] = (
+            "Your previous save of this case could not be read and has been set aside; "
+            "the investigation has started fresh."
+        )
+        sess.recovered_from_corrupt_save = False
+    return response
+
+
+def _generated_case_entry(p) -> Optional[dict]:
+    """Player-safe library entry for one generated-case directory, or None.
+
+    This is the ONLY shape generated-case endpoints may return: title + recipe
+    metadata. The full bundle contains the solution and must never cross the API.
+    """
+    from .case_store import normalize_case_metadata
+
+    if not (p.is_dir() and p.name != "templates"):
+        return None
+    if not (p.name.startswith("gen_") or (p / "metadata.json").exists()):
+        return None
+
+    load_status = "ok"
+    metadata = normalize_case_metadata(None)
+
+    # 1. Try loading metadata
+    metadata_path = p / "metadata.json"
+    if metadata_path.exists():
+        try:
+            with open(metadata_path) as f:
+                raw_m = json.load(f)
+            metadata = normalize_case_metadata(raw_m)
+        except Exception:
+            load_status = "corrupted_metadata"
+    else:
+        load_status = "missing_metadata"
+
+    # 2. Try loading case.json
+    title = "Corrupted Case"
+    case_type_val = "unknown"
+    difficulty_val = "standard"
+    case_path = p / "case.json"
+    if case_path.exists():
+        try:
+            with open(case_path) as f:
+                case_info = json.load(f)
+            title = case_info.get("title", "Untitled Case")
+            case_type_val = case_info.get("case_type", "unknown")
+            difficulty_val = case_info.get("difficulty", "standard")
+        except Exception:
+            load_status = "missing_case_data"
+    else:
+        load_status = "missing_case_data"
+
+    # Verify other vital files exist to confirm ok status
+    for vital in ["clues.json", "agents.json", "locations.json", "solution.json"]:
+        if not (p / vital).exists():
+            load_status = "missing_case_data"
+            break
+
+    quality_report = metadata.get("quality_report", {})
+    q_score = quality_report.get("overall_score") if quality_report else None
+    candidate_scores = metadata.get("candidate_scores", [])
+    candidate_count = len(candidate_scores) if candidate_scores else 1
+
+    return {
+        "case_id": p.name,
+        "title": title,
+        "case_type": case_type_val,
+        "difficulty": difficulty_val,
+        "mode": metadata.get("mode", "deterministic"),
+        "seed": metadata.get("seed", 12345),
+        "selected_seed": metadata.get("selected_seed"),
+        "best_of_n_used": metadata.get("best_of_n_used", False),
+        "candidate_count": candidate_count,
+        "num_suspects": metadata.get("num_suspects"),
+        "num_locations": metadata.get("num_locations"),
+        "theme_preset": metadata.get("theme_preset"),
+        "custom_theme": metadata.get("custom_theme"),
+        "tone": metadata.get("tone", "standard"),
+        "quality_score": q_score,
+        "quality_report": quality_report,
+        "fallback_used": metadata.get("fallback_used", False),
+        "repair_attempts": metadata.get("repair_attempts", 0),
+        "compaction_applied": metadata.get("compaction_applied", False),
+        "created_at": metadata.get("created_at"),
+        "activated_at": metadata.get("activated_at"),
+        "load_status": load_status,
     }
 
 
@@ -1291,83 +1825,16 @@ def list_generated_cases(
     best_of_n: Optional[bool] = None,
     fallback_used: Optional[bool] = None
 ):
-    from .case_store import DATA_DIR, normalize_case_metadata
-    import json
-    
+    from .case_store import DATA_DIR
+
     entries = []
     if not DATA_DIR.exists():
         return entries
-        
-    for p in DATA_DIR.iterdir():
-        if p.is_dir() and p.name != "templates":
-            if p.name.startswith("gen_") or (p / "metadata.json").exists():
-                load_status = "ok"
-                metadata = normalize_case_metadata(None)
-                
-                # 1. Try loading metadata
-                metadata_path = p / "metadata.json"
-                if metadata_path.exists():
-                    try:
-                        with open(metadata_path) as f:
-                            raw_m = json.load(f)
-                        metadata = normalize_case_metadata(raw_m)
-                    except Exception:
-                        load_status = "corrupted_metadata"
-                else:
-                    load_status = "missing_metadata"
-                    
-                # 2. Try loading case.json
-                title = "Corrupted Case"
-                case_type_val = "unknown"
-                difficulty_val = "standard"
-                case_path = p / "case.json"
-                if case_path.exists():
-                    try:
-                        with open(case_path) as f:
-                            case_info = json.load(f)
-                        title = case_info.get("title", "Untitled Case")
-                        case_type_val = case_info.get("case_type", "unknown")
-                        difficulty_val = case_info.get("difficulty", "standard")
-                    except Exception:
-                        load_status = "missing_case_data"
-                else:
-                    load_status = "missing_case_data"
-                    
-                # Verify other vital files exist to confirm ok status
-                for vital in ["clues.json", "agents.json", "locations.json", "solution.json"]:
-                    if not (p / vital).exists():
-                        load_status = "missing_case_data"
-                        break
 
-                quality_report = metadata.get("quality_report", {})
-                q_score = quality_report.get("overall_score") if quality_report else None
-                candidate_scores = metadata.get("candidate_scores", [])
-                candidate_count = len(candidate_scores) if candidate_scores else 1
-                
-                entries.append({
-                    "case_id": p.name,
-                    "title": title,
-                    "case_type": case_type_val,
-                    "difficulty": difficulty_val,
-                    "mode": metadata.get("mode", "deterministic"),
-                    "seed": metadata.get("seed", 12345),
-                    "selected_seed": metadata.get("selected_seed"),
-                    "best_of_n_used": metadata.get("best_of_n_used", False),
-                    "candidate_count": candidate_count,
-                    "num_suspects": metadata.get("num_suspects"),
-                    "num_locations": metadata.get("num_locations"),
-                    "theme_preset": metadata.get("theme_preset"),
-                    "custom_theme": metadata.get("custom_theme"),
-                    "tone": metadata.get("tone", "standard"),
-                    "quality_score": q_score,
-                    "quality_report": quality_report,
-                    "fallback_used": metadata.get("fallback_used", False),
-                    "repair_attempts": metadata.get("repair_attempts", 0),
-                    "compaction_applied": metadata.get("compaction_applied", False),
-                    "created_at": metadata.get("created_at"),
-                    "activated_at": metadata.get("activated_at"),
-                    "load_status": load_status
-                })
+    for p in DATA_DIR.iterdir():
+        entry = _generated_case_entry(p)
+        if entry is not None:
+            entries.append(entry)
 
     # Filtering
     if tone:
@@ -1392,24 +1859,39 @@ def list_generated_cases(
 
 @app.get("/api/generated_cases/{case_id}")
 def get_generated_case(case_id: str):
-    from .case_store import CaseLoadError
-    try:
-        case_data = fetch_case(case_id)
-        return case_data
-    except CaseLoadError as cle:
-        if cle.load_status == "missing_case_data":
-            raise HTTPException(status_code=404, detail="Case not found")
-        raise HTTPException(status_code=400, detail=f"Case is corrupted: {cle.load_status}")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to load case: {e}")
+    """Library metadata for one generated case.
+
+    This used to return the entire raw CaseData — solution, killer, lie flags and
+    all — which broke the game's core invariant for any client that asked. Only
+    the player-safe library entry may cross the API; the case content itself is
+    served through the projected gameplay endpoints once the case is activated.
+    """
+    from .case_store import DATA_DIR, is_safe_case_id
+
+    if not is_safe_case_id(case_id):
+        raise HTTPException(status_code=404, detail="Case not found")
+    entry = _generated_case_entry(DATA_DIR / case_id)
+    if entry is None:
+        raise HTTPException(status_code=404, detail="Case not found")
+    if entry["load_status"] == "missing_case_data":
+        raise HTTPException(status_code=400, detail="Case is corrupted: missing_case_data")
+    # Nested "case" block kept for callers that read case-shaped metadata.
+    return {
+        "case": {
+            "case_id": entry["case_id"],
+            "title": entry["title"],
+            "case_type": entry["case_type"],
+            "difficulty": entry["difficulty"],
+        },
+        **entry,
+    }
 
 
 @app.post("/api/generated_cases/{case_id}/activate")
 def activate_generated_case(case_id: str):
     from .case_store import save_case_to_disk, CaseLoadError
     from datetime import datetime
-    global ACTIVE_CASE_ID
-    
+
     try:
         case_data = fetch_case(case_id)
         if case_data.metadata and case_data.metadata.get("load_status") in ["corrupted_metadata", "missing_case_data"]:
@@ -1421,15 +1903,15 @@ def activate_generated_case(case_id: str):
     except Exception:
         raise HTTPException(status_code=404, detail="Case not found")
         
-    ACTIVE_CASE_ID = case_id
+    _activate_for_current_player(case_id)
     set_active_start_time(case_data.case.sim_start_time)
-    reset_session(ACTIVE_CASE_ID)
-    
+    reset_session(case_id, current_player_id())
+
     if case_data.metadata:
         case_data.metadata["activated_at"] = datetime.now().isoformat() + "Z"
         save_case_to_disk(case_data)
-        
-    return {"status": "success", "active_session_id": ACTIVE_CASE_ID}
+
+    return {"status": "success", "active_session_id": case_id}
 
 
 @app.post("/api/generated_cases/{case_id}/regenerate")
@@ -1472,12 +1954,15 @@ def regenerate_generated_case(case_id: str):
 
 @app.delete("/api/generated_cases/{case_id}")
 def delete_generated_case(case_id: str):
-    from .case_store import delete_case_from_disk
+    from .case_store import delete_case_from_disk, CaseDeleteError
     try:
         delete_case_from_disk(case_id)
-        return {"status": "deleted"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except CaseDeleteError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except OSError:
+        logging.getLogger(__name__).exception("Could not delete case %s", case_id)
+        raise HTTPException(status_code=500, detail="Could not delete the case from disk.")
+    return {"status": "deleted"}
 
 
 # ---------------------------------------------------------------------------

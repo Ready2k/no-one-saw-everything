@@ -9,7 +9,12 @@ backend/app/data/llm_settings.json
 
 # Saved investigations (mutable player state; the locked case truth is committed)
 backend/app/data/sessions/
+backend/app/data/telemetry/
 .pids/
 backend/app/data/town/town_layout.json.bak
 backend.log
 frontend.log
+
+# Playwright E2E output
+frontend/test-results/
+frontend/playwright-report/

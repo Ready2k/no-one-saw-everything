@@ -385,6 +385,15 @@ export default function VisualMap({
                         src={t.url}
                         alt=""
                         draggable={false}
+                        // Each tile is a 5-6MB HD image. The default view is
+                        // zoomed fully out (all tiles genuinely on screen, so
+                        // this doesn't defer that first load) — the payoff is
+                        // the map-jump entry path (a clue's "view on map" link
+                        // opens this view already zoomed into one location),
+                        // where most of the mosaic is off-screen from the
+                        // first frame and has no reason to fetch yet.
+                        loading="lazy"
+                        decoding="async"
                         style={{
                           left: `${t.leftPct}%`,
                           top: `${t.topPct}%`,

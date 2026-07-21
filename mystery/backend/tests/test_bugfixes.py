@@ -143,7 +143,9 @@ def test_generate_with_activate_resets_session():
 # Suggestion polling logs telemetry once per suggestion, not per poll
 # ---------------------------------------------------------------------------
 
-def test_challenge_suggestion_telemetry_deduped():
+def test_challenge_suggestion_telemetry_deduped(monkeypatch):
+    # /api/session/log is playtest-gated (operator-only); enable it for this read.
+    monkeypatch.setenv("MYSTERY_PLAYTEST_MODE", "true")
     client.post("/api/interview/ask", json={"agent_id": "agent_clara", "question_type": "alibi"})
     client.post(
         "/api/interview/ask",
@@ -191,10 +193,12 @@ def test_sanitise_allows_been_but_blocks_unsupported_names():
 # Telemetry now records inspections and all clue-discovery sources
 # ---------------------------------------------------------------------------
 
-def test_telemetry_covers_inspection_and_discovery_sources():
+def test_telemetry_covers_inspection_and_discovery_sources(monkeypatch):
     from helpers import inspect_and_discover
 
-    inspect_and_discover(client, "loc_marcus_house")
+    # /api/session/log is playtest-gated (operator-only); enable it for this read.
+    monkeypatch.setenv("MYSTERY_PLAYTEST_MODE", "true")
+    inspect_and_discover(client, "loc_cafe_storage")
     client.post("/api/events/ev_0756_sound/pin")
     client.post(
         "/api/interview/ask",

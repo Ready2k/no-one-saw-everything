@@ -609,9 +609,9 @@ class GenerateCaseRequest(BaseModel):
     num_suspects: Optional[int] = Field(None, ge=3, le=7)
     num_locations: Optional[int] = Field(None, ge=3, le=8)
     theme_preset: Optional[str] = None
-    custom_theme: Optional[str] = None
+    custom_theme: Optional[str] = Field(None, max_length=2000)
     tone: Optional[str] = None
-    llm_notes: Optional[str] = None
+    llm_notes: Optional[str] = Field(None, max_length=4000)
     candidate_count: int = Field(1, ge=1, le=5)
 
 
@@ -671,7 +671,7 @@ class ChallengeSuggestion(BaseModel):
 
 class FreeTextAskRequest(BaseModel):
     agent_id: str
-    question: str
+    question: str = Field(..., max_length=1000)
 
 
 class FreeTextAskResponse(BaseModel):
@@ -684,8 +684,8 @@ class FreeTextAskResponse(BaseModel):
 
 class NoteCreate(BaseModel):
     note_type: NoteType = "manual"
-    title: str
-    body: str = ""
+    title: str = Field(..., max_length=200)
+    body: str = Field("", max_length=5000)
     linked_agent_ids: list[str] = []
     linked_clue_ids: list[str] = []
     linked_event_ids: list[str] = []
@@ -695,8 +695,8 @@ class NoteCreate(BaseModel):
 
 
 class NoteUpdate(BaseModel):
-    title: Optional[str] = None
-    body: Optional[str] = None
+    title: Optional[str] = Field(None, max_length=200)
+    body: Optional[str] = Field(None, max_length=5000)
     player_tags: Optional[list[str]] = None
     status: Optional[Literal["open", "unresolved", "resolved"]] = None
     pinned_to_agent_id: Optional[str] = None
@@ -739,7 +739,7 @@ class ChallengeRequest(BaseModel):
     # Another person's word, used as evidence. The game is called No One Saw Everything: the
     # player must be able to put Elias's statement in front of Clara, not only a physical clue.
     evidence_claim_ids: list[str] = []
-    player_statement: Optional[str] = None
+    player_statement: Optional[str] = Field(None, max_length=1000)
 
 
 class ChallengeRecord(BaseModel):
@@ -752,7 +752,7 @@ class ChallengeRecord(BaseModel):
     challenged_claim_id: str
     evidence_clue_ids: list[str] = []
     evidence_claim_ids: list[str] = []
-    player_statement: Optional[str] = None
+    player_statement: Optional[str] = Field(None, max_length=1000)
     outcome: ChallengeOutcome
     deterministic_response_text: str
     display_response_text: str
@@ -778,9 +778,9 @@ class ChallengeRecord(BaseModel):
 
 class AccusationRequest(BaseModel):
     accused_agent_id: str
-    motive_answer: str = ""
-    method_answer: str = ""
-    opportunity_answer: str = ""
+    motive_answer: str = Field("", max_length=3000)
+    method_answer: str = Field("", max_length=3000)
+    opportunity_answer: str = Field("", max_length=3000)
     supporting_note_ids: list[str] = []
     supporting_clue_ids: list[str] = []
 

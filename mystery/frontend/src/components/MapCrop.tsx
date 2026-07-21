@@ -50,6 +50,31 @@ export default function MapCrop({
   if (tiles) {
     // Mosaic art: emulate the background-position crop with a positioned
     // full-map layer inside an overflow-hidden frame.
+    //
+    // Each mosaic tile is a 5-6MB HD image, and a full mosaic is 3x3 (9) or
+    // more with zoom variants — this crop only ever shows a small window
+    // (`width`x`height`) onto it, so fetching every tile regardless of
+    // whether it's inside that window used to mean ~50MB+ downloaded for a
+    // 340x200px establishing-shot card. Skip any tile whose rectangle
+    // doesn't actually intersect the visible crop window.
+    const layerLeft = width / 2 - cx * scale;
+    const layerTop = height / 2 - cy * scale;
+    const visibleLeft = -layerLeft;
+    const visibleTop = -layerTop;
+    const visibleRight = visibleLeft + width;
+    const visibleBottom = visibleTop + height;
+    const visibleTiles = tiles.filter((t) => {
+      const tileLeft = (t.leftPct / 100) * mapW * scale;
+      const tileTop = (t.topPct / 100) * mapH * scale;
+      const tileRight = tileLeft + (t.widthPct / 100) * mapW * scale;
+      const tileBottom = tileTop + (t.heightPct / 100) * mapH * scale;
+      return (
+        tileRight > visibleLeft &&
+        tileLeft < visibleRight &&
+        tileBottom > visibleTop &&
+        tileTop < visibleBottom
+      );
+    });
     return (
       <div
         className={className}
@@ -60,18 +85,20 @@ export default function MapCrop({
         <div
           style={{
             position: "absolute",
-            left: width / 2 - cx * scale,
-            top: height / 2 - cy * scale,
+            left: layerLeft,
+            top: layerTop,
             width: mapW * scale,
             height: mapH * scale,
           }}
         >
-          {tiles.map((t) => (
+          {visibleTiles.map((t) => (
             <img
               key={t.url}
               src={t.url}
               alt=""
               draggable={false}
+              loading="lazy"
+              decoding="async"
               style={{
                 position: "absolute",
                 left: `${t.leftPct}%`,
