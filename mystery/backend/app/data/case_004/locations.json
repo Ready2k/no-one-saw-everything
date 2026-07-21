@@ -3,22 +3,46 @@
     "location_id": "loc_village_square",
     "name": "Village Square",
     "description": "The open heart of the village. At night, lit only by a single lamp post near the clinic. Silent except for the fountain.",
-    "connected_location_ids": ["loc_fountain", "loc_pub", "loc_owen_house", "loc_clinic", "loc_elias_house"],
+    "connected_location_ids": [
+      "loc_fountain",
+      "loc_pub",
+      "loc_owen_house",
+      "loc_clinic",
+      "loc_elias_house"
+    ],
     "visibility_type": "public",
-    "map_position": {"x": 724, "y": 540},
-    "map_bounds": {"x": 360, "y": 280, "width": 730, "height": 560},
+    "map_position": {
+      "x": 3176,
+      "y": 2344
+    },
+    "map_bounds": {
+      "x": 2928,
+      "y": 2112,
+      "width": 496,
+      "height": 464
+    },
     "visual_layer": "exterior",
     "camera_coverage": false
   },
   {
     "location_id": "loc_fountain",
     "name": "Village Fountain",
-    "description": "The old stone fountain in the centre of the square. The stone coping is crumbling in places — a loose piece is missing from the east rim.",
-    "connected_location_ids": ["loc_village_square"],
+    "description": "The old stone fountain in the centre of the square. The stone coping is crumbling in places \u2014 a loose piece is missing from the east rim.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
     "murder_suitable": true,
-    "map_position": {"x": 724, "y": 540},
-    "map_bounds": {"x": 505, "y": 350, "width": 440, "height": 390},
+    "map_position": {
+      "x": 3152,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 3040,
+      "y": 2240,
+      "width": 224,
+      "height": 192
+    },
     "visual_layer": "exterior",
     "illustration": "/art/case_004/fountain_closeup.png"
   },
@@ -26,104 +50,217 @@
     "location_id": "loc_pub",
     "name": "The Mallet & Crown",
     "description": "The village pub, on the west side of the square. Closes at eleven on weeknights.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
-    "map_position": {"x": 205, "y": 330},
-    "map_bounds": {"x": 0, "y": 130, "width": 420, "height": 520},
-    "visual_layer": "exterior"
+    "map_position": {
+      "x": 2528,
+      "y": 2330
+    },
+    "map_bounds": {
+      "x": 2368,
+      "y": 2170,
+      "width": 320,
+      "height": 320,
+      "rotation": 29
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_owen_house",
     "name": "Owen Price's House & Yard",
     "description": "Owen's house on the corner of the square, timber yard behind. Gate faces the square.",
-    "connected_location_ids": ["loc_village_square"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "private",
-    "map_position": {"x": 1230, "y": 590},
-    "map_bounds": {"x": 1080, "y": 390, "width": 368, "height": 430},
-    "visual_layer": "exterior"
+    "map_position": {
+      "x": 4008,
+      "y": 2456
+    },
+    "map_bounds": {
+      "x": 3824,
+      "y": 2272,
+      "width": 368,
+      "height": 368,
+      "rotation": 2
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_clinic",
     "name": "Village Clinic",
-    "description": "The small clinic. Nadia's flat is above it — her living room faces the square.",
-    "connected_location_ids": ["loc_village_square"],
+    "description": "The small clinic. Nadia's flat is above it \u2014 her living room faces the square.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
-    "map_position": {"x": 1080, "y": 155},
-    "map_bounds": {"x": 900, "y": 0, "width": 390, "height": 310},
-    "visual_layer": "exterior"
+    "map_position": {
+      "x": 3664,
+      "y": 2232
+    },
+    "map_bounds": {
+      "x": 3533,
+      "y": 2096,
+      "width": 262,
+      "height": 272,
+      "rotation": 6.5
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_elias_house",
     "name": "Elias's Cottage",
     "description": "Elias's cottage on the square's south side. His bedroom window faces the fountain.",
-    "connected_location_ids": ["loc_village_square"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "private",
-    "map_position": {"x": 760, "y": 900},
-    "map_bounds": {"x": 430, "y": 790, "width": 640, "height": 296},
-    "visual_layer": "exterior"
+    "map_position": {
+      "x": 3040,
+      "y": 2821
+    },
+    "map_bounds": {
+      "x": 2912,
+      "y": 2720,
+      "width": 256,
+      "height": 202,
+      "rotation": 29
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_priya_flat",
     "name": "Priya's Flat",
     "description": "Priya's flat two streets from the square.",
-    "connected_location_ids": ["loc_village_square"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "private",
-    "map_position": {"x": 1260, "y": 900},
-    "map_bounds": {"x": 1090, "y": 790, "width": 358, "height": 296},
-    "visual_layer": "exterior"
+    "map_position": {
+      "x": 2632,
+      "y": 2802
+    },
+    "map_bounds": {
+      "x": 2480,
+      "y": 2666,
+      "width": 304,
+      "height": 272
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_ben_flat",
     "name": "Ben's Flat",
     "description": "Ben's small flat above the newsagent, one street from the square.",
-    "connected_location_ids": ["loc_village_square"],
-    "access_rules": ["owner"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
     "visibility_type": "private",
-    "map_position": {"x": 1210, "y": 870},
-    "map_bounds": {"x": 1090, "y": 790, "width": 358, "height": 296},
-    "visual_layer": "exterior"
+    "map_position": {
+      "x": 2285,
+      "y": 2837
+    },
+    "map_bounds": {
+      "x": 2157,
+      "y": 2685,
+      "width": 256,
+      "height": 304,
+      "rotation": 13
+    },
+    "visual_layer": "interior"
   },
   {
     "location_id": "loc_fishery",
     "name": "Fishery",
     "description": "The riverside fishery, where local fishermen clean their daily catch.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
-    "map_position": {"x": 1400, "y": 200},
-    "map_bounds": {"x": 1300, "y": 100, "width": 200, "height": 200},
+    "map_position": {
+      "x": 2208,
+      "y": 2016
+    },
+    "map_bounds": {
+      "x": 2016,
+      "y": 1888,
+      "width": 384,
+      "height": 256
+    },
     "visual_layer": "exterior"
   },
   {
     "location_id": "loc_lake",
     "name": "Lover's Lake",
     "description": "A serene, deep water lake on the northern edge of town surrounded by reeds.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
-    "map_position": {"x": 200, "y": 200},
-    "map_bounds": {"x": 50, "y": 50, "width": 300, "height": 300},
+    "map_position": {
+      "x": 1232,
+      "y": 2032
+    },
+    "map_bounds": {
+      "x": 480,
+      "y": 1504,
+      "width": 1504,
+      "height": 1056
+    },
     "visual_layer": "exterior"
   },
   {
     "location_id": "loc_woodland",
     "name": "Whispering Woodland",
     "description": "Dense woods bordering the town, filled with winding paths and tall oak trees.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
-    "map_position": {"x": 200, "y": 900},
-    "map_bounds": {"x": 50, "y": 800, "width": 300, "height": 250},
+    "map_position": {
+      "x": 5008,
+      "y": 3952
+    },
+    "map_bounds": {
+      "x": 3872,
+      "y": 3328,
+      "width": 2272,
+      "height": 1248
+    },
     "visual_layer": "exterior"
   },
   {
     "location_id": "loc_meadow",
     "name": "Green Meadow",
     "description": "A sprawling field of wildflowers and soft grass, ideal for afternoon strolls.",
-    "connected_location_ids": ["loc_village_square"],
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
     "visibility_type": "public",
-    "map_position": {"x": 900, "y": 950},
-    "map_bounds": {"x": 800, "y": 900, "width": 200, "height": 180},
+    "map_position": {
+      "x": 2880,
+      "y": 3856
+    },
+    "map_bounds": {
+      "x": 2272,
+      "y": 3104,
+      "width": 1216,
+      "height": 1504
+    },
     "visual_layer": "exterior"
   }
 ]

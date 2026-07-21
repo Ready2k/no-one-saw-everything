@@ -12,6 +12,7 @@ import {
   Bounds,
   BuildingInstance,
   Camera,
+  CaseClueRef,
   CaseObjectRef,
   CaseLocationRef,
   CaseRef,
@@ -57,6 +58,7 @@ import {
   Scene,
   SceneAnchor,
   SceneAmbient,
+  SceneClue,
   SceneLight,
   SceneLocation,
   SceneProp,
@@ -127,6 +129,37 @@ function resolveAnchor(
     semantic_asset_id: "",
     render_policy: "discovery_gated",
     external: false
+  };
+}
+
+function resolveClueWorldPosition(
+  layout: TownLayout,
+  recs: CanonicalRecs,
+  caseId: string,
+  clue: CaseClueRef,
+  view: MapView,
+  sceneScreen = false
+): { x: number; y: number; bounds: Bounds } | null {
+  if (!clue.location_id) return null;
+  if (sceneScreen) {
+    return {
+      x: clue.x ?? 50,
+      y: clue.y ?? 50,
+      bounds: { x: 0, y: 0, w: 100, h: 100 }
+    };
+  }
+  const bounds = resolveLocationView(layout, recs, caseId, clue.location_id, view).bounds;
+  return {
+    x: bounds.x + ((clue.x ?? 50) / 100) * bounds.w,
+    y: bounds.y + ((clue.y ?? 50) / 100) * bounds.h,
+    bounds
+  };
+}
+
+function worldToCluePercent(bounds: Bounds, x: number, y: number): { x: number; y: number } {
+  return {
+    x: clamp(((x - bounds.x) / bounds.w) * 100, 0, 100),
+    y: clamp(((y - bounds.y) / bounds.h) * 100, 0, 100)
   };
 }
 
@@ -483,6 +516,7 @@ type Gesture =
   | { kind: "resizeLoc"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: Bounds; mutated: boolean }
   | { kind: "rotateLoc"; before: TownLayout; id: string; center: { x: number; y: number }; startAngle: number; origRot: number; mutated: boolean }
   | { kind: "moveAnchor"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
+  | { kind: "moveClue"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; bounds: Bounds; mutated: boolean }
   | { kind: "moveProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
   | { kind: "resizeProp"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { w: number; h: number }; mutated: boolean }
   | { kind: "moveBuilding"; before: TownLayout; id: string; startW: { wx: number; wy: number }; orig: { x: number; y: number }; mutated: boolean }
@@ -496,6 +530,7 @@ interface MirrorState {
   activeTool: ToolId;
   selection: Selection;
   mapView: MapView;
+  interiorSceneLocationId: string | null;
   previewMode: PreviewMode;
   showEvidenceAnchors: boolean;
   underlaySource: UnderlaySourceId;
@@ -518,6 +553,7 @@ interface MirrorState {
   fineAdjustment: boolean;
   activeLocations: CaseLocationRef[];
   activeObjects: CaseObjectRef[];
+  activeClues: CaseClueRef[];
   canonicalRecs: CanonicalRecs;
 }
 
@@ -559,6 +595,7 @@ export default function DevMapEditor() {
   const [selectedCaseId, setSelectedCaseId] = useState("canonical");
   const [selection, setSelection] = useState<Selection>(null);
   const [mapView, setMapView] = useState<MapView>("external");
+  const [interiorSceneLocationId, setInteriorSceneLocationId] = useState<string | null>(null);
 
   const [previewMode, setPreviewMode] = useState<PreviewMode>("debug");
   const [fineAdjustment, setFineAdjustment] = useState(false);
@@ -578,6 +615,7 @@ export default function DevMapEditor() {
   });
 
   const [locationSearch, setLocationSearch] = useState("");
+  const [clueSearch, setClueSearch] = useState("");
   const [showExportModal, setShowExportModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -613,6 +651,36 @@ export default function DevMapEditor() {
   const cols = layout?.grid?.cols || 192;
   const rows = layout?.grid?.rows || 144;
 
+  const selectedArtLocationId = (
+    lay: TownLayout,
+    st: MirrorState
+  ): string | null => {
+    if (st.selection?.kind === "clue") {
+      return st.activeClues.find((c) => c.clue_id === st.selection?.id)?.location_id || null;
+    }
+    if (st.selection?.kind === "location") return st.selection.id;
+    if (st.selection?.kind === "object") {
+      const obj = st.activeObjects.find((o) => o.object_id === st.selection?.id);
+      return obj ? resolveAnchor(lay, st.canonicalRecs, st.selectedCaseId, obj).location_id : null;
+    }
+    if (st.underlaySource === "selected_location_art" && st.interiorSceneLocationId) return st.interiorSceneLocationId;
+    return hoverLocRef.current;
+  };
+
+  const isInteriorSceneScreen = (st: MirrorState): boolean => st.underlaySource === "selected_location_art";
+
+  const selectedArtUnderlays = (lay: TownLayout, st: MirrorState) => {
+    const locId = selectedArtLocationId(lay, st);
+    const loc = locId ? st.activeLocations.find((l) => l.location_id === locId) : null;
+    const url = loc?.search_illustration;
+    if (!locId || !url) return [];
+    if (isInteriorSceneScreen(st)) {
+      return [{ img: underlayImgs.current[url], x: 0, y: 0, w: 100, h: 100 }].filter((u) => !!u.img);
+    }
+    const bounds = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, locId, st.mapView).bounds;
+    return [{ img: underlayImgs.current[url], x: bounds.x, y: bounds.y, w: bounds.w, h: bounds.h }].filter((u) => !!u.img);
+  };
+
   // --- Derived collections ---
   const activeLocations = useMemo<CaseLocationRef[]>(() => {
     if (selectedCaseId === "canonical") {
@@ -626,6 +694,20 @@ export default function DevMapEditor() {
   const activeObjects = useMemo<CaseObjectRef[]>(() => {
     if (selectedCaseId === "canonical") return [];
     return cases.find((c) => c.case_id === selectedCaseId)?.objects || [];
+  }, [cases, selectedCaseId]);
+
+  const activeClues = useMemo<CaseClueRef[]>(() => {
+    if (selectedCaseId === "canonical") return [];
+    return (cases.find((c) => c.case_id === selectedCaseId)?.clues || []).filter(
+      (c) => c.method === "inspect" && !(c.reveal_on || []).includes("examine_body")
+    );
+  }, [cases, selectedCaseId]);
+
+  const activeBodyClues = useMemo<CaseClueRef[]>(() => {
+    if (selectedCaseId === "canonical") return [];
+    return (cases.find((c) => c.case_id === selectedCaseId)?.clues || []).filter(
+      (c) => c.method === "inspect" && (c.reveal_on || []).includes("examine_body")
+    );
   }, [cases, selectedCaseId]);
 
   const activeProps = useMemo<PropInstance[]>(() => {
@@ -815,10 +897,11 @@ export default function DevMapEditor() {
     const gRows = lay.grid?.rows || 144;
     const { w, h, dpr } = sizeRef.current;
     const g = gestureRef.current;
+    const interiorScreen = isInteriorSceneScreen(st);
 
     // Locations
     const locations: SceneLocation[] = [];
-    if (st.visibleLayers["debug_bounds"]) {
+    if (!interiorScreen && st.visibleLayers["debug_bounds"]) {
       for (const l of st.activeLocations) {
         const eff = resolveLocationView(lay, st.canonicalRecs, st.selectedCaseId, l.location_id, st.mapView);
         const visible = isLocationVisibleIn(lay, st.selectedCaseId, l.location_id);
@@ -837,7 +920,7 @@ export default function DevMapEditor() {
 
     // Anchors
     const anchors: SceneAnchor[] = [];
-    if (st.visibleLayers["object_anchors"] && st.showEvidenceAnchors && st.selectedCaseId !== "canonical") {
+    if (!interiorScreen && st.visibleLayers["object_anchors"] && st.showEvidenceAnchors && st.selectedCaseId !== "canonical") {
       for (const o of st.activeObjects) {
         const eff = resolveAnchor(lay, st.canonicalRecs, st.selectedCaseId, o);
         const locVisible = isLocationVisibleIn(lay, st.selectedCaseId, eff.location_id);
@@ -853,9 +936,31 @@ export default function DevMapEditor() {
       }
     }
 
+    // Clue hotspots
+    const clues: SceneClue[] = [];
+    if (st.visibleLayers["evidence_markers"] && st.selectedCaseId !== "canonical") {
+      const selectedLocId = interiorScreen ? selectedArtLocationId(lay, st) : null;
+      for (const c of st.activeClues) {
+        if (selectedLocId && c.location_id !== selectedLocId) continue;
+        const pos = resolveClueWorldPosition(lay, st.canonicalRecs, st.selectedCaseId, c, st.mapView, interiorScreen);
+        if (!pos) continue;
+        const locVisible = isLocationVisibleIn(lay, st.selectedCaseId, c.location_id || "");
+        if (st.previewMode === "player_reveal" && !locVisible) continue;
+        clues.push({
+          id: c.clue_id,
+          title: c.title,
+          x: pos.x,
+          y: pos.y,
+          radius: c.radius || 8,
+          alpha: st.previewMode === "fog" && !locVisible ? 0.3 : 1,
+          selected: st.selection?.kind === "clue" && st.selection.id === c.clue_id
+        });
+      }
+    }
+
     // Lights
     const lights: SceneLight[] = [];
-    if (st.visibleLayers["lights"]) {
+    if (!interiorScreen && st.visibleLayers["lights"]) {
       for (const [id, light] of Object.entries(lay.lights || {})) {
         const eff = resolveLightView(light, st.mapView);
         lights.push({
@@ -873,7 +978,7 @@ export default function DevMapEditor() {
 
     // Ambient sprites
     const ambientSprites: SceneAmbient[] = [];
-    if (st.visibleLayers["ambient"]) {
+    if (!interiorScreen && st.visibleLayers["ambient"]) {
       for (const [id, sprite] of Object.entries(lay.ambient_sprites || {})) {
         ambientSprites.push({
           id,
@@ -890,7 +995,7 @@ export default function DevMapEditor() {
 
     // Props
     const props: SceneProp[] = [];
-    for (const p of mergedProps(lay, st.selectedCaseId)) {
+    if (!interiorScreen) for (const p of mergedProps(lay, st.selectedCaseId)) {
       const layerName = p.layer || "props";
       if (!st.visibleLayers[layerName]) continue;
       props.push({
@@ -904,7 +1009,7 @@ export default function DevMapEditor() {
         selected: st.selection?.kind === "prop" && st.selection.id === p.instance_id
       });
     }
-    for (const b of lay.building_instances || []) {
+    if (!interiorScreen) for (const b of lay.building_instances || []) {
       const footprint = rotatedFootprint(b.footprint || { w: 1, h: 1 }, b.rotation || 0);
       if (st.visibleLayers["structures"]) {
         const artUrl = (st.mapView === "internal" ? b.interior_asset : b.exterior_asset) || b.exterior_asset;
@@ -960,13 +1065,15 @@ export default function DevMapEditor() {
       cssH: h,
       dpr,
       camera: cameraRef.current,
-      cols: gCols,
-      rows: gRows,
-      tileLayers: lay.tile_layers || {},
+      cols: interiorScreen ? 100 : gCols,
+      rows: interiorScreen ? 100 : gRows,
+      tileLayers: interiorScreen ? {} : lay.tile_layers || {},
       visibleLayers: st.visibleLayers,
       underlays:
         st.underlaySource === "none"
           ? []
+          : st.underlaySource === "selected_location_art"
+          ? selectedArtUnderlays(lay, st)
           : (UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource)?.tiles || [])
               .map((t) => {
                 // Mosaic cells resolve per view (B2 pairs external/interior
@@ -978,13 +1085,14 @@ export default function DevMapEditor() {
                 return { img: underlayImgs.current[url], x: t.x, y: t.y, w: t.w, h: t.h };
               })
               .filter((u) => !!u.img),
-      underlayOpacity: st.underlayOpacity,
+      underlayOpacity: interiorScreen ? 1 : st.underlayOpacity,
       solidRender: st.solidRenderView,
       showGrid: st.showGrid,
-      showSafety: st.showSafety,
+      showSafety: !interiorScreen && st.showSafety,
       showLabels: st.showLabels,
       locations,
       anchors,
+      clues,
       props,
       lights,
       ambientSprites,
@@ -1004,6 +1112,7 @@ export default function DevMapEditor() {
       activeTool,
       selection,
       mapView,
+      interiorSceneLocationId,
       previewMode,
       showEvidenceAnchors,
       underlaySource,
@@ -1026,6 +1135,7 @@ export default function DevMapEditor() {
       fineAdjustment,
       activeLocations,
       activeObjects,
+      activeClues,
       canonicalRecs
     };
     requestRender();
@@ -1038,6 +1148,16 @@ export default function DevMapEditor() {
 
   useEffect(() => {
     casesRef.current = cases;
+    for (const c of cases) {
+      for (const loc of c.locations || []) {
+        const url = loc.search_illustration;
+        if (!url || underlayImgs.current[url]) continue;
+        const img = new Image();
+        img.src = url;
+        img.onload = () => requestRender();
+        underlayImgs.current[url] = img;
+      }
+    }
   }, [cases]);
 
   // --- Boot: preload underlays (keyed by URL) + fetch layout ---
@@ -1064,7 +1184,7 @@ export default function DevMapEditor() {
         } as TownLayout;
         setLayout(cleanLayout);
         setLayoutVersion(data.layout_version ?? null);
-        setCases(data.cases);
+        setCases((data.cases || []).map((c: CaseRef) => ({ ...c, clues: c.clues || [] })));
         setCanonicalRecs(data.canonical_recommended_locations);
         buildingLibraryRef.current = data.building_library?.buildings || {};
         setBuildingLibrary(buildingLibraryRef.current);
@@ -1176,12 +1296,15 @@ export default function DevMapEditor() {
   const clampCamera = () => {
     const lay = layoutRef.current;
     if (!lay) return;
+    const screen = stateRef.current ? isInteriorSceneScreen(stateRef.current) : false;
     const cam = cameraRef.current;
     const { w, h } = sizeRef.current;
     const vw = w / cam.scale;
     const vh = h / cam.scale;
-    cam.x = clamp(cam.x, -vw * 0.85, lay.grid.cols - vw * 0.15);
-    cam.y = clamp(cam.y, -vh * 0.85, lay.grid.rows - vh * 0.15);
+    const worldCols = screen ? 100 : lay.grid.cols;
+    const worldRows = screen ? 100 : lay.grid.rows;
+    cam.x = clamp(cam.x, -vw * 0.85, worldCols - vw * 0.15);
+    cam.y = clamp(cam.y, -vh * 0.85, worldRows - vh * 0.15);
   };
 
   const updateZoomLabel = () => {
@@ -1211,8 +1334,9 @@ export default function DevMapEditor() {
     const lay = layoutRef.current;
     if (!lay) return;
     const { w, h } = sizeRef.current;
-    const gCols = lay.grid.cols;
-    const gRows = lay.grid.rows;
+    const screen = stateRef.current ? isInteriorSceneScreen(stateRef.current) : false;
+    const gCols = screen ? 100 : lay.grid.cols;
+    const gRows = screen ? 100 : lay.grid.rows;
     const scale = clamp(Math.min((w - 40) / gCols, (h - 40) / gRows), MIN_SCALE, MAX_SCALE);
     cameraRef.current = {
       scale,
@@ -1313,9 +1437,12 @@ export default function DevMapEditor() {
   const eventToTile = (e: { clientX: number; clientY: number }) => {
     const { wx, wy } = eventToWorld(e);
     const lay = layoutRef.current!;
+    const screen = stateRef.current ? isInteriorSceneScreen(stateRef.current) : false;
+    const gCols = screen ? 100 : lay.grid.cols;
+    const gRows = screen ? 100 : lay.grid.rows;
     return {
-      x: clamp(Math.floor(wx), 0, lay.grid.cols - 1),
-      y: clamp(Math.floor(wy), 0, lay.grid.rows - 1)
+      x: clamp(Math.floor(wx), 0, gCols - 1),
+      y: clamp(Math.floor(wy), 0, gRows - 1)
     };
   };
 
@@ -1809,6 +1936,59 @@ export default function DevMapEditor() {
     showToast("Prop duplicated.", "success");
   };
 
+  // --- Clue hotspots ---
+  const updateLocalClue = (caseId: string, clueId: string, updates: Partial<CaseClueRef>) => {
+    const applyUpdates = (prev: CaseRef[]) =>
+      prev.map((c) =>
+        c.case_id === caseId
+          ? { ...c, clues: (c.clues || []).map((clue) => (clue.clue_id === clueId ? { ...clue, ...updates } : clue)) }
+          : c
+      );
+    casesRef.current = applyUpdates(casesRef.current);
+    if (stateRef.current?.selectedCaseId === caseId) {
+      stateRef.current = {
+        ...stateRef.current,
+        activeClues: (stateRef.current.activeClues || []).map((clue) =>
+          clue.clue_id === clueId ? { ...clue, ...updates } : clue
+        )
+      };
+    }
+    setCases((prev) => applyUpdates(prev));
+  };
+
+  const saveClueLocation = (clue: CaseClueRef, updates: { x: number; y: number; radius?: number }, quiet = false) => {
+    if (selectedCaseId === "canonical") return;
+    const caseId = selectedCaseId;
+    updateLocalClue(caseId, clue.clue_id, {
+      x: updates.x,
+      y: updates.y,
+      radius: updates.radius ?? clue.radius
+    });
+    api
+      .saveDevMapClueLocation({
+        case_id: caseId,
+        clue_id: clue.clue_id,
+        x: updates.x,
+        y: updates.y,
+        radius: updates.radius ?? clue.radius
+      })
+      .then((res) => {
+        updateLocalClue(caseId, clue.clue_id, { x: res.x, y: res.y, radius: res.radius });
+        if (!quiet) showToast("Clue hotspot saved to clues.json.", "success");
+      })
+      .catch((err: Error) => {
+        showToast(`Clue hotspot save failed: ${err.message}`, "error");
+      });
+  };
+
+  const placeClueAtWorld = (clue: CaseClueRef, wx: number, wy: number, quiet = false) => {
+    const lay = layoutRef.current;
+    if (!lay || !clue.location_id) return;
+    const bounds = resolveLocationView(lay, canonicalRecs, selectedCaseId, clue.location_id, mapView).bounds;
+    const pct = worldToCluePercent(bounds, wx, wy);
+    saveClueLocation(clue, pct, quiet);
+  };
+
   // --- Select tool hit testing ---
   const selectionHandleWorld = (): { x: number; y: number } | null => {
     const st = stateRef.current;
@@ -1926,6 +2106,32 @@ export default function DevMapEditor() {
           const before = lay;
           layoutRef.current = deepClone(lay);
           gestureRef.current = { kind: "moveAnchor", before, id: o.object_id, startW: world, orig: { ...eff.anchor }, mutated: false };
+          return;
+        }
+      }
+    }
+
+    // 2.25 Clue hotspots
+    if (st.selectedCaseId !== "canonical" && st.visibleLayers["evidence_markers"]) {
+      const interiorScreen = isInteriorSceneScreen(st);
+      const selectedLocId = interiorScreen ? selectedArtLocationId(lay, st) : null;
+      for (const c of st.activeClues) {
+        if (selectedLocId && c.location_id !== selectedLocId) continue;
+        const pos = resolveClueWorldPosition(lay, st.canonicalRecs, st.selectedCaseId, c, st.mapView, interiorScreen);
+        if (!pos) continue;
+        if (Math.hypot(world.wx - pos.x, world.wy - pos.y) <= 12 / cam.scale) {
+          setSelection({ kind: "clue", id: c.clue_id });
+          const before = lay;
+          layoutRef.current = deepClone(lay);
+          gestureRef.current = {
+            kind: "moveClue",
+            before,
+            id: c.clue_id,
+            startW: world,
+            orig: { x: pos.x, y: pos.y },
+            bounds: pos.bounds,
+            mutated: false
+          };
           return;
         }
       }
@@ -2213,6 +2419,18 @@ export default function DevMapEditor() {
         requestRender();
         break;
       }
+      case "moveClue": {
+        const st = stateRef.current!;
+        const fine = st.fineAdjustment;
+        const snap = (v: number) => (fine ? Math.round(v * 2) / 2 : Math.round(v));
+        const dx = snap(world.wx - g.startW.wx);
+        const dy = snap(world.wy - g.startW.wy);
+        if (dx !== 0 || dy !== 0) g.mutated = true;
+        const pct = worldToCluePercent(g.bounds, g.orig.x + dx, g.orig.y + dy);
+        updateLocalClue(st.selectedCaseId, g.id, pct);
+        requestRender();
+        break;
+      }
       case "moveProp": {
         const dx = Math.round(world.wx - g.startW.wx);
         const dy = Math.round(world.wy - g.startW.wy);
@@ -2344,6 +2562,28 @@ export default function DevMapEditor() {
       }
       return;
     }
+    if (g.kind === "moveClue") {
+      layoutRef.current = g.before;
+      const caseId = stateRef.current?.selectedCaseId || selectedCaseId;
+      const clue = casesRef.current.find((c) => c.case_id === caseId)?.clues?.find((c) => c.clue_id === g.id);
+      if (g.mutated && clue && clue.x != null && clue.y != null) {
+        api
+          .saveDevMapClueLocation({
+            case_id: caseId,
+            clue_id: clue.clue_id,
+            x: clue.x,
+            y: clue.y,
+            radius: clue.radius
+          })
+          .then((res) => {
+            updateLocalClue(caseId, clue.clue_id, { x: res.x, y: res.y, radius: res.radius });
+            showToast("Clue hotspot saved to clues.json.", "success");
+          })
+          .catch((err: Error) => showToast(`Clue hotspot save failed: ${err.message}`, "error"));
+      }
+      requestRender();
+      return;
+    }
     // Move / resize gestures
     if (g.mutated) {
       setLayout(layoutRef.current!);
@@ -2456,6 +2696,12 @@ export default function DevMapEditor() {
           }),
         { undoable: true }
       );
+    } else if (sel.kind === "clue") {
+      const clue = st.activeClues.find((c) => c.clue_id === sel.id);
+      const pos = clue ? resolveClueWorldPosition(lay, st.canonicalRecs, st.selectedCaseId, clue, st.mapView, isInteriorSceneScreen(st)) : null;
+      if (!clue || !pos) return;
+      const pct = worldToCluePercent(pos.bounds, pos.x + mx, pos.y + my);
+      saveClueLocation(clue, pct, true);
     } else if (sel.kind === "prop") {
       mutateLayout(
         (l) => {
@@ -2508,6 +2754,9 @@ export default function DevMapEditor() {
   const currentUnderlayTiles = (): SnapUnderlayTile[] => {
     const st = stateRef.current;
     if (!st || st.underlaySource === "none") return [];
+    if (layoutRef.current && st.underlaySource === "selected_location_art") {
+      return selectedArtUnderlays(layoutRef.current, st);
+    }
     const def = UNDERLAY_SOURCES.find((u) => u.id === st.underlaySource);
     return (def?.tiles || [])
       .map((t) => {
@@ -2904,6 +3153,7 @@ export default function DevMapEditor() {
 
   const selectLocationFromList = (locId: string) => {
     setSelection({ kind: "location", id: locId });
+    if (underlaySource === "selected_location_art") setInteriorSceneLocationId(locId);
     if (activeTool !== "select") setActiveTool("select");
   };
 
@@ -2925,6 +3175,18 @@ export default function DevMapEditor() {
       (l) => l.name.toLowerCase().includes(q) || l.location_id.toLowerCase().includes(q)
     );
   }, [activeLocations, locationSearch]);
+
+  const filteredClues = useMemo(() => {
+    const q = clueSearch.trim().toLowerCase();
+    const sorted = [...activeClues].sort((a, b) => a.title.localeCompare(b.title));
+    if (!q) return sorted;
+    return sorted.filter(
+      (c) =>
+        c.title.toLowerCase().includes(q) ||
+        c.clue_id.toLowerCase().includes(q) ||
+        (c.location_id || "").toLowerCase().includes(q)
+    );
+  }, [activeClues, clueSearch]);
 
   const activeToolDef = TOOL_DEFS.find((t) => t.id === activeTool)!;
 
@@ -2964,6 +3226,11 @@ export default function DevMapEditor() {
     selection?.kind === "object" ? activeObjects.find((o) => o.object_id === selection.id) : null;
   const selectedObjectEff = selectedObject
     ? resolveAnchor(layout, canonicalRecs, selectedCaseId, selectedObject)
+    : null;
+  const selectedClue =
+    selection?.kind === "clue" ? activeClues.find((c) => c.clue_id === selection.id) : null;
+  const selectedCluePos = selectedClue
+    ? resolveClueWorldPosition(layout, canonicalRecs, selectedCaseId, selectedClue, mapView, underlaySource === "selected_location_art")
     : null;
   const selectedProp =
     selection?.kind === "prop" ? activeProps.find((p) => p.instance_id === selection.id) : null;
@@ -3036,6 +3303,7 @@ export default function DevMapEditor() {
               onChange={(e) => {
                 setSelectedCaseId(e.target.value);
                 setSelection(null);
+                setInteriorSceneLocationId(null);
               }}
             >
               <option value="canonical">Canonical Town Template</option>
@@ -3300,7 +3568,21 @@ export default function DevMapEditor() {
             <div className="control-group">
               <div className="inline-row">
                 <label className="mini-label">Underlay</label>
-                <select value={underlaySource} onChange={(e) => setUnderlaySource(e.target.value as UnderlaySourceId)}>
+                <select
+                  value={underlaySource}
+                  onChange={(e) => {
+                    const next = e.target.value as UnderlaySourceId;
+                    setUnderlaySource(next);
+                    if (next === "selected_location_art") {
+                      if (selection?.kind === "clue") {
+                        setInteriorSceneLocationId(activeClues.find((c) => c.clue_id === selection.id)?.location_id || null);
+                      } else if (selection?.kind === "location") {
+                        setInteriorSceneLocationId(selection.id);
+                      }
+                    }
+                  }}
+                >
+                  <option value="selected_location_art">Selected clue/location HD art</option>
                   {UNDERLAY_SOURCES.map((u) => (
                     <option key={u.id} value={u.id}>
                       {u.label}
@@ -3320,6 +3602,11 @@ export default function DevMapEditor() {
                     value={underlayOpacity}
                     onChange={(e) => setUnderlayOpacity(parseFloat(e.target.value))}
                   />
+                </div>
+              )}
+              {underlaySource === "selected_location_art" && (
+                <div className="view-note">
+                  Interior scene screen: replaces the town map with the player search image and shows only inspect clues for this location.
                 </div>
               )}
               {underlaySource === "town_tiles_hd" && (
@@ -3456,6 +3743,72 @@ export default function DevMapEditor() {
               })}
             </div>
           </details>
+
+          {selectedCaseId !== "canonical" && (
+            <details open className="sidebar-section">
+              <summary className="section-title">Clues ({filteredClues.length})</summary>
+              <input
+                className="search-input"
+                type="text"
+                placeholder="Search inspect clues..."
+                value={clueSearch}
+                onChange={(e) => setClueSearch(e.target.value)}
+              />
+              <div className="location-list">
+                {filteredClues.map((c) => {
+                  const isSel = selection?.kind === "clue" && selection.id === c.clue_id;
+                  const hasPoint = c.x != null && c.y != null;
+                  return (
+                    <div
+                      key={c.clue_id}
+                      className={`location-item ${isSel ? "selected" : ""}`}
+                      onClick={() => {
+                        setSelection({ kind: "clue", id: c.clue_id });
+                        setInteriorSceneLocationId(c.location_id || null);
+                        setMapView("internal");
+                        setUnderlaySource("selected_location_art");
+                        setUnderlayOpacity(1);
+                        if (activeTool !== "select") setActiveTool("select");
+                        const pos = resolveClueWorldPosition(layout, canonicalRecs, selectedCaseId, c, "internal", true);
+                        if (pos) zoomToBounds(pos.bounds);
+                      }}
+                      onDoubleClick={() => {
+                        const pos = resolveClueWorldPosition(layout, canonicalRecs, selectedCaseId, c, mapView, underlaySource === "selected_location_art");
+                        if (pos) zoomToBounds({ x: pos.x - 3, y: pos.y - 3, w: 6, h: 6 });
+                      }}
+                      title={`${c.clue_id} - ${c.location_id || "no location"}`}
+                    >
+                      <span className={`source-dot ${hasPoint ? "internal" : "recommended"}`} />
+                      <span className="loc-name">{c.title}</span>
+                      <span className="coord-chip">{hasPoint ? `${Math.round(c.x!)}%,${Math.round(c.y!)}%` : "50%,50%"}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </details>
+          )}
+
+          {selectedCaseId !== "canonical" && activeBodyClues.length > 0 && (
+            <details className="sidebar-section">
+              <summary className="section-title">Body Clues ({activeBodyClues.length})</summary>
+              <div className="view-note">
+                Found via victim body examination, not the room search scene.
+              </div>
+              <div className="location-list">
+                {activeBodyClues.map((c) => (
+                  <div
+                    key={c.clue_id}
+                    className="location-item"
+                    title={`${c.clue_id} - body examination at ${c.location_id || "discovery location"}`}
+                  >
+                    <span className="source-dot case_override" />
+                    <span className="loc-name">{c.title}</span>
+                    <span className="coord-chip">body</span>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
         </aside>
 
         {/* ---------------- Canvas workspace ---------------- */}
@@ -3747,6 +4100,96 @@ export default function DevMapEditor() {
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+          ) : selectedClue ? (
+            <div className="panel-stack">
+              <div className="section-title">Selected Clue Hotspot</div>
+              <div className="control-group">
+                <label>ID</label>
+                <input type="text" value={selectedClue.clue_id} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Title</label>
+                <input type="text" value={selectedClue.title} readOnly className="ro" />
+              </div>
+              <div className="control-group">
+                <label>Search Location</label>
+                <input type="text" value={selectedClue.location_id || "No inspect location"} readOnly className="ro" />
+              </div>
+              <div className="view-note">
+                Saved to this case's clues.json as percentages within the current location art. Use Internal view for HD interiors.
+              </div>
+              <div className="num-grid">
+                {(["x", "y"] as const).map((k) => (
+                  <div key={k} className="control-group">
+                    <label>{k.toUpperCase()} %</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={0.1}
+                      value={selectedClue[k] ?? 50}
+                      onChange={(e) => {
+                        const v = parseFloat(e.target.value);
+                        if (Number.isNaN(v)) return;
+                        saveClueLocation(selectedClue, {
+                          x: k === "x" ? clamp(v, 0, 100) : selectedClue.x ?? 50,
+                          y: k === "y" ? clamp(v, 0, 100) : selectedClue.y ?? 50,
+                          radius: selectedClue.radius
+                        });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="control-group">
+                <label>Search Radius % ({selectedClue.radius || 8})</label>
+                <input
+                  type="range"
+                  min={1}
+                  max={25}
+                  step={0.5}
+                  value={selectedClue.radius || 8}
+                  onChange={(e) => {
+                    const radius = parseFloat(e.target.value);
+                    saveClueLocation(
+                      selectedClue,
+                      {
+                        x: selectedClue.x ?? 50,
+                        y: selectedClue.y ?? 50,
+                        radius
+                      },
+                      true
+                    );
+                  }}
+                />
+              </div>
+              <div className="btn-row">
+                <button
+                  className="mse-btn mse-btn-secondary"
+                  disabled={!selectedClue.location_id}
+                  onClick={() => {
+                    if (!selectedClue.location_id) return;
+                    if (underlaySource === "selected_location_art") {
+                      saveClueLocation(selectedClue, { x: 50, y: 50, radius: selectedClue.radius });
+                      zoomToBounds({ x: 0, y: 0, w: 100, h: 100 });
+                    } else {
+                      const b = resolveLocationView(layout, canonicalRecs, selectedCaseId, selectedClue.location_id, mapView).bounds;
+                      placeClueAtWorld(selectedClue, b.x + b.w / 2, b.y + b.h / 2);
+                      zoomToBounds(b);
+                    }
+                  }}
+                >
+                  ⌖ Center in location
+                </button>
+                <button
+                  className="mse-btn mse-btn-secondary"
+                  disabled={!selectedCluePos}
+                  onClick={() => selectedCluePos && zoomToBounds({ x: selectedCluePos.x - 3, y: selectedCluePos.y - 3, w: 6, h: 6 })}
+                >
+                  Zoom to hotspot
+                </button>
               </div>
             </div>
           ) : selectedProp ? (

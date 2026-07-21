@@ -43,10 +43,10 @@
     "is_victim": true,
     "sprite_asset": "Abigail_Chen.png",
     "portrait_art": {
-      "calm": "/art/portraits/clara_calm.png",
+      "calm": "/art/case_005/portraits/clara_wells_calm.png",
       "deceased": "/art/portraits/clara_deceased.png",
-      "defensive": "/art/portraits/clara_defensive.png",
-      "cracking": "/art/portraits/clara_cracking.png"
+      "defensive": "/art/case_005/portraits/clara_wells_calm.png",
+      "cracking": "/art/case_005/portraits/clara_wells_calm.png"
     },
     "sprite_id": "sprite_abigail_chen"
   },
@@ -94,10 +94,10 @@
     "conflict_avoidance": 0.1,
     "sprite_asset": "Carlos_Gomez.png",
     "portrait_art": {
-      "calm": "/art/portraits/owen_calm.png",
+      "calm": "/art/case_005/portraits/owen_price_calm.png",
       "deceased": "/art/portraits/owen_deceased.png",
-      "defensive": "/art/portraits/owen_defensive.png",
-      "cracking": "/art/portraits/owen_cracking.png"
+      "defensive": "/art/case_005/portraits/owen_price_defensive.png",
+      "cracking": "/art/case_005/portraits/owen_price_cracking.png"
     },
     "sprite_id": "sprite_carlos_gomez",
     "baseline": {
@@ -143,10 +143,10 @@
     "gossip_tendency": 0.8,
     "sprite_asset": "Ryan_Park.png",
     "portrait_art": {
-      "calm": "/art/portraits/ben_calm.png",
+      "calm": "/art/case_005/portraits/ben_carter_calm.png",
       "deceased": "/art/portraits/ben_deceased.png",
-      "defensive": "/art/portraits/ben_defensive.png",
-      "cracking": "/art/portraits/ben_cracking.png"
+      "defensive": "/art/case_005/portraits/ben_carter_defensive.png",
+      "cracking": "/art/case_005/portraits/ben_carter_cracking.png"
     },
     "sprite_id": "sprite_ryan_park",
     "baseline": {
@@ -192,10 +192,10 @@
     "gossip_tendency": 0.2,
     "sprite_asset": "Ayesha_Khan.png",
     "portrait_art": {
-      "calm": "/art/portraits/nadia_calm.png",
+      "calm": "/art/case_005/portraits/nadia_cole_calm.png",
       "deceased": "/art/portraits/nadia_deceased.png",
-      "defensive": "/art/portraits/nadia_defensive.png",
-      "cracking": "/art/portraits/nadia_cracking.png"
+      "defensive": "/art/case_005/portraits/nadia_cole_defensive.png",
+      "cracking": "/art/case_005/portraits/nadia_cole_cracking.png"
     },
     "sprite_id": "sprite_ayesha_khan",
     "baseline": {
@@ -241,10 +241,10 @@
     "gossip_tendency": 0.9,
     "sprite_asset": "Adam_Smith.png",
     "portrait_art": {
-      "calm": "/art/portraits/elias_calm.png",
+      "calm": "/art/case_005/portraits/elias_grant_calm.png",
       "deceased": "/art/portraits/elias_deceased.png",
-      "defensive": "/art/portraits/elias_defensive.png",
-      "cracking": "/art/portraits/elias_cracking.png"
+      "defensive": "/art/case_005/portraits/elias_grant_defensive.png",
+      "cracking": "/art/case_005/portraits/elias_grant_cracking.png"
     },
     "sprite_id": "sprite_adam_smith",
     "baseline": {
@@ -283,10 +283,10 @@
     "conflict_avoidance": 0.7,
     "sprite_asset": "Ethan_Brooks.png",
     "portrait_art": {
-      "calm": "/art/portraits/col_calm.png",
+      "calm": "/art/case_005/portraits/col_hartley_calm.png",
       "deceased": "/art/portraits/col_deceased.png",
-      "defensive": "/art/portraits/col_defensive.png",
-      "cracking": "/art/portraits/col_cracking.png"
+      "defensive": "/art/case_005/portraits/col_hartley_defensive.png",
+      "cracking": "/art/case_005/portraits/col_hartley_cracking.png"
     },
     "sprite_id": "sprite_ethan_brooks",
     "baseline": {

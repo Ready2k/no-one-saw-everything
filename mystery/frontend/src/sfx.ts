@@ -195,4 +195,84 @@ export const sfx = {
     thump(c, { freqFrom: 1700, freqTo: 900, duration: 0.025, volume: 0.06, type: "square" });
     thump(c, { at: c.currentTime + 0.008, freqFrom: 260, freqTo: 130, duration: 0.045, volume: 0.08 });
   },
+
+  /** Evidence reveal: force the authored clue stinger, with a bright fallback. */
+  evidenceFound() {
+    if (audioManager.playStinger("clue_discovered", { force: true })) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 520, freqTo: 1180, duration: 0.12, volume: 0.12, type: "sine" });
+    thump(c, { at: c.currentTime + 0.06, freqFrom: 780, freqTo: 1760, duration: 0.16, volume: 0.08, type: "sine" });
+    noiseSwish(c, {
+      at: c.currentTime + 0.02,
+      duration: 0.18,
+      volume: 0.035,
+      filter: "highpass",
+      freqFrom: 1800,
+      freqTo: 3600,
+      q: 0.8,
+    });
+  },
+
+  lensAdjust() {
+    if (throttled("lensAdjust")) return;
+    if (audioManager.playUi("lens_adjust")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 1500, freqTo: 2200, duration: 0.12, volume: 0.04, type: "triangle" });
+  },
+
+  mapSelect() {
+    if (throttled("mapSelect")) return;
+    if (audioManager.playUi("map_select")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 620, freqTo: 300, duration: 0.12, volume: 0.06, type: "triangle" });
+  },
+
+  sheetPull() {
+    if (throttled("sheetPull")) return;
+    if (audioManager.playUi("sheet_pull")) return;
+    const c = ctx();
+    if (!c) return;
+    noiseSwish(c, {
+      duration: 0.35,
+      volume: 0.05,
+      filter: "bandpass",
+      freqFrom: 900,
+      freqTo: 260,
+      q: 0.7,
+    });
+  },
+
+  evidenceInspect() {
+    if (throttled("evidenceInspect")) return;
+    if (audioManager.playUi("evidence_inspect")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 740, freqTo: 900, duration: 0.18, volume: 0.04, type: "triangle" });
+  },
+
+  questionSend() {
+    if (throttled("questionSend")) return;
+    if (audioManager.playUi("question_send")) return;
+    const c = ctx();
+    if (!c) return;
+    thump(c, { freqFrom: 880, freqTo: 440, duration: 0.14, volume: 0.04, type: "triangle" });
+  },
+
+  locationShift() {
+    if (throttled("locationShift")) return;
+    if (audioManager.playUi("location_shift")) return;
+    const c = ctx();
+    if (!c) return;
+    noiseSwish(c, {
+      duration: 0.42,
+      volume: 0.04,
+      filter: "lowpass",
+      freqFrom: 700,
+      freqTo: 140,
+      q: 0.5,
+    });
+  },
 };

@@ -22,7 +22,10 @@ unchanged (the no-regression fallback).
 """
 
 import random
+import logging
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 from ..models import CaseData, Event
 from .schemas import TimelinePlan
@@ -118,7 +121,8 @@ def compile_timeline(
     for e in kept:
         try:
             t = _to_min(e.time)
-        except Exception:
+        except ValueError:
+            logger.warning(f"Invalid time format in event {e.event_id}: {e.time}")
             continue
         for aid in e.agent_ids:
             reserved[(aid, t)] = e.location_id

@@ -52,7 +52,14 @@ API or the frontend.
   investigation interior. Location function tags (`pub`, `clinic`, `bookshop`,
   `flat`, etc.) are data-driven and discovery-safe.
 
-Not yet built: free-text LLM interrogation (phase 9).
+- **Free-text LLM Interrogation** (phase 9) — Maps open-ended player text to one of the deterministic six question types, or falls back to casual chat, bridging the gap between natural language and the strict truth engine.
+
+## Code Quality & Stability
+The codebase recently underwent a comprehensive AAA-level review to harden stability:
+- **Robust Error Handling**: LLM timeouts and JSON failures degrade gracefully.
+- **Memory Management**: Strict cleanup of React timeouts and unmounted components.
+- **Security**: Hardened against basic SSRF and documented local-only API key constraints.
+
 
 ## Run it
 
@@ -64,13 +71,16 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/uvicorn app.main:app --port 8010
 ```
 
-Frontend (React + Vite, port 5173, proxies `/api` to 8010):
+Frontend (React + Vite, port 5179, proxies `/api` to 8010):
 
 ```bash
 cd mystery/frontend
 npm install
-npm run dev
+npm run dev -- --host 127.0.0.1 --port 5179
 ```
+
+Or use `./start.sh` from the repo root. Override with `MYSTERY_FRONTEND_PORT=5181`
+or `MYSTERY_API_PORT=8011` if those ports are busy.
 
 Tests (also act as the case fairness validator):
 

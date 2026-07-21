@@ -1,0 +1,5 @@
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/rewind_01.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/rewind_02.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/rewind_03.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/rewind_04.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/concept/.work/rewind_05.mp4'

@@ -33,6 +33,16 @@ export interface SceneAnchor {
   selected: boolean;
 }
 
+export interface SceneClue {
+  id: string;
+  title: string;
+  x: number;
+  y: number;
+  radius: number;
+  alpha: number;
+  selected: boolean;
+}
+
 export interface SceneLight {
   id: string;
   x: number;
@@ -113,6 +123,7 @@ export interface Scene {
   showLabels: boolean;
   locations: SceneLocation[];
   anchors: SceneAnchor[];
+  clues: SceneClue[];
   props: SceneProp[];
   lights: SceneLight[];
   ambientSprites: SceneAmbient[];
@@ -509,6 +520,49 @@ export function drawScene(canvas: HTMLCanvasElement, scene: Scene): void {
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 2;
     ctx.stroke();
+    ctx.restore();
+  }
+
+  // Clue hotspots authored as discoverability percentages, drawn at their
+  // resolved tile-space position for the active location bounds.
+  for (const c of scene.clues) {
+    const px = X(c.x);
+    const py = Y(c.y);
+    if (px < -24 || px > cssW + 24 || py < -24 || py > cssH + 24) continue;
+    const r = Math.max(6, Math.min(s * (c.radius / 18), 14));
+    ctx.save();
+    ctx.globalAlpha = c.alpha;
+    if (c.selected) {
+      ctx.beginPath();
+      ctx.arc(px, py, r + 5, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(251, 191, 36, 0.32)";
+      ctx.fill();
+    }
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.fillStyle = c.selected ? "#fbbf24" : "#a855f7";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(px - r * 0.55, py);
+    ctx.lineTo(px + r * 0.55, py);
+    ctx.moveTo(px, py - r * 0.55);
+    ctx.lineTo(px, py + r * 0.55);
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.8)";
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    if (scene.showLabels && s >= 6) {
+      ctx.font = "700 10px -apple-system, 'Segoe UI', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.shadowColor = "rgba(0,0,0,0.85)";
+      ctx.shadowBlur = 4;
+      ctx.fillStyle = "#fff";
+      ctx.fillText(c.title, px, py - r - 5, 160);
+      ctx.shadowBlur = 0;
+    }
     ctx.restore();
   }
 

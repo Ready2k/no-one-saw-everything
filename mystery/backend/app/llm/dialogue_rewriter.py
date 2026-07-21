@@ -1,6 +1,6 @@
 """LLM dialogue rewriting module."""
 
-import json
+# import json  # UNUSED — commented out during code review [2026-07-19]
 import random
 import re
 from typing import Optional, Dict, Any, List
@@ -368,10 +368,10 @@ def _get_open_ended_deflection(pressure_level: float) -> str:
         ])
     else:
         return random.choice([
-            "I'm not sure how to answer that.",
-            "I don't think I follow.",
-            "I'm afraid I can't help you with that.",
-            "I don't really know what you're talking about."
+            "I'm sorry, my mind is a bit elsewhere with everything that's happened.",
+            "I'm not quite sure what you mean.",
+            "Hmm, I don't really know what to say to that.",
+            "I'm afraid I don't have a good answer for that right now."
         ])
 
 

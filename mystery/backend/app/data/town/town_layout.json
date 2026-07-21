@@ -148,11 +148,11 @@
     },
     "loc_clinic_dispensary": {
       "bounds": {
-        "x": 113.5,
-        "y": 70.5,
+        "x": 112.5,
+        "y": 67.5,
         "w": 4,
         "h": 5,
-        "rotation": 44
+        "rotation": 93
       },
       "mode": "interior",
       "notes": "",
@@ -494,63 +494,13 @@
         "loc_woodland",
         "loc_meadow"
       ],
-      "location_bounds": {
-        "loc_village_square": {
-          "x": 95,
-          "y": 75,
-          "w": 10,
-          "h": 7
-        },
-        "loc_fountain": {
-          "x": 99,
-          "y": 76,
-          "w": 4,
-          "h": 4
-        },
-        "loc_pub": {
-          "x": 95,
-          "y": 66,
-          "w": 13,
-          "h": 7
-        },
-        "loc_clinic": {
-          "x": 105,
-          "y": 73,
-          "w": 8,
-          "h": 6
-        },
-        "loc_ben_flat": {
-          "x": 81,
-          "y": 66,
-          "w": 6,
-          "h": 3
-        },
-        "loc_priya_flat": {
-          "x": 80,
-          "y": 69,
-          "w": 6,
-          "h": 4
-        },
-        "loc_elias_house": {
-          "x": 83.1,
-          "y": 77,
-          "w": 6,
-          "h": 4,
-          "rotation": 30
-        },
-        "loc_owen_house": {
-          "x": 113,
-          "y": 68,
-          "w": 7,
-          "h": 7
-        }
-      },
+      "location_bounds": {},
       "object_anchors": {
         "obj_fountain_stone": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 102,
-            "y": 78
+            "x": 101,
+            "y": 73
           },
           "semantic_asset_id": "obj_fountain_coping_stone",
           "render_policy": "discovery_gated"
@@ -559,7 +509,7 @@
           "location_id": "loc_fountain",
           "anchor": {
             "x": 100,
-            "y": 79
+            "y": 74.5
           },
           "semantic_asset_id": "obj_muddy_bootprint",
           "render_policy": "discovery_gated"
@@ -567,8 +517,8 @@
         "obj_fred_lighter": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 100,
-            "y": 77
+            "x": 99.5,
+            "y": 73.2
           },
           "semantic_asset_id": "obj_pub_lighter",
           "render_policy": "discovery_gated",
@@ -577,8 +527,8 @@
         "obj_owen_pub_receipt": {
           "location_id": "loc_fountain",
           "anchor": {
-            "x": 101,
-            "y": 77
+            "x": 100.6,
+            "y": 72.8
           },
           "semantic_asset_id": "obj_pub_receipt",
           "render_policy": "discovery_gated"
@@ -586,8 +536,8 @@
         "obj_pub_ledger": {
           "location_id": "loc_pub",
           "anchor": {
-            "x": 98,
-            "y": 70
+            "x": 79,
+            "y": 72
           },
           "semantic_asset_id": "obj_pub_ledger",
           "render_policy": "discovery_gated",
@@ -596,8 +546,8 @@
         "obj_blackmail_letters": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 84,
-            "y": 66
+            "x": 70.5,
+            "y": 87
           },
           "semantic_asset_id": "obj_blackmail_letters",
           "render_policy": "discovery_gated",
@@ -606,8 +556,8 @@
         "obj_arson_clipping": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 85,
-            "y": 66
+            "x": 71.5,
+            "y": 87.2
           },
           "semantic_asset_id": "obj_arson_clipping",
           "render_policy": "discovery_gated",
@@ -616,8 +566,8 @@
         "obj_ben_phone": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 86,
-            "y": 67
+            "x": 72.5,
+            "y": 88
           },
           "semantic_asset_id": "obj_phone",
           "render_policy": "discovery_gated",
@@ -626,8 +576,8 @@
         "obj_ben_jacket_mud": {
           "location_id": "loc_ben_flat",
           "anchor": {
-            "x": 85,
-            "y": 68
+            "x": 71.2,
+            "y": 89
           },
           "semantic_asset_id": "obj_muddy_jacket",
           "render_policy": "discovery_gated",
@@ -831,8 +781,8 @@
         "obj_dispensary_log": {
           "location_id": "loc_clinic_dispensary",
           "anchor": {
-            "x": 115.8,
-            "y": 72.7
+            "x": 113.8,
+            "y": 68.7
           },
           "semantic_asset_id": "obj_dispensary_log",
           "render_policy": "discovery_gated",
@@ -928,8 +878,8 @@
         "obj_mortgage_deed": {
           "location_id": "loc_clara_flat",
           "anchor": {
-            "x": 98,
-            "y": 55.2
+            "x": 102,
+            "y": 52.2
           },
           "semantic_asset_id": "obj_mortgage_deed",
           "render_policy": "discovery_gated",
@@ -938,8 +888,8 @@
         "obj_clara_note": {
           "location_id": "loc_rear_alley",
           "anchor": {
-            "x": 109.7,
-            "y": 53.4
+            "x": 104.7,
+            "y": 52.4
           },
           "semantic_asset_id": "obj_committee_note",
           "render_policy": "discovery_gated",
@@ -958,8 +908,8 @@
         "obj_col_log": {
           "location_id": "loc_owen_house",
           "anchor": {
-            "x": 121.8,
-            "y": 76
+            "x": 123.8,
+            "y": 77
           },
           "semantic_asset_id": "obj_delivery_log",
           "render_policy": "discovery_gated",
@@ -968,8 +918,8 @@
         "obj_owen_boot_mud": {
           "location_id": "loc_owen_house",
           "anchor": {
-            "x": 121.7,
-            "y": 77.5
+            "x": 119.7,
+            "y": 80.5
           },
           "semantic_asset_id": "obj_ashy_boots",
           "render_policy": "discovery_gated",
@@ -979,7 +929,7 @@
           "location_id": "loc_clara_flat",
           "anchor": {
             "x": 97.3,
-            "y": 54.4
+            "y": 53.4
           },
           "semantic_asset_id": "obj_property_register",
           "render_policy": "discovery_gated",
@@ -988,8 +938,8 @@
         "obj_clara_notebook": {
           "location_id": "loc_hobbs_cafe",
           "anchor": {
-            "x": 95,
-            "y": 57.4
+            "x": 93,
+            "y": 61.4
           },
           "semantic_asset_id": "obj_clara_notebook",
           "render_policy": "discovery_gated",
@@ -998,8 +948,8 @@
         "obj_yard_books": {
           "location_id": "loc_owen_house",
           "anchor": {
-            "x": 121.5,
-            "y": 75.2
+            "x": 123.5,
+            "y": 73.2
           },
           "semantic_asset_id": "obj_yard_books",
           "render_policy": "discovery_gated",
@@ -1083,8 +1033,8 @@
         "obj_elias_memory": {
           "location_id": "loc_village_square",
           "anchor": {
-            "x": 94.8,
-            "y": 68.2
+            "x": 91.8,
+            "y": 72.2
           },
           "semantic_asset_id": "clue_memory_bell_girl",
           "render_policy": "debug_only",
@@ -1097,6 +1047,69 @@
             "y": 89
           },
           "semantic_asset_id": "obj_spare_key",
+          "render_policy": "discovery_gated",
+          "external": false
+        }
+      }
+    },
+    "case_007": {
+      "visible_locations": [
+        "loc_village_square",
+        "loc_fountain",
+        "loc_elias_bench",
+        "loc_hobbs_cafe",
+        "loc_cafe_kitchen",
+        "loc_rear_alley",
+        "loc_bookshop",
+        "loc_bookshop_back",
+        "loc_clinic",
+        "loc_marcus_house",
+        "loc_marcus_study",
+        "loc_owen_house",
+        "loc_clara_flat",
+        "loc_priya_flat",
+        "loc_nadia_flat",
+        "loc_elias_house"
+      ],
+      "location_bounds": {},
+      "object_anchors": {
+        "obj_owl_doorstop": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 86,
+            "y": 61
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_notebook_1994": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 85,
+            "y": 59
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_archive_boxes": {
+          "location_id": "loc_bookshop_back",
+          "anchor": {
+            "x": 86,
+            "y": 60
+          },
+          "semantic_asset_id": "",
+          "render_policy": "discovery_gated",
+          "external": false
+        },
+        "obj_painted_lantern": {
+          "location_id": "loc_rear_alley",
+          "anchor": {
+            "x": 105,
+            "y": 52
+          },
+          "semantic_asset_id": "",
           "render_policy": "discovery_gated",
           "external": false
         }

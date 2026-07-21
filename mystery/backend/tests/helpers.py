@@ -19,3 +19,15 @@ def inspect_and_discover(client, location_id: str) -> list[str]:
         d.raise_for_status()
         discovered.append(hotspot["clue_id"])
     return discovered
+
+
+def examine_body_and_discover(client, agent_id: str) -> list[str]:
+    """Examine the victim body and discover every body hotspot it exposes."""
+    r = client.get(f"/api/examine_body/{agent_id}")
+    r.raise_for_status()
+    discovered = []
+    for hotspot in r.json()["hidden_clues"]:
+        d = client.post("/api/discover_clue", json={"clue_id": hotspot["clue_id"]})
+        d.raise_for_status()
+        discovered.append(hotspot["clue_id"])
+    return discovered

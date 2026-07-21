@@ -1169,6 +1169,7 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         "visible_location_ids": [
             "loc_village_square", "loc_fountain", "loc_pub", "loc_owen_house",
             "loc_clinic", "loc_elias_house", "loc_priya_flat", "loc_ben_flat",
+            "loc_fishery", "loc_lake", "loc_woodland", "loc_meadow",
         ],
         "overlays": [
             "overlay_case_004_runtime_lighting",
@@ -1184,8 +1185,32 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         },
     },
     "case_005": {
-        "mode": "canonical_overworld",
-        "map": CANONICAL_MAP,
+        # Case 005 is a deliberately self-contained village.  Unlike the
+        # reusable town, its visual geography is part of this case's story:
+        # the back lane provides the unseen route between Owen's yard and the
+        # rear alley.  It therefore owns both its map art and coordinates.
+        "mode": "case_art",
+        "map": {
+            "definition_id": "case_005_rear_alley_village_v1",
+            "asset": "case_005_rear_alley_village_v1",
+            "image": "/art/case_005/map/case_005_village_map_dawn.png",
+            "width": 1448,
+            "height": 1086,
+            "tile_size": 32,
+            "grid": {"cols": 45, "rows": 34},
+            "origin": "north_west",
+            "base_palette": "wet_indigo_dawn",
+            "lighting_overlay": "runtime_lightingTint",
+        },
+        "use_authored_locations": True,
+        # Blue-dawn practicals are player-safe ambience, not evidence.
+        "light_overlays": [
+            {"id": "case_005_square_lamp", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_village_square", "x": 578, "y": 336, "width": 200, "height": 170, "from": "00:00", "to": "08:30", "opacity": 0.66},
+            {"id": "case_005_cafe_windows", "semantic_asset_id": "light_pub_window_glow", "location_id": "loc_hobbs_cafe", "x": 817, "y": 682, "width": 230, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.48},
+            {"id": "case_005_bookshop_windows", "semantic_asset_id": "light_window_warm", "location_id": "loc_bookshop", "x": 388, "y": 502, "width": 170, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.42},
+            {"id": "case_005_clinic_window", "semantic_asset_id": "light_window_cool", "location_id": "loc_clinic", "x": 983, "y": 364, "width": 125, "height": 90, "from": "00:00", "to": "08:30", "opacity": 0.45},
+            {"id": "case_005_yard_security_light", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_owen_house", "x": 1274, "y": 708, "width": 150, "height": 130, "from": "00:00", "to": "07:15", "opacity": 0.38},
+        ],
         "visible_location_ids": [
             "loc_village_square", "loc_rear_alley", "loc_hobbs_cafe",
             "loc_clara_flat", "loc_owen_house", "loc_clinic",
@@ -1419,6 +1444,18 @@ def map_config(case_id: str) -> dict[str, Any] | None:
     return CASE_MAPS.get(case_id)
 
 
+def map_definition_for_case(case_id: str) -> dict[str, Any]:
+    """Return the map definition appropriate for one case.
+
+    Most migrated cases share the canonical mosaic.  A case may instead own
+    a complete authored backdrop, without changing any investigation truth.
+    """
+    config = map_config(case_id)
+    if config and config.get("map") is not CANONICAL_MAP:
+        return config["map"]
+    return canonical_map_definition()
+
+
 def _clue_ids_by_object(case: CaseData, object_locations: dict[str, str]) -> dict[str, list[str]]:
     result: dict[str, list[str]] = {}
     for clue in case.clues:
@@ -1607,7 +1644,7 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
         "definition_id": config["map"]["definition_id"],
         "visible_location_ids": visible_location_ids_list,
         "overlays": config["overlays"],
-        "light_overlays": resolve_town_lights(layout, visible_location_ids),
+        "light_overlays": config.get("light_overlays") or resolve_town_lights(layout, visible_location_ids),
         "ambient_sprites": resolve_town_ambient_sprites(layout),
         "crop_padding_by_location": config.get("crop_padding_by_location", {}),
         "object_visuals": object_visuals,

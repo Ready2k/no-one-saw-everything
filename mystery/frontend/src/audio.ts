@@ -38,6 +38,7 @@ class AudioManager {
   private currentAmbientHowl: Howl | null = null;
   private currentPlaylistTracks: string[] = [];
   private currentPlaylistIndex = -1;
+  private pendingStingers: string[] = [];
   
   private lastPlayed: Record<string, number> = {};
   
@@ -73,6 +74,9 @@ class AudioManager {
         this.currentAmbient = null;
         this.playAmbient(name);
       }
+      const pending = [...this.pendingStingers];
+      this.pendingStingers = [];
+      pending.forEach((name) => this.playStinger(name));
     } catch (e) {
       if ((import.meta as any).env.DEV) {
         console.warn('Audio manifest failed to load, audio is disabled.', e);
@@ -212,19 +216,25 @@ class AudioManager {
     this.playAmbient(name);
   }
 
-  public playStinger(name: string) {
-    if (!this.state.unlocked) return;
+  public playStinger(name: string, opts: { force?: boolean } = {}): boolean {
+    if (!this.state.unlocked) return false;
+    if (!this.manifest) {
+      if (!this.pendingStingers.includes(name)) {
+        this.pendingStingers = [...this.pendingStingers, name].slice(-5);
+      }
+      return false;
+    }
+
+    const howl = this.getHowl('stingers', name, STINGER_MULT);
+    if (!howl) return false;
     
     // Cooldown check
     const now = Date.now();
     const cooldown = COOLDOWNS[name] || 500;
-    if (this.lastPlayed[name] && now - this.lastPlayed[name] < cooldown) {
-      return;
+    if (!opts.force && this.lastPlayed[name] && now - this.lastPlayed[name] < cooldown) {
+      return false;
     }
     this.lastPlayed[name] = now;
-
-    const howl = this.getHowl('stingers', name, STINGER_MULT);
-    if (!howl) return;
 
     howl.play();
 
@@ -238,6 +248,7 @@ class AudioManager {
         }
       }, howl.duration() * 1000 || 2000);
     }
+    return true;
   }
 
   public playUi(name: string): boolean {

@@ -1,6 +1,7 @@
 import { useWorld } from "../App";
 import { timeOfDayLabel } from "../api";
 import Portrait from "../components/Portrait";
+import { sfx } from "../sfx";
 
 export default function Overview({ onBegin }: { onBegin: () => void }) {
   const { caseOverview: c } = useWorld();
@@ -35,7 +36,13 @@ export default function Overview({ onBegin }: { onBegin: () => void }) {
             </dd>
           </div>
         </dl>
-        <button className="primary" onClick={onBegin}>
+        <button
+          className="primary"
+          onClick={() => {
+            sfx.pageTurn();
+            onBegin();
+          }}
+        >
           Begin investigation
         </button>
         <p className="hint-text">

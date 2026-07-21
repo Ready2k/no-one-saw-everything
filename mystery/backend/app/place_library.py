@@ -72,6 +72,23 @@ _CASE_004_SEARCH_ILLUSTRATIONS = {
 }
 
 
+# Case 005 begins the neo-noir location-art migration. These are player-safe
+# establishing scenes: the clue projection still controls every discoverable
+# object, and none of these images identify a culprit or reveal a hidden item.
+_CASE_005_SEARCH_ILLUSTRATIONS = {
+    "loc_village_square": "/art/case_005/village_square_dawn_hd.png",
+    "loc_fountain": "/art/case_005/village_square_dawn_hd.png",
+    "loc_elias_bench": "/art/case_005/village_square_dawn_hd.png",
+    "loc_rear_alley": "/art/case_005/rear_alley_fire_hd.png",
+    "loc_hobbs_cafe": "/art/case_005/hobbs_cafe_dawn_hd.png",
+    "loc_clara_flat": "/art/case_005/clara_flat_dawn_hd.png",
+    "loc_owen_house": "/art/case_005/owen_yard_dawn_hd.png",
+    "loc_clinic": "/art/case_005/clinic_dawn_hd.png",
+    "loc_bookshop": "/art/case_005/bookshop_dawn_hd.png",
+    "loc_back_lane": "/art/case_005/back_lane_dawn_hd.png",
+}
+
+
 _REUSABLE_SEARCH_ILLUSTRATIONS = {
     "loc_village_square": "/art/town/places_hd/village_square_hd.png",
     "loc_fishery": "/art/town/places_hd/fishery_hd.png",
@@ -93,6 +110,10 @@ def location_search_illustration(location_id: str, case_id: str | None = None) -
             return case_illustration
     if case_id == "case_004":
         case_illustration = _CASE_004_SEARCH_ILLUSTRATIONS.get(location_id)
+        if case_illustration:
+            return case_illustration
+    if case_id == "case_005":
+        case_illustration = _CASE_005_SEARCH_ILLUSTRATIONS.get(location_id)
         if case_illustration:
             return case_illustration
     return _REUSABLE_SEARCH_ILLUSTRATIONS.get(location_id)

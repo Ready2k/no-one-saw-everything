@@ -50,6 +50,9 @@ def load_saved_settings() -> SavedLLMSettings | None:
     return None
 
 
+# SECURITY NOTE: API keys are stored in plaintext in llm_settings.json.
+# Acceptable for local single-player use. If distributing or hosting,
+# switch to environment-variable-only storage.
 def save_settings(settings: SavedLLMSettings) -> None:
     if settings.base_url:
         settings.base_url = normalize_base_url(settings.base_url)

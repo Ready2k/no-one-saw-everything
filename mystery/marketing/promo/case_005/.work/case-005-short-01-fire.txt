@@ -1,0 +1,5 @@
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/case_005/.work/alley_01.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/case_005/.work/alley_02.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/case_005/.work/alley_03.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/case_005/.work/alley_04.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/case_005/.work/alley_05.mp4'

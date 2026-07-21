@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { useWorld } from "../App";
-import type { InspectResult, LocationPublic } from "../types";
+import type { InspectResult, LocationPublic, ClueHotspot, CluePublic } from "../types";
 import { ClueCard } from "./shared";
 import { MagnifyingSearch } from "../components/MagnifyingSearch";
-import { audioManager } from "../audio";
+import { sfx } from "../sfx";
 import LocationTransition, {
   shouldPlayLocationTransition,
 } from "../components/LocationTransition";
@@ -18,6 +18,7 @@ export default function Places() {
   const [result, setResult] = useState<InspectResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [transitionLoc, setTransitionLoc] = useState<LocationPublic | null>(null);
+  const [newlyFound, setNewlyFound] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     getMapInfo().then(setMapData).catch(() => setMapData(null));
@@ -27,11 +28,12 @@ export default function Places() {
     const loc = locations.find((l) => l.location_id === locationId);
     if (loc && shouldPlayLocationTransition(locationId)) setTransitionLoc(loc);
     setSelected(locationId);
+    setNewlyFound(new Set());
     setBusy(true);
     try {
       const res = await api.inspect(locationId);
       if (res.new_clues?.length) {
-        audioManager.playStinger("clue_discovered");
+        sfx.evidenceFound();
       }
       setResult(res);
     } finally {
@@ -43,12 +45,13 @@ export default function Places() {
     if (!result) return;
     try {
       const discoveredClue = await api.discoverClue(clueId);
-      audioManager.playStinger("clue_discovered");
+      sfx.evidenceFound();
+      setNewlyFound((previous) => new Set(previous).add(clueId));
       setResult((prev: InspectResult | null) => {
         if (!prev) return prev;
         return {
           ...prev,
-          hidden_clues: prev.hidden_clues.filter((c: any) => c.clue_id !== clueId),
+          hidden_clues: prev.hidden_clues.filter((c: ClueHotspot) => c.clue_id !== clueId),
           known_clues: [...prev.known_clues, discoveredClue],
         };
       });
@@ -106,6 +109,7 @@ export default function Places() {
                mapWidth={result.location.illustration ? 100 : mapData?.map.width}
                mapHeight={result.location.illustration ? 100 : mapData?.map.height}
                isIllustration={Boolean(result.location.illustration)}
+               locationId={result.location.location_id}
                onDiscover={handleDiscover}
             />
 
@@ -116,8 +120,8 @@ export default function Places() {
             <h3>Found evidence</h3>
             {result.known_clues.length > 0 ? (
                <div className="found-evidence-list">
-                 {result.known_clues.map((c: any) => (
-                   <ClueCard key={c.clue_id} clue={c} />
+                 {result.known_clues.map((c: CluePublic) => (
+                   <ClueCard key={c.clue_id} clue={c} isNew={newlyFound.has(c.clue_id)} />
                  ))}
                </div>
             ) : (

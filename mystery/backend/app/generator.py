@@ -242,6 +242,14 @@ def generate_case(
     # shuffled IDs. If we just load the template's agents, their names will be replaced, meaning
     # the agent originally named "Marcus" might now be named "Owen". That means "Owen" has the occupation "Cafe Owner".
     # This is fine for a scaffold, it proves dynamic role assignment!
+    
+    # Inject static small talk from base agents
+    base_agents_dict = {ba["agent_id"]: ba for ba in base_agents}
+    for a in data["agents"]:
+        base_a = base_agents_dict.get(a.get("agent_id"))
+        if base_a and "small_talk" in base_a:
+            a["small_talk"] = base_a["small_talk"]
+            
     agents = [Agent(**a) for a in data["agents"]]
     
     # Ensure the victim is marked as victim correctly

@@ -8,6 +8,8 @@ import AgentSprite from "./AgentSprite";
 import EventMarker from "./EventMarker";
 import MapLightOverlay from "./MapLightOverlay";
 import SemanticMapObject from "./SemanticMapObject";
+import CaseAtmosphere from "./CaseAtmosphere";
+import { sfx } from "../sfx";
 
 // Positions are stored in map-image pixels; we place everything with
 // percentages so the map can scale responsively.
@@ -71,6 +73,7 @@ export default function VisualMap({
   const { width, height } = data.map;
   const isCanonicalOverworld = data.visual?.mode === "canonical_overworld";
   const isCanonicalPilot = data.visual?.mode === "canonical_pilot" || isCanonicalOverworld;
+  const isCaseArt = data.visual?.mode === "case_art";
   const artworkFrameStyle = data.visual?.mode === "canonical_pilot"
     ? {
         left: "33.333%",
@@ -299,6 +302,7 @@ export default function VisualMap({
   const resetView = () => {
     const el = viewportRef.current;
     if (!el) return;
+    sfx.mapSelect();
     smooth.current = true;
     const next = defaultViewForMode(el.clientWidth, el.clientHeight);
     setView(clampView(next.scale, next.tx, next.ty));
@@ -306,11 +310,14 @@ export default function VisualMap({
   const zoomButton = (factor: number) => () => {
     const el = viewportRef.current;
     if (!el) return;
+    sfx.mapSelect();
     const rect = el.getBoundingClientRect();
     zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, factor);
   };
 
   // Nudge markers sharing a location so they don't overlap.
+  // Note: We deliberately don't memoize this Map because it's populated during the JSX render
+  // inside the .map() callback below. We need a fresh empty Map on every single render.
   const markerOffsets = new Map<string, number>();
 
   return (
@@ -340,7 +347,7 @@ export default function VisualMap({
         </button>
         <button 
           type="button" 
-          onClick={() => setShowLabels(s => !s)} 
+          onClick={() => { sfx.mapSelect(); setShowLabels(s => !s); }} 
           title={showLabels ? "Hide labels" : "Show labels"}
           style={{ fontSize: '1rem', marginTop: '4px', opacity: showLabels ? 1 : 0.5 }}
         >
@@ -363,7 +370,11 @@ export default function VisualMap({
           <div className="visual-map-image-frame">
             {(() => {
               const tiles = mapImageTiles(data.map, view.scale);
-              const artStyle = isCanonicalPilot ? { filter: "saturate(0.96) brightness(1.08)" } : undefined;
+              const artStyle = isCanonicalPilot
+                ? { filter: "saturate(0.96) brightness(1.08)" }
+                : isCaseArt
+                  ? { filter: "saturate(0.92) brightness(1.16) contrast(0.98)" }
+                  : undefined;
               if (tiles) {
                 return (
                   <div className="visual-map-image" style={artStyle} role="img" aria-label="Village map">
@@ -414,6 +425,7 @@ export default function VisualMap({
                 }}
               />
             )}
+            <CaseAtmosphere caseId={data.case_id} />
           </div>
         </div>
 
@@ -532,7 +544,10 @@ export default function VisualMap({
                     top: pct(labelPos.y, height),
                     transform: `translate(-50%, -50%) scale(${1 / view.scale})`,
                   }}
-                  onClick={() => onSelectLocation(loc.location_id)}
+                  onClick={() => {
+                    sfx.mapSelect();
+                    onSelectLocation(loc.location_id);
+                  }}
                   onMouseEnter={() => setHoveredLocationId(loc.location_id)}
                   onMouseLeave={() =>
                     setHoveredLocationId((prev) => (prev === loc.location_id ? null : prev))
@@ -566,7 +581,10 @@ export default function VisualMap({
                 y={0}
                 zoomCompensation={1 / view.scale}
                 selected={selectedEventId === e.event_id}
-                onClick={() => onSelectEvent(e)}
+                onClick={() => {
+                  sfx.mapSelect();
+                  onSelectEvent(e);
+                }}
               />
             </div>
           );
@@ -590,7 +608,10 @@ export default function VisualMap({
               stale={Number.isFinite(pin.staleMinutes) && pin.staleMinutes > 10}
               lastSeen={pin.lastSeenTime}
               onClick={() => {
-                if (!pin.agent.is_background) onSelectAgent(pin.agent.agent_id);
+                if (!pin.agent.is_background) {
+                  sfx.mapSelect();
+                  onSelectAgent(pin.agent.agent_id);
+                }
               }}
             />
           </div>

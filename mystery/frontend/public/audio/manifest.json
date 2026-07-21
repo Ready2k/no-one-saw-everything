@@ -3,6 +3,7 @@
     "investigation_1": "/audio/ambient/investigation.mp3",
     "investigation_2": "/audio/ambient/The_Desk_at_Three.mp3",
     "investigation_3": "/audio/ambient/The_Clock_Across_The_Room.mp3",
+    "case_005_rain": "/audio/ambient/case_005_rain_dawn_balanced.mp3",
     "accusation": "/audio/ambient/accusation.mp3",
     "testimony": "/audio/ambient/The_Last_Testimony.mp3"
   },
@@ -14,13 +15,16 @@
     ]
   },
   "stingers": {
-    "clue_discovered": "/audio/stingers/clue_discovered.mp3",
-    "contradiction_locked": "/audio/stingers/contradiction_locked.mp3",
-    "pressure_defensive": "/audio/stingers/pressure_defensive.mp3",
-    "pressure_cracking": "/audio/stingers/pressure_cracking.mp3",
-    "accusation_submitted": "/audio/stingers/accusation_submitted.mp3",
-    "case_solved": "/audio/stingers/case_solved.mp3",
-    "case_failed": "/audio/stingers/case_failed.mp3"
+    "clue_discovered": "/audio/stingers/clue_discovered_short.wav",
+    "contradiction_locked": "/audio/stingers/contradiction_locked_short.wav",
+    "pressure_defensive": "/audio/stingers/pressure_defensive_short.wav",
+    "pressure_cracking": "/audio/stingers/pressure_cracking_short.wav",
+    "accusation_submitted": "/audio/stingers/accusation_submitted_short.wav",
+    "case_solved": "/audio/stingers/case_solved_short.wav",
+    "case_failed": "/audio/stingers/case_failed_short.wav",
+    "intro_tension": "/audio/stingers/intro_tension.wav",
+    "intro_discovery": "/audio/stingers/intro_discovery.wav",
+    "intro_drama": "/audio/stingers/intro_drama.wav"
   },
   "ui": {
     "click": "/audio/ui/click.wav",
@@ -28,6 +32,12 @@
     "page_turn": "/audio/ui/page_turn.wav",
     "pin_push": "/audio/ui/pin_push.wav",
     "stamp_thunk": "/audio/ui/stamp_thunk.wav",
-    "pencil_scratch": "/audio/ui/pencil_scratch.wav"
+    "pencil_scratch": "/audio/ui/pencil_scratch.wav",
+    "lens_adjust": "/audio/ui/lens_adjust.wav",
+    "map_select": "/audio/ui/map_select.wav",
+    "sheet_pull": "/audio/ui/sheet_pull.wav",
+    "evidence_inspect": "/audio/ui/evidence_inspect.wav",
+    "question_send": "/audio/ui/question_send.wav",
+    "location_shift": "/audio/ui/location_shift.wav"
   }
 }

@@ -193,7 +193,7 @@ export interface MapAmbientSprite {
 }
 
 export interface MapVisualContract {
-  mode: "canonical_pilot" | "canonical_overworld" | "legacy_fallback";
+  mode: "canonical_pilot" | "canonical_overworld" | "case_art" | "legacy_fallback";
   definition_id: string;
   visible_location_ids: string[] | null;
   overlays: string[];

@@ -7,6 +7,19 @@ mkdir -p "$PID_DIR"
 
 BACKEND_LOG="$SCRIPT_DIR/backend.log"
 FRONTEND_LOG="$SCRIPT_DIR/frontend.log"
+BACKEND_PORT="${MYSTERY_API_PORT:-8010}"
+FRONTEND_PORT="${MYSTERY_FRONTEND_PORT:-5179}"
+
+# Do not claim success while pointing a new frontend at some unrelated API
+# already using the default port. This commonly happens when several local
+# worktrees are open at once.
+for port in "$BACKEND_PORT" "$FRONTEND_PORT"; do
+  if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "Port $port is already in use. Choose clean ports, for example:"
+    echo "  MYSTERY_API_PORT=8011 MYSTERY_FRONTEND_PORT=5181 ./start.sh"
+    exit 1
+  fi
+done
 
 # ── Backend ──────────────────────────────────────────────────────────────────
 echo "▶  Starting backend..."
@@ -19,11 +32,11 @@ if [ ! -f "$SCRIPT_DIR/backend/.venv/bin/uvicorn" ]; then
 fi
 
 "$SCRIPT_DIR/backend/.venv/bin/uvicorn" app.main:app \
-  --port 8010 \
+  --port "$BACKEND_PORT" \
   --app-dir "$SCRIPT_DIR/backend" \
   >> "$BACKEND_LOG" 2>&1 &
 echo $! > "$PID_DIR/backend.pid"
-echo "   Backend  → http://localhost:8010  (pid $(cat "$PID_DIR/backend.pid"), log: backend.log)"
+echo "   Backend  → http://localhost:$BACKEND_PORT  (pid $(cat "$PID_DIR/backend.pid"), log: backend.log)"
 
 # ── Frontend ─────────────────────────────────────────────────────────────────
 echo "▶  Starting frontend..."
@@ -33,10 +46,10 @@ if [ ! -d "$SCRIPT_DIR/frontend/node_modules" ]; then
   npm --prefix "$SCRIPT_DIR/frontend" install --silent
 fi
 
-npm --prefix "$SCRIPT_DIR/frontend" run dev \
+MYSTERY_API_PORT="$BACKEND_PORT" npm --prefix "$SCRIPT_DIR/frontend" run dev -- --host 127.0.0.1 --port "$FRONTEND_PORT" \
   >> "$FRONTEND_LOG" 2>&1 &
 echo $! > "$PID_DIR/frontend.pid"
-echo "   Frontend → http://localhost:5173  (pid $(cat "$PID_DIR/frontend.pid"), log: frontend.log)"
+echo "   Frontend → http://localhost:$FRONTEND_PORT  (pid $(cat "$PID_DIR/frontend.pid"), log: frontend.log)"
 
 echo ""
 echo "✅  Game is running. Run ./stop.sh to shut it down."

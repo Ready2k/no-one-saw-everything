@@ -187,7 +187,14 @@ def project_map_location(loc: Location, case_id: str | None = None) -> dict[str,
     if case_id:
         from .town_map import map_config, pilot_location_bounds_internal, pilot_location_visuals
 
-        if map_config(case_id):
+        config = map_config(case_id)
+        if config and config.get("use_authored_locations"):
+            # Case-owned maps keep their authored geometry.  The normal
+            # canonical map's shared anchors would place Case 005's back
+            # lane somewhere else, breaking the visual route but never the
+            # underlying case logic.
+            position, bounds, layer = loc.map_position, loc.map_bounds, loc.visual_layer
+        elif config:
             position, bounds, layer = pilot_location_visuals(loc.location_id, case_id)
             if position is None:
                 position, bounds, layer = location_visuals(loc)

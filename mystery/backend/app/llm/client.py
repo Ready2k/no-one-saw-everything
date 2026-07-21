@@ -1,6 +1,6 @@
 """LLM Provider abstraction."""
 
-import os
+# import os  # UNUSED — commented out during code review [2026-07-19]
 import json
 import urllib.request
 from typing import Protocol, Type, TypeVar, Any
@@ -333,9 +333,11 @@ class OpenAICompatibleLLMClient:
             with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
                 resp_data = json.loads(response.read().decode("utf-8"))
                 content = resp_data["choices"][0]["message"]["content"]
+                if not content:
+                    raise RuntimeError("LLM returned empty response")
                 return schema.model_validate_json(content)
         except Exception as e:
-            raise RuntimeError(f"LLM API Error: {e}")
+            raise RuntimeError(f"LLM API Error: {e}") from e
 
     def generate_chat(
         self,
@@ -387,10 +389,12 @@ class OpenAICompatibleLLMClient:
                 resp_data = json.loads(response.read().decode("utf-8"))
                 content = resp_data["choices"][0]["message"]["content"]
                 if schema is not None:
+                    if not content:
+                        raise RuntimeError("LLM returned empty response")
                     return schema.model_validate_json(content)
                 return content
         except Exception as e:
-            raise RuntimeError(f"LLM API Error: {e}")
+            raise RuntimeError(f"LLM API Error: {e}") from e
 
 
 

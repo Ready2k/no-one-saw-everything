@@ -1,5 +1,9 @@
+import logging
+
 from fastapi import HTTPException
 from app.models import FreeTextAskRequest, FreeTextAskResponse, ChallengeSuggestion, AskRequest, ChallengeRequest, InterviewMessage, QuestionIntent
+
+logger = logging.getLogger(__name__)
 from app.question_classifier import classify_question
 from app.llm.question_intent_classifier import classify_question_intent_llm
 from app.llm.config import get_llm_config
@@ -8,6 +12,7 @@ from app.interview import answer_question, public_ask_response, examine_body
 from app.world_state import build_conversation_context, build_world_state_digest
 from app import challenge as challenge_engine
 from app.challenge import ChallengeError
+from app.dialogue_processor import humanize_response
 
 def _generic_followups(case) -> list[str]:
     """Safe, always-available on-ramps back to the grounded structured
@@ -41,7 +46,11 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
 
     intent = classify_question(req.question, case, sess)
     if not intent:
-        intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
+        try:
+            intent = classify_question_intent_llm(req.question, case, sess, agent_id=req.agent_id)
+        except Exception as e:
+            logger.warning("LLM intent classification failed, falling back: %s", e)
+            intent = None
         
     if not intent:
         intent = QuestionIntent(
@@ -50,10 +59,55 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
             rewritten_structured_question="Unknown"
         )
 
+    agent = next((a for a in case.agents if a.agent_id == req.agent_id), None)
+    if agent:
+        from app.dialogue_processor import apply_deflection
+        fallback_msg = apply_deflection(agent)
+    else:
+        fallback_msg = "I'm not sure what you mean. Ask me where I was, what I saw, or about a specific person or object."
+
     fallback_resp = FreeTextAskResponse(
         intent=intent,
-        fallback_message="I'm not sure what you mean. Ask me where I was, what I saw, or about a specific person or object."
+        fallback_message=fallback_msg
     )
+
+    SMALL_TALK_INTENTS = ["greeting", "how_are_you", "occupation", "how_can_help", "favorite_thing", "about_me", "general_relationships", "emotions"]
+    
+    if intent.intent in SMALL_TALK_INTENTS:
+        agent = next(a for a in case.agents if a.agent_id == req.agent_id)
+        transcript = sess.transcript_for(req.agent_id)
+        
+        transcript.intent_counts[intent.intent] = transcript.intent_counts.get(intent.intent, 0) + 1
+        count = transcript.intent_counts[intent.intent]
+
+        answer_text = agent.small_talk.get(intent.intent, "I don't have much to say about that.")
+        answer_text = humanize_response(answer_text, agent, count)
+        
+        transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
+        transcript.messages.append(
+            InterviewMessage(
+                speaker="agent",
+                text=answer_text,
+                llm_rewrite_used=False,
+                llm_rewrite_fallback=False,
+            )
+        )
+        return FreeTextAskResponse(
+            intent=intent,
+            answer={
+                "question_text": req.question,
+                "answer_text": answer_text,
+                "deterministic_answer_text": answer_text,
+                "answer_type": "small_talk",
+                "emotional_shift": None,
+                "new_claims": [],
+                "revealed_clues": [],
+                "suggested_followups": _generic_followups(case),
+                "llm_rewrite_used": False,
+                "llm_rewrite_fallback": False,
+                "llm_rewrite_fallback_reason": None,
+            },
+        )
 
     # Mapping based on intent rules
     if intent.intent == "fallback_unknown":

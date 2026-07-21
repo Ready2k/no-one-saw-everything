@@ -490,10 +490,15 @@ class LlmTestRequest(BaseModel):
 
 
 def _run_llm_test(base_url: str, api_key: Optional[str], model: str) -> dict:
+# SECURITY NOTE: base_url is user-supplied and used to make HTTP requests.
+# In a hosted/multi-user deployment, validate against an allowlist to prevent SSRF.
+@app.post("/api/llm-settings/test")
+def test_llm_settings(payload: LlmTestRequest):
+    """Sends a real chat completion request to the given endpoint/model so the
+    Settings panel can prove the LLM is actually generating a response, rather
+    than just resolving a reachable model list."""
     from .llm.config import normalize_base_url
     from .llm.client import OpenAICompatibleLLMClient
-    import time
-    import uuid
 
     base_url = normalize_base_url(base_url.strip())
     nonce = uuid.uuid4().hex[:6]
@@ -722,7 +727,7 @@ def map_replay(
     accusation has been submitted (the reveal gate).
     """
     from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
-    from .town_map import canonical_map_definition, map_config, map_payload
+    from .town_map import map_config, map_definition_for_case, map_payload
 
     start = _validate_time_param(start, "start")
     end = _validate_time_param(end, "end")
@@ -732,7 +737,7 @@ def map_replay(
     # Migrated cases use the reusable canonical HD map contract; unmigrated
     # cases preserve the legacy fallback art and coordinates.
     if map_config(case.case.case_id):
-        map_definition = canonical_map_definition()
+        map_definition = map_definition_for_case(case.case.case_id)
         map_asset = map_definition["asset"]
         map_image = map_definition["image"]
         map_width = map_definition["width"]
@@ -798,6 +803,28 @@ def map_replay(
 # Evidence inspection
 # ---------------------------------------------------------------------------
 
+# Case 005's generated location art has deliberate search zones.  These values
+# are percentages within the individual illustration, and are presentation-only:
+# they never make an undiscovered clue visible until the inspection endpoint has
+# authorised it.  Body-specific findings remain in the autopsy flow instead.
+CASE_005_ILLUSTRATION_HOTSPOTS: dict[tuple[str, str], tuple[float, float, float]] = {
+    ("loc_clara_flat", "clue_mortgage_deed"): (47.0, 45.0, 7.0),
+    ("loc_clara_flat", "clue_property_register"): (42.0, 48.0, 7.0),
+    ("loc_clara_flat", "clue_clara_called_owen"): (17.0, 65.0, 6.5),
+    ("loc_clara_flat", "clue_whitfield_is_nobody"): (45.0, 45.0, 6.5),
+    ("loc_clara_flat", "clue_capacity_certificate"): (52.0, 48.0, 6.5),
+    ("loc_rear_alley", "clue_clara_committee_note"): (43.0, 61.0, 7.0),
+    ("loc_rear_alley", "clue_belt_weapon"): (81.0, 75.0, 7.5),
+    ("loc_rear_alley", "clue_staged_fire"): (44.0, 60.0, 6.5),
+    ("loc_owen_house", "clue_owen_ash_boots"): (35.0, 67.0, 7.0),
+    ("loc_owen_house", "clue_col_carried_the_deed"): (17.0, 48.0, 6.5),
+    ("loc_owen_house", "clue_col_cctv_arrival"): (85.0, 68.0, 7.5),
+    ("loc_owen_house", "clue_belt_hook_gap"): (19.0, 42.0, 6.5),
+    ("loc_owen_house", "clue_yard_books"): (18.0, 48.0, 6.5),
+    ("loc_back_lane", "clue_back_lane"): (51.0, 72.0, 8.0),
+    ("loc_hobbs_cafe", "clue_clara_second_page"): (56.0, 53.0, 7.0),
+}
+
 @app.post("/api/inspect")
 def inspect(req: InspectRequest):
     if not req.location_id:
@@ -811,10 +838,14 @@ def inspect(req: InspectRequest):
     sess.inspected_location_ids.add(req.location_id)
     log_telemetry_event(sess, "inspection_performed", {"location_id": req.location_id})
     hidden_clues, already, locked = [], [], 0
-    import hashlib
     for clue in case.clues:
         d = clue.discoverability
         if d.method != "inspect" or d.location_id != req.location_id:
+            continue
+        # Body-examination clues share the body's discovery location for
+        # narrative context, but they belong to the dedicated visual autopsy
+        # flow rather than the room magnifying-glass search.
+        if "examine_body" in (d.reveal_on or []):
             continue
         if clue.clue_id in sess.discovered_clue_ids:
             already.append(project_clue(clue))
@@ -825,6 +856,11 @@ def inspect(req: InspectRequest):
             
         x = d.x
         y = d.y
+        radius = d.radius if d.radius is not None else 8.0
+        authored_hotspot = CASE_005_ILLUSTRATION_HOTSPOTS.get((req.location_id, clue.clue_id)) \
+            if case.case.case_id == "case_005" else None
+        if authored_hotspot:
+            x, y, radius = authored_hotspot
         if x is None or y is None:
             seed_str = f"{case.case.case_id}:{req.location_id}:{clue.clue_id}"
             digest = hashlib.md5(seed_str.encode("utf-8")).hexdigest()
@@ -835,7 +871,7 @@ def inspect(req: InspectRequest):
             "clue_id": clue.clue_id,
             "x": x,
             "y": y,
-            "radius": d.radius if d.radius is not None else 8.0,
+            "radius": radius,
             "discovery_text": d.discovery_text,
             "title": clue.title,
         })
@@ -1939,7 +1975,6 @@ def _layout_file_version(path) -> str:
     from this exact on-disk state, so two editors saving around the same time
     can't silently clobber each other. Empty file == no file, so a fresh
     editor session (nothing to conflict with) still gets a stable token."""
-    import hashlib
 
     if not path.exists():
         return "empty"
@@ -1954,7 +1989,7 @@ def get_dev_map_layout():
         raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
 
     from .town_map import TOWN_LAYOUT_FILE, _BOUNDS_TILES, list_hd_tile_variants
-    from .place_library import load_building_library
+    from .place_library import load_building_library, location_search_illustration
     from .case_store import list_all_cases, get_case
 
     layout_version = _layout_file_version(TOWN_LAYOUT_FILE)
@@ -1989,6 +2024,7 @@ def get_dev_map_layout():
                     "location_id": l.location_id,
                     "name": l.name,
                     "description": l.description,
+                    "search_illustration": location_search_illustration(l.location_id, case_id),
                     "legacy_bounds": l.map_bounds.model_dump() if hasattr(l.map_bounds, "model_dump") else (l.map_bounds if l.map_bounds else None),
                     "legacy_position": l.map_position.model_dump() if hasattr(l.map_position, "model_dump") else (l.map_position if l.map_position else None),
                     "visual_layer": l.visual_layer
@@ -2002,11 +2038,28 @@ def get_dev_map_layout():
                     "normal_location_id": o.normal_location_id,
                     "final_location_id": o.final_location_id,
                 })
+            clues = []
+            for clue in case_data.clues:
+                d = clue.discoverability
+                clues.append({
+                    "clue_id": clue.clue_id,
+                    "title": clue.title,
+                    "clue_type": clue.clue_type,
+                    "strength": clue.strength,
+                    "method": d.method,
+                    "location_id": d.location_id,
+                    "object_id": d.object_id,
+                    "reveal_on": d.reveal_on,
+                    "x": d.x,
+                    "y": d.y,
+                    "radius": d.radius if d.radius is not None else 8.0,
+                })
             cases_details.append({
                 "case_id": case_id,
                 "title": case_data.case.title,
                 "locations": locations,
-                "objects": objects
+                "objects": objects,
+                "clues": clues
             })
         except Exception:
             pass
@@ -2074,3 +2127,70 @@ def save_dev_map_layout(payload: dict = Body(...), x_base_layout_version: str | 
         return {"status": "success", "layout_version": _layout_file_version(TOWN_LAYOUT_FILE)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to persist layout: {e}")
+
+
+@app.post("/api/dev/map-editor/clue-location")
+def save_dev_map_clue_location(payload: dict = Body(...)):
+    import json
+    enable_editor = os.getenv("ENABLE_DEV_MAP_EDITOR", "false").lower() == "true"
+    if not enable_editor:
+        raise HTTPException(status_code=403, detail="Developer Map Editor is disabled. Set ENABLE_DEV_MAP_EDITOR=true to enable it.")
+
+    from .case_store import DATA_DIR, load_case_from_disk
+
+    case_id = payload.get("case_id")
+    clue_id = payload.get("clue_id")
+    x = payload.get("x")
+    y = payload.get("y")
+    radius = payload.get("radius", 8.0)
+    if not case_id or not clue_id:
+        raise HTTPException(status_code=400, detail="case_id and clue_id are required")
+    if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+        raise HTTPException(status_code=400, detail="x and y must be numbers")
+    if not 0 <= float(x) <= 100 or not 0 <= float(y) <= 100:
+        raise HTTPException(status_code=400, detail="x and y must be percentages from 0 to 100")
+    if not isinstance(radius, (int, float)) or float(radius) <= 0:
+        raise HTTPException(status_code=400, detail="radius must be a positive number")
+
+    case_dir = DATA_DIR / str(case_id)
+    clues_file = case_dir / "clues.json"
+    if not clues_file.exists():
+        raise HTTPException(status_code=404, detail=f"No clues.json for case {case_id}")
+
+    try:
+        data = json.loads(clues_file.read_text())
+        target = None
+        for clue in data.get("clues", []):
+            if clue.get("clue_id") == clue_id:
+                target = clue
+                break
+        if target is None:
+            raise HTTPException(status_code=404, detail=f"No clue {clue_id} in {case_id}")
+        discoverability = target.setdefault("discoverability", {})
+        if discoverability.get("method") != "inspect":
+            raise HTTPException(status_code=400, detail="Only inspect clues have map-search locations")
+        discoverability["x"] = round(float(x), 3)
+        discoverability["y"] = round(float(y), 3)
+        discoverability["radius"] = round(float(radius), 3)
+
+        temp_file = clues_file.with_suffix(".json.tmp")
+        backup_file = clues_file.with_suffix(".json.bak")
+        temp_file.write_text(json.dumps(data, indent=2))
+        if clues_file.exists():
+            if backup_file.exists():
+                backup_file.unlink()
+            clues_file.rename(backup_file)
+        temp_file.rename(clues_file)
+        load_case_from_disk.cache_clear()
+        return {
+            "status": "success",
+            "case_id": case_id,
+            "clue_id": clue_id,
+            "x": discoverability["x"],
+            "y": discoverability["y"],
+            "radius": discoverability["radius"],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to persist clue location: {e}")

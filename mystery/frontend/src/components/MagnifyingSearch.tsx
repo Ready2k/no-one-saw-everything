@@ -1,5 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import type { MapBounds, ClueHotspot } from "../types";
+import CaseAtmosphere from "./CaseAtmosphere";
+import { sfx } from "../sfx";
+
+type SearchTool = "lens" | "raking" | "scale";
+
+const SEARCH_TOOLS: { id: SearchTool; label: string; readout: string }[] = [
+  { id: "lens", label: "Hand lens", readout: "2.5× optical inspection" },
+  { id: "raking", label: "Raking light", readout: "Low-angle surface contrast" },
+  { id: "scale", label: "Reference scale", readout: "Size and material reference" },
+];
 
 function getClueEmoji(title: string): string {
   const t = title.toLowerCase();
@@ -38,6 +48,7 @@ export function MagnifyingSearch({
   spriteAsset,
   isIllustration = false,
   isPortrait = false,
+  locationId,
   sheetFolded = true,
   onDiscover,
 }: {
@@ -49,6 +60,7 @@ export function MagnifyingSearch({
   spriteAsset?: string;
   isIllustration?: boolean;
   isPortrait?: boolean;
+  locationId?: string;
   /** Body exam only: while the morgue sheet covers the subject, nothing can be found. */
   sheetFolded?: boolean;
   onDiscover: (clueId: string) => void;
@@ -59,6 +71,7 @@ export function MagnifyingSearch({
   const [dim, setDim] = useState({ w: 0, h: 0 });
   const [zoomLevel, setZoomLevel] = useState(1); // 1x to 3x
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [activeTool, setActiveTool] = useState<SearchTool>("lens");
 
   const isDragging = useRef(false);
   const lastClientPos = useRef<{x: number, y: number} | null>(null);
@@ -205,7 +218,8 @@ export function MagnifyingSearch({
 
     const found = adjustedClues.find((c) => {
       const dx = c.x - pctX;
-      const dy = (c.y - pctY) / (dim.w / dim.h);
+      const aspectRatio = dim.h > 0 ? dim.w / dim.h : 1;
+      const dy = (c.y - pctY) / aspectRatio;
       const dist = Math.sqrt(dx * dx + dy * dy);
       
       // The lens must be relatively sized to the clue to find it.
@@ -258,7 +272,7 @@ export function MagnifyingSearch({
   return (
     <div
       ref={containerRef}
-      className={`magnifying-container ${activeHotspot ? "hotspot-active" : ""}`}
+      className={`magnifying-container tool-${activeTool} ${activeHotspot ? "hotspot-active" : ""}`}
       style={{ paddingBottom: `${(1 / aspectRatio) * 100}%` }}
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
@@ -277,32 +291,52 @@ export function MagnifyingSearch({
       )}
       {!isPortrait && (
         <>
+          <div className="investigation-kit" aria-label="Investigation tools">
+            <span className="kit-label">Field kit</span>
+            <div className="kit-tools">
+              {SEARCH_TOOLS.map((tool) => (
+                <button
+                  key={tool.id}
+                  className={activeTool === tool.id ? "active" : ""}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (activeTool !== tool.id) sfx.lensAdjust();
+                    setActiveTool(tool.id);
+                  }}
+                  title={`${tool.readout}. Visual aid only.`}
+                >
+                  {tool.label}
+                </button>
+              ))}
+            </div>
+            <span className="kit-readout">{SEARCH_TOOLS.find((tool) => tool.id === activeTool)?.readout}</span>
+          </div>
           <div className="pan-controls" style={{
             position: "absolute", top: 10, left: 10, zIndex: 20,
             display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4,
             background: "rgba(0,0,0,0.6)", padding: 4, borderRadius: 6, border: "1px solid rgba(255,255,255,0.2)"
           }}>
             <div />
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, -1); }}>↑</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(0, -1); }}>↑</button>
             <div />
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(-1, 0); }}>←</button>
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); setPanOffset({x:0, y:0}); }}>◎</button>
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(1, 0); }}>→</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(-1, 0); }}>←</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); setPanOffset({x:0, y:0}); }}>◎</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(1, 0); }}>→</button>
             <div />
-            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); pan(0, 1); }}>↓</button>
+            <button className="pan-btn" onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); pan(0, 1); }}>↓</button>
             <div />
           </div>
 
           <div className="zoom-controls">
             <button
-              onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.max(1, zoomLevel - 0.5)); }}
+              onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); setZoomLevel(Math.max(1, zoomLevel - 0.5)); }}
               disabled={zoomLevel <= 1}
             >
               -
             </button>
             <div className="zoom-level">{zoomLevel.toFixed(1)}x</div>
             <button
-              onClick={(e) => { e.stopPropagation(); setZoomLevel(Math.min(3, zoomLevel + 0.5)); }}
+              onClick={(e) => { e.stopPropagation(); sfx.lensAdjust(); setZoomLevel(Math.min(3, zoomLevel + 0.5)); }}
               disabled={zoomLevel >= 3}
             >
               +
@@ -353,6 +387,9 @@ export function MagnifyingSearch({
             <div className={`morgue-sheet ${sheetFolded ? "folded" : ""}`} aria-hidden="true" />
           )}
         </div>
+        {isIllustration && imageUrl.includes("/art/case_005/") && (
+          <CaseAtmosphere caseId="case_005" scope="place" locationId={locationId} />
+        )}
       </div>
 
       {(!isPortrait || sheetFolded) && adjustedClues.map(c => {
@@ -395,7 +432,7 @@ export function MagnifyingSearch({
 
       {mousePos && dim.w > 0 && (
         <div
-          className="magnifying-lens"
+          className={`magnifying-lens tool-${activeTool}`}
           style={{
             left: mousePos.x,
             top: mousePos.y,

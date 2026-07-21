@@ -31,15 +31,22 @@ function Shot({
   alt,
   caption,
   full,
+  art,
 }: {
   file: string;
   alt: string;
   caption?: string;
   full?: boolean;
+  art?: boolean;
 }) {
+  const className = [
+    "manual-shot",
+    full ? "full" : "zoom",
+    art ? "art" : "",
+  ].filter(Boolean).join(" ");
   return (
-    <figure className={full ? "manual-shot full" : "manual-shot zoom"}>
-      <img src={`/manual/${file}`} alt={alt} loading="lazy" />
+    <figure className={className}>
+      <img src={file.startsWith("/") ? file : `/manual/${file}`} alt={alt} loading="lazy" />
       {caption && <figcaption>🔎 {caption}</figcaption>}
     </figure>
   );
@@ -64,10 +71,11 @@ const SECTIONS: Section[] = [
           new hires wandering into the morgue asking the corpse for its alibi.
         </p>
         <Shot
-          file="00-intro-cinematic.jpg"
+          file="/art/case_001/intro/marcus_study_intro.jpg"
           alt="The body-discovery cinematic showing the victim, the discovery time, and the scene"
           caption="Exhibit A — the opening scene. Plays once, the first time a new case lands on your desk."
           full
+          art
         />
         <p>
           <strong>No One Saw Everything</strong> is a fair-play mystery: everything you need to
@@ -252,7 +260,7 @@ const SECTIONS: Section[] = [
         <Shot
           file="04-map-full.jpg"
           alt="The Map Replay screen showing the village map with agent pins and the observed events feed"
-          caption="Map Replay — the whole village, wandering in real time."
+          caption="Map Replay — the canonical town map, with the morning moving across it in real time."
           full
         />
         <Opt name="Location / Who filters / Trace toggle">
@@ -300,12 +308,12 @@ const SECTIONS: Section[] = [
         </p>
         <Shot
           file="05c-places-detail.jpg"
-          alt="The Places screen with a location selected, showing the magnifying search and found evidence"
-          caption="A location under the lens — search status, found evidence, and notes, all in one pane."
+          alt="The Places screen with Marcus Bell's house selected and the current HD search scene visible"
+          caption="A location under the lens — search artwork, status, found evidence, and notes, all in one pane."
           full
         />
         <Opt name="Location list (left)">
-          Every searchable location on the estate. Locations marked{" "}
+          Every searchable location in the case. Locations marked{" "}
           <span className="badge ambiguous">private</span> are back-rooms and personal spaces —
           you can still search them, but doing so where someone could see you may affect how
           they feel about you later.
@@ -313,17 +321,17 @@ const SECTIONS: Section[] = [
         <Shot
           file="05b-places-list.png"
           alt="The location list with private badges on back-rooms"
-          caption="Every door on the estate. Purple tags mean you're trespassing a little."
+          caption="Every door in the case. Purple tags mean you're trespassing a little."
         />
         <Opt name="Search status / Magnifying glass search">
           The status line shows how many clues you've found here out of the total hidden. Sweep
-          the magnifying lens over the scene — it glints when it passes something worth a closer
-          look. This is the game's one honest-to-goodness minigame, and it rewards patience over
-          frantic clicking.
+          the magnifying lens over the scene artwork — it glints when it passes something worth
+          a closer look. This is the game's one honest-to-goodness minigame, and it rewards
+          patience over frantic clicking.
         </Opt>
         <Shot
           file="05d-places-magnifier.png"
-          alt="The magnifying glass search tool sweeping over a location"
+          alt="The magnifying glass search tool sweeping over the current Places artwork"
           caption="Sweep, don't spam. The glint tells you when to click."
         />
         <Opt name="Found evidence">

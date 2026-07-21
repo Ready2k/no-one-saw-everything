@@ -1,4 +1,7 @@
+import logging
 from app.models import CaseData
+
+logger = logging.getLogger(__name__)
 from app.session import Session
 from app.models import QuestionIntent
 from app.llm.client import get_llm_client
@@ -120,12 +123,15 @@ Intent rules:
 - object: Asking about a physical item or evidence.
 - contradiction: Asking a vague question about a lie or contradictory statement ("Why did someone say X?").
 - explicit_challenge: Explicitly demanding to confront or challenge the suspect with evidence ("Challenge Clara with Ben's sighting").
-- fallback_unknown: Anything else — including personal background, childhood, feelings,
-  opinions, hobbies, small talk, or a specific alleged fact/detail not covered by the other
-  categories above, that is not specifically about the victim, another named suspect, a piece
-  of evidence, or the murder. When the question could plausibly go either way, or asks about
-  a specific detail rather than a general topic, prefer fallback_unknown and give it a lower
-  confidence score rather than forcing a fit.
+- greeting: Simple greetings ("hi", "hello", "good morning").
+- how_are_you: Asking how they are doing or feeling right now.
+- occupation: Asking what their job is or what they do for a living.
+- how_can_help: Asking how they can assist the investigation or what they can do.
+- favorite_thing: Asking about their favorite things, hobbies, or what they like.
+- about_me: Asking for general background information about themselves ("tell me about yourself", "who are you").
+- general_relationships: Asking broadly about their friends or who they get along with (excluding specific suspects/victims).
+- emotions: Asking what makes them happy or sad.
+- fallback_unknown: Anything else — including a specific alleged fact/detail not covered by the other categories above, that is not specifically about the victim, another named suspect, a piece of evidence, or the murder. When the question could plausibly go either way, or asks about a specific detail rather than a general topic, prefer fallback_unknown and give it a lower confidence score rather than forcing a fit.
 """
     try:
         intent = client.generate_json(
@@ -149,7 +155,8 @@ Intent rules:
                 "rewritten_structured_question": "Unknown question",
             })
         return intent
-    except Exception:
+    except Exception as e:
+        logger.warning("Intent classification failed: %s", e)
         return QuestionIntent(
             intent="fallback_unknown",
             confidence=1.0,

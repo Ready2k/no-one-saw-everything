@@ -184,10 +184,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (tab !== "accuse") {
-      audioManager.playAmbient("investigation");
+    if (mode !== "investigation") {
+      audioManager.stopAmbient();
+      return;
     }
-  }, [tab]);
+    if (showIntro) return;
+    if (tab === "accuse") {
+      audioManager.stopAmbient();
+      return;
+    }
+    audioManager.playAmbient(world?.caseOverview.case_id === "case_005" ? "case_005_rain" : "investigation");
+  }, [mode, showIntro, tab, world?.caseOverview.case_id]);
 
   useEffect(() => {
     if (!world || mode !== "investigation" || showIntro) return;

@@ -1,0 +1,678 @@
+{
+  "clues": [
+    {
+      "clue_id": "clue_ledger_page",
+      "title": "Torn ledger page on the body",
+      "clue_type": "document",
+      "description": "In Marcus's coat pocket: a page torn from the cafe ledger. Till takings for the past year, with shortfalls circled in red and a note in Marcus's hand \u2014 'C. \u2014 until tomorrow.'",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_storage",
+        "reveal_on": [
+          "examine_body"
+        ],
+        "x": 61.0,
+        "y": 66.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_clara",
+        "agent_marcus"
+      ],
+      "linked_object_ids": [
+        "obj_ledger_page"
+      ],
+      "linked_event_ids": [
+        "ev_0615_marcus_ledger"
+      ]
+    },
+    {
+      "clue_id": "clue_overheard_threat",
+      "title": "\"You have until tomorrow\"",
+      "clue_type": "witness_statement",
+      "description": "Elias heard Marcus, low and furious, tell someone in the cafe kitchen doorway yesterday morning: 'You have until tomorrow.' He never saw who it was.",
+      "strength": "medium",
+      "reliability": 0.7,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias",
+        "question_type": "relationship"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_marcus"
+      ]
+    },
+    {
+      "clue_id": "clue_till_discrepancy",
+      "title": "Audited ledger with missing page",
+      "clue_type": "document",
+      "description": "The cafe ledger in Marcus's study is covered in fresh audit marks. One page has been torn out \u2014 the stub remains. Someone at the cafe was stealing, and Marcus knew.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_house",
+        "x": 57.0,
+        "y": 26.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_marcus"
+      ],
+      "linked_event_ids": [
+        "ev_0615_marcus_ledger"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_sighting",
+      "title": "Blue coat in the rear alley",
+      "clue_type": "witness_statement",
+      "description": "Ben saw someone in a blue coat slip into the rear alley at about 07:47 and head for the cafe's rear door. He never saw the face \u2014 only the coat, and a walk he described as 'like they didn't want to be walking'.",
+      "strength": "medium",
+      "reliability": 0.72,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_ben",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_clara_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_clara"
+      ],
+      "linked_event_ids": [
+        "ev_0747_blue_coat"
+      ],
+      "linked_location_ids": [
+        "loc_rear_alley"
+      ]
+    },
+    {
+      "clue_id": "clue_storage_sound",
+      "title": "Dull thud at 07:56",
+      "clue_type": "observation",
+      "description": "A dull thud was heard from the cafe's back rooms at 07:56 \u2014 inside the murder window, in the room where the body was found.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_method"
+      ],
+      "linked_event_ids": [
+        "ev_0756_sound"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_storage"
+      ]
+    },
+    {
+      "clue_id": "clue_rear_door",
+      "title": "Figure leaving by the rear door at 07:58",
+      "clue_type": "observation",
+      "description": "The cafe's rear door opened briefly at 07:58. A figure left carrying something small and walked quickly towards the square.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity",
+        "conc_clara_false_alibi"
+      ],
+      "linked_event_ids": [
+        "ev_0758_rear_door"
+      ],
+      "linked_location_ids": [
+        "loc_rear_alley"
+      ]
+    },
+    {
+      "clue_id": "clue_till_weight_missing",
+      "title": "The till weight is gone",
+      "clue_type": "object_trail",
+      "description": "The brass till weight sat on the counter at 07:36 \u2014 Clara moved it herself. After the body was found, it is nowhere on the counter.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_hobbs_cafe"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_method"
+      ],
+      "linked_object_ids": [
+        "obj_till_weight"
+      ],
+      "linked_event_ids": [
+        "ev_0736_till_weight"
+      ]
+    },
+    {
+      "clue_id": "clue_till_weight_found",
+      "title": "Till weight in the mop bucket",
+      "clue_type": "physical_evidence",
+      "description": "The brass till weight, found pushed down inside the kitchen mop bucket. It has been rinsed but is still damp \u2014 and it doesn't belong anywhere near the sink.",
+      "strength": "strong",
+      "reliability": 0.95,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_kitchen",
+        "required_prior_clue_ids": [
+          "clue_till_weight_missing"
+        ],
+        "x": 77.0,
+        "y": 44.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_method"
+      ],
+      "linked_object_ids": [
+        "obj_till_weight"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_kitchen"
+      ]
+    },
+    {
+      "clue_id": "clue_blue_coat_damp",
+      "title": "Damp sleeve on Clara's coat",
+      "clue_type": "physical_evidence",
+      "description": "Clara's blue coat hangs on the hook beside the kitchen sink. The right cuff is splashed damp and a faint dark smudge is worked into the weave \u2014 and the sink was used, hard, not long ago.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_kitchen",
+        "x": 84.0,
+        "y": 39.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_means",
+        "conc_clara_opportunity"
+      ],
+      "linked_object_ids": [
+        "obj_blue_coat"
+      ],
+      "linked_agent_ids": [
+        "agent_clara"
+      ]
+    },
+    {
+      "clue_id": "clue_care_debts",
+      "title": "Final notices from Fernlea",
+      "clue_type": "document",
+      "description": "Two years of invoices from the Fernlea care home in Clara's name, the last few stamped FINAL NOTICE, and an order of service from a funeral this spring. The sums are brutal \u2014 more per month than a cafe manager earns. Money trouble isn't guilt. But it is money trouble.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_clara_flat",
+        "x": 37.0,
+        "y": 46.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_motive"
+      ],
+      "linked_agent_ids": [
+        "agent_clara"
+      ],
+      "linked_location_ids": [
+        "loc_clara_flat"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_overheard",
+      "title": "\"Storage room, before we open\"",
+      "clue_type": "witness_statement",
+      "description": "Passing the cafe window at 07:40, Nadia heard Marcus say 'storage room, before we open'. She couldn't hear who he was speaking to \u2014 but whoever it was knew where Marcus would be.",
+      "strength": "medium",
+      "reliability": 0.75,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_opportunity"
+      ],
+      "linked_agent_ids": [
+        "agent_nadia",
+        "agent_marcus"
+      ],
+      "linked_event_ids": [
+        "ev_0740_marcus_summons"
+      ]
+    },
+    {
+      "clue_id": "clue_owen_argument",
+      "title": "Owen's shouting match with Marcus",
+      "clue_type": "observation",
+      "description": "At 07:05 Owen confronted Marcus outside the cafe \u2014 money, a deadline, the committee. He jabbed a finger in Marcus's chest and stormed off. Half the square heard it.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "observation"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_owen",
+        "agent_marcus"
+      ],
+      "linked_event_ids": [
+        "ev_0705_owen_argument"
+      ]
+    },
+    {
+      "clue_id": "clue_loan_book",
+      "title": "Marcus's loan book",
+      "clue_type": "document",
+      "description": "A private notebook in Marcus's study: 'O. Price \u2014 \u00a38,000 \u2014 due 1st. Committee if unpaid.' Owen had everything to lose today.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_marcus_house",
+        "x": 63.0,
+        "y": 71.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_object_ids": [
+        "obj_loan_ledger"
+      ]
+    },
+    {
+      "clue_id": "clue_owen_delayed_delivery",
+      "title": "Owen's delayed delivery",
+      "clue_type": "witness_statement",
+      "description": "Owen says he was in his yard from 07:15 and that the timber 'didn't finish going in until five past eight'. He offers no witness and bristles when pressed for one \u2014 leaving him, on his own account, unaccounted for during the murder window.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_owen",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_no_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_event_ids": [
+        "ev_0715_owen_yard"
+      ]
+    },
+    {
+      "clue_id": "clue_owen_driver_corroborates",
+      "title": "Owen's signed delivery docket",
+      "clue_type": "witness_statement",
+      "description": "The yard's timed delivery docket, signed by both men: Col Hartley was in Owen's yard from 07:15 to 08:05 \u2014 the whole of the murder window \u2014 stacking the order alongside him. Owen never denied it. He simply refused to volunteer a witness for himself, and it did not occur to him that anyone would need one.",
+      "strength": "medium",
+      "reliability": 0.8,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_owen",
+        "question_type": "evidence",
+        "required_prior_clue_ids": [
+          "clue_owen_delayed_delivery"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_owen_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_owen"
+      ],
+      "linked_event_ids": [
+        "ev_0715_owen_yard"
+      ]
+    },
+    {
+      "clue_id": "clue_isabella_note",
+      "title": "Isabella's note on the body",
+      "clue_type": "document",
+      "description": "A folded note in Marcus's pocket: 'We settle this at 8. Don't make me ask twice. \u2014 I.R.' Isabella wanted something from Marcus, badly, this morning.",
+      "strength": "medium",
+      "reliability": 0.9,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_storage",
+        "reveal_on": [
+          "examine_body"
+        ],
+        "x": 47.0,
+        "y": 59.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_isabella"
+      ],
+      "linked_object_ids": [
+        "obj_isabella_note"
+      ],
+      "linked_event_ids": [
+        "ev_0720_isabella_note"
+      ]
+    },
+    {
+      "clue_id": "clue_partnership_letter",
+      "title": "The partnership letter",
+      "clue_type": "document",
+      "description": "A signed letter in Marcus's coat: the bookshop expansion goes to Priya Shah \u2014 not Isabella Reed. Marcus broke his promise, and today he was going to say so to Isabella's face.",
+      "strength": "medium",
+      "reliability": 0.95,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_storage",
+        "reveal_on": [
+          "examine_body"
+        ],
+        "x": 32.0,
+        "y": 22.0,
+        "radius": 8.0
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_red_herring"
+      ],
+      "linked_agent_ids": [
+        "agent_isabella",
+        "agent_priya"
+      ],
+      "linked_object_ids": [
+        "obj_partnership_letter"
+      ]
+    },
+    {
+      "clue_id": "clue_isabella_clinic",
+      "title": "Isabella alone in the clinic",
+      "clue_type": "witness_statement",
+      "description": "Isabella arrived at the clinic at 07:40 and was in the waiting room until 08:00. Nadia will not say what she was there for, and will not swear she stayed put \u2014 leaving Isabella, on the face of it, unobserved during the murder window.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "medium",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "question_type": "alibi"
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_no_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_isabella",
+        "agent_nadia"
+      ],
+      "linked_event_ids": [
+        "ev_0740_isabella_clinic"
+      ]
+    },
+    {
+      "clue_id": "clue_nadia_isabella_bp_check",
+      "title": "The blood pressure check",
+      "clue_type": "witness_statement",
+      "description": "Pressed, Nadia gives up what she had been protecting: Isabella was not alone in that waiting room \u2014 she was with her. Nadia had a blood-pressure cuff on her arm from 07:40 until 08:00 and would not leave her, because Isabella had come in with her heart racing over the meeting. She withheld it because it was a patient's confidence, not because it wasn't true.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_nadia",
+        "question_type": "evidence",
+        "required_prior_clue_ids": [
+          "clue_isabella_clinic"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_isabella_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_isabella",
+        "agent_nadia"
+      ],
+      "linked_event_ids": [
+        "ev_0740_isabella_clinic"
+      ]
+    },
+    {
+      "clue_id": "clue_elias_fountain",
+      "title": "Nobody at the fountain",
+      "clue_type": "witness_statement",
+      "description": "Elias sat facing the fountain from 06:40 onwards and does not recall seeing Clara there between 07:45 and 08:00 \u2014 though he admits he had his crossword.",
+      "strength": "weak",
+      "reliability": 0.55,
+      "ambiguity": "high",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_elias",
+        "question_type": "timeline"
+      },
+      "supports_conclusion_ids": [
+        "conc_clara_false_alibi"
+      ],
+      "linked_agent_ids": [
+        "agent_elias",
+        "agent_clara"
+      ],
+      "linked_location_ids": [
+        "loc_fountain"
+      ]
+    },
+    {
+      "clue_id": "clue_ben_priya_meeting",
+      "title": "Ben and Priya's secret meeting",
+      "clue_type": "confession",
+      "description": "Ben was in the alley at 07:45 to meet Priya \u2014 they've been seeing each other in secret. That's why he was there, and why neither of them wanted to say so.",
+      "strength": "medium",
+      "reliability": 0.85,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "interview",
+        "agent_id": "agent_priya",
+        "question_type": "location",
+        "location_id": "loc_rear_alley",
+        "required_prior_clue_ids": [
+          "clue_ben_sighting"
+        ]
+      },
+      "supports_conclusion_ids": [
+        "conc_ben_innocent"
+      ],
+      "linked_agent_ids": [
+        "agent_ben",
+        "agent_priya"
+      ],
+      "linked_event_ids": [
+        "ev_0745_ben_priya_meet"
+      ]
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "conc_clara_motive",
+      "type": "motive",
+      "summary": "Clara was stealing from the till; Marcus had proof and a deadline of this morning.",
+      "target_agent_id": "agent_clara",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ledger_page",
+        "clue_overheard_threat",
+        "clue_till_discrepancy",
+        "clue_care_debts"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_opportunity",
+      "type": "opportunity",
+      "summary": "Clara was at the cafe's rear door during the murder window, despite claiming to be at the fountain.",
+      "target_agent_id": "agent_clara",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ben_sighting",
+        "clue_rear_door",
+        "clue_storage_sound",
+        "clue_nadia_overheard",
+        "clue_blue_coat_damp"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_means",
+      "type": "means",
+      "summary": "Clara had the till weight \u2014 she handled it at 07:36, it vanished in the murder window, and it was found rinsed in the kitchen she controls.",
+      "target_agent_id": "agent_clara",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_till_weight_missing",
+        "clue_till_weight_found",
+        "clue_blue_coat_damp"
+      ]
+    },
+    {
+      "conclusion_id": "conc_method",
+      "type": "method",
+      "summary": "Marcus was struck with the brass till weight in the storage room at about 07:56.",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_till_weight_found",
+        "clue_storage_sound",
+        "clue_till_weight_missing"
+      ]
+    },
+    {
+      "conclusion_id": "conc_clara_false_alibi",
+      "type": "false_alibi",
+      "summary": "Clara's fountain alibi is false \u2014 she was seen entering the rear alley at 07:47, a figure left the rear door at 07:58, and nobody saw her at the fountain.",
+      "target_agent_id": "agent_clara",
+      "required_for_solution": true,
+      "supported_by_clue_ids": [
+        "clue_ben_sighting",
+        "clue_rear_door",
+        "clue_elias_fountain"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_red_herring",
+      "type": "red_herring",
+      "summary": "Owen had a desperate financial motive and argued publicly with Marcus an hour before the murder.",
+      "target_agent_id": "agent_owen",
+      "supported_by_clue_ids": [
+        "clue_owen_argument",
+        "clue_loan_book"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_no_alibi",
+      "type": "red_herring",
+      "summary": "Owen was alone in his yard waiting for a delayed delivery during the murder window, leaving him without an alibi.",
+      "target_agent_id": "agent_owen",
+      "supported_by_clue_ids": [
+        "clue_owen_delayed_delivery"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_red_herring",
+      "type": "red_herring",
+      "summary": "Isabella was betrayed over the partnership and demanded a showdown with Marcus this very morning.",
+      "target_agent_id": "agent_isabella",
+      "supported_by_clue_ids": [
+        "clue_isabella_note",
+        "clue_partnership_letter"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_no_alibi",
+      "type": "red_herring",
+      "summary": "Isabella was left alone in the clinic waiting room during the murder window, leaving her without an alibi.",
+      "target_agent_id": "agent_isabella",
+      "supported_by_clue_ids": [
+        "clue_isabella_clinic"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_red_herring",
+      "type": "red_herring",
+      "summary": "Ben was lurking in the rear alley during the murder window and is evasive about why.",
+      "target_agent_id": "agent_ben",
+      "supported_by_clue_ids": [
+        "clue_storage_sound"
+      ]
+    },
+    {
+      "conclusion_id": "conc_ben_innocent",
+      "type": "innocence_anchor",
+      "summary": "Ben was in the alley to meet Priya in secret \u2014 nothing to do with Marcus.",
+      "target_agent_id": "agent_ben",
+      "supported_by_clue_ids": [
+        "clue_ben_priya_meeting"
+      ]
+    },
+    {
+      "conclusion_id": "conc_owen_innocent",
+      "type": "innocence_anchor",
+      "summary": "The delivery driver never left Owen's yard \u2014 he was covered for the entire murder window.",
+      "target_agent_id": "agent_owen",
+      "supported_by_clue_ids": [
+        "clue_owen_driver_corroborates"
+      ]
+    },
+    {
+      "conclusion_id": "conc_isabella_innocent",
+      "type": "innocence_anchor",
+      "summary": "Nadia was attending to Isabella's blood pressure check for the entire murder window \u2014 she was never actually alone.",
+      "target_agent_id": "agent_isabella",
+      "supported_by_clue_ids": [
+        "clue_nadia_isabella_bp_check"
+      ]
+    }
+  ]
+}
