@@ -12,7 +12,8 @@ from app.interview import answer_question, public_ask_response, examine_body
 from app.world_state import build_conversation_context, build_world_state_digest
 from app import challenge as challenge_engine
 from app.challenge import ChallengeError
-from app.dialogue_processor import humanize_response
+from app.dialogue_processor import humanize_response, default_small_talk_line
+from app.behavioural_tells import open_ended_tells
 
 def _generic_followups(case) -> list[str]:
     """Safe, always-available on-ramps back to the grounded structured
@@ -30,12 +31,18 @@ def _generic_followups(case) -> list[str]:
     ]
 
 
-def _open_ended_reply(case, sess, req: FreeTextAskRequest, intent: QuestionIntent) -> FreeTextAskResponse:
+def _open_ended_reply(
+    case, sess, req: FreeTextAskRequest, intent: QuestionIntent, *, guarded: bool = False
+) -> FreeTextAskResponse:
     """Let the agent improvise an in-character reply with no deterministic
-    ground truth to rewrite — used both for genuinely unmatched questions and
-    for a confrontation/bluff with no evidence behind it, so a suspect reacts
-    (denial, suspicion, irritation) instead of a flat meta-message. Guarded by
-    the same forbidden-facts list and sanitiser as every grounded rewrite."""
+    ground truth to rewrite — used for genuinely unmatched questions, a
+    confrontation/bluff with no evidence behind it, and a reference to an
+    object/location/clue that never resolved (undiscovered, or just not a
+    real thing) — so a suspect reacts instead of hitting a flat meta-message.
+    Guarded by the same forbidden-facts list and sanitiser as every grounded
+    rewrite. `guarded` marks a question the agent has real reason to dodge
+    (a bluff or confrontation), which biases the accompanying observable
+    tell toward evasion rather than plain pressure."""
     agent = next(a for a in case.agents if a.agent_id == req.agent_id)
     pressure = sess.pressure_for(req.agent_id)
     transcript = sess.transcript_for(req.agent_id)
@@ -50,11 +57,15 @@ def _open_ended_reply(case, sess, req: FreeTextAskRequest, intent: QuestionInten
         world_state=build_world_state_digest(case, sess, req.agent_id) or None,
     )
 
+    tell_seed = f"{case.case.case_id}:{req.agent_id}:{req.question}:{len(transcript.messages)}"
+    observable_tells = open_ended_tells(agent=agent, pressure=pressure, seed=tell_seed, guarded=guarded)
+
     transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
     transcript.messages.append(
         InterviewMessage(
             speaker="agent",
             text=result.rewritten_text,
+            observable_tells=observable_tells,
             llm_rewrite_used=True,
             llm_rewrite_fallback=result.fallback_used,
             llm_rewrite_fallback_reason=result.fallback_reason,
@@ -69,6 +80,7 @@ def _open_ended_reply(case, sess, req: FreeTextAskRequest, intent: QuestionInten
             "deterministic_answer_text": result.rewritten_text,
             "answer_type": "open_ended",
             "emotional_shift": None,
+            "observable_tells": [t.model_dump() for t in observable_tells],
             "new_claims": [],
             "revealed_clues": [],
             "suggested_followups": _generic_followups(case),
@@ -129,7 +141,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         transcript.intent_counts[intent.intent] = transcript.intent_counts.get(intent.intent, 0) + 1
         count = transcript.intent_counts[intent.intent]
 
-        deterministic_text = agent.small_talk.get(intent.intent, "I don't have much to say about that.")
+        deterministic_text = agent.small_talk.get(intent.intent) or default_small_talk_line(agent, intent.intent)
         deterministic_text = humanize_response(deterministic_text, agent, count)
 
         display_text = deterministic_text
@@ -167,12 +179,17 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
             llm_rewrite_fallback = rewrite_result.fallback_used
             llm_rewrite_fallback_reason = rewrite_result.fallback_reason
 
+        pressure = sess.pressure_for(req.agent_id)
+        tell_seed = f"{case.case.case_id}:{req.agent_id}:{intent.intent}:{count}"
+        observable_tells = open_ended_tells(agent=agent, pressure=pressure, seed=tell_seed)
+
         transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))
         transcript.messages.append(
             InterviewMessage(
                 speaker="agent",
                 text=display_text,
                 deterministic_text=deterministic_text,
+                observable_tells=observable_tells,
                 llm_rewrite_used=llm_rewrite_used,
                 llm_rewrite_fallback=llm_rewrite_fallback,
                 llm_rewrite_fallback_reason=llm_rewrite_fallback_reason,
@@ -184,6 +201,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
                 "question_text": req.question,
                 "answer_text": display_text,
                 "deterministic_answer_text": deterministic_text,
+                "observable_tells": [t.model_dump() for t in observable_tells],
                 "answer_type": "small_talk",
                 "emotional_shift": None,
                 "new_claims": [],
@@ -265,7 +283,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
         # model is available; otherwise keep the original meta message so
         # the player still knows to use the Challenge button.
         if get_llm_config().dialogue_enabled:
-            return _open_ended_reply(case, sess, req, intent)
+            return _open_ended_reply(case, sess, req, intent, guarded=True)
         return FreeTextAskResponse(
             intent=intent,
             fallback_message="That sounds like something to challenge directly. Use the Challenge button if you have evidence."
@@ -302,8 +320,20 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
             if ask_req.topic_location_id:
                 ask_req.question_type = "location"
             else:
+                # The player named an object/clue the resolver could not
+                # place — often evidence that just hasn't been discovered
+                # yet, by design (app/reference_resolver.py only recognises
+                # an object once a clue has linked it). There is nothing
+                # grounded to answer with, but a flat "that's not relevant"
+                # line about the actual murder weapon reads as broken, not
+                # careful — let the agent react in-voice instead when a
+                # rewrite model is available.
+                if get_llm_config().dialogue_enabled:
+                    return _open_ended_reply(case, sess, req, intent)
                 return fallback_resp
     if ask_req.question_type == "location" and not ask_req.topic_location_id:
+        if get_llm_config().dialogue_enabled:
+            return _open_ended_reply(case, sess, req, intent)
         return fallback_resp
         
     resp = answer_question(case, sess, ask_req)
