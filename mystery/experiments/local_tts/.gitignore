@@ -1,0 +1,13 @@
+# Never commit model weights, generated audio, or the synthesis cache.
+cache/
+out/
+models/
+refs/
+*.wav
+*.onnx
+*.onnx.json
+*.pt
+*.pth
+*.safetensors
+.venv/
+__pycache__/
