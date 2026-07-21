@@ -1,0 +1,6 @@
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/gameplay_01.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/gameplay_02.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/gameplay_03.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/gameplay_04.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/gameplay_05.mp4'
+file '/Users/jamescregeen/Code_Projects/generative_agents/mystery/marketing/promo/.work/gameplay_06.mp4'
