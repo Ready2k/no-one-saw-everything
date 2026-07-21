@@ -1,0 +1,11 @@
+Generate a mystery CasePlan.
+
+Case Type: {case_type}
+Difficulty: {difficulty}
+
+Allowed Roles: {VICTIM_ID}, {KILLER_ID}, {RH1_ID}, {RH2_ID}, {WITNESS1_ID}, {WITNESS2_ID}, {WITNESS3_ID}, {WITNESS4_ID}
+Allowed Clue Types: document, physical_evidence, observation, witness_statement, confession, object_trail
+Allowed Memory Functions: motive, alibi, red_herring, innocence_anchor, timeline, lore
+Allowed Discovery Methods: inspect, observation, interview
+
+Please provide the CasePlan JSON.

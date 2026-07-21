@@ -1,0 +1,301 @@
+[
+  {
+    "target_agent_id": "agent_clara",
+    "challenged_claim_id": "claim_clara_vouch_marcus",
+    "evidence_clue_ids": [
+      "clue_ben_grey_coat"
+    ],
+    "evidence_claim_ids": [
+      "claim_ben_grey_coat"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "Ben saw... at a quarter to. ...He did step away. Twenty to nine — 'cups' — and he took the ladle back off me at nine on the dot. Nineteen minutes, no cups, out of breath, and a story about mice in a cupboard I stocked myself this morning. I told you he was with me because he has been, every day, for fifteen years. I'm not lying for him any more, detective. Just don't ask me to enjoy it.",
+    "emotional_shift": "torn",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "reframed",
+    "reveals_clue_ids": [
+      "clue_marcus_cups_gap"
+    ],
+    "reveals_memory_ids": [
+      "mem_clara_gap"
+    ],
+    "new_claims": [
+      {
+        "claim_id": "claim_clara_admits_gap",
+        "summary": "Clara stops covering: Marcus was away from the stall from 20:40 to 20:59 and returned empty-handed and out of breath.",
+        "claim_type": "sighting",
+        "time_reference": "20:40",
+        "time_to": "20:59",
+        "location_reference_id": "loc_village_square",
+        "truthfulness": "true",
+        "about_agent_id": "agent_marcus",
+        "asserts_presence": false
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_marcus",
+    "challenged_claim_id": "claim_marcus_stall",
+    "evidence_clue_ids": [
+      "clue_ben_grey_coat"
+    ],
+    "evidence_claim_ids": [
+      "claim_ben_grey_coat"
+    ],
+    "outcome": "deflect",
+    "response_text": "Ben Carter saw a coat. In an unlit alley, at night, from a van. A grey coat in November, detective — you might as well arrest the fog. When you have a face, bring me the face.",
+    "emotional_shift": "contemptuous",
+    "pressure_delta": 0.1,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_marcus",
+    "challenged_claim_id": "claim_marcus_stall",
+    "evidence_clue_ids": [
+      "clue_marcus_cups_gap"
+    ],
+    "evidence_claim_ids": [
+      "claim_clara_admits_gap"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "So Clara counted the minutes. ...Very well: it was longer than thirty seconds. I went through to my own kitchen, found the cup box spoiled, and stood a while in the dark putting the stock list straight in my head. A man may stand in his own kitchen, detective. It is not yet an indictable offence. When I'd done arithmetic enough I came back to the ladle.",
+    "emotional_shift": "clipped",
+    "pressure_delta": 0.25,
+    "sets_claim_status": "reframed",
+    "new_claims": [
+      {
+        "claim_id": "claim_marcus_kitchen_alone",
+        "summary": "Under pressure, Marcus now admits he was away nineteen minutes but claims he spent them alone in the cafe kitchen 'doing stock arithmetic'.",
+        "claim_type": "alibi",
+        "time_reference": "20:40",
+        "time_to": "20:59",
+        "location_reference_id": "loc_cafe_kitchen",
+        "truthfulness": "false",
+        "about_agent_id": "agent_marcus"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_marcus",
+    "challenged_claim_id": "claim_marcus_stall",
+    "evidence_clue_ids": [
+      "clue_cider_residue"
+    ],
+    "outcome": "deflect",
+    "response_text": "Cider on iron. Detective, by nine o'clock that square was varnished in the stuff — every hand, every rail, every coin in my float. You could have swabbed the fountain and found cinnamon. It proves the fair happened. Nothing else.",
+    "emotional_shift": "tense",
+    "pressure_delta": 0.15,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_marcus",
+    "challenged_claim_id": "claim_marcus_kitchen_alone",
+    "evidence_clue_ids": [
+      "clue_rear_door_latch"
+    ],
+    "outcome": "deflect",
+    "response_text": "Bolts are Priya's religion, not mine. If that door stood unbolted then whoever Elias was expecting drew it for them — which tells you he was expecting somebody, and that somebody had a key to nothing. I have a key to nothing in that building, detective. Ask Isabella who does.",
+    "emotional_shift": "cold",
+    "pressure_delta": 0.12,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_marcus",
+    "challenged_claim_id": "claim_marcus_kitchen_alone",
+    "evidence_clue_ids": [
+      "clue_isabella_light"
+    ],
+    "outcome": "deflect",
+    "response_text": "A light under a door and a thud in a dark shop. Isabella's six minutes of glassware put her closer to that room than any coat puts me. I notice you are not standing in her parlour.",
+    "emotional_shift": "acid",
+    "pressure_delta": 0.12,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_marcus",
+    "challenged_claim_id": "claim_marcus_stall",
+    "evidence_clue_ids": [
+      "clue_notebook_found"
+    ],
+    "required_prior_clue_ids": [
+      "clue_marcus_cups_gap"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "...You went through the cup crate. Under the straw. Of course you did. You're the one person in this village who counts the way I do.\n\nSit down, detective. The ladle can wait.\n\nThirty years ago I kept Thomas Hobbs' books. A good man. A careless man — careless with stock, with money, with the one thing I have never been careless about in my life: the record. When he died there was no will worth the name, and there was a cafe going to a nephew in another county who'd have sold it for the lead on the roof. So I sat at the schoolhouse window three evenings running, because the glass there takes the lamplight like a tracing table, and I taught my wrist his name. One line, detective. I have kept every other line in that ledger true for thirty years. I built the place. Every table, every account, every apprentice this village sent me — that was me, on top of one crooked line.\n\nAnd Elias watched me write it. Wrote it down like weather, and didn't understand what he'd seen for thirty years — until he sorted his boxes for that blasted archive and the arithmetic finally came due. His letter said: sign it to the trust, or the archive reads the page for you. At the stall tonight he told me to come and see him first. 'You know which page.' So I went. Through my own kitchen, down my own alley, to a door he'd unbolted for me like a man leaving a gate open for a dog he trusts.\n\nI offered him the truth of it. I offered him money — for the trust, for the roof fund, for whatever charity would let him feel clean. He said there wasn't a price, and that was that, and then he turned his back on me. Turned his back, detective, and went on sorting his boxes — as if I were already entered in the book and ruled off. Fifty years I have been this village's sums. He was going to make me its anecdote.\n\nThe owl was by the door. I don't remember deciding.\n\nOne line, detective. Thirty years of true accounts, on top of one crooked line. Enter it however you like. You'll find my arithmetic holds to the end.",
+    "emotional_shift": "broken, then terribly calm",
+    "pressure_delta": 0.4,
+    "sets_claim_status": "disputed",
+    "reveals_memory_ids": [
+      "mem_marcus_forgery",
+      "mem_marcus_ultimatum",
+      "mem_marcus_meeting"
+    ],
+    "new_claims": [
+      {
+        "claim_id": "claim_marcus_confession",
+        "summary": "Marcus confesses: the forged bill of sale, Elias's ultimatum, the invited meeting in the stockroom, and the owl doorstop.",
+        "claim_type": "statement",
+        "time_reference": "20:52",
+        "location_reference_id": "loc_bookshop_back",
+        "truthfulness": "true",
+        "about_agent_id": "agent_marcus"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_marcus",
+    "challenged_claim_id": "claim_marcus_kitchen_alone",
+    "evidence_clue_ids": [
+      "clue_notebook_found"
+    ],
+    "required_prior_clue_ids": [
+      "clue_marcus_cups_gap"
+    ],
+    "outcome": "contradiction_locked",
+    "response_text": "...You went through the cup crate. Under the straw. Of course you did. You're the one person in this village who counts the way I do.\n\nSit down, detective. The ladle can wait.\n\nThirty years ago I kept Thomas Hobbs' books. A good man. A careless man — careless with stock, with money, with the one thing I have never been careless about in my life: the record. When he died there was no will worth the name, and there was a cafe going to a nephew in another county who'd have sold it for the lead on the roof. So I sat at the schoolhouse window three evenings running, because the glass there takes the lamplight like a tracing table, and I taught my wrist his name. One line, detective. I have kept every other line in that ledger true for thirty years. I built the place. Every table, every account, every apprentice this village sent me — that was me, on top of one crooked line.\n\nAnd Elias watched me write it. Wrote it down like weather, and didn't understand what he'd seen for thirty years — until he sorted his boxes for that blasted archive and the arithmetic finally came due. His letter said: sign it to the trust, or the archive reads the page for you. At the stall tonight he told me to come and see him first. 'You know which page.' So I went. Through my own kitchen, down my own alley, to a door he'd unbolted for me like a man leaving a gate open for a dog he trusts.\n\nI offered him the truth of it. I offered him money — for the trust, for the roof fund, for whatever charity would let him feel clean. He said there wasn't a price, and that was that, and then he turned his back on me. Turned his back, detective, and went on sorting his boxes — as if I were already entered in the book and ruled off. Fifty years I have been this village's sums. He was going to make me its anecdote.\n\nThe owl was by the door. I don't remember deciding.\n\nOne line, detective. Thirty years of true accounts, on top of one crooked line. Enter it however you like. You'll find my arithmetic holds to the end.",
+    "emotional_shift": "broken, then terribly calm",
+    "pressure_delta": 0.4,
+    "sets_claim_status": "disputed",
+    "reveals_memory_ids": [
+      "mem_marcus_forgery",
+      "mem_marcus_ultimatum",
+      "mem_marcus_meeting"
+    ],
+    "new_claims": [
+      {
+        "claim_id": "claim_marcus_confession",
+        "summary": "Marcus confesses: the forged bill of sale, Elias's ultimatum, the invited meeting in the stockroom, and the owl doorstop.",
+        "claim_type": "statement",
+        "time_reference": "20:52",
+        "location_reference_id": "loc_bookshop_back",
+        "truthfulness": "true",
+        "about_agent_id": "agent_marcus"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_logs",
+    "evidence_clue_ids": [
+      "clue_owen_row"
+    ],
+    "outcome": "reframe",
+    "response_text": "Aye, and I'd row with him again tonight if he'd only stand there and take it. I shout in the light, detective, at volume, in front of the whole parish — that's the entire trick of me. If I'd wanted Elias Grant dead I'd have been the last man in England to hide it well.",
+    "emotional_shift": "steady",
+    "pressure_delta": 0.05,
+    "sets_claim_status": "disputed"
+  },
+  {
+    "target_agent_id": "agent_owen",
+    "challenged_claim_id": "claim_owen_logs",
+    "evidence_clue_ids": [
+      "clue_owen_burn"
+    ],
+    "outcome": "reveal_innocent_secret",
+    "response_text": "...She told you. Course she told you, there's a dead man. Fine — the logs were a lie. I burned my hand on my own brazier playing blacksmith with two ciders and a rum in me, and Nadia strapped it in the clinic while I sat there like a scolded apprentice. Twenty to nine till near enough nine, the pair of us, and you can photograph the dressing if it helps. I'd sooner have been your suspect than the fair's punchline, and I stand by the instinct even now. That's the whole of my crime tonight, detective. Vanity, and a chestnut pan.",
+    "emotional_shift": "sheepish",
+    "pressure_delta": -0.05,
+    "sets_claim_status": "resolved",
+    "reveals_memory_ids": [
+      "mem_owen_burn"
+    ],
+    "new_claims": [
+      {
+        "claim_id": "claim_owen_clinic",
+        "summary": "Owen admits he was in the clinic having a burn dressed from 20:40 until nearly 21:00.",
+        "claim_type": "alibi",
+        "time_reference": "20:40",
+        "time_to": "20:58",
+        "location_reference_id": "loc_clinic",
+        "truthfulness": "true",
+        "about_agent_id": "agent_owen"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_isabella",
+    "challenged_claim_id": "claim_isabella_never_left",
+    "evidence_clue_ids": [
+      "clue_isabella_seen"
+    ],
+    "evidence_claim_ids": [
+      "claim_clara_saw_isabella"
+    ],
+    "outcome": "partial_admission",
+    "response_text": "Clara. Of course — the stall faces my door. ...Six minutes, detective, for the ceremony glasses, in my own shop, in the dark, because I know it in the dark. And since we are being thorough: there was light under the stockroom door, and at ten to nine there was a thud, and I told myself it was boxes because boxes was a thing I could carry a tray past. I locked my own front door on that room. If you mean to make me say it more than once, bring a chair.",
+    "emotional_shift": "shaken",
+    "pressure_delta": 0.2,
+    "sets_claim_status": "reframed",
+    "reveals_clue_ids": [
+      "clue_isabella_light"
+    ],
+    "reveals_memory_ids": [
+      "mem_isabella_visit"
+    ],
+    "new_claims": [
+      {
+        "claim_id": "claim_isabella_admits_visit",
+        "summary": "Isabella admits she was inside the dark bookshop from 20:47 to 20:53 fetching glasses, saw light under the stockroom door, and heard a heavy thud at 20:52.",
+        "claim_type": "statement",
+        "time_reference": "20:47",
+        "time_to": "20:53",
+        "location_reference_id": "loc_bookshop",
+        "truthfulness": "true",
+        "about_agent_id": "agent_isabella"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_isabella",
+    "challenged_claim_id": "claim_isabella_never_left",
+    "evidence_clue_ids": [
+      "clue_priya_window_view"
+    ],
+    "outcome": "reveal_innocent_secret",
+    "response_text": "Priya watched me the whole time? Through the window? ...Then you know precisely what my six minutes contained: a lamp, a shelf of glasses, and an apron I apparently polish things on without knowing it. Yes — I went in, I heard the thud, I chose to believe it was boxes, and I have been paying for that choice by the minute ever since. I did not go past my own counter. Your witness counted my footsteps for you. Believe her. She counts true.",
+    "emotional_shift": "wrung out",
+    "pressure_delta": -0.05,
+    "sets_claim_status": "resolved",
+    "reveals_clue_ids": [
+      "clue_isabella_light"
+    ],
+    "new_claims": [
+      {
+        "claim_id": "claim_isabella_admits_visit",
+        "summary": "Isabella admits she was inside the dark bookshop from 20:47 to 20:53 fetching glasses, saw light under the stockroom door, and heard a heavy thud at 20:52.",
+        "claim_type": "statement",
+        "time_reference": "20:47",
+        "time_to": "20:53",
+        "location_reference_id": "loc_bookshop",
+        "truthfulness": "true",
+        "about_agent_id": "agent_isabella"
+      }
+    ]
+  },
+  {
+    "target_agent_id": "agent_ben",
+    "challenged_claim_id": "claim_ben_straps",
+    "evidence_clue_ids": [
+      "clue_painted_lantern"
+    ],
+    "outcome": "reveal_innocent_secret",
+    "response_text": "You found it. ...Okay. Okay. It's a lantern, it's got sweet peas on it because they're her flower, there's a ring taped inside the little door, and tonight at the lighting I was going to ask Priya to marry me. Three weekends in me mum's shed, that lantern. That's the straps, that's the alley, that's the blanket, that's everything. Just — when this is over, whenever it's over — let me still be the one who shows her. Please.",
+    "emotional_shift": "mortified, then steady",
+    "pressure_delta": -0.05,
+    "sets_claim_status": "resolved",
+    "reveals_memory_ids": [
+      "mem_ben_lantern"
+    ],
+    "new_claims": [
+      {
+        "claim_id": "claim_ben_lantern",
+        "summary": "Ben admits the van trip was to fetch a hand-built proposal lantern for Priya, hidden under the tombola table.",
+        "claim_type": "statement",
+        "time_reference": "20:46",
+        "location_reference_id": "loc_rear_alley",
+        "truthfulness": "true",
+        "about_agent_id": "agent_ben"
+      }
+    ]
+  }
+]

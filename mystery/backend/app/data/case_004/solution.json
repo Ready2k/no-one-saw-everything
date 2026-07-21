@@ -1,0 +1,100 @@
+{
+  "killer_id": "agent_ben",
+  "motive": {
+    "canonical": "Ben discovered that Owen had blackmailed his father for twelve years over the village hall arson. He confronted Owen, who was contemptuous, and Ben struck him.",
+    "concept_groups": [
+      [
+        "blackmail",
+        "extortion",
+        "letters",
+        "payments",
+        "money",
+        "dad",
+        "father",
+        "Ted"
+      ],
+      [
+        "arson",
+        "village hall",
+        "fire",
+        "2011"
+      ],
+      [
+        "confronted",
+        "confrontation",
+        "anger",
+        "revenge",
+        "twelve years"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "method": {
+    "canonical": "Blunt force with a loose piece of the fountain's stone coping, struck at the fountain in the village square.",
+    "concept_groups": [
+      [
+        "stone",
+        "coping",
+        "fountain",
+        "piece",
+        "blunt",
+        "struck",
+        "hit"
+      ],
+      [
+        "fountain",
+        "square",
+        "village square",
+        "rim"
+      ]
+    ],
+    "min_groups": 2
+  },
+  "opportunity": {
+    "canonical": "Ben was seen crossing the square late at night. Nadia heard two voices at the fountain, one identified as Owen's. Priya initially provided a false alibi for Ben, but a timestamped cancellation text proves he was not with her. Physical traces — muddy jacket cuff and bootprint — place Ben at the fountain during the murder window.",
+    "concept_groups": [
+      [
+        "seen crossing",
+        "square",
+        "late",
+        "night",
+        "22:35"
+      ],
+      [
+        "bootprint",
+        "mud",
+        "jacket",
+        "cuff",
+        "fountain flower bed"
+      ],
+      [
+        "home",
+        "alibi",
+        "false alibi",
+        "Priya",
+        "cancelled text",
+        "cannot account"
+      ]
+    ],
+    "min_groups": 1
+  },
+  "key_clue_ids": [
+    "clue_blackmail_letters",
+    "clue_arson_clipping",
+    "clue_ben_cancel_text",
+    "clue_nadia_night_sighting",
+    "clue_nadia_voices",
+    "clue_priya_false_alibi",
+    "clue_bootprint",
+    "clue_jacket_mud"
+  ],
+  "explanation": "Correct. Ben Carter killed Owen Price. That evening, clearing his late father's belongings, Ben found seven blackmail letters from Owen spanning twelve years — Owen had extorted Ted Carter over the village hall fire of 2011. Ben cancelled his evening plans with Priya at 22:00 and went to the square. Priya tried to cover for him with a false alibi, but the timestamped text broke it. Ben confronted Owen at the fountain just before eleven. Owen laughed and said Ted had come to him. Ben seized the loose coping stone from the fountain rim and struck Owen. Nadia saw Ben crossing the square at 22:35 and later heard two voices from the fountain — Owen's laugh, a younger voice. Elias saw a figure leave quickly at 23:18. Mud from the flower bed was still on Ben's jacket cuff the next morning. The bootprint in the bed matches his resoled work boot. Fred Dunmore argued with Owen earlier, but had returned to the pub by 22:55.",
+  "epilogues": {
+    "agent_ben": "He pleaded guilty at the first hearing and would not let his solicitor argue provocation, though the letters were right there and any jury in the country would have listened. He said his father had spent twenty years being told he had brought it on himself, and he was not going to stand up in a court and say the same thing about someone else.",
+    "agent_owen": "The letters went to the police, and then to a coroner in Cardiff, who reopened a file that had been closed for nine years. Ted Carter's death is now recorded differently. It is the only thing anybody managed to give him back.",
+    "agent_priya": "She was not charged. She has told people, several times, that she would lie for him again, and each time she says it she sounds less certain, and she has stopped saying it now.",
+    "agent_fred": "He turned back at the top of the square because he could not make himself ask a man for more time twice in one night. He has since told that story in his own pub, badly, many times. The debt died with Owen. He says he would rather have paid it.",
+    "agent_nadia": "She was at her window and she saw almost all of it, and almost all of it is not the same as enough. She now keeps the curtains open.",
+    "agent_elias": "He saw two figures by the fountain before midnight and told everyone it was nothing. He has stopped saying he sees everything from that bench."
+  }
+}

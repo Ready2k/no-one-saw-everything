@@ -1,0 +1,19 @@
+PERSONA:
+Name: {name}
+Occupation: {occupation}
+Traits: {traits}
+Current pressure from the detective (0-1): {pressure_level}
+
+WHAT JUST HAPPENED:
+{trigger_summary}
+
+PUBLIC STATE OF THE INVESTIGATION:
+{world_state}
+
+THEIR PREVIOUS PRIVATE STATE:
+{previous_state}
+
+OTHER SUSPECTS THEY COULD PRIVATELY WONDER ABOUT (candidate agent_ids):
+{candidates}
+
+Update this person's private state of mind now.

@@ -1,0 +1,534 @@
+[
+  {
+    "event_id": "ev_0600_clara_reads",
+    "time": "06:00",
+    "location_id": "loc_clara_flat",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Clara lays the Land Registry extract beside the deed she found in the Marcus estate papers and finally lets herself understand it: the cafe and the flat above it are charged against Owen Price's debt. She has lived in that flat for eleven years.",
+    "visibility": "private",
+    "importance": 9,
+    "player_description": "A light is on in the flat above Hobbs Cafe, earlier than usual."
+  },
+  {
+    "event_id": "ev_bg_rosa_0",
+    "time": "06:02",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Rosa passes Hobbs Cafe, tending the flowerbeds.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_cole_0",
+    "time": "06:03",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Cole passes Hobbs Cafe, wiping down the windows.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_gus_0",
+    "time": "06:04",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Gus is by Hobbs Cafe, setting out the morning papers.",
+    "importance": 2,
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_wren_0",
+    "time": "06:09",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Wren is by Village Clinic, tuning up for a morning busk.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_0610_clara_writes",
+    "time": "06:10",
+    "location_id": "loc_clara_flat",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "object_use",
+    "truth_description": "She writes the letter to the committee in the cafe's order book, four times, crossing out. The fourth draft runs to a second page. On that second page she offers Owen twelve months to buy the charge back before she sends the first page to anyone.",
+    "visibility": "private",
+    "importance": 9,
+    "player_description": "The light in the flat stays on."
+  },
+  {
+    "event_id": "ev_bg_dez_0",
+    "time": "06:10",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Dez stops by Village Clinic, setting up a stall.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_effie_0",
+    "time": "06:11",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "At Village Clinic, Effie is walking the dog past.",
+    "importance": 2,
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_rosa_1",
+    "time": "06:15",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "Rosa stops by Village Clinic, watering the planters.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_sal_0",
+    "time": "06:16",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Sal stops by Reed & Bell Bookshop, leaving bottles on the step.",
+    "importance": 2,
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_cole_1",
+    "time": "06:16",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "Cole stops by Village Clinic, setting his ladder against a wall.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_birdie_0",
+    "time": "06:17",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Birdie is at Reed & Bell Bookshop, sweeping the front step.",
+    "importance": 2,
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_0620_the_call",
+    "time": "06:20",
+    "location_id": "loc_clara_flat",
+    "agent_ids": [
+      "agent_clara",
+      "agent_owen"
+    ],
+    "event_type": "conversation",
+    "truth_description": "Clara telephones Owen and tells him what she has. She does not threaten him. She tells him, in her flat exact way, that there is a way through this and that she has written it down. Owen hears only the committee. He says: 'The alley. Seven. Bring it.'",
+    "visibility": "hidden",
+    "importance": 10
+  },
+  {
+    "event_id": "ev_bg_gus_1",
+    "time": "06:22",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_gus"
+    ],
+    "event_type": "movement",
+    "truth_description": "Gus is at Village Clinic, calling the day's headlines.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_bg_min_0",
+    "time": "06:23",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Min is at Fountain, carrying a tray of loaves.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_tam_0",
+    "time": "06:24",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "arrival",
+    "truth_description": "At Fountain, Tam is starting the early post round.",
+    "importance": 2,
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_wren_1",
+    "time": "06:27",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_wren"
+    ],
+    "event_type": "movement",
+    "truth_description": "Wren is at Reed & Bell Bookshop, picking a good corner to play.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_rosa_2",
+    "time": "06:28",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_rosa"
+    ],
+    "event_type": "movement",
+    "truth_description": "At Reed & Bell Bookshop, Rosa is tending the flowerbeds.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_dez_1",
+    "time": "06:28",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_dez"
+    ],
+    "event_type": "movement",
+    "truth_description": "At Reed & Bell Bookshop, Dez is laying out the morning's produce.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_sal_1",
+    "time": "06:29",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "At Fountain, Sal is clinking crates off the milk cart.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_cole_2",
+    "time": "06:29",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_cole"
+    ],
+    "event_type": "movement",
+    "truth_description": "At Reed & Bell Bookshop, Cole is wiping down the windows.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_bg_effie_1",
+    "time": "06:29",
+    "location_id": "loc_bookshop",
+    "agent_ids": [
+      "agent_bg_effie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Effie is by Reed & Bell Bookshop, letting the dog sniff every lamppost.",
+    "importance": 2,
+    "from_location_id": "loc_clinic",
+    "to_location_id": "loc_bookshop"
+  },
+  {
+    "event_id": "ev_0630_owen_books",
+    "time": "06:30",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "object_use",
+    "truth_description": "Owen sits with the yard books open and the estate solicitor's letter on top of them. Eight thousand pounds, called in. Four men on the payroll. He closes the books and takes his belt off the hook by the door.",
+    "visibility": "public_partial",
+    "importance": 8,
+    "player_description": "The light is on in the yard office at Owen Price's. He is at his books early."
+  },
+  {
+    "event_id": "ev_bg_birdie_1",
+    "time": "06:30",
+    "location_id": "loc_fountain",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie passes Fountain, brushing down the pavement.",
+    "importance": 2,
+    "from_location_id": "loc_bookshop",
+    "to_location_id": "loc_fountain"
+  },
+  {
+    "event_id": "ev_bg_tam_1",
+    "time": "06:37",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam is by Hobbs Cafe, sorting letters from his mailbag.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_0640_elias_bench",
+    "time": "06:40",
+    "location_id": "loc_elias_bench",
+    "agent_ids": [
+      "agent_elias"
+    ],
+    "event_type": "routine",
+    "truth_description": "Elias takes his bench with his flask, facing the square, and settles in to notice everything.",
+    "visibility": "public",
+    "importance": 3,
+    "player_description": "Elias Grant takes his usual bench with a flask of tea."
+  },
+  {
+    "event_id": "ev_bg_min_1",
+    "time": "06:41",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_min"
+    ],
+    "event_type": "movement",
+    "truth_description": "Min passes Hobbs Cafe, delivering warm bread.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_sal_2",
+    "time": "06:42",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_sal"
+    ],
+    "event_type": "movement",
+    "truth_description": "Sal is by Hobbs Cafe, leaving bottles on the step.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_bg_birdie_2",
+    "time": "06:43",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_bg_birdie"
+    ],
+    "event_type": "movement",
+    "truth_description": "Birdie stops by Hobbs Cafe, sweeping the front step.",
+    "importance": 2,
+    "from_location_id": "loc_fountain",
+    "to_location_id": "loc_hobbs_cafe"
+  },
+  {
+    "event_id": "ev_0645_clara_down",
+    "time": "06:45",
+    "location_id": "loc_hobbs_cafe",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Clara comes down to the cafe, pale and composed, with the deed and the order book under her arm. She leaves the order book on the counter and takes only the loose first page with her.",
+    "visibility": "public",
+    "importance": 7,
+    "player_description": "Clara opens up the cafe. She is carrying papers."
+  },
+  {
+    "event_id": "ev_0650_ben_van",
+    "time": "06:50",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "routine",
+    "truth_description": "Ben's van dies on the county road with the cafe's linen in the back. He gets out and starts trying to bump-start it on the slope, swearing, aware he is going to be late for the seven o'clock at the cafe's rear door.",
+    "visibility": "public_partial",
+    "importance": 8,
+    "player_description": "Ben Carter's van is stopped on the county road with the bonnet up."
+  },
+  {
+    "event_id": "ev_bg_tam_2",
+    "time": "06:50",
+    "location_id": "loc_clinic",
+    "agent_ids": [
+      "agent_bg_tam"
+    ],
+    "event_type": "movement",
+    "truth_description": "Tam is at Village Clinic, starting the early post round.",
+    "importance": 2,
+    "from_location_id": "loc_hobbs_cafe",
+    "to_location_id": "loc_clinic"
+  },
+  {
+    "event_id": "ev_0655_owen_leaves",
+    "time": "06:55",
+    "location_id": "loc_back_lane",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "movement",
+    "truth_description": "Owen leaves the yard by the back lane — the one route across this village that his neighbours' windows and Elias's bench cannot see. He has his belt in his hand.",
+    "visibility": "hidden",
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0700_nadia_glance",
+    "time": "07:00",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_nadia"
+    ],
+    "event_type": "movement",
+    "truth_description": "Nadia crosses the square to open the clinic and glances down the alley entrance. She sees a big man in a grey work jacket turning in at the far end, and thinks: delivery. She thinks nothing else about it for four hours.",
+    "visibility": "public_partial",
+    "importance": 8,
+    "player_description": "Nadia Cole crosses the square towards the clinic. She glances down the alley as she passes."
+  },
+  {
+    "event_id": "ev_0700_clara_alley",
+    "time": "07:00",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_clara"
+    ],
+    "event_type": "movement",
+    "truth_description": "Clara goes out to the rear door at seven, as she does every morning of her life, with the page in her hand. She expects the linen. She expects Owen. She is early for one and on time for the other.",
+    "visibility": "hidden",
+    "importance": 8
+  },
+  {
+    "event_id": "ev_0703_argument",
+    "time": "07:03",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_owen",
+      "agent_clara"
+    ],
+    "event_type": "argument",
+    "truth_description": "Owen asks for the papers. Clara gives him the first page — the committee letter — and tells him there is a second page, and that he should read it before he says anything else. Owen does not hear her. He has been reading the first page. He asks if she is really going to do this to him. She says: 'I'm going to do it correctly.'",
+    "visibility": "hidden",
+    "importance": 10
+  },
+  {
+    "event_id": "ev_0709_murder",
+    "time": "07:09",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_owen",
+      "agent_clara"
+    ],
+    "event_type": "murder",
+    "truth_description": "Owen strangles Clara with his belt. It takes less time than an argument would have. She does not cry out. The second page is still in the order book on the cafe counter, twelve feet away through a wall, and he never learns it existed.",
+    "visibility": "hidden",
+    "importance": 10
+  },
+  {
+    "event_id": "ev_0712_fire",
+    "time": "07:12",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_owen"
+    ],
+    "event_type": "hidden_action",
+    "truth_description": "Owen holds the committee letter to the pub lighter and pushes it into the crate stack, and stands there long enough to be sure it has taken. He drops the belt behind the bins. He goes back up the lane.",
+    "visibility": "hidden",
+    "importance": 9
+  },
+  {
+    "event_id": "ev_0720_fire_fails",
+    "time": "07:20",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [],
+    "event_type": "environmental",
+    "truth_description": "The morning is damp, the alley floor is concrete, and the crates are wet through from three days of rain. The fire scorches the wall, chars the crate stack, blackens one corner of the letter — and goes out.",
+    "visibility": "public_partial",
+    "importance": 8,
+    "player_description": "A thin smell of smoke drifts out of the rear alley and stops."
+  },
+  {
+    "event_id": "ev_0720_sal_helps_ben",
+    "time": "07:20",
+    "location_id": "loc_village_square",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Sal, on the milk round, gives Ben a push and the van coughs into life on the county road. Ben, twenty minutes late and cheerful about it, drives on towards the cafe with the linen.",
+    "visibility": "public",
+    "importance": 6,
+    "player_description": "Ben Carter's van starts. The milkman waves him off."
+  },
+  {
+    "event_id": "ev_0725_owen_returns",
+    "time": "07:25",
+    "location_id": "loc_owen_house",
+    "agent_ids": [
+      "agent_owen",
+      "agent_col"
+    ],
+    "event_type": "arrival",
+    "truth_description": "Owen comes back into the yard by the lane. Col, unloading, glances up and sees his boss holding his trousers up with one hand, no belt, breathing hard. Col thinks nothing of it. Owen says, evenly: 'You were here from quarter to seven. Say it back to me.'",
+    "visibility": "public_partial",
+    "importance": 9,
+    "player_description": "Owen Price comes into his yard from the back lane. His driver is already there, unloading."
+  },
+  {
+    "event_id": "ev_0731_discovery",
+    "time": "07:31",
+    "location_id": "loc_rear_alley",
+    "agent_ids": [
+      "agent_ben"
+    ],
+    "event_type": "body_discovery",
+    "truth_description": "Ben comes down the alley to the rear door with the linen over his arm, twenty-one minutes late, and smells the smoke before he sees her.",
+    "visibility": "public",
+    "importance": 10,
+    "player_description": "Ben Carter enters the rear alley with a linen delivery. He stops. He shouts."
+  }
+]

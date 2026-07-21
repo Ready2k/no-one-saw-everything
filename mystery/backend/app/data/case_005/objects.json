@@ -1,0 +1,136 @@
+[
+  {
+    "object_id": "obj_owen_belt",
+    "name": "A builder's leather belt",
+    "description": "A wide brown leather work belt with a rectangular brass buckle, worn pale where a hand has gone to it ten thousand times. There is no name on it. Owen Price has worn one like it, or this one, for twenty years.",
+    "is_weapon": true,
+    "normal_location_id": "loc_owen_house",
+    "final_location_id": "loc_rear_alley",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_owen"
+    ],
+    "last_seen_time": "07:10",
+    "hidden_state": "dropped_behind_the_bins_under_scorched_crates",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_mortgage_deed",
+    "name": "Fraudulent mortgage deed",
+    "description": "A property mortgage document, found in Clara's flat: Hobbs Cafe and the flat above are secured against Owen Price's debt to Marcus Bell, signed with Marcus's name in a shaky hand that does not match his other signatures. Owen had someone forge it.",
+    "normal_location_id": "loc_clara_flat",
+    "final_location_id": "loc_clara_flat",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_clara",
+      "agent_owen"
+    ],
+    "last_seen_time": "06:45",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_clara_note",
+    "name": "Clara's drafted note to the committee",
+    "description": "On Clara's kitchen table: a draft letter to the village committee, in her handwriting, beginning 'I write to report that the property at Hobbs Cafe has been fraudulently mortgaged...' She had not yet sent it.",
+    "normal_location_id": "loc_clara_flat",
+    "final_location_id": "loc_clara_flat",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_clara"
+    ],
+    "last_seen_time": "06:55",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_burn_accelerant",
+    "name": "Smell of lighter fluid",
+    "description": "The fire in the alley smells of lighter fluid — not a spontaneous bin fire. A disposable lighter was found in the ash, with a small sticker from the Mallet & Crown — a pub giveaway lighter. Owen drinks at the Mallet & Crown.",
+    "normal_location_id": "loc_rear_alley",
+    "final_location_id": "loc_rear_alley",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_owen"
+    ],
+    "last_seen_time": "07:12",
+    "hidden_state": "in_ash_partially_melted",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_col_log",
+    "name": "Col Hartley's delivery log",
+    "description": "Col's official timber delivery log. The Tuesday page is blank — no deliveries were scheduled to Owen's yard this morning. Yet Col initially claims he was there from 06:45.",
+    "normal_location_id": "loc_owen_house",
+    "final_location_id": "loc_owen_house",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_col"
+    ],
+    "last_seen_time": "06:30",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_owen_boot_mud",
+    "name": "Mud on Owen's boots",
+    "description": "Owen's boots, when examined, have a fine layer of charred ash on the soles — consistent with the burnt crate debris in the rear alley, not with the timber yard where Owen claims to have been.",
+    "normal_location_id": "loc_owen_house",
+    "final_location_id": "loc_owen_house",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_owen"
+    ],
+    "last_seen_time": "07:45",
+    "hidden_state": "ash_on_sole_visible_on_inspection",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_property_register",
+    "name": "Land Registry extract",
+    "description": "A printed Land Registry extract found in Clara's flat: it confirms the cafe property was recently registered with a charge — the mortgagee is listed as Owen Price.",
+    "normal_location_id": "loc_clara_flat",
+    "final_location_id": "loc_clara_flat",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_clara"
+    ],
+    "last_seen_time": "06:45",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_clara_notebook",
+    "name": "Clara's notebook",
+    "description": "The cafe's order book. The last four pages are not orders. They are drafts of the same letter, written and rewritten — and the final version has a second page.",
+    "is_weapon": false,
+    "normal_location_id": "loc_clara_flat",
+    "final_location_id": "loc_clara_flat",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_clara"
+    ],
+    "last_seen_time": "06:45",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_yard_books",
+    "name": "The yard's account books",
+    "description": "Owen Price's books. Four men on the payroll, an estate solicitor's letter calling in eight thousand pounds, and a column of figures that does not reach the bottom of the page.",
+    "is_weapon": false,
+    "normal_location_id": "loc_owen_house",
+    "final_location_id": "loc_owen_house",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_owen"
+    ],
+    "last_seen_time": "06:30",
+    "clue_relevance": "motive"
+  }
+]

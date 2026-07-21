@@ -1,0 +1,37 @@
+# Tasks: Case Library & Hardened Recovery
+
+- [x] Update backend request model (`models.py`) with new parameters and Pydantic constraints
+- [x] Update backend API routes (`main.py`) to pass parameters and validate deterministic vs. creative options
+- [x] Update frontend API client (`api.ts`) with new parameter types
+- [x] Update LLM mystery generation prompts and client (`mystery_architect.py`) to incorporate counts, theme, tone, and notes
+- [x] Implement target-based generation and fallback pruning/compaction logic in `generator.py`
+  - [x] Compaction/pruning logic mapping: always keep victim, killer, red herrings. Rank witnesses by usefulness. Reuse existing kept locations. Clean up references.
+- [x] Update frontend UI (`GenerateCaseModal.tsx`) with the new configurable options, sections, warning, and auto-toggle logic
+- [x] Add automated tests (`test_generator.py` or new test file) covering constraints, validation, and rejection logic
+- [x] Verify using automated tests and running the app
+- [x] Expose Case Recipe / Generation Details accordion in success summary UI
+- [x] Implement recursive sweep for narrative corpse leak cleaning (names, locations)
+- [x] Add 8 stress tests covering leaks, suspicion hooks, solution validity, and safety
+- [x] Add Case Quality Scoring layer after case generation and validation (`quality.py`)
+- [x] Expose Case Quality Scoring report in Case Recipe / Generation Details accordion
+- [x] Add quality scoring tests (balanced score, concentration warning, weak red herring, missing suspicion hook, overall score bounding)
+- [x] Store last successful recipe in modal state and add a "Regenerate with same settings" button to success summary UI
+- [x] Implement Best-of-N case generation and validation (candidate count bounding [1, 5]) inside backend endpoint (`main.py`)
+- [x] Expose Best-of-N metrics (selected seed, candidates scores list) inside Generation Details accordion
+- [x] Add Best-of-N unit tests (regeneration, candidate bounds, highest score selection, metadata, single-candidate behavior)
+- [x] Deduplicate red herring metadata list during generation and compaction
+- [x] Adjust red herring scoring logic inside `quality.py` (motive caps, perfect score warning guardrails)
+- [x] Implement publicity-aware location remapping and exclude pruned agents' private locations in `generator.py`
+- [x] Add location type metadata schema to `Location` model in `models.py`
+- [x] Add 4 new hardening tests (red herring uniqueness, motive score capping, remapping safety exclusions, publicity-aware location checks)
+- [x] Persist generated case metadata (`metadata.json`) to case folders inside `case_store.py`
+- [x] Implement backend Case Library GET, activation, regeneration, and deletion endpoints inside `main.py`
+- [x] Implement TypeScript Case Library API client methods inside `api.ts`
+- [x] Add a 📚 Case Library button in the header topbar near the Generate Case flow in `App.tsx`
+- [x] Implement the `CaseLibraryModal` React component supporting sorting, filtering, details expansion, duplicate recipe prefill, regeneration, deletion, and activation
+- [x] Add 3 comprehensive Case Library integration tests (`test_case_library.py`) covering saving, lists, filters, sorting, activation, recipe regeneration, and deletions
+- [x] Add metadata versioning (`metadata_version: 1`) to every generated case metadata
+- [x] Implement `normalize_case_metadata` to automatically upgrade old/partial metadata files into current canonical schema
+- [x] Handle missing/invalid/corrupted metadata files gracefully and define `CaseLoadError` with status codes
+- [x] Harden library listing, activation, regeneration, and deletion endpoints to report or handle errors resiliently
+- [x] Add 7 new pytest checkers covering missing/corrupted metadata recovery, corrupted listing marking, recipe missing regeneration rejection, and normalization logic

@@ -1,0 +1,309 @@
+[
+  {
+    "memory_id": "mem_owen_debt_called",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "The estate called in Owen's eight thousand pounds the week Marcus Bell died. The yard is the only thing he has ever built and there are four men on the payroll, one of them Col, eleven years. Forging the charge against the cafe was the only way he could see to keep any of it.",
+    "emotional_weight": 10,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_yard_books",
+      "clue_mortgage_deed"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_owen_the_call",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "opportunity_setup",
+    "truth_status": "true",
+    "summary": "Clara telephoned him at twenty past six and told him she had it all, and that she had written something down he needed to read. He heard only 'the committee'. He named the alley and the hour himself, because the alley is blind from the square and because he already knew, in some part of himself, what he was choosing.",
+    "emotional_weight": 10,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_clara_called_owen"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_owen_cover",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "cover_story",
+    "case_function": "false_alibi_reason",
+    "truth_status": "false",
+    "summary": "Owen's story: he was in the yard office from a quarter to seven taking a supplier call, and Col was there with him. He told Col what to say the moment he came back up the lane.",
+    "emotional_weight": 9,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_col_false_alibi"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_owen_never_read_it",
+    "owner_agent_id": "agent_owen",
+    "known_by_agent_ids": [
+      "agent_owen"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "killer_motive",
+    "truth_status": "true",
+    "summary": "Owen burned the page she handed him and never knew there was a second one. He has not been told. When he is told, it will be the worst moment of his life.",
+    "emotional_weight": 10,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_clara_second_page"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_clara_discovery",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_clara"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "victim_trigger",
+    "truth_status": "true",
+    "summary": "Clara worked it out over two days with a Land Registry extract and a deed from the estate papers: her home is security against another man's debt. She has lived in that flat eleven years.",
+    "emotional_weight": 9,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_property_register",
+      "clue_mortgage_deed"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_clara_the_offer",
+    "owner_agent_id": "agent_clara",
+    "known_by_agent_ids": [
+      "agent_clara"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "victim_trigger",
+    "truth_status": "true",
+    "summary": "Clara wrote the letter four times. The final draft has a second page offering Owen twelve months to buy the charge back before she sends the first page anywhere — 'I would rather be paid than be right.' She meant to give him the way out. She took only page one to the alley, because page two was for afterwards.",
+    "emotional_weight": 10,
+    "shareability": "will_hide",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_clara_second_page"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_ben_late",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "innocent_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Ben was due at the cafe's rear door at seven with the linen, as he is every morning. His van died and he was twenty-one minutes late, and in those twenty-one minutes Clara Wells was strangled at the door he should have been standing at. He has not said this out loud to anybody.",
+    "emotional_weight": 9,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ben_due_at_seven"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_ben_anchor",
+    "owner_agent_id": "agent_ben",
+    "known_by_agent_ids": [
+      "agent_ben"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Ben's van broke down on the county road at about ten to seven and Sal the milkman push-started it at twenty past. Sal was made late by it and has said so, repeatedly, to everyone.",
+    "emotional_weight": 5,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_ben_van_broke_down"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_col_the_lie",
+    "owner_agent_id": "agent_col",
+    "known_by_agent_ids": [
+      "agent_col"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Owen told Col what to say before Col had even put the load down. Col said it. Owen kept him on through two bad winters and stood at his father's funeral, and Col has eleven years and a mortgage and a boy at school, and he said it.",
+    "emotional_weight": 9,
+    "shareability": "will_lie",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_col_false_alibi"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_col_the_belt",
+    "owner_agent_id": "agent_col",
+    "known_by_agent_ids": [
+      "agent_col"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Col saw Owen come in from the lane at twenty-five past seven, breathing hard, holding his trousers up with one hand. No belt. Col thought nothing of it. He has thought about very little else since.",
+    "emotional_weight": 8,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_col_saw_no_belt"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_col_anchor",
+    "owner_agent_id": "agent_col",
+    "known_by_agent_ids": [
+      "agent_col"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "The yard gate camera stamped Col's van coming in at 07:24 off the county road. Whatever he lied about, he was not in the alley.",
+    "emotional_weight": 5,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_col_cctv_arrival"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_nadia_certificate",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "private_secret",
+    "case_function": "red_herring_motive",
+    "truth_status": "true",
+    "summary": "Nadia signed a capacity certificate Owen brought to the clinic folded over, calling it a formality. She never read it. It is the document that let him mortgage Clara's home, and Clara's letter would have finished her.",
+    "emotional_weight": 9,
+    "shareability": "will_deflect",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_capacity_certificate",
+      "clue_nadia_struck_off"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_nadia_glance",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Nadia glanced down the alley at seven and saw a big man in a grey work jacket turning in at the lane end. She took him for a delivery.",
+    "emotional_weight": 6,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_nadia_sees_owen_alley"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_nadia_anchor",
+    "owner_agent_id": "agent_nadia",
+    "known_by_agent_ids": [
+      "agent_nadia"
+    ],
+    "memory_type": "observed",
+    "case_function": "innocence_anchor",
+    "truth_status": "true",
+    "summary": "Nadia opened the clinic at 07:02 and dressed Iris Penhale's leg until 07:25, with the patient present and the notes timed and initialled at each stage.",
+    "emotional_weight": 4,
+    "shareability": "will_share_if_asked",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_nadia_patient_anchor"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_elias_certainty",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_elias"
+    ],
+    "memory_type": "false_belief",
+    "case_function": "witness_bias",
+    "truth_status": "mistaken",
+    "summary": "Elias sat facing the square from twenty to seven and is absolutely certain — and absolutely correct — that Owen Price never crossed it. He believes this settles the question. It does not occur to him that there is another way round, because nobody has used the back lane in front of him in thirty years.",
+    "emotional_weight": 7,
+    "shareability": "will_share",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_elias_certain"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  },
+  {
+    "memory_id": "mem_elias_belt",
+    "owner_agent_id": "agent_elias",
+    "known_by_agent_ids": [
+      "agent_elias"
+    ],
+    "memory_type": "witness_fragment",
+    "case_function": "clue_support",
+    "truth_status": "true",
+    "summary": "Elias taught Owen Price as a boy and can tell you the man has worn the same brown belt with a brass buckle his whole adult life, and hitches it with his left hand when he is thinking. He offers this as character. He does not know what he has said.",
+    "emotional_weight": 5,
+    "shareability": "will_share",
+    "discoverable_by_player": true,
+    "linked_clue_ids": [
+      "clue_elias_belt_anecdote"
+    ],
+    "linked_agent_ids": [],
+    "linked_location_ids": []
+  }
+]
