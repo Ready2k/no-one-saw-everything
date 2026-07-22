@@ -41,6 +41,14 @@ interface SceneArtwork {
   position?: string;
 }
 
+interface WitnessReplay {
+  frames: Array<{ src: string; label: string }>;
+  witness: string;
+  observation: string;
+  figureLabel: string;
+  direction: "toward" | "away";
+}
+
 type Beat =
   | { kind: "title" }
   | { kind: "place-reconstruct"; place: PlaceReconstruction }
@@ -74,6 +82,44 @@ const COTTAGE_EXTERIOR =
   "/art/town/buildings/generated_exteriors_v1/cottage_small_v1_exterior_canonical_alpha.png";
 const CLINIC_EXTERIOR =
   "/art/town/buildings/generated_exteriors_v1/clinic_small_v1_exterior_canonical_alpha.png";
+
+// These are cinematic reconstructions of player-visible witness moments, not
+// hidden camera footage.  A figure stays anonymous unless the public event
+// itself names them, and the motion is illustrative rather than a new clue.
+const WITNESS_REPLAYS: Record<string, Record<string, WitnessReplay>> = {
+  case_005: {
+    ev_0700_nadia_glance: {
+      frames: [
+        { src: `${CASE_005_ART}/rewind/nadia_alley_glance_empty_hd.png`, label: "the square" },
+        { src: `${CASE_005_ART}/rewind/grey_jacket_blur_hd.png`, label: "a grey jacket" },
+        { src: `${CASE_005_ART}/rewind/elias_tea_ripple_hd.png`, label: "tea ripples" },
+        { src: `${CASE_005_ART}/rewind/wet_crate_ember_hd.png`, label: "an ember fails" },
+        { src: `${CASE_005_ART}/rewind/yard_gate_dawn_hd.png`, label: "the yard gate" },
+        { src: `${CASE_005_ART}/back_lane_dawn_hd.png`, label: "then nothing" },
+      ],
+      witness: "Nadia's line of sight",
+      observation: "A passing figure turns into the alley. From the square, that is all she can make out.",
+      figureLabel: "unidentified passer-by",
+      direction: "away",
+    },
+  },
+  case_010: {
+    ev_0747_blue_coat: {
+      frames: [
+        { src: `${CASE_010_ART}/rewind/blue_coat_glimpse_empty_hd.png`, label: "the rear passage" },
+        { src: `${CASE_010_ART}/rewind/blue_coat_blur_hd.png`, label: "blue at the window" },
+        { src: `${CASE_010_ART}/rewind/rear_door_shadow_hd.png`, label: "a shadow inside" },
+        { src: `${CASE_010_ART}/rewind/mop_bucket_ripple_hd.png`, label: "water trembles" },
+        { src: `${CASE_010_ART}/rewind/rear_door_glint_hd.png`, label: "a glint by the door" },
+        { src: `${CASE_010_ART}/village_square_dawn_hd.png`, label: "the empty fountain" },
+      ],
+      witness: "Ben's glimpse from the bookshop end",
+      observation: "A blue-coated figure moves toward the cafe's rear door. The face never comes into view.",
+      figureLabel: "blue-coated figure",
+      direction: "toward",
+    },
+  },
+};
 
 const INTRO_ART_OVERRIDES: Record<string, string> = {
   [`${CASE_001_ART}/village_square_dawn_hd.png`]: `${CASE_001_INTRO_ART}/village_square_dawn_intro.jpg`,
@@ -248,7 +294,8 @@ const GLIMPSE_HOLD = 4600;
 function pickGlimpses(
   events: EventPublic[],
   windowStart: number,
-  windowEnd: number
+  windowEnd: number,
+  preferredEventIds: string[] = []
 ): EventPublic[] {
   if (events.length === 0) return [];
   const sorted = [...events].sort((a, b) => minutes(a.time) - minutes(b.time));
@@ -256,6 +303,10 @@ function pickGlimpses(
   const add = (e: EventPublic | undefined) => {
     if (e) picks.set(e.event_id, e);
   };
+  // A case's authored witness reconstruction is always worth seeing. It is
+  // built entirely from the public event text, so preferring it cannot leak
+  // any hidden action or identity.
+  for (const eventId of preferredEventIds) add(sorted.find((e) => e.event_id === eventId));
   add(sorted[0]);
   add(
     [...sorted]
@@ -271,9 +322,13 @@ function pickGlimpses(
       .sort((a, b) => b.importance - a.importance)[0]
   );
   add(sorted[sorted.length - 1]);
-  return [...picks.values()]
-    .sort((a, b) => minutes(a.time) - minutes(b.time))
-    .slice(0, 4);
+  const preferred = preferredEventIds
+    .map((eventId) => picks.get(eventId))
+    .filter((event): event is EventPublic => !!event);
+  const remaining = [...picks.values()]
+    .filter((event) => !preferredEventIds.includes(event.event_id))
+    .sort((a, b) => minutes(a.time) - minutes(b.time));
+  return [...preferred, ...remaining].slice(0, 4);
 }
 
 export default function RewindIntro({ onDone }: { onDone: () => void }) {
@@ -299,7 +354,12 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
     getMapInfo().then(setMapData).catch(() => {});
     api
       .events({ time_from: c.sim_start_time, time_to: c.discovery_time })
-      .then((events) => setGlimpses(pickGlimpses(events, windowStart, windowEnd)))
+      .then((events) => setGlimpses(pickGlimpses(
+        events,
+        windowStart,
+        windowEnd,
+        Object.keys(WITNESS_REPLAYS[c.case_id] ?? {})
+      )))
       .catch(() => {})
       .finally(() => setLoaded(true));
   }, [c, windowStart, windowEnd]);
@@ -369,7 +429,9 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
         ? TITLE_HOLD
         : beat.kind === "place-reconstruct"
           ? 5600
-          : GLIMPSE_HOLD;
+          : WITNESS_REPLAYS[c.case_id]?.[beat.kind === "glimpse" ? beat.event.event_id : ""]
+            ? 9800
+            : GLIMPSE_HOLD;
     const timer = setTimeout(() => setBeatIndex((i) => i + 1), hold);
     return () => clearTimeout(timer);
   }, [loaded, beatIndex, beat.kind]);
@@ -430,6 +492,7 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
             minutes(beat.event.time) <= windowEnd
           }
           agents={agents}
+          witnessReplay={WITNESS_REPLAYS[c.case_id]?.[beat.event.event_id]}
         />
       )}
 
@@ -565,6 +628,7 @@ function GlimpseBeat({
   locationName,
   inWindow,
   agents,
+  witnessReplay,
 }: {
   event: EventPublic;
   locations: LocationPublic[];
@@ -572,6 +636,7 @@ function GlimpseBeat({
   locationName: (id: string) => string;
   inWindow: boolean;
   agents: ReturnType<typeof useWorld>["agents"];
+  witnessReplay?: WitnessReplay;
 }) {
   const present = event.agent_ids
     .map((id) => agents.find((a) => a.agent_id === id))
@@ -590,7 +655,9 @@ function GlimpseBeat({
           <span className="rw-feed-loc">{locationName(event.location_id)}</span>
         </div>
         <div className="rw-feed-frame">
-          {artwork ? (
+          {witnessReplay ? (
+            <WitnessReplayScene replay={witnessReplay} />
+          ) : artwork ? (
             <img
               className="rw-feed-scene"
               src={artwork.src}
@@ -630,6 +697,37 @@ function GlimpseBeat({
           {inWindow && <span className="badge window">murder window</span>}
         </div>
       </div>
+    </div>
+  );
+}
+
+function WitnessReplayScene({ replay }: { replay: WitnessReplay }) {
+  return (
+    <div className={`rw-witness-scene ${replay.direction}`}>
+      {replay.frames.map((frame, index) => (
+        <img
+          key={frame.src}
+          className={`rw-feed-scene rw-witness-art rw-witness-flash flash-${index + 1}`}
+          src={frame.src}
+          alt={`${frame.label} — ${replay.observation}`}
+          draggable={false}
+        />
+      ))}
+      <div className="rw-witness-vignette" />
+      <div className="rw-witness-track" aria-hidden="true">
+        <span className="rw-witness-footstep step-one" />
+        <span className="rw-witness-footstep step-two" />
+        <span className="rw-witness-footstep step-three" />
+        <span className="rw-witness-figure" />
+      </div>
+      <div className="rw-witness-caption">
+        <span>WITNESS VIEW · {replay.witness}</span>
+        <strong>{replay.figureLabel}</strong>
+      </div>
+      <div className="rw-witness-frame-count" aria-hidden>
+        {replay.frames.map((frame, index) => <span key={frame.src}>{String(index + 1).padStart(2, "0")} · {frame.label}</span>)}
+      </div>
+      <p className="rw-witness-observation">{replay.observation}</p>
     </div>
   );
 }
