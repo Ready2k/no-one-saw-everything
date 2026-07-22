@@ -29,28 +29,79 @@ def _load_prompt(filename: str) -> str:
 
 
 def _build_forbidden_facts(case: CaseData, agent: Agent) -> list[str]:
-    """Extract hidden facts that should never leak."""
+    """Extract hidden facts (full sentences/claims) that should never leak.
+
+    Deliberately excludes solution.motive/method/opportunity.concept_groups —
+    those are individual short words ("till", "mother", "committee"), not
+    facts, and are handled separately by _build_concept_facets/_sanitise's
+    group-count check. A word this common cannot be banned outright (an
+    unrelated agent saying "my mother" in passing is not a leak), but the
+    *combination* the solution actually scores on is."""
     forbidden = []
-    
+
     # Hidden roles
     if case.solution.killer_id == agent.agent_id:
         forbidden.append(f"{agent.full_name} is the killer.")
-    
+
     for conclusion in case.conclusions:
         forbidden.append(conclusion.summary)
-        
+
     for mem in case.memories:
         if mem.owner_agent_id == agent.agent_id and mem.truth_status != "true":
             forbidden.append(mem.summary)
-            
-    for rule in case.solution.motive.concept_groups:
-        forbidden.extend(rule)
-    for rule in case.solution.method.concept_groups:
-        forbidden.extend(rule)
-    for rule in case.solution.opportunity.concept_groups:
-        forbidden.extend(rule)
-        
+
     return forbidden
+
+
+def _build_concept_facets(case: CaseData) -> list[tuple[str, list[list[str]], int]]:
+    """(facet name, concept_groups, min_groups) for motive/method/opportunity —
+    the exact vocabulary/threshold judge.py uses to score a free-text
+    accusation as correct (a facet counts once >= min_groups distinct groups
+    are matched). _sanitise applies the identical threshold to a rewrite: one
+    stray word from one group is unremarkable, but hitting enough distinct
+    groups to itself count as a correct accusation is the model leaking the
+    answer key, regardless of phrasing."""
+    return [
+        ("motive", case.solution.motive.concept_groups, case.solution.motive.min_groups),
+        ("method", case.solution.method.concept_groups, case.solution.method.min_groups),
+        ("opportunity", case.solution.opportunity.concept_groups, case.solution.opportunity.min_groups),
+    ]
+
+
+def _concept_combination_leak(
+    text_lower: str,
+    allowed_blob: str,
+    concept_facets: list[tuple[str, list[list[str]], int]],
+) -> Optional[str]:
+    """True if `text_lower` hits enough distinct concept groups from any
+    facet to itself clear that facet's min_groups bar — i.e. paraphrases the
+    solution's answer key in its own grading vocabulary (see _sanitise's 4b
+    for the full rationale). Shared by _sanitise and belief_updater's
+    talking-point filter, which has the same forbidden-fact surface but
+    never routes through _sanitise itself."""
+    for facet_name, groups, min_groups in concept_facets:
+        if not groups:
+            continue
+        matched_groups = 0
+        for group in groups:
+            hit = False
+            for word in group:
+                word_lower = word.lower().strip()
+                if not word_lower or word_lower in allowed_blob:
+                    continue
+                pattern = rf"\b{re.escape(word_lower)}\b"
+                if re.search(pattern, text_lower):
+                    hit = True
+                    break
+            if hit:
+                matched_groups += 1
+        # Cap the bar at how many groups actually exist: a facet authored
+        # with fewer groups than its own min_groups (or a single very
+        # specific group) must still be reachable, not silently unblockable.
+        threshold = max(1, min(min_groups, len(groups)))
+        if matched_groups >= threshold:
+            return f"{facet_name} ({matched_groups}/{len(groups)} concept groups)"
+    return None
 
 
 def _sanitise(
@@ -59,6 +110,7 @@ def _sanitise(
     allowed_facts: list[str],
     case: CaseData,
     allowed_context: list[str],
+    concept_facets: Optional[list[tuple[str, list[list[str]], int]]] = None,
 ) -> Optional[str]:
     """
     Sanitises LLM text.
@@ -81,24 +133,29 @@ def _sanitise(
     # Rather than checking all IDs, we just look for typical ID formats if they leak,
     # but more robustly, we just check forbidden facts.
 
-    # 4. Forbidden facts
-    # We do a basic substring check for very specific forbidden phrases, but a better
-    # check is if any forbidden fact's key nouns are leaked in a way that suggests guilt.
-    # To keep it simple and deterministic, we'll check exact string overlap of long chunks.
-    # Actually, the requirement was "forbidden facts passed in forbidden_facts".
+    # 4. Forbidden facts (single sentences/claims: the killer label sentence,
+    # conclusion summaries, an agent's own lies)
+    # Word-boundary match rather than a raw substring check, so a short entry
+    # can't false-positive inside an unrelated word — the same style already
+    # used for VIOLENCE_TERMS and agent names below.
     #
     # Exempt any forbidden phrase that is already visible in the deterministic
-    # text/allowed context being rewritten: the solution's grading concept
-    # groups (used to score free-text accusations) share vocabulary with
-    # scripted dialogue by design — e.g. a killer's false alibi is
-    # deliberately worded close to the true murder window ("quarter to
-    # eight"). That word overlap is the scripted lie doing its job, not the
-    # model smuggling in a new fact, so a faithful paraphrase must not be
-    # rejected for reusing wording the player could already see.
+    # text/allowed context being rewritten: that word overlap is the scripted
+    # answer doing its job, not the model smuggling in a new fact, so a
+    # faithful paraphrase must not be rejected for reusing wording the player
+    # could already see.
     for fact in forbidden_facts:
-        fact_lower = fact.lower()
-        if len(fact) > 10 and fact_lower in text_lower and fact_lower not in allowed_blob:
+        fact_lower = fact.lower().strip()
+        if not fact_lower or fact_lower in allowed_blob:
+            continue
+        pattern = rf"\b{re.escape(fact_lower)}\b"
+        if re.search(pattern, text_lower):
             return f"Contains forbidden fact: {fact}"
+
+    # 4b. Forbidden fact *combinations* — see _concept_combination_leak.
+    leak = _concept_combination_leak(text_lower, allowed_blob, concept_facets or [])
+    if leak:
+        return f"Contains forbidden fact combination: {leak}"
 
     # 5. Unsupported facts
     # The rewrite may not introduce cast members that the grounded answer never
@@ -221,6 +278,7 @@ def rewrite_interview_answer(
     user_prompt_template = _load_prompt("interview_rewrite_user.txt")
 
     forbidden_facts = _build_forbidden_facts(case, agent)
+    concept_facets = _build_concept_facets(case)
 
     user_prompt = user_prompt_template.format(
         name=agent.full_name,
@@ -236,7 +294,7 @@ def rewrite_interview_answer(
         forbidden_facts="- " + "\n- ".join(forbidden_facts) if forbidden_facts else "None",
         deterministic_text=deterministic_text
     )
-    
+
     client = get_llm_client()
     try:
         result = client.generate_json(
@@ -251,7 +309,8 @@ def rewrite_interview_answer(
         if recent_exchange:
             allowed_context.extend(recent_exchange)
         rejection = _sanitise(
-            result.rewritten_text, forbidden_facts, allowed_facts, case, allowed_context
+            result.rewritten_text, forbidden_facts, allowed_facts, case, allowed_context,
+            concept_facets=concept_facets,
         )
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
@@ -293,6 +352,7 @@ def rewrite_challenge_response(
     user_prompt_template = _load_prompt("challenge_rewrite_user.txt")
 
     forbidden_facts = _build_forbidden_facts(case, agent)
+    concept_facets = _build_concept_facets(case)
 
     user_prompt = user_prompt_template.format(
         name=agent.full_name,
@@ -310,7 +370,7 @@ def rewrite_challenge_response(
         forbidden_facts="- " + "\n- ".join(forbidden_facts) if forbidden_facts else "None",
         deterministic_text=deterministic_text
     )
-    
+
     client = get_llm_client()
     try:
         result = client.generate_json(
@@ -327,7 +387,8 @@ def rewrite_challenge_response(
             agent.full_name,
         ]
         rejection = _sanitise(
-            result.rewritten_text, forbidden_facts, allowed_facts, case, allowed_context
+            result.rewritten_text, forbidden_facts, allowed_facts, case, allowed_context,
+            concept_facets=concept_facets,
         )
         if rejection:
             logger.warning(f"Rewrite rejected: {rejection}")
@@ -397,6 +458,7 @@ def generate_open_ended_response(
     user_prompt_template = _load_prompt("open_ended_user.txt")
 
     forbidden_facts = _build_forbidden_facts(case, agent)
+    concept_facets = _build_concept_facets(case)
 
     user_prompt = user_prompt_template.format(
         name=agent.full_name,
@@ -422,7 +484,10 @@ def generate_open_ended_response(
         allowed_context = [question_text, agent.full_name]
         if recent_exchange:
             allowed_context.extend(recent_exchange)
-        rejection = _sanitise(result.rewritten_text, forbidden_facts, [], case, allowed_context)
+        rejection = _sanitise(
+            result.rewritten_text, forbidden_facts, [], case, allowed_context,
+            concept_facets=concept_facets,
+        )
         if rejection:
             logger.warning(f"Open-ended response rejected: {rejection}")
             return RewriteResult(

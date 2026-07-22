@@ -1227,6 +1227,62 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
             "loc_elias_bench": 2.0,
         },
     },
+    "case_010": {
+        # Case 010 deliberately revisits Case 001 in Case 005's authored
+        # village.  The building footprints below are fixed to the Case 005
+        # map so a player recognises the square, cafe, clinic, and yard.
+        "mode": "case_art",
+        "map": {
+            "definition_id": "case_010_storage_room_village_v1",
+            "asset": "case_010_storage_room_village_v1",
+            "image": "/art/case_010/map/case_010_village_map_dawn.png",
+            "width": 1448,
+            "height": 1086,
+            "tile_size": 32,
+            "grid": {"cols": 45, "rows": 34},
+            "origin": "north_west",
+            "base_palette": "wet_indigo_dawn",
+            "lighting_overlay": "runtime_lightingTint",
+        },
+        "location_visuals": {
+            "loc_village_square": {"x": 515, "y": 250, "width": 420, "height": 230, "layer": "exterior"},
+            "loc_fountain": {"x": 650, "y": 292, "width": 128, "height": 112, "layer": "exterior"},
+            "loc_elias_bench": {"x": 750, "y": 336, "width": 105, "height": 58, "layer": "exterior"},
+            "loc_hobbs_cafe": {"x": 696, "y": 496, "width": 270, "height": 290, "layer": "exterior"},
+            "loc_cafe_kitchen": {"x": 740, "y": 570, "width": 105, "height": 82, "layer": "interior"},
+            "loc_cafe_storage": {"x": 850, "y": 570, "width": 90, "height": 82, "layer": "interior"},
+            "loc_rear_alley": {"x": 610, "y": 430, "width": 78, "height": 260, "layer": "exterior"},
+            "loc_bookshop": {"x": 260, "y": 388, "width": 250, "height": 230, "layer": "exterior"},
+            "loc_clinic": {"x": 885, "y": 280, "width": 190, "height": 170, "layer": "exterior"},
+            "loc_marcus_house": {"x": 456, "y": 55, "width": 205, "height": 165, "layer": "exterior"},
+            "loc_marcus_study": {"x": 500, "y": 95, "width": 110, "height": 90, "layer": "interior"},
+            "loc_owen_house": {"x": 1045, "y": 590, "width": 340, "height": 340, "layer": "exterior"},
+            "loc_clara_flat": {"x": 740, "y": 510, "width": 150, "height": 110, "layer": "interior"},
+            "loc_priya_flat": {"x": 180, "y": 700, "width": 180, "height": 155, "layer": "interior"},
+            "loc_nadia_flat": {"x": 380, "y": 650, "width": 150, "height": 165, "layer": "interior"},
+            "loc_elias_house": {"x": 760, "y": 45, "width": 260, "height": 180, "layer": "interior"},
+        },
+        "light_overlays": [
+            {"id": "case_010_square_lamp", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_village_square", "x": 578, "y": 336, "width": 200, "height": 170, "from": "00:00", "to": "08:30", "opacity": 0.66},
+            {"id": "case_010_cafe_windows", "semantic_asset_id": "light_pub_window_glow", "location_id": "loc_hobbs_cafe", "x": 817, "y": 682, "width": 230, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.48},
+            {"id": "case_010_bookshop_windows", "semantic_asset_id": "light_window_warm", "location_id": "loc_bookshop", "x": 388, "y": 502, "width": 170, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.42},
+            {"id": "case_010_clinic_window", "semantic_asset_id": "light_window_cool", "location_id": "loc_clinic", "x": 983, "y": 364, "width": 125, "height": 90, "from": "00:00", "to": "08:30", "opacity": 0.45},
+            {"id": "case_010_yard_security_light", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_owen_house", "x": 1274, "y": 708, "width": 150, "height": 130, "from": "00:00", "to": "07:15", "opacity": 0.38},
+        ],
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
+            "loc_cafe_kitchen", "loc_cafe_storage", "loc_rear_alley", "loc_bookshop",
+            "loc_clinic", "loc_marcus_house", "loc_marcus_study", "loc_owen_house",
+            "loc_clara_flat", "loc_priya_flat", "loc_nadia_flat", "loc_elias_house",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1, "loc_fountain": 2.0, "loc_elias_bench": 2.0,
+            "loc_hobbs_cafe": 2.3, "loc_cafe_kitchen": 2.0, "loc_cafe_storage": 2.0,
+            "loc_rear_alley": 2.6, "loc_bookshop": 2.3, "loc_clinic": 2.4,
+            "loc_marcus_house": 2.2, "loc_marcus_study": 2.0, "loc_owen_house": 2.2,
+        },
+    },
     "case_006": {
         "mode": "canonical_overworld",
         "map": CANONICAL_MAP,
@@ -1624,7 +1680,13 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
     
     canonical_locations_dict = {}
     for loc_id in visible_location_ids_list:
-        pos, bounds, layer = pilot_location_visuals(loc_id)
+        authored = (config.get("location_visuals") or {}).get(loc_id)
+        if authored:
+            bounds = {key: authored[key] for key in ("x", "y", "width", "height")}
+            pos = _center(bounds)
+            layer = authored["layer"]
+        else:
+            pos, bounds, layer = pilot_location_visuals(loc_id)
         if pos and bounds:
             canonical_locations_dict[loc_id] = _tagged_location_payload(loc_id, pos, bounds, layer)
         elif loc_id in CANONICAL_LOCATIONS:

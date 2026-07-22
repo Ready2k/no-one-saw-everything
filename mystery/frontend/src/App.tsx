@@ -193,7 +193,8 @@ export default function App() {
       audioManager.stopAmbient();
       return;
     }
-    audioManager.playAmbient(world?.caseOverview.case_id === "case_005" ? "case_005_rain" : "investigation");
+    const hasCase005Atmosphere = ["case_005", "case_010"].includes(world?.caseOverview.case_id ?? "");
+    audioManager.playAmbient(hasCase005Atmosphere ? "case_005_rain" : "investigation");
   }, [mode, showIntro, tab, world?.caseOverview.case_id]);
 
   useEffect(() => {

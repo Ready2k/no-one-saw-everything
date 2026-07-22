@@ -31,7 +31,7 @@ from ..models import Agent, AgentBeliefState, CaseData
 from ..session import Session
 from .client import get_llm_client
 from .config import get_llm_config
-from .dialogue_rewriter import _build_forbidden_facts
+from .dialogue_rewriter import _build_forbidden_facts, _build_concept_facets, _concept_combination_leak
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +73,7 @@ def _validate_belief(
         target = None
 
     forbidden = [f.lower() for f in _build_forbidden_facts(case, agent) if len(f) > 10]
+    concept_facets = _build_concept_facets(case)
     first_names = [a.full_name.split()[0] for a in case.agents]
 
     points: list[str] = []
@@ -86,6 +87,13 @@ def _validate_belief(
         if any(label in lowered for label in ("killer", "red_herring", "victim_role")):
             continue
         if any(fact in lowered for fact in forbidden):
+            continue
+        # Same grading-vocabulary combination check as the dialogue-rewrite
+        # sanitiser (_sanitise's 4b) — talking points never route through
+        # _sanitise, so without this a point could paraphrase the motive in
+        # concept-group words ("stole", "till", "mother") and slip past the
+        # single-fact check above untouched.
+        if _concept_combination_leak(lowered, "", concept_facets):
             continue
         # Talking points are self-focused colour; one that names another
         # cast member is how an invented sighting would smuggle itself in.

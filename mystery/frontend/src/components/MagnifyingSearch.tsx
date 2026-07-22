@@ -387,8 +387,12 @@ export function MagnifyingSearch({
             <div className={`morgue-sheet ${sheetFolded ? "folded" : ""}`} aria-hidden="true" />
           )}
         </div>
-        {isIllustration && imageUrl.includes("/art/case_005/") && (
-          <CaseAtmosphere caseId="case_005" scope="place" locationId={locationId} />
+        {isIllustration && (imageUrl.includes("/art/case_005/") || imageUrl.includes("/art/case_010/")) && (
+          <CaseAtmosphere
+            caseId={imageUrl.includes("/art/case_010/") ? "case_010" : "case_005"}
+            scope="place"
+            locationId={locationId}
+          />
         )}
       </div>
 

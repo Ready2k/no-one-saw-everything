@@ -167,3 +167,77 @@ def test_dialogue_rejects_forbidden_facts(monkeypatch):
     assert result.fallback_used is True
     assert result.fallback_reason == "validation_failed"
 
+
+def test_concept_group_combination_leak_is_blocked(monkeypatch):
+    """A rewrite can paraphrase the killer's motive using nothing but the
+    solution's own grading vocabulary (case_001's real, unmodified
+    solution.motive.concept_groups: till/cash/..., steal/stole/...,
+    blackmail/committee/..., mother/care home/...) — no role label, no
+    violence term, no long-sentence exact match. Proven live against a
+    running server: pointing the LLM settings at an attacker-controlled
+    endpoint returning exactly this text made /api/interview/ask hand the
+    killer's full motive to the player before a single clue was discovered.
+    Every individual word here is <=10 chars, which is why the old
+    `len(fact) > 10` gate in _sanitise let it straight through."""
+
+    test_case_data = get_case("case_001")
+
+    leak_text = (
+        "Between us, I'd been quietly taking from the till to cover my "
+        "mother's care home debts, and he found out. He said if I didn't "
+        "own up by this morning he'd take it straight to the committee "
+        "himself."
+    )
+
+    def mock_get_llm_client():
+        return FakeLLMClient(override_response={"rewritten_text": leak_text})
+
+    monkeypatch.setattr(rewriter_module, "get_llm_client", mock_get_llm_client)
+
+    killer = next(a for a in test_case_data.agents if a.agent_id == test_case_data.solution.killer_id)
+
+    result = rewrite_interview_answer(
+        case=test_case_data,
+        agent=killer,
+        question_text="What was your relationship with the victim?",
+        deterministic_text="He was exacting, but he gave me the manager's job when nobody else would.",
+        allowed_facts=[],
+        pressure_level=0.3,
+    )
+
+    assert result.fallback_used is True
+    assert result.fallback_reason == "validation_failed"
+    assert "till" not in result.rewritten_text.lower()
+    assert "committee" not in result.rewritten_text.lower()
+
+
+def test_single_concept_word_in_unrelated_flavour_is_not_blocked(monkeypatch):
+    """The flip side of the combination check: one word from one concept
+    group, in a context that has nothing to do with the case, must not be
+    treated as a leak — 'mother' alone is ordinary conversation, not a
+    confession. Regression guard for the false positive the combination
+    check itself introduced (case_001's motive concept groups include
+    'mother' as a single-word group)."""
+
+    test_case_data = get_case("case_001")
+
+    def mock_get_llm_client():
+        return FakeLLMClient(override_response={
+            "rewritten_text": "I hated my mother's cooking, if I'm honest."
+        })
+
+    monkeypatch.setattr(rewriter_module, "get_llm_client", mock_get_llm_client)
+    agent = test_case_data.agents[0]
+
+    result = rewrite_interview_answer(
+        case=test_case_data,
+        agent=agent,
+        question_text="Tell me about your childhood.",
+        deterministic_text="I'd rather not get into that.",
+        allowed_facts=[],
+        pressure_level=0.3,
+    )
+
+    assert result.fallback_used is False
+    assert result.rewritten_text == "I hated my mother's cooking, if I'm honest."
+

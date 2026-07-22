@@ -89,6 +89,30 @@ _CASE_005_SEARCH_ILLUSTRATIONS = {
 }
 
 
+# Case 010 is the original storage-room investigation replayed in the same
+# physical village as Case 005.  Its dawn scenes deliberately reuse the Case
+# 005 set dressing; the generated storage-room establishing shot is the one
+# Case 001-specific room needed to keep the murder scene truthful.
+_CASE_010_SEARCH_ILLUSTRATIONS = {
+    "loc_village_square": "/art/case_010/village_square_dawn_hd.png",
+    "loc_fountain": "/art/case_010/village_square_dawn_hd.png",
+    "loc_elias_bench": "/art/case_010/village_square_dawn_hd.png",
+    "loc_hobbs_cafe": "/art/case_010/hobbs_cafe_dawn_hd.png",
+    "loc_cafe_kitchen": "/art/case_010/hobbs_cafe_dawn_hd.png",
+    "loc_cafe_storage": "/art/case_010/cafe_storage_dawn_hd.png",
+    "loc_rear_alley": "/art/case_010/rear_alley_fire_hd.png",
+    "loc_bookshop": "/art/case_010/bookshop_dawn_hd.png",
+    "loc_clinic": "/art/case_010/clinic_dawn_hd.png",
+    "loc_marcus_house": "/art/case_010/bookshop_dawn_hd.png",
+    "loc_marcus_study": "/art/case_010/bookshop_dawn_hd.png",
+    "loc_owen_house": "/art/case_010/owen_yard_dawn_hd.png",
+    "loc_clara_flat": "/art/case_010/clara_flat_dawn_hd.png",
+    "loc_priya_flat": "/art/case_010/clara_flat_dawn_hd.png",
+    "loc_nadia_flat": "/art/case_010/clara_flat_dawn_hd.png",
+    "loc_elias_house": "/art/case_010/clara_flat_dawn_hd.png",
+}
+
+
 _REUSABLE_SEARCH_ILLUSTRATIONS = {
     "loc_village_square": "/art/town/places_hd/village_square_hd.png",
     "loc_fishery": "/art/town/places_hd/fishery_hd.png",
@@ -114,6 +138,10 @@ def location_search_illustration(location_id: str, case_id: str | None = None) -
             return case_illustration
     if case_id == "case_005":
         case_illustration = _CASE_005_SEARCH_ILLUSTRATIONS.get(location_id)
+        if case_illustration:
+            return case_illustration
+    if case_id == "case_010":
+        case_illustration = _CASE_010_SEARCH_ILLUSTRATIONS.get(location_id)
         if case_illustration:
             return case_illustration
     return _REUSABLE_SEARCH_ILLUSTRATIONS.get(location_id)

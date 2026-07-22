@@ -6,6 +6,8 @@ import urllib.request
 from typing import Protocol, Type, TypeVar, Any
 from pydantic import BaseModel
 
+from .http_safety import urlopen_no_redirect
+
 T = TypeVar("T", bound=BaseModel)
 
 class LLMClient(Protocol):
@@ -330,7 +332,7 @@ class OpenAICompatibleLLMClient:
         
         req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers)
         try:
-            with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
+            with urlopen_no_redirect(req, timeout=timeout_seconds) as response:
                 resp_data = json.loads(response.read().decode("utf-8"))
                 content = resp_data["choices"][0]["message"]["content"]
                 if not content:
@@ -385,7 +387,7 @@ class OpenAICompatibleLLMClient:
             
         req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers)
         try:
-            with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
+            with urlopen_no_redirect(req, timeout=timeout_seconds) as response:
                 resp_data = json.loads(response.read().decode("utf-8"))
                 content = resp_data["choices"][0]["message"]["content"]
                 if schema is not None:
