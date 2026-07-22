@@ -24,6 +24,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .http_safety import urlopen_no_redirect
+
 # Same hosts as environment/frontend_server/translator/ollama_utils.py on
 # main. Duplicated rather than imported: the mystery module is a standalone
 # FastAPI service with its own venv and does not depend on the Django app.
@@ -113,7 +115,7 @@ def list_models_for_base_url(base_url: str, api_key: Optional[str] = None) -> tu
     last_error: Optional[str] = None
 
     try:
-        with urllib.request.urlopen(f"{root}/api/tags", timeout=_USER_PROBE_TIMEOUT_SECONDS) as resp:
+        with urlopen_no_redirect(f"{root}/api/tags", timeout=_USER_PROBE_TIMEOUT_SECONDS) as resp:
             data = json.loads(resp.read().decode("utf-8"))
         names = sorted(m.get("name", "") for m in data.get("models", []) if m.get("name"))
         if names:
@@ -127,7 +129,7 @@ def list_models_for_base_url(base_url: str, api_key: Optional[str] = None) -> tu
     if api_key:
         req.add_header("Authorization", f"Bearer {api_key}")
     try:
-        with urllib.request.urlopen(req, timeout=_USER_PROBE_TIMEOUT_SECONDS) as resp:
+        with urlopen_no_redirect(req, timeout=_USER_PROBE_TIMEOUT_SECONDS) as resp:
             data = json.loads(resp.read().decode("utf-8"))
         names = sorted(m.get("id", "") for m in data.get("data", []) if m.get("id"))
         if names:
