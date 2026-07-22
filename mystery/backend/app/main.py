@@ -490,13 +490,6 @@ class LlmTestRequest(BaseModel):
 
 
 def _run_llm_test(base_url: str, api_key: Optional[str], model: str) -> dict:
-# SECURITY NOTE: base_url is user-supplied and used to make HTTP requests.
-# In a hosted/multi-user deployment, validate against an allowlist to prevent SSRF.
-@app.post("/api/llm-settings/test")
-def test_llm_settings(payload: LlmTestRequest):
-    """Sends a real chat completion request to the given endpoint/model so the
-    Settings panel can prove the LLM is actually generating a response, rather
-    than just resolving a reachable model list."""
     from .llm.config import normalize_base_url
     from .llm.client import OpenAICompatibleLLMClient
 
@@ -528,6 +521,8 @@ def test_llm_settings(payload: LlmTestRequest):
     return {"ok": True, "reply": reply, "elapsed_ms": elapsed_ms, "nonce": nonce}
 
 
+# SECURITY NOTE: base_url is user-supplied and used to make HTTP requests.
+# In a hosted/multi-user deployment, validate against an allowlist to prevent SSRF.
 @app.post("/api/llm-settings/test")
 def test_llm_settings(payload: LlmTestRequest):
     """Sends a real chat completion request to the given endpoint/model so the
