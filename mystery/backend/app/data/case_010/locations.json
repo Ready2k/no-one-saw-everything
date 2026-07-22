@@ -1,0 +1,373 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The open heart of the village, with a stone fountain, benches, and a view of the cafe and bookshop fronts.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_bookshop",
+      "loc_clinic",
+      "loc_rear_alley",
+      "loc_marcus_house",
+      "loc_owen_house"
+    ],
+    "visibility_type": "public",
+    "camera_coverage": false,
+    "map_position": {
+      "x": 370,
+      "y": 180
+    },
+    "map_bounds": {
+      "x": 300,
+      "y": 140,
+      "width": 150,
+      "height": 80
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_hobbs_cafe",
+    "name": "Hobbs Cafe",
+    "description": "The village cafe. Counter, tables, and the till at the front; kitchen behind.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_cafe_kitchen"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_village_square"
+    ],
+    "camera_coverage": false,
+    "map_position": {
+      "x": 390,
+      "y": 115
+    },
+    "map_bounds": {
+      "x": 365,
+      "y": 87,
+      "width": 67,
+      "height": 46
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_cafe_kitchen",
+    "name": "Cafe Kitchen",
+    "description": "The working kitchen behind the cafe counter. Coat hooks, sink, mop bucket in the corner.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_cafe_storage"
+    ],
+    "access_rules": [
+      "staff"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "map_position": {
+      "x": 377,
+      "y": 98
+    },
+    "map_bounds": {
+      "x": 366,
+      "y": 88,
+      "width": 40,
+      "height": 20
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_cafe_storage",
+    "name": "Cafe Storage Room",
+    "description": "A cramped storage room behind the kitchen, stacked with crates. A rear door opens onto the alley.",
+    "connected_location_ids": [
+      "loc_cafe_kitchen",
+      "loc_rear_alley"
+    ],
+    "access_rules": [
+      "staff",
+      "keyholder"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [
+      "loc_cafe_kitchen",
+      "loc_rear_alley"
+    ],
+    "camera_coverage": false,
+    "murder_suitable": true,
+    "map_position": {
+      "x": 418,
+      "y": 94
+    },
+    "map_bounds": {
+      "x": 406,
+      "y": 88,
+      "width": 24,
+      "height": 18
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_rear_alley",
+    "name": "Rear Alley",
+    "description": "A narrow service alley running behind the cafe and bookshop. Bins, crates, and the cafe's rear door.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_cafe_storage",
+      "loc_bookshop"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_cafe_storage"
+    ],
+    "map_position": {
+      "x": 360,
+      "y": 56
+    },
+    "map_bounds": {
+      "x": 270,
+      "y": 52,
+      "width": 160,
+      "height": 8
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Reed & Bell Bookshop",
+    "description": "Isabella Reed's bookshop, part-funded by Marcus Bell. Its back door opens onto the rear alley.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_rear_alley"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 295,
+      "y": 114
+    },
+    "map_bounds": {
+      "x": 267,
+      "y": 98,
+      "width": 56,
+      "height": 35
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "A small clinic on the square where Nadia Cole works the early shift.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 432,
+      "y": 244
+    },
+    "map_bounds": {
+      "x": 380,
+      "y": 215,
+      "width": 103,
+      "height": 56
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_marcus_house",
+    "name": "Marcus Bell's House",
+    "description": "Marcus's house on the edge of the square. His study holds the cafe's books.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_marcus_study"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 383,
+      "y": 372
+    },
+    "map_bounds": {
+      "x": 349,
+      "y": 328,
+      "width": 67,
+      "height": 92
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_marcus_study",
+    "name": "Marcus's Study",
+    "description": "A small study off the house where Marcus keeps the cafe's books and his own private ledger.",
+    "connected_location_ids": [
+      "loc_marcus_house"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_owen_house",
+    "name": "Owen Price's House & Yard",
+    "description": "Owen's house and builder's timber yard on the far side of the square.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 475,
+      "y": 372
+    },
+    "map_bounds": {
+      "x": 442,
+      "y": 328,
+      "width": 67,
+      "height": 92
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_clara_flat",
+    "name": "Flat above Hobbs Cafe",
+    "description": "Clara Wells's small flat above the cafe, reached by a side stair. Neat to the point of silence; the paperwork lives in a shoebox under the bed.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 295,
+      "y": 74
+    },
+    "map_bounds": {
+      "x": 267,
+      "y": 67,
+      "width": 56,
+      "height": 26
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_fountain",
+    "name": "Fountain",
+    "description": "The stone fountain at the square's heart, its rim worn smooth by generations of sitters. Where villagers go to be alone in public — the polite fiction is that nobody watches who.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 370,
+      "y": 184
+    },
+    "map_bounds": {
+      "x": 357,
+      "y": 168,
+      "width": 26,
+      "height": 28
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_elias_bench",
+    "name": "Elias's Bench",
+    "description": "The specific bench in the village square where Elias always sits, facing the cafe.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_fountain"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "map_position": {
+      "x": 335,
+      "y": 172
+    },
+    "map_bounds": {
+      "x": 322,
+      "y": 160,
+      "width": 24,
+      "height": 24
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_priya_flat",
+    "name": "Priya's Flat",
+    "description": "A small rented flat with more books than furniture, most of them borrowed from the shop and faithfully returned.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 185,
+      "y": 315
+    },
+    "map_bounds": {
+      "x": 170,
+      "y": 295,
+      "width": 30,
+      "height": 42
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_nadia_flat",
+    "name": "Nadia's Flat",
+    "description": "Nadia Cole's neat and tidy apartment.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 215,
+      "y": 315
+    },
+    "map_bounds": {
+      "x": 200,
+      "y": 295,
+      "width": 30,
+      "height": 42
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_elias_house",
+    "name": "Elias Grant's House",
+    "description": "A quiet little house belonging to the retired schoolteacher Elias Grant.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 291,
+      "y": 372
+    },
+    "map_bounds": {
+      "x": 258,
+      "y": 328,
+      "width": 67,
+      "height": 92
+    },
+    "visual_layer": "interior"
+  }
+]
