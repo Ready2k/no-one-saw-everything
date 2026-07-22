@@ -1,0 +1,26 @@
+{
+  "case_id": "case_010",
+  "title": "The Storage Room Murder",
+  "source_case": "case_001",
+  "shared_village_case": "case_005",
+  "art_direction": "neo_noir_village_v1",
+  "lighting": "wet indigo dawn with restrained amber practical lights",
+  "purpose": "Case 001 replayed in the Case 005 village, with Case 001's dawn timing, residents, and storage-room murder intact.",
+  "assets": {
+    "overhead_village": "/art/case_010/overhead/village_overhead_dawn.png",
+    "village_map": "/art/case_010/map/case_010_village_map_dawn.png",
+    "loc_village_square": "/art/case_010/village_square_dawn_hd.png",
+    "loc_hobbs_cafe": "/art/case_010/hobbs_cafe_dawn_hd.png",
+    "loc_cafe_storage": "/art/case_010/cafe_storage_dawn_hd.png",
+    "loc_rear_alley": "/art/case_010/rear_alley_fire_hd.png",
+    "loc_bookshop": "/art/case_010/bookshop_dawn_hd.png",
+    "loc_clinic": "/art/case_010/clinic_dawn_hd.png",
+    "loc_clara_flat": "/art/case_010/clara_flat_dawn_hd.png",
+    "loc_owen_house": "/art/case_010/owen_yard_dawn_hd.png"
+  },
+  "constraints": [
+    "All reused scenes are player-safe establishing art.",
+    "Case 010 has no rear-alley fire; the alley image is reused only as wet, empty village geography.",
+    "The dedicated storage room is player-safe and contains no body, weapon, blood, or highlighted evidence."
+  ]
+}

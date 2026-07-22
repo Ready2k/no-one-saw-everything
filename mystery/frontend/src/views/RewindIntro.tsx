@@ -55,6 +55,7 @@ const CASE_002_INTRO_ART = `${CASE_002_ART}/intro`;
 const CASE_004_ART = "/art/case_004";
 const CASE_004_INTRO_ART = `${CASE_004_ART}/intro`;
 const CASE_005_ART = "/art/case_005";
+const CASE_010_ART = "/art/case_010";
 const TOWN_INTERIORS = "/art/town/interiors_hd";
 const TOWN_INTERIORS_INTRO = `${TOWN_INTERIORS}/intro`;
 const TOWN_PLACES = "/art/town/places_hd";
@@ -223,6 +224,19 @@ const CASE_005_PLACES: PlaceReconstruction[] = [
   },
 ];
 
+const CASE_010_PLACES: PlaceReconstruction[] = [
+  {
+    id: "case-010-village-storage",
+    displayName: "Hobbs Cafe & the Storage Room",
+    matchedLine: "The same dawn village, with the cafe's rear room sealed off.",
+    exteriorSrc: `${CASE_010_ART}/overhead/village_overhead_dawn.png`,
+    interiorSrc: `${CASE_010_ART}/cafe_storage_dawn_hd.png`,
+    focus: { x: 57, y: 61 },
+    description:
+      "Rain slicks the same square and the same cafe windows. Beyond the public room, a service door leads to the quiet storage room where nobody claims to have seen what happened.",
+  },
+];
+
 // Auto-advance pacing (ms). Cast and brief wait for the player.
 const TITLE_HOLD = 4200;
 const GLIMPSE_HOLD = 4600;
@@ -299,6 +313,8 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
           ? CASE_004_PLACES
           : c.case_id === "case_005"
             ? CASE_005_PLACES
+            : c.case_id === "case_010"
+              ? CASE_010_PLACES
             : [];
     for (const place of places) {
       urls.add(place.exteriorSrc);
@@ -322,6 +338,8 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
             ? CASE_004_PLACES
             : c.case_id === "case_005"
               ? CASE_005_PLACES
+              : c.case_id === "case_010"
+                ? CASE_010_PLACES
               : [];
       for (const place of places) {
         introBeats.push({ kind: "place-reconstruct", place });

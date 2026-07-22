@@ -11,7 +11,7 @@ export default function CaseAtmosphere({
   scope?: "map" | "place";
   locationId?: string;
 }) {
-  if (caseId !== "case_005") return null;
+  if (caseId !== "case_005" && caseId !== "case_010") return null;
 
   // The map is an exterior overview. Individual search illustrations may be
   // indoors, so keep weather outside rather than laying rain over rooms.
@@ -24,7 +24,9 @@ export default function CaseAtmosphere({
   const isExterior = scope === "map" || (locationId != null && exteriorPlaceIds.has(locationId));
   if (!isExterior) return null;
 
-  const smoke = locationId === "loc_rear_alley";
+  // Case 010 shares the weather and village, but its storage-room murder has
+  // no fire: reserve smoke for Case 005's actual discovery scene.
+  const smoke = caseId === "case_005" && locationId === "loc_rear_alley";
   return (
     <div
       className={`case-atmosphere case-atmosphere-${scope}${smoke ? " has-smoke" : ""}`}
