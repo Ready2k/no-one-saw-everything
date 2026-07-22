@@ -104,9 +104,20 @@ from .case_store import set_active_start_time
 # X-Session-Id header. A ContextVar so concurrent requests each see their own player.
 _current_player: ContextVar[str] = ContextVar("mystery_player", default=DEFAULT_PLAYER_ID)
 
+# The remote socket address for the request being handled right now, set by the same
+# middleware. Rate limiting must key on this, not on X-Session-Id: that header is
+# whatever string the client sends, so a limiter keyed on it is bypassed for free by
+# sending a fresh id on every request. The socket peer address costs nothing to change
+# on the same connection and is what actually identifies "one requester" here.
+_current_remote_addr: ContextVar[str] = ContextVar("mystery_remote_addr", default="unknown")
+
 
 def current_player_id() -> str:
     return _current_player.get()
+
+
+def current_remote_addr() -> str:
+    return _current_remote_addr.get()
 
 
 def _effective_case_id(player_id: str | None = None) -> str:
@@ -284,6 +295,7 @@ async def request_context_and_autosave(request: Request, call_next):
     """
     player_id = sanitize_player_id(request.headers.get("x-session-id"))
     ctx_token = _current_player.set(player_id)
+    remote_token = _current_remote_addr.set(request.client.host if request.client else "unknown")
     try:
         # Time-of-day wrapping must follow the case this request is actually playing
         # (case_004 runs 22:00–23:45; case_001 mornings).
@@ -307,6 +319,7 @@ async def request_context_and_autosave(request: Request, call_next):
         return response
     finally:
         _current_player.reset(ctx_token)
+        _current_remote_addr.reset(remote_token)
 
 
 def _playtest_mode_enabled() -> bool:
@@ -454,7 +467,7 @@ def discover_llm_models(payload: ModelDiscoveryRequest):
     Custom (OpenAI-compatible) provider's Model dropdown."""
     from .llm.discovery import list_models_for_base_url
 
-    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    _enforce_rate_limit(_llm_rate_limiter, current_remote_addr(), "LLM settings")
     if not payload.base_url.strip():
         raise HTTPException(status_code=400, detail="base_url is required")
     _reject_ssrf_target(payload.base_url)
@@ -474,7 +487,7 @@ def discover_llm_models_saved():
     from .llm.config import load_saved_settings
     from .llm.discovery import list_models_for_base_url
 
-    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    _enforce_rate_limit(_llm_rate_limiter, current_remote_addr(), "LLM settings")
     saved = load_saved_settings()
     if saved is None or not saved.base_url:
         raise HTTPException(status_code=400, detail="No saved endpoint to query.")
@@ -528,7 +541,7 @@ def test_llm_settings(payload: LlmTestRequest):
     """Sends a real chat completion request to the given endpoint/model so the
     Settings panel can prove the LLM is actually generating a response, rather
     than just resolving a reachable model list."""
-    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    _enforce_rate_limit(_llm_rate_limiter, current_remote_addr(), "LLM settings")
     if not payload.base_url.strip() or not payload.model.strip():
         raise HTTPException(status_code=400, detail="base_url and model are required")
     _reject_ssrf_target(payload.base_url)
@@ -543,7 +556,7 @@ def test_llm_settings_saved():
     the (never-returned) real api_key."""
     from .llm.config import load_saved_settings
 
-    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    _enforce_rate_limit(_llm_rate_limiter, current_remote_addr(), "LLM settings")
     saved = load_saved_settings()
     if saved is None or not saved.base_url or not saved.model:
         raise HTTPException(status_code=400, detail="No saved endpoint to test.")
@@ -558,7 +571,7 @@ def probe_llm_settings():
     provider='auto'."""
     from .llm.discovery import detect_llm
 
-    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "LLM settings")
+    _enforce_rate_limit(_llm_rate_limiter, current_remote_addr(), "LLM settings")
     detected = detect_llm(force=True)
     if detected is None:
         return {"found": False}
@@ -1056,7 +1069,7 @@ def free_text_ask(req: FreeTextAskRequest):
     # classification, and potentially the open-ended responder) even under the
     # default no-network 'fake' provider — rate-limit uniformly rather than
     # branching on which provider happens to be configured.
-    _enforce_rate_limit(_llm_rate_limiter, current_player_id(), "free-text question")
+    _enforce_rate_limit(_llm_rate_limiter, current_remote_addr(), "free-text question")
     case = case_data()
     sess = session()
     target = next((a for a in case.agents if a.agent_id == req.agent_id), None)
@@ -1552,7 +1565,7 @@ def generate(req: GenerateCaseRequest):
 
     # Up to 5 candidates, each generated, validated, and quality-scored — real
     # CPU and disk work regardless of whether an LLM is configured.
-    _enforce_rate_limit(_generate_rate_limiter, current_player_id(), "case generation")
+    _enforce_rate_limit(_generate_rate_limiter, current_remote_addr(), "case generation")
 
     # case_type names a template file and ends up inside the generated case id
     # (a future path component) — it must be a known template, nothing else.

@@ -46,20 +46,28 @@ def test_rate_limiter_window_slides():
 # Endpoint-level enforcement
 # ---------------------------------------------------------------------------
 
-def test_case_generation_is_rate_limited_per_player(monkeypatch):
+def test_case_generation_is_rate_limited_per_origin(monkeypatch):
+    """Keyed on the remote address, not X-Session-Id: that header is whatever
+    string the client sends, so a limiter keyed on it is bypassed for free by
+    sending a fresh id on every request (proven live — 22 requests with a
+    rotated X-Session-Id got 200 every time against a cap of 20/window). A
+    different X-Session-Id from the *same* origin must still share the one
+    quota; only a genuinely different origin gets its own."""
     monkeypatch.setattr(main, "_generate_rate_limiter", RateLimiter(max_requests=2, window_seconds=60))
-    headers = {"X-Session-Id": "abuse_test_player_1"}
     body = {"case_type": "blackmail", "difficulty": "standard", "seed": 1, "mode": "deterministic"}
 
-    assert client.post("/api/cases/generate", json=body, headers=headers).status_code == 200
-    assert client.post("/api/cases/generate", json=body, headers=headers).status_code == 200
-    r = client.post("/api/cases/generate", json=body, headers=headers)
+    assert client.post("/api/cases/generate", json=body, headers={"X-Session-Id": "abuse_test_player_1"}).status_code == 200
+    assert client.post("/api/cases/generate", json=body, headers={"X-Session-Id": "abuse_test_player_1"}).status_code == 200
+
+    # Rotating X-Session-Id from the same origin must NOT reset the quota —
+    # this is exactly the bypass being closed.
+    r = client.post("/api/cases/generate", json=body, headers={"X-Session-Id": "abuse_test_player_2"})
     assert r.status_code == 429
     assert "Retry-After" in r.headers
 
-    # A different player has their own quota.
-    other = {"X-Session-Id": "abuse_test_player_2"}
-    assert client.post("/api/cases/generate", json=body, headers=other).status_code == 200
+    # A different origin (remote address) has its own quota.
+    other_origin = TestClient(app, client=("203.0.113.7", 12345))
+    assert other_origin.post("/api/cases/generate", json=body, headers={"X-Session-Id": "abuse_test_player_1"}).status_code == 200
 
 
 def test_free_text_ask_is_rate_limited_per_player(monkeypatch):
