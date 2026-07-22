@@ -17,25 +17,33 @@ def _explicit_victim_reference(q_norm: str, q_words: set[str], victim) -> bool:
     return bool({"victim", "deceased"} & q_words)
 
 
+_DUAL_SUBJECT_PHRASES = ("you two", "the two of you", "between you two")
+
+
 def _refers_to_victim(q_norm: str, q_words: set[str], victim) -> bool:
-    """Word-boundary check for a victim reference, including bare pronouns.
-    Pronouns like "her"/"him" must be whole words — a plain substring check
-    matches "her" inside "there", "gathered", "weather" etc. and silently
-    misroutes any question containing one of those, e.g. "what happened back
-    there"."""
+    """Word-boundary check for a victim reference, including ambiguous ones:
+    bare pronouns ("him"/"her"/"them") and implicit dual-subject phrasing
+    ("you two", "the two of you") — a leading question like "you two didn't
+    get along, did you?" never names its second subject, but in an
+    interrogation about a murder it defaults to meaning the victim. Pronouns
+    must be whole words — a plain substring check matches "her" inside
+    "there", "gathered", "weather" etc. and silently misroutes any question
+    containing one of those, e.g. "what happened back there"."""
     if _explicit_victim_reference(q_norm, q_words, victim):
         return True
-    return bool({"him", "her", "them"} & q_words)
+    if q_words & {"him", "her", "them"}:
+        return True
+    return any(phrase in q_norm for phrase in _DUAL_SUBJECT_PHRASES)
 
 
 def _last_named_other_agent(case: CaseData, session: Session, agent_id: Optional[str]) -> Optional[str]:
     """The most recent non-victim agent the player explicitly named in this
     suspect's own conversation, provided the victim hasn't been named more
-    recently than that. Used to stop a bare pronoun follow-up ("when did you
-    last see them?") from silently defaulting to the victim right after the
-    player asked about someone else by name — "When did you last see Owen?"
-    / "when did you last see them?" must stay about Owen, not become a
-    confident (and wrong) answer about the victim."""
+    recently than that. Used to stop an ambiguous reference (a bare pronoun,
+    or "you two didn't get along, did you?") from silently defaulting to the
+    victim right after the player asked about someone else by name — "When
+    did you last see Owen?" / "when did you last see them?" must stay about
+    Owen, not become a confident (and wrong) answer about the victim."""
     if not agent_id:
         return None
     victim_id = next((a.agent_id for a in case.agents if a.is_victim), None)
@@ -48,6 +56,25 @@ def _last_named_other_agent(case: CaseData, session: Session, agent_id: Optional
         if referenced:
             return referenced
     return None
+
+
+def _confidently_about_victim(
+    q_norm: str, q_words: set[str], victim, case: CaseData, session: Session, agent_id: Optional[str]
+) -> bool:
+    """True only when a reference to "the victim" can safely resolve to the
+    victim specifically. An explicit reference (their name, "victim",
+    "deceased") always can. An ambiguous one (a bare pronoun, or "you two")
+    can too — unless the player just named a different suspect in this same
+    conversation, in which case defaulting to the victim would confidently
+    answer about the wrong person instead of admitting the question is
+    ambiguous."""
+    if not victim:
+        return False
+    if _explicit_victim_reference(q_norm, q_words, victim):
+        return True
+    if not _refers_to_victim(q_norm, q_words, victim):
+        return False
+    return _last_named_other_agent(case, session, agent_id) is None
 
 
 def classify_question(
@@ -80,33 +107,32 @@ def classify_question(
     # 3. Last seen victim
     if any(phrase in q_norm for phrase in ["last see", "last saw", "when did you see"]):
         victim = next((a for a in case.agents if a.is_victim), None)
-        if _refers_to_victim(q_norm, q_words, victim):
-            # A bare pronoun ("them"/"him"/"her") defaults to the victim only
-            # when the player hasn't just named someone else in this same
-            # conversation — otherwise a follow-up like "when did you last
-            # see them?" right after "When did you last see Owen?" would
-            # confidently answer about the wrong person.
-            explicit = _explicit_victim_reference(q_norm, q_words, victim)
-            other_agent = None if explicit else _last_named_other_agent(case, session, agent_id)
-            if other_agent is None:
-                return QuestionIntent(
-                    intent="last_seen_victim",
-                    confidence=0.9,
-                    **refs,
-                    rewritten_structured_question="When did you last see the victim?"
-                )
-            
-    # 4. Relationship
-    if any(phrase in q_norm for phrase in ["know", "relationship", "how did you feel about", "first met", "how you met"]):
+        if _confidently_about_victim(q_norm, q_words, victim, case, session, agent_id):
+            return QuestionIntent(
+                intent="last_seen_victim",
+                confidence=0.9,
+                **refs,
+                rewritten_structured_question="When did you last see the victim?"
+            )
+
+    # 4. Relationship. "get along"/"getting along" covers leading questions
+    # like "you two didn't exactly get along, did you?" — without this they
+    # fell all the way through to the small-talk "general_relationships"
+    # catch-all below and got a generic non-answer instead of being treated
+    # as the real relationship probe they are.
+    if any(phrase in q_norm for phrase in [
+        "know", "relationship", "how did you feel about", "first met", "how you met",
+        "get along", "getting along",
+    ]):
         victim = next((a for a in case.agents if a.is_victim), None)
-        if _refers_to_victim(q_norm, q_words, victim):
+        if _confidently_about_victim(q_norm, q_words, victim, case, session, agent_id):
             return QuestionIntent(
                 intent="relationship",
                 confidence=0.85,
                 **refs,
                 rewritten_structured_question="What was your relationship with the victim?"
             )
-            
+
     # 4b. Conflict/argument with the victim. "Argued", "fought", "disagreement"
     # etc. are not "when did you last see" phrasing (rule 3) and describe a
     # relationship dynamic, not a sighting — routing them to last_seen_victim
@@ -116,7 +142,7 @@ def classify_question(
     # grounded topic.
     if any(phrase in q_norm for phrase in ["argu", "fight with", "fought with", "disagreement", "falling out", "quarrel"]):
         victim = next((a for a in case.agents if a.is_victim), None)
-        if _refers_to_victim(q_norm, q_words, victim):
+        if _confidently_about_victim(q_norm, q_words, victim, case, session, agent_id):
             return QuestionIntent(
                 intent="relationship",
                 confidence=0.85,

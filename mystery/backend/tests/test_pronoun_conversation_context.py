@@ -5,6 +5,11 @@ last_seen_follow_up question hit this on 49 of 78 total findings. Fixing it
 required two things: classify_question needs the asking suspect's own
 conversation history (via agent_id), and that history has to actually be
 recorded — a canned fallback previously never touched the transcript at all.
+
+The same conversation-aware disambiguation also covers a leading question
+like "you two didn't get along, did you?" — an implicit dual-subject
+reference with no explicit name/pronoun at all, which previously fell all
+the way through to the small-talk "general_relationships" catch-all.
 """
 
 from app.case_store import get_case
@@ -48,6 +53,29 @@ def test_explicit_victim_reference_still_wins_regardless_of_prior_context():
     intent = classify_question("When did you last see the victim?", case, sess, agent_id=agent_id)
     assert intent is not None
     assert intent.intent == "last_seen_victim"
+
+
+def test_leading_dual_subject_question_defaults_to_victim_with_no_prior_context():
+    case = get_case("case_001")
+    sess = Session("test_leading_no_context")
+    intent = classify_question(
+        "You two didn't exactly get along, did you?", case, sess, agent_id="agent_clara"
+    )
+    assert intent is not None
+    assert intent.intent == "relationship"
+
+
+def test_leading_dual_subject_question_does_not_default_after_naming_someone_else():
+    case = get_case("case_001")
+    sess = Session("test_leading_with_context")
+    agent_id = "agent_clara"
+
+    handle_free_text(FreeTextAskRequest(agent_id=agent_id, question="When did you last see Ben?"), case, sess)
+
+    intent = classify_question(
+        "You two didn't exactly get along, did you?", case, sess, agent_id=agent_id
+    )
+    assert intent is None or intent.intent != "relationship"
 
 
 def test_canned_fallback_now_gets_recorded_to_transcript():
