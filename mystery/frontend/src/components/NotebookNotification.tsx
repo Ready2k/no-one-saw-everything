@@ -34,6 +34,15 @@ export default function NotebookNotification({
     ["Clara Wells routine:\nOpens cafe at 08:00 sharp."]
   ]);
 
+  // Callers (Suspects.tsx) pass an inline `onDone`, a fresh function identity
+  // on every parent re-render — of which there are many during an interview
+  // (typing, async results, the background status poll). A ref keeps this
+  // effect from seeing that as a reason to fire its cleanup and reschedule
+  // the whole phase sequence from zero, which otherwise stalls the animation
+  // in a loop of its own opening phases instead of ever reaching "exit".
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(setTimeout(() => setPhase("open"), 600));
@@ -41,9 +50,10 @@ export default function NotebookNotification({
     timers.push(setTimeout(() => setPhase("write"), 4800));
     timers.push(setTimeout(() => setPhase("done"), 8500));
     timers.push(setTimeout(() => setPhase("exit"), 13500));
-    timers.push(setTimeout(() => onDone(), 14500));
+    timers.push(setTimeout(() => onDoneRef.current(), 14500));
     return () => timers.forEach(clearTimeout);
-  }, [onDone]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
 
