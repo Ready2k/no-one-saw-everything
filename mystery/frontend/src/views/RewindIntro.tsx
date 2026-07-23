@@ -121,6 +121,30 @@ const WITNESS_REPLAYS: Record<string, Record<string, WitnessReplay>> = {
   },
 };
 
+export function hasWitnessReplay(caseId: string, eventId: string): boolean {
+  return !!WITNESS_REPLAYS[caseId]?.[eventId];
+}
+
+const WITNESS_TESTIMONY: Record<string, Record<string, { clueId: string; eventId: string }>> = {
+  case_005: {
+    agent_nadia: { clueId: "clue_nadia_sees_owen_alley", eventId: "ev_0700_nadia_glance" },
+  },
+  case_010: {
+    agent_ben: { clueId: "clue_ben_sighting", eventId: "ev_0747_blue_coat" },
+  },
+};
+
+/** The reconstruction becomes available only once the witness has actually
+ * shared the authored sighting in interview. */
+export function witnessReplayForTestimony(
+  caseId: string,
+  agentId: string,
+  revealedClueIds: string[]
+): string | null {
+  const testimony = WITNESS_TESTIMONY[caseId]?.[agentId];
+  return testimony && revealedClueIds.includes(testimony.clueId) ? testimony.eventId : null;
+}
+
 const INTRO_ART_OVERRIDES: Record<string, string> = {
   [`${CASE_001_ART}/village_square_dawn_hd.png`]: `${CASE_001_INTRO_ART}/village_square_dawn_intro.jpg`,
   [`${CASE_001_ART}/fountain_daylight_closeup_hd.png`]: `${CASE_001_INTRO_ART}/fountain_daylight_closeup_intro.jpg`,
@@ -303,9 +327,9 @@ function pickGlimpses(
   const add = (e: EventPublic | undefined) => {
     if (e) picks.set(e.event_id, e);
   };
-  // A case's authored witness reconstruction is always worth seeing. It is
-  // built entirely from the public event text, so preferring it cannot leak
-  // any hidden action or identity.
+  // Optional caller-selected moments may be placed first; the opening rewind
+  // does not use this. Witness reconstructions belong to testimony, not a
+  // pre-investigation briefing.
   for (const eventId of preferredEventIds) add(sorted.find((e) => e.event_id === eventId));
   add(sorted[0]);
   add(
@@ -331,7 +355,14 @@ function pickGlimpses(
   return [...preferred, ...remaining].slice(0, 4);
 }
 
-export default function RewindIntro({ onDone }: { onDone: () => void }) {
+export default function RewindIntro({
+  onDone,
+  replayEventId,
+}: {
+  onDone: () => void;
+  /** Plays one authored witness montage from the Rewind event list. */
+  replayEventId?: string;
+}) {
   const { caseOverview: c, agents, locations, locationName } = useWorld();
   const period = timeOfDayLabel(c.sim_start_time);
   const [beatIndex, setBeatIndex] = useState(0);
@@ -358,7 +389,7 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
         events,
         windowStart,
         windowEnd,
-        Object.keys(WITNESS_REPLAYS[c.case_id] ?? {})
+        []
       )))
       .catch(() => {})
       .finally(() => setLoaded(true));
@@ -390,6 +421,10 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
 
   const beats = useMemo<Beat[]>(
     () => {
+      if (replayEventId) {
+        const event = glimpses.find((candidate) => candidate.event_id === replayEventId);
+        return event ? [{ kind: "glimpse", event }] : [{ kind: "title" }];
+      }
       const introBeats: Beat[] = [{ kind: "title" }];
       const places =
         c.case_id === "case_001"
@@ -411,7 +446,7 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
         { kind: "brief" },
       ];
     },
-    [c.case_id, glimpses]
+    [c.case_id, glimpses, replayEventId]
   );
   const beat = beats[Math.min(beatIndex, beats.length - 1)];
 
@@ -492,7 +527,7 @@ export default function RewindIntro({ onDone }: { onDone: () => void }) {
             minutes(beat.event.time) <= windowEnd
           }
           agents={agents}
-          witnessReplay={WITNESS_REPLAYS[c.case_id]?.[beat.event.event_id]}
+          witnessReplay={replayEventId ? WITNESS_REPLAYS[c.case_id]?.[beat.event.event_id] : undefined}
         />
       )}
 

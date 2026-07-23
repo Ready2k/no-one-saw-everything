@@ -59,6 +59,16 @@
       "path": "/art/case_005/owen_yard_dawn_hd.png",
       "role": "player-safe yard location",
       "contains_hidden_evidence": false
+    },
+    "loc_owen_yard_office": {
+      "path": "/art/case_005/owen_yard_office_dawn_hd.png",
+      "role": "player-safe investigation interior",
+      "contains_hidden_evidence": false
+    },
+    "resolution_rear_alley": {
+      "path": "/art/case_005/rear_alley_after_fire_dawn_hd.png",
+      "role": "spoiler-safe resolution still",
+      "contains_hidden_evidence": false
     }
   },
   "portraits": {

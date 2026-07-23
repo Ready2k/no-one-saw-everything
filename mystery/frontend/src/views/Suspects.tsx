@@ -27,6 +27,7 @@ import NotebookNotification from "../components/NotebookNotification";
 import { audioManager } from "../audio";
 import { cinematicsEnabled } from "../settings";
 import { sfx } from "../sfx";
+import RewindIntro, { witnessReplayForTestimony } from "./RewindIntro";
 
 interface BeatData {
   claimText: string;
@@ -300,6 +301,7 @@ function InterviewPanel({
   const [error, setError] = useState<string | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
   const [notebookNote, setNotebookNote] = useState<string | null>(null);
+  const [witnessReplayEventId, setWitnessReplayEventId] = useState<string | null>(null);
 
   const [timeRef, setTimeRef] = useState("07:50");
   const [clueTopic, setClueTopic] = useState("");
@@ -610,6 +612,12 @@ function InterviewPanel({
 
   return (
     <>
+      {witnessReplayEventId && (
+        <RewindIntro
+          replayEventId={witnessReplayEventId}
+          onDone={() => setWitnessReplayEventId(null)}
+        />
+      )}
       {notebookNote && (
         <NotebookNotification
           noteText={notebookNote}
@@ -689,7 +697,11 @@ function InterviewPanel({
                   You haven't questioned {firstName} yet. Open with a question using Quick Tools.
                 </p>
               )}
-              {transcript.map((m, i) => (
+              {transcript.map((m, i) => {
+                const replayEventId = m.speaker === "agent"
+                  ? witnessReplayForTestimony(caseOverview.case_id, agentId, m.revealed_clue_ids)
+                  : null;
+                return (
                 <div
                   key={i}
                   className={`transcript-node bubble ${m.speaker} ${
@@ -732,8 +744,21 @@ function InterviewPanel({
                       )
                     }
                   />
+                  {replayEventId && (
+                    <div className="witness-replay-offer">
+                      <span>Witness account recorded</span>
+                      <button
+                        type="button"
+                        className="small-button witness-replay-button"
+                        onClick={() => setWitnessReplayEventId(replayEventId)}
+                      >
+                        Visualise {firstName}'s account
+                      </button>
+                    </div>
+                  )}
                 </div>
-              ))}
+                );
+              })}
               {pendingQuestion && (
                 <div className="transcript-node bubble player pending">
                   <span className="bubble-speaker">YOU</span>

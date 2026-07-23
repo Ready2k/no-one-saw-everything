@@ -1,9 +1,31 @@
 import type { MapAgent } from "../types";
-import { SPRITE_SHEET, spriteUrl } from "../map/mapAssets";
 
-// A single idle frame cropped from the original Smallville sheet, drawn at
-// exactly one map-tile's on-screen footprint (see MAP_GRID) so characters
-// stay proportionate to furniture/buildings at any zoom level.
+const PAWN_FINISHES = [
+  "brass",
+  "verdigris",
+  "slate",
+  "umber",
+  "ivory",
+  "oxblood",
+  "cobalt",
+] as const;
+
+function pawnFinish(agentId: string) {
+  let value = 0;
+  for (let i = 0; i < agentId.length; i += 1) value = (value * 31 + agentId.charCodeAt(i)) >>> 0;
+  return PAWN_FINISHES[value % PAWN_FINISHES.length];
+}
+
+function pawnMonogram(name: string) {
+  const words = name.trim().split(/\s+/);
+  return words.length > 1
+    ? `${words[0][0]}${words[words.length - 1]?.[0] ?? ""}`
+    : words[0]?.slice(0, 2) ?? "?";
+}
+
+// The village map uses engraved investigator's pawns rather than character
+// sprites. The finish is stable per agent, while the monogram and name keep
+// every marker quickly identifiable without turning the map into an RPG.
 export default function AgentSprite({
   agent,
   x,
@@ -28,6 +50,7 @@ export default function AgentSprite({
     : stale && lastSeen
       ? `${agent.full_name} — last seen ${lastSeen}`
       : agent.full_name;
+  const finish = agent.is_victim ? "victim" : pawnFinish(agent.agent_id);
   return (
     <button
       className={`map-agent ${agent.is_background ? "background-agent" : ""} ${stale ? "stale" : ""} ${agent.is_victim ? "victim" : ""}`}
@@ -43,15 +66,14 @@ export default function AgentSprite({
       data-agent-id={agent.agent_id}
     >
       <span
-        className="map-agent-sprite"
-        style={{
-          width: size.width,
-          height: size.height,
-          backgroundImage: `url(${spriteUrl(agent.sprite_asset)})`,
-          backgroundSize: `${SPRITE_SHEET.cols * size.width}px ${SPRITE_SHEET.rows * size.height}px`,
-          backgroundPosition: `${-SPRITE_SHEET.idleCol * size.width}px ${-SPRITE_SHEET.idleRow * size.height}px`,
-        }}
-      />
+        className={`map-agent-pawn finish-${finish}`}
+        style={{ width: size.width, height: size.height }}
+        aria-hidden="true"
+      >
+        <span className="map-agent-pawn-cap" />
+        <span className="map-agent-pawn-face">{pawnMonogram(agent.full_name)}</span>
+        <span className="map-agent-pawn-base" />
+      </span>
       <span
         className="map-agent-name"
         style={{

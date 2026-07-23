@@ -16,7 +16,12 @@
     "loc_bookshop": "/art/case_010/bookshop_dawn_hd.png",
     "loc_clinic": "/art/case_010/clinic_dawn_hd.png",
     "loc_clara_flat": "/art/case_010/clara_flat_dawn_hd.png",
-    "loc_owen_house": "/art/case_010/owen_yard_dawn_hd.png"
+    "loc_owen_house": "/art/case_010/owen_yard_dawn_hd.png",
+    "resolution_storage_room": "/art/case_010/cafe_storage_after_dawn_hd.png",
+    "evidence_ledger_page": "/art/case_010/evidence/ledger_page_case10.png",
+    "evidence_till_weight": "/art/case_010/evidence/till_weight_mop_bucket.png",
+    "evidence_blue_coat": "/art/case_010/evidence/blue_coat_damp_sleeve.png",
+    "evidence_isabella_note": "/art/case_010/evidence/isabella_folded_note.png"
   },
   "constraints": [
     "All reused scenes are player-safe establishing art.",
