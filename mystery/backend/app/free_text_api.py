@@ -127,6 +127,7 @@ def handle_free_text(req: FreeTextAskRequest, case, sess) -> FreeTextAskResponse
             pressure_level=pressure,
             recent_exchange=recent_exchange or None,
             world_state=build_world_state_digest(case, sess, req.agent_id) or None,
+            session=sess,
         )
 
         transcript.messages.append(InterviewMessage(speaker="player", text=req.question, question_type=None))

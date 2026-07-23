@@ -124,6 +124,9 @@ def update_belief_state(
     if agent is None or agent.is_victim or agent_id == case.case.victim_id:
         return None
 
+    if session.llm_unavailable:
+        return None
+
     previous = session.belief_states.get(agent_id)
     digest = build_world_state_digest(case, session, agent_id, include_beliefs=False)
     candidates = _candidates(case, agent_id)
@@ -151,6 +154,7 @@ def update_belief_state(
         )
     except Exception as e:
         logger.warning(f"Belief update failed for {agent_id}: {e}")
+        session.llm_unavailable = True
         return None
 
     state = _validate_belief(case, agent, raw)

@@ -258,6 +258,7 @@ def answer_question(case: CaseData, session: Session, req: AskRequest) -> AskRes
             emotion=emotional_shift or "neutral",
             world_state=build_world_state_digest(case, session, req.agent_id) or None,
             is_repeat=is_repeat,
+            session=session,
         )
         display_answer = rewrite_result.rewritten_text
         llm_rewrite_used = True

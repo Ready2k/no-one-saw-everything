@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from .client import get_llm_client
 from .schemas import DialogueRewrite
 from ..models import CaseData, Agent
+from ..session import Session
 
 logger = logging.getLogger(__name__)
 
@@ -272,7 +273,15 @@ def rewrite_interview_answer(
     emotion: str = "neutral",
     world_state: Optional[list[str]] = None,
     is_repeat: bool = False,
+    session: Optional[Session] = None,
 ) -> RewriteResult:
+
+    if session is not None and session.llm_unavailable:
+        return RewriteResult(
+            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, is_repeat=is_repeat),
+            fallback_used=True,
+            fallback_reason="provider_unavailable"
+        )
 
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
     user_prompt_template = _load_prompt("interview_rewrite_user.txt")
@@ -327,6 +336,8 @@ def rewrite_interview_answer(
 
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
+        if session is not None:
+            session.llm_unavailable = True
         return RewriteResult(
             rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, is_repeat=is_repeat),
             fallback_used=True,
@@ -346,7 +357,15 @@ def rewrite_challenge_response(
     pressure_level: float,
     emotion: str = "neutral",
     world_state: Optional[list[str]] = None,
+    session: Optional[Session] = None,
 ) -> RewriteResult:
+
+    if session is not None and session.llm_unavailable:
+        return RewriteResult(
+            rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, outcome),
+            fallback_used=True,
+            fallback_reason="provider_unavailable"
+        )
 
     system_prompt = _load_prompt("dialogue_rewrite_system.txt")
     user_prompt_template = _load_prompt("challenge_rewrite_user.txt")
@@ -405,6 +424,8 @@ def rewrite_challenge_response(
 
     except Exception as e:
         logger.warning(f"Rewrite failed: {e}")
+        if session is not None:
+            session.llm_unavailable = True
         return RewriteResult(
             rewritten_text=_diegetic_fallback(deterministic_text, pressure_level, outcome),
             fallback_used=True,
@@ -443,6 +464,7 @@ def generate_open_ended_response(
     pressure_level: float,
     recent_exchange: Optional[list[str]] = None,
     world_state: Optional[list[str]] = None,
+    session: Optional[Session] = None,
 ) -> RewriteResult:
     """Handles free-text questions that match none of the fixed interview
     intents (spec 06) — e.g. "tell me about your childhood". Rather than a
@@ -453,6 +475,13 @@ def generate_open_ended_response(
     as context — only the same forbidden-facts list and the same sanitiser
     used for grounded rewrites, which is what still blocks a leak or an
     invented relationship to another named suspect."""
+
+    if session is not None and session.llm_unavailable:
+        return RewriteResult(
+            rewritten_text=_get_open_ended_deflection(pressure_level),
+            fallback_used=True,
+            fallback_reason="provider_unavailable",
+        )
 
     system_prompt = _load_prompt("open_ended_system.txt")
     user_prompt_template = _load_prompt("open_ended_user.txt")
@@ -500,6 +529,8 @@ def generate_open_ended_response(
 
     except Exception as e:
         logger.warning(f"Open-ended response failed: {e}")
+        if session is not None:
+            session.llm_unavailable = True
         return RewriteResult(
             rewritten_text=_get_open_ended_deflection(pressure_level),
             fallback_used=True,

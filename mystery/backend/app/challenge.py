@@ -211,6 +211,7 @@ def resolve_challenge(case: CaseData, session: Session, req: ChallengeRequest) -
             pressure_level=pressure,
             emotion=record.emotional_shift or "neutral",
             world_state=build_world_state_digest(case, session, req.target_agent_id) or None,
+            session=session,
         )
         record.display_response_text = rewrite_result.rewritten_text
         record.llm_rewrite_used = True

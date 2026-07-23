@@ -97,6 +97,14 @@ class Session:
         # Set when this session replaced a save that could not be read; the original
         # file was quarantined, not deleted. Surfaced once via /api/cases/activate.
         self.recovered_from_corrupt_save: bool = False
+        # Tripped the first time a configured LLM call fails to connect (timeout,
+        # refused, unresolvable host). Once set, dialogue rewriting skips straight
+        # to the deterministic fallback instead of hanging on the same dead host
+        # again — the point of a session-scoped, in-memory-only breaker rather than
+        # a config flag is that it clears itself the moment a new investigation
+        # starts (new case, restart, or a backend restart), so a host that comes
+        # back online gets tried again next game rather than needing a manual reset.
+        self.llm_unavailable: bool = False
         self._notes_issued = 0
         self._challenges_issued = 0
         self._observations_issued = 0
