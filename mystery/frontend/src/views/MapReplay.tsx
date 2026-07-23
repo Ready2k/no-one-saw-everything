@@ -41,6 +41,7 @@ export default function MapReplay({
   const [showTrace, setShowTrace] = useState(false);
 
   const toastTimer = useRef<number>(0);
+  const playFrame = useRef<number>(0);
 
   useEffect(() => {
     return () => window.clearTimeout(toastTimer.current);
@@ -62,19 +63,26 @@ export default function MapReplay({
   const startMin = minutes(caseOverview.sim_start_time);
   const endMin = minutes(caseOverview.discovery_time);
 
-  // Play loop.
+  // Continuous play loop. The map projection accepts fractional minutes, so
+  // witnessed movement travels smoothly instead of stepping once per minute.
   useEffect(() => {
     if (!playing) return;
-    const id = setInterval(() => {
+    let lastFrame = performance.now();
+    const advance = (now: number) => {
+      const elapsed = now - lastFrame;
+      lastFrame = now;
       setT((prev) => {
-        if (prev >= endMin) {
+        const next = prev + (elapsed / TICK_MS) * speed;
+        if (next >= endMin) {
           setPlaying(false);
           return endMin;
         }
-        return prev + 1;
+        return next;
       });
-    }, TICK_MS / speed);
-    return () => clearInterval(id);
+      playFrame.current = window.requestAnimationFrame(advance);
+    };
+    playFrame.current = window.requestAnimationFrame(advance);
+    return () => window.cancelAnimationFrame(playFrame.current);
   }, [playing, speed, endMin]);
 
   // Jump requests from the case board ("view clue on map"). Waits for the

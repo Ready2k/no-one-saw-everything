@@ -417,8 +417,11 @@ export function minutes(hhmm: string): number {
 }
 
 export function hhmm(mins: number): string {
-  const h = Math.floor(mins / 60) % 24;
-  const m = mins % 60;
+  // Replay playback can use fractional minutes for smooth movement; display
+  // remains minute-precise everywhere the clock is shown.
+  const wholeMinutes = Math.floor(mins);
+  const h = Math.floor(wholeMinutes / 60) % 24;
+  const m = wholeMinutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 

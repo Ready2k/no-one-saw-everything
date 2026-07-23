@@ -23,6 +23,9 @@ export default function MapTimeline({
   onSpeed: (s: number) => void;
 }) {
   const span = endMin - startMin;
+  // Playback advances in fractional minutes so figures can cross the map
+  // smoothly. The controls remain minute-precise for clear detective notes.
+  const displayedMinute = Math.floor(current);
   const winFrom = ((minutes(murderWindow[0]) - startMin) / span) * 100;
   const winTo = ((minutes(murderWindow[1]) - startMin) / span) * 100;
 
@@ -37,7 +40,7 @@ export default function MapTimeline({
       >
         {playing ? "⏸ Pause" : "▶ Play"}
       </button>
-      <span className="map-clock">{hhmm(current)}</span>
+      <span className="map-clock">{hhmm(displayedMinute)}</span>
       <div className="map-scrub-wrap">
         <div
           className="map-window-band"
@@ -49,7 +52,7 @@ export default function MapTimeline({
           className="map-scrub"
           min={startMin}
           max={endMin}
-          value={current}
+          value={displayedMinute}
           onChange={(e) => onScrub(Number(e.target.value))}
         />
       </div>
