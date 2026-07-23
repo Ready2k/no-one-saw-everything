@@ -28,6 +28,7 @@ import { audioManager } from "../audio";
 import { cinematicsEnabled } from "../settings";
 import { sfx } from "../sfx";
 import RewindIntro, { witnessReplayForTestimony } from "./RewindIntro";
+import { lifelikeCalmPortrait, lifelikeDeceasedPortrait } from "../characterArt";
 
 interface BeatData {
   claimText: string;
@@ -337,29 +338,40 @@ function InterviewPanel({
     observedExchangeToken !== freshExchangeToken;
   const showObserveNudge = calmFreshObserveAvailable && !observeNudgeSeen && !observeMsg;
 
-  const refresh = useCallback(() => {
-    api.transcript(agentId).then((t) => {
+  const refresh = useCallback(async () => {
+    try {
+      const [t, , , r, b] = await Promise.all([
+        api.transcript(agentId),
+        api.clues().then(setClues).catch(console.error),
+        api.claims().then(setAllClaims).catch(console.error),
+        api.challengeSuggestions(agentId).catch(() => ({
+          contradiction_count: 0,
+          hints_taken: 0,
+          suggestions: [],
+        })),
+        api.board().catch(() => null),
+      ]);
       setTranscript(t);
-      setPendingQuestion(null);
-    });
-    api.clues().then(setClues);
-    api.claims().then(setAllClaims);
-    api.challengeSuggestions(agentId).then((r) => {
-      setContradictionCount(r.contradiction_count);
-      setHintsTaken(r.hints_taken);
-      setSuggestions([]);
-    });
-    api.board().then((b) => {
-      const me = b.suspects.find((s) => s.agent.agent_id === agentId);
-      if (me) {
-        setSuspicion(me.suspicion);
-        setClaims(me.claims);
+      if (r) {
+        setContradictionCount(r.contradiction_count);
+        setHintsTaken(r.hints_taken);
       }
-      onBoardState(b.suspects);
-    });
+      if (b) {
+        const me = b.suspects.find((s) => s.agent.agent_id === agentId);
+        if (me) {
+          setSuspicion(me.suspicion);
+          setClaims(me.claims);
+        }
+        onBoardState(b.suspects);
+      }
+    } catch (e) {
+      console.error("Failed to refresh transcript:", e);
+    }
   }, [agentId, onBoardState]);
 
-  useEffect(refresh, [refresh]);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   useEffect(() => {
     const el = transcriptRef.current;
@@ -410,11 +422,11 @@ function InterviewPanel({
       setLastResult(result);
       setLastChallenge(null);
       setFallbackMsg(null);
-      refresh();
+      await refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
-      setPendingQuestion(null);
     } finally {
+      setPendingQuestion(null);
       setBusy(false);
     }
   };
@@ -464,11 +476,11 @@ function InterviewPanel({
         setFallbackMsg(result.fallback_message);
       }
       setFreeText("");
-      refresh();
+      await refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
-      setPendingQuestion(null);
     } finally {
+      setPendingQuestion(null);
       setBusy(false);
     }
   };
@@ -584,6 +596,7 @@ function InterviewPanel({
     setError(null);
     setFallbackMsg(null);
     setObserveMsg(null);
+    setPendingQuestion(`You claimed: "${s.claim_text}" — but ${s.evidence_title}.`);
     try {
       const result = await api.challenge({
         target_agent_id: agentId,
@@ -602,10 +615,11 @@ function InterviewPanel({
           outcomeLabel: result.outcome.replace(/_/g, " "),
         });
       }
-      refresh();
+      await refresh();
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e));
     } finally {
+      setPendingQuestion(null);
       setBusy(false);
     }
   };
@@ -1125,7 +1139,7 @@ function InterviewPanel({
               disabled={busy || !freeText.trim()}
               onClick={submitFreeText}
             >
-              ASK
+              {busy ? "ASKING…" : "ASK"}
             </button>
           </div>
 
@@ -1232,7 +1246,7 @@ function AutopsyPanel({
   const total = found + (hidden_clues?.length || 0);
   const pct = total > 0 ? Math.round((found / total) * 100) : 0;
   const postMortemPortrait =
-    agent.portrait_art?.deceased || agent.portrait_art?.calm || undefined;
+    lifelikeDeceasedPortrait(agent) || lifelikeCalmPortrait(agent) || undefined;
 
   return (
     <div className="interview-panel panel autopsy-panel">

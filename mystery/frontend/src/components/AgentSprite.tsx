@@ -1,6 +1,7 @@
 import type { MapAgent } from "../types";
+import { lifelikeCalmPortrait } from "../characterArt";
 
-const PAWN_FINISHES = [
+const IMPRESSION_RIMS = [
   "brass",
   "verdigris",
   "slate",
@@ -10,22 +11,21 @@ const PAWN_FINISHES = [
   "cobalt",
 ] as const;
 
-function pawnFinish(agentId: string) {
+function impressionRim(agentId: string) {
   let value = 0;
   for (let i = 0; i < agentId.length; i += 1) value = (value * 31 + agentId.charCodeAt(i)) >>> 0;
-  return PAWN_FINISHES[value % PAWN_FINISHES.length];
+  return IMPRESSION_RIMS[value % IMPRESSION_RIMS.length];
 }
 
-function pawnMonogram(name: string) {
+function fallbackMonogram(name: string) {
   const words = name.trim().split(/\s+/);
   return words.length > 1
     ? `${words[0][0]}${words[words.length - 1]?.[0] ?? ""}`
     : words[0]?.slice(0, 2) ?? "?";
 }
 
-// The village map uses engraved investigator's pawns rather than character
-// sprites. The finish is stable per agent, while the monogram and name keep
-// every marker quickly identifiable without turning the map into an RPG.
+// The map is a detective's reconstructed memory, not a board game. Residents
+// appear as painted witness impressions clipped to the village geography.
 export default function AgentSprite({
   agent,
   x,
@@ -50,7 +50,8 @@ export default function AgentSprite({
     : stale && lastSeen
       ? `${agent.full_name} — last seen ${lastSeen}`
       : agent.full_name;
-  const finish = agent.is_victim ? "victim" : pawnFinish(agent.agent_id);
+  const finish = agent.is_victim ? "victim" : impressionRim(agent.agent_id);
+  const portrait = lifelikeCalmPortrait(agent);
   return (
     <button
       className={`map-agent ${agent.is_background ? "background-agent" : ""} ${stale ? "stale" : ""} ${agent.is_victim ? "victim" : ""}`}
@@ -66,13 +67,18 @@ export default function AgentSprite({
       data-agent-id={agent.agent_id}
     >
       <span
-        className={`map-agent-pawn finish-${finish}`}
+        className={`map-agent-impression finish-${finish}`}
         style={{ width: size.width, height: size.height }}
         aria-hidden="true"
       >
-        <span className="map-agent-pawn-cap" />
-        <span className="map-agent-pawn-face">{pawnMonogram(agent.full_name)}</span>
-        <span className="map-agent-pawn-base" />
+        <span className="map-agent-impression-pin" />
+        <span
+          className="map-agent-impression-portrait"
+          style={portrait ? { backgroundImage: `url(${portrait})` } : undefined}
+        >
+          {!portrait && <span className="map-agent-impression-monogram">{fallbackMonogram(agent.full_name)}</span>}
+        </span>
+        <span className="map-agent-impression-shadow" />
       </span>
       <span
         className="map-agent-name"

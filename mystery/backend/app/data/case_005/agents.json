@@ -44,7 +44,7 @@
     "sprite_asset": "Abigail_Chen.png",
     "portrait_art": {
       "calm": "/art/case_005/portraits/clara_wells_calm.png",
-      "deceased": "/art/portraits/clara_deceased.png",
+      "deceased": "/art/case_005/portraits/clara_wells_deceased.png",
       "defensive": "/art/case_005/portraits/clara_wells_calm.png",
       "cracking": "/art/case_005/portraits/clara_wells_calm.png"
     },

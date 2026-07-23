@@ -2183,62 +2183,76 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   padding: 0;
   z-index: 4;
 }
-.map-agent-pawn {
-  --pawn-light: #d8b46d;
-  --pawn-mid: #926d32;
-  --pawn-dark: #3e2b15;
+.map-agent-impression {
+  --impression-rim: #b98b42;
+  --impression-shadow: #302114;
   display: grid;
-  grid-template-rows: 19% 60% 21%;
+  grid-template-rows: 16% 72% 12%;
   place-items: center;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.65));
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.68));
   isolation: isolate;
 }
-.map-agent-pawn.finish-brass { --pawn-light: #e2c779; --pawn-mid: #9b7734; --pawn-dark: #4a3515; }
-.map-agent-pawn.finish-verdigris { --pawn-light: #a9c8b7; --pawn-mid: #4e8879; --pawn-dark: #1e4b46; }
-.map-agent-pawn.finish-slate { --pawn-light: #b3bdc5; --pawn-mid: #667786; --pawn-dark: #293843; }
-.map-agent-pawn.finish-umber { --pawn-light: #d1aa7b; --pawn-mid: #88583a; --pawn-dark: #3f271d; }
-.map-agent-pawn.finish-ivory { --pawn-light: #f0e7c7; --pawn-mid: #b5a681; --pawn-dark: #605744; }
-.map-agent-pawn.finish-oxblood { --pawn-light: #c77b70; --pawn-mid: #7e3435; --pawn-dark: #411c24; }
-.map-agent-pawn.finish-cobalt { --pawn-light: #90b4d5; --pawn-mid: #3e6998; --pawn-dark: #1d365d; }
-.map-agent-pawn.finish-victim { --pawn-light: #d8d8d3; --pawn-mid: #74716d; --pawn-dark: #351b20; opacity: 0.82; }
-.map-agent-pawn-cap {
-  width: 36%;
-  height: 100%;
-  border: 1px solid color-mix(in srgb, var(--pawn-light) 55%, #fff 15%);
-  border-radius: 50% 50% 40% 40%;
-  background: radial-gradient(circle at 34% 25%, var(--pawn-light), var(--pawn-mid) 58%, var(--pawn-dark));
-  box-shadow: inset -1px -1px 1px var(--pawn-dark), 0 1px 0 rgba(255,255,255,0.2);
-  z-index: 2;
+.map-agent-impression.finish-brass { --impression-rim: #d7b45d; --impression-shadow: #4b341b; }
+.map-agent-impression.finish-verdigris { --impression-rim: #74b6a6; --impression-shadow: #214d49; }
+.map-agent-impression.finish-slate { --impression-rim: #9facbb; --impression-shadow: #2b3847; }
+.map-agent-impression.finish-umber { --impression-rim: #c98a5f; --impression-shadow: #482a1e; }
+.map-agent-impression.finish-ivory { --impression-rim: #ded1a8; --impression-shadow: #5a5341; }
+.map-agent-impression.finish-oxblood { --impression-rim: #bb706b; --impression-shadow: #482027; }
+.map-agent-impression.finish-cobalt { --impression-rim: #72a6cf; --impression-shadow: #213a63; }
+.map-agent-impression.finish-victim { --impression-rim: #a6a4a0; --impression-shadow: #2f2025; opacity: 0.72; }
+.map-agent-impression-pin {
+  width: 21%;
+  height: 88%;
+  border: 1px solid color-mix(in srgb, var(--impression-rim) 72%, #fff 20%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #fff7, var(--impression-rim) 38%, var(--impression-shadow));
+  box-shadow: 0 1px 1px #0009;
+  z-index: 3;
 }
-.map-agent-pawn-face {
-  width: 54%;
+.map-agent-impression-portrait {
+  width: 76%;
   height: 100%;
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--pawn-light) 55%, #fff 15%);
-  border-radius: 46% 46% 28% 28%;
+  overflow: hidden;
+  border: 2px solid var(--impression-rim);
+  border-radius: 48% 48% 42% 42%;
+  background-color: #18202b;
+  background-position: center 18%;
+  background-size: cover;
+  box-shadow:
+    inset 0 0 0 1px rgba(12, 15, 20, 0.65),
+    0 0 0 1px color-mix(in srgb, var(--impression-shadow) 80%, transparent),
+    0 2px 2px rgba(0,0,0,0.5);
+  position: relative;
+  z-index: 2;
+}
+.map-agent-impression-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(90deg, transparent 47%, color-mix(in srgb, var(--pawn-dark) 45%, transparent) 50%, transparent 53%),
-    radial-gradient(circle at 32% 22%, var(--pawn-light), var(--pawn-mid) 60%, var(--pawn-dark));
-  color: color-mix(in srgb, var(--pawn-dark) 84%, #000);
+    linear-gradient(118deg, transparent 42%, rgba(255,255,255,0.18) 49%, transparent 55%),
+    linear-gradient(to bottom, transparent 55%, color-mix(in srgb, var(--impression-shadow) 52%, transparent));
+  pointer-events: none;
+}
+.map-agent-impression-monogram {
+  color: var(--impression-rim);
   font-family: var(--font-display);
-  font-size: clamp(5px, 0.48vw, 8px);
+  font-size: clamp(5px, 0.45vw, 8px);
   font-weight: 900;
-  letter-spacing: -0.08em;
-  line-height: 1;
-  text-shadow: 0 1px 0 color-mix(in srgb, var(--pawn-light) 55%, transparent);
+}
+.map-agent-impression-shadow {
+  width: 78%;
+  height: 56%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--impression-rim) 58%, transparent), transparent 70%);
+  opacity: 0.68;
+  filter: blur(1px);
   z-index: 1;
 }
-.map-agent-pawn-base {
-  width: 86%;
-  height: 72%;
-  border: 1px solid color-mix(in srgb, var(--pawn-light) 40%, #fff 10%);
-  border-radius: 46% 46% 30% 30%;
-  background: linear-gradient(90deg, var(--pawn-dark), var(--pawn-mid) 44%, var(--pawn-light) 56%, var(--pawn-mid) 72%, var(--pawn-dark));
-  box-shadow: inset 0 -2px 1px var(--pawn-dark), 0 2px 1px rgba(0,0,0,0.42);
-  z-index: 0;
-}
-.map-agent:hover .map-agent-pawn { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 72%, transparent)) drop-shadow(0 2px 2px rgba(0,0,0,0.65)); }
+.map-agent-impression.finish-victim .map-agent-impression-portrait { filter: grayscale(1) contrast(0.75); }
+.map-agent:hover .map-agent-impression { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 78%, transparent)) drop-shadow(0 2px 2px rgba(0,0,0,0.7)); }
 .map-agent-name {
   font-size: 0.6rem;
   background: rgba(20, 22, 29, 0.85);
@@ -2783,7 +2797,7 @@ input[type="range"]:disabled { opacity: 0.4; cursor: default; }
   display: block;
   object-fit: contain;
   object-position: 50% 5%;
-  filter: grayscale(0.7) saturate(0.48) brightness(0.68) contrast(1.08) sepia(0.08) hue-rotate(165deg);
+  filter: grayscale(0.46) saturate(0.64) brightness(0.76) contrast(1.04) sepia(0.05) hue-rotate(165deg);
 }
 
 .magnifying-lens {

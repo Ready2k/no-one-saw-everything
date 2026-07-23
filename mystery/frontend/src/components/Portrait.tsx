@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { AgentPublic } from "../types";
 import { SPRITE_SHEET } from "../map/mapAssets";
+import { lifelikeCalmPortrait } from "../characterArt";
 
 // Pressure is a 0-1 cumulative value from the session (see backend
 // session.py). Expressions switch at these thresholds; tune freely —
@@ -18,6 +19,8 @@ export function expressionForPressure(pressure: number): ExpressionState {
 
 /** Best available asset for the desired expression: cracking > defensive > calm. */
 function portraitAsset(agent: AgentPublic, expression: ExpressionState): string | null {
+  const lifelike = lifelikeCalmPortrait(agent);
+  if (lifelike) return lifelike;
   const art = agent.portrait_art;
   if (!art) return null;
   if (expression === "cracking" && art.cracking) return art.cracking;

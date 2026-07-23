@@ -185,6 +185,7 @@
       "height": 64,
       "rotation": -55
     },
-    "visual_layer": "exterior"
+    "visual_layer": "exterior",
+    "illustration": "/art/case_003/clinic_bench_dusk_hd.png"
   }
 ]
