@@ -1,6 +1,0 @@
-{
-  "model": "qwen2.5-coder:7b",
-  "profile": "chat-large",
-  "host_id": "ollama-remote",
-  "updated_at": "2026-07-01T14:31:18.657186"
-}

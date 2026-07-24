@@ -61,7 +61,7 @@ export const SPRITE_SHEET = {
 // Legacy fallback grid. Migrated maps return their own grid in MapReplayData.
 export const MAP_GRID = { cols: 140, rows: 100 } as const;
 
-// The original Phaser renderer (environment/frontend_server/templates/demo/
+// The original Phaser renderer (upstream generative-agents demo,
 // main_script.html) draws each 32x32 character frame at displayWidth=40
 // against tile_width=32 (`new_sprite.displayWidth = 40; scaleY = scaleX`) —
 // i.e. characters are deliberately drawn at 1.25x a tile, not exactly 1:1,

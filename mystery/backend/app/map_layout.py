@@ -2,7 +2,7 @@
 
 Positions are pixel coordinates on the 719x513 rendered overview of the
 original Smallville map (``the_ville2.png``), derived from the sector
-tile data in ``environment/frontend_server/static_dirs/assets/the_ville``.
+tile data in the upstream generative-agents repository (the_ville assets).
 
 This module is visual-only fallback data: authored ``map_position`` /
 ``map_bounds`` fields on a location always win. It exists so that
