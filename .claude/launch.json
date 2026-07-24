@@ -2,13 +2,6 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "frontend_server",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["manage.py", "runserver"],
-      "cwd": "environment/frontend_server",
-      "port": 8000
-    },
-    {
       "name": "mystery-backend",
       "runtimeExecutable": "bash",
       "runtimeArgs": [

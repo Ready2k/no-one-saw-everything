@@ -13,40 +13,7 @@ def reset_discovery_cache():
     discovery.reset_cache()
 
 
-def test_prefers_shared_settings_when_model_is_registered(monkeypatch):
-    monkeypatch.setattr(
-        discovery, "_read_shared_settings",
-        lambda: {"host_id": "ollama-remote", "model": "qwen2.5-coder:7b"},
-    )
-    monkeypatch.setattr(
-        discovery, "_models_for_host",
-        lambda endpoint: ["gemma4:latest", "qwen2.5-coder:7b"],
-    )
-    result = discovery.detect_llm()
-    assert result is not None
-    assert result.source == "shared_settings"
-    assert result.model == "qwen2.5-coder:7b"
-    assert result.host_id == "ollama-remote"
-
-
-def test_falls_back_to_available_model_when_saved_model_missing(monkeypatch):
-    monkeypatch.setattr(
-        discovery, "_read_shared_settings",
-        lambda: {"host_id": "ollama-remote", "model": "some-removed-model:7b"},
-    )
-    monkeypatch.setattr(
-        discovery, "_models_for_host",
-        lambda endpoint: ["gemma4:latest"],
-    )
-    result = discovery.detect_llm()
-    assert result is not None
-    assert result.source == "shared_settings_model_unavailable"
-    assert result.model == "gemma4:latest"
-
-
-def test_probes_hosts_in_order_when_no_shared_settings(monkeypatch):
-    monkeypatch.setattr(discovery, "_read_shared_settings", lambda: None)
-
+def test_probes_hosts_in_order(monkeypatch):
     def fake_models(endpoint):
         # Only the second host in the list responds.
         if endpoint == AVAILABLE_HOSTS[1]["endpoint"]:
@@ -62,13 +29,11 @@ def test_probes_hosts_in_order_when_no_shared_settings(monkeypatch):
 
 
 def test_returns_none_when_nothing_reachable(monkeypatch):
-    monkeypatch.setattr(discovery, "_read_shared_settings", lambda: None)
     monkeypatch.setattr(discovery, "_models_for_host", lambda endpoint: [])
     assert discovery.detect_llm() is None
 
 
 def test_detection_is_cached(monkeypatch):
-    monkeypatch.setattr(discovery, "_read_shared_settings", lambda: None)
     calls = {"n": 0}
 
     def fake_models(endpoint):
@@ -83,14 +48,6 @@ def test_detection_is_cached(monkeypatch):
 
     discovery.detect_llm(force=True)
     assert calls["n"] == 2, "force=True should bypass the cache"
-
-
-def test_shared_settings_file_missing_falls_through_safely():
-    # No monkeypatching: on a checkout without the shared settings file,
-    # _read_shared_settings must not raise.
-    assert discovery._read_shared_settings() is None or isinstance(
-        discovery._read_shared_settings(), dict
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -108,7 +65,7 @@ def test_config_auto_provider_success(monkeypatch):
             host_id="ollama-remote",
             endpoint="http://Desktop-HomePC.local:11434",
             model="qwen2.5-coder:7b",
-            source="shared_settings",
+            source="auto_probe",
         ),
     )
 
@@ -118,7 +75,7 @@ def test_config_auto_provider_success(monkeypatch):
     assert cfg.model == "qwen2.5-coder:7b"
     assert cfg.configured is True
     assert cfg.dialogue_enabled is True  # auto-on when a live model is found
-    assert cfg.detected_source == "shared_settings"
+    assert cfg.detected_source == "auto_probe"
 
 
 def test_config_auto_provider_respects_explicit_dialogue_override(monkeypatch):
