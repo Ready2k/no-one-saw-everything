@@ -1,0 +1,6 @@
+# Kokoro-82M engine (Apache-2.0). Also needs system espeak-ng for G2P fallback.
+# First synthesis downloads ~330 MB of weights from Hugging Face.
+-r requirements.txt
+kokoro>=0.9
+torch>=2.2
+numpy

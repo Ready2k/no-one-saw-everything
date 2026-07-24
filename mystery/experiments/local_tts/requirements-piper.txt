@@ -1,0 +1,4 @@
+# Piper engine (GPL-3.0, OHF-Voice/piper1-gpl). CPU/ONNX, very light.
+# Download voices with: python -m piper.download_voices en_GB-alan-medium --data-dir models/piper
+-r requirements.txt
+piper-tts>=1.4

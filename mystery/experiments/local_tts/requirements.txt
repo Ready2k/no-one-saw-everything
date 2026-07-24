@@ -1,0 +1,6 @@
+# Core service only — engines have their own extras files.
+# The espeak fallback engine additionally needs the system espeak-ng binary:
+#   sudo apt install espeak-ng   |   brew install espeak-ng
+fastapi>=0.110
+uvicorn>=0.29
+pydantic>=2.6
