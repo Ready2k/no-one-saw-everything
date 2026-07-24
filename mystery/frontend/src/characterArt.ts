@@ -18,6 +18,7 @@ const LIFELIKE_CALM: Record<string, string> = {
   agent_fred: "/art/portraits/lifelike/fred_dunmore_calm.png",
   agent_solicitor: "/art/portraits/lifelike/mr_whittle_calm.png",
   agent_bg_rosa: "/art/portraits/lifelike/rosa_fenn_calm.png",
+  agent_rosa: "/art/portraits/lifelike/rosa_fenn_calm.png",
   agent_bg_wren: "/art/portraits/lifelike/wren_ashby_calm.png",
   agent_bg_sal: "/art/portraits/lifelike/sal_ibori_calm.png",
   agent_bg_min: "/art/portraits/lifelike/min_okafor_calm.png",
@@ -25,6 +26,7 @@ const LIFELIKE_CALM: Record<string, string> = {
   agent_bg_dez: "/art/portraits/lifelike/dez_holt_calm.png",
   agent_bg_birdie: "/art/portraits/lifelike/birdie_voss_calm.png",
   agent_bg_tam: "/art/portraits/lifelike/tam_doyle_calm.png",
+  agent_tam: "/art/portraits/lifelike/tam_doyle_calm.png",
   agent_bg_gus: "/art/portraits/lifelike/gus_farrow_calm.png",
   agent_bg_effie: "/art/portraits/lifelike/effie_marsh_calm.png",
 };
