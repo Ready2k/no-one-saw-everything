@@ -56,26 +56,35 @@ def apply_body_language(text: str, agent: Agent) -> str:
     action = random.choice(actions)
     return f"{action} {text}"
 
+# Canned, non-LLM deflection lines, keyed by temperament. Kept as module-level
+# constants so callers (and tests guarding the no-leak fallback) can recognise a
+# deterministic deflection without duplicating the wording.
+DEFLECTIONS_HOSTILE = (
+    "That's none of your business.",
+    "I don't see how that's relevant to anything.",
+    "Ask a sensible question, Detective.",
+)
+DEFLECTIONS_TIMID = (
+    "I... I don't really know anything about that.",
+    "Maybe you should ask someone else.",
+    "I'm sorry, I can't help you with that.",
+)
+DEFLECTIONS_NEUTRAL = (
+    "I'd prefer not to discuss that.",
+    "I have nothing to say on the matter.",
+    "Let's stay focused on the facts, please.",
+)
+ALL_DEFLECTIONS = frozenset(DEFLECTIONS_HOSTILE + DEFLECTIONS_TIMID + DEFLECTIONS_NEUTRAL)
+
+
 def apply_deflection(agent: Agent) -> str:
-    # Called when trust is too low, or it's a fallback intent that they refuse to answer
+    """A canned refusal line chosen by temperament, used when trust is too low
+    or the question is a fallback the agent won't engage with."""
     if agent.conflict_avoidance < 0.3:
-        return random.choice([
-            "That's none of your business.",
-            "I don't see how that's relevant to anything.",
-            "Ask a sensible question, Detective."
-        ])
-    elif agent.conflict_avoidance > 0.7:
-        return random.choice([
-            "I... I don't really know anything about that.",
-            "Maybe you should ask someone else.",
-            "I'm sorry, I can't help you with that."
-        ])
-    else:
-        return random.choice([
-            "I'd prefer not to discuss that.",
-            "I have nothing to say on the matter.",
-            "Let's stay focused on the facts, please."
-        ])
+        return random.choice(DEFLECTIONS_HOSTILE)
+    if agent.conflict_avoidance > 0.7:
+        return random.choice(DEFLECTIONS_TIMID)
+    return random.choice(DEFLECTIONS_NEUTRAL)
 
 def default_small_talk_line(agent: Agent, intent: str) -> str:
     """A per-agent default for small talk when the case has not authored one

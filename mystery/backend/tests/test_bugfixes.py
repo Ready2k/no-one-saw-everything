@@ -198,7 +198,9 @@ def test_telemetry_covers_inspection_and_discovery_sources(monkeypatch):
 
     # /api/session/log is playtest-gated (operator-only); enable it for this read.
     monkeypatch.setenv("MYSTERY_PLAYTEST_MODE", "true")
-    inspect_and_discover(client, "loc_cafe_storage")
+    # loc_cafe_kitchen holds an ungated magnifying-glass clue in case_001;
+    # (loc_cafe_storage's clues are body-exam reveals, not room searches).
+    inspect_and_discover(client, "loc_cafe_kitchen")
     client.post("/api/events/ev_0756_sound/pin")
     client.post(
         "/api/interview/ask",

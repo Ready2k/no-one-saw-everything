@@ -186,8 +186,10 @@ def test_open_ended_rejects_blank_rewrite(monkeypatch):
 
 def test_free_text_api_keeps_canned_fallback_when_dialogue_disabled(monkeypatch):
     """No behaviour change for players without an LLM configured — an
-    unrecognised question still gets the plain hint message, not a
-    fabricated reply from the fake/off provider."""
+    unrecognised question gets a canned deflection line, never a fabricated
+    reply from the fake/off provider."""
+    from app.dialogue_processor import ALL_DEFLECTIONS
+
     monkeypatch.setenv("MYSTERY_LLM_PROVIDER", "fake")
     monkeypatch.delenv("MYSTERY_LLM_DIALOGUE_ENABLED", raising=False)
 
@@ -200,4 +202,6 @@ def test_free_text_api_keeps_canned_fallback_when_dialogue_disabled(monkeypatch)
     assert res.status_code == 200
     data = res.json()
     assert data["answer"] is None
-    assert "not sure what you mean" in data["fallback_message"].lower()
+    # The fallback must be one of the deterministic canned lines, proving no
+    # text was invented by the provider.
+    assert data["fallback_message"] in ALL_DEFLECTIONS

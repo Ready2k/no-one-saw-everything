@@ -75,13 +75,18 @@ def test_case_004_places_use_hd_search_illustrations():
 
 
 def test_reusable_places_use_hd_search_illustrations_across_cases():
+    # Places shared across cases (the square and the outdoor nature spots)
+    # fall back to the reusable HD library when a case has authored no
+    # bespoke art of its own for them. Pass no case_id to exercise that
+    # shared library directly — individual cases (e.g. case_005) may override
+    # any of these with their own dawn/moonlight variants.
     from app.place_library import location_search_illustration
 
-    assert location_search_illustration("loc_village_square", "case_005").endswith("/village_square_hd.png")
-    assert location_search_illustration("loc_fishery", "case_005").endswith("/fishery_hd.png")
-    assert location_search_illustration("loc_lake", "case_005").endswith("/lovers_lake_hd.png")
-    assert location_search_illustration("loc_woodland", "case_005").endswith("/whispering_woodland_hd.png")
-    assert location_search_illustration("loc_meadow", "case_005").endswith("/green_meadow_hd.png")
+    assert location_search_illustration("loc_village_square").endswith("/village_square_hd.png")
+    assert location_search_illustration("loc_fishery").endswith("/fishery_hd.png")
+    assert location_search_illustration("loc_lake").endswith("/lovers_lake_hd.png")
+    assert location_search_illustration("loc_woodland").endswith("/whispering_woodland_hd.png")
+    assert location_search_illustration("loc_meadow").endswith("/green_meadow_hd.png")
 
 
 def test_case_001_places_use_hd_search_illustrations():
@@ -127,12 +132,12 @@ def test_case_002_inspect_clues_have_authored_search_hotspots():
     case = get_case("case_002")
     expected = {
         "clue_solicitor_letter": ("loc_bookshop_back", 49, 65, 6),
-        "clue_forged_document": ("loc_bookshop_back", 39, 40, 6),
-        "clue_scarf_thread": ("loc_bookshop_back", 53, 39, 6),
+        "clue_forged_document": ("loc_bookshop_back", 68, 71, 6),
+        "clue_scarf_thread": ("loc_bookshop_back", 52, 34, 6),
         "clue_staged_breakin": ("loc_bookshop_back", 77, 40, 7),
-        "clue_letter_opener_wiped": ("loc_bookshop_back", 53, 63, 6),
+        "clue_letter_opener_wiped": ("loc_bookshop_back", 70, 68, 6),
         "clue_invoice_discrepancy": ("loc_bookshop", 62, 64, 6),
-        "clue_owen_debt_folder": ("loc_bookshop_back", 69, 70, 7),
+        "clue_owen_debt_folder": ("loc_bookshop_back", 46, 73, 7),
         "clue_priya_scarf_missing_thread": ("loc_bookshop", 66, 37, 7),
     }
 
@@ -194,15 +199,25 @@ def test_case_004_inspect_clues_have_authored_search_hotspots():
         assert discoverability.radius == radius
 
 
-def test_all_authored_cases_use_canonical_visual_contract():
-    for case_id in ("case_001", "case_002", "case_003", "case_004", "case_005", "case_006"):
+def test_all_authored_cases_use_a_full_visual_contract():
+    # Every authored case renders every one of its locations, whether it uses
+    # the shared canonical overworld or its own bespoke case-art village map.
+    canonical_cases = ("case_001", "case_002", "case_004")
+    case_art_cases = ("case_003", "case_005", "case_006")
+
+    for case_id in canonical_cases + case_art_cases:
         case = get_case(case_id)
         payload = map_payload(case, set())
 
-        assert payload["mode"] == "canonical_overworld"
-        assert payload["definition_id"] == "town_canonical_v1"
-        assert set(payload["visible_location_ids"]) == {loc.location_id for loc in case.locations}
-        assert set(payload["canonical_locations"]) == set(payload["visible_location_ids"])
+        expected_mode = "canonical_overworld" if case_id in canonical_cases else "case_art"
+        assert payload["mode"] == expected_mode, case_id
+        if case_id in canonical_cases:
+            assert payload["definition_id"] == "town_canonical_v1", case_id
+        else:
+            # Case-art maps carry their own per-case definition id.
+            assert payload["definition_id"].startswith(case_id), case_id
+        assert set(payload["visible_location_ids"]) == {loc.location_id for loc in case.locations}, case_id
+        assert set(payload["canonical_locations"]) == set(payload["visible_location_ids"]), case_id
 
 
 def test_all_authored_case_object_visuals_stay_in_visible_locations():

@@ -122,29 +122,21 @@ _REUSABLE_SEARCH_ILLUSTRATIONS = {
 }
 
 
+# Per-case search-art overrides, keyed by case id. A case's bespoke art wins
+# for the locations it lists; everything else falls back to the shared library.
+_CASE_SEARCH_ILLUSTRATIONS = {
+    "case_001": _CASE_001_SEARCH_ILLUSTRATIONS,
+    "case_002": _CASE_002_SEARCH_ILLUSTRATIONS,
+    "case_004": _CASE_004_SEARCH_ILLUSTRATIONS,
+    "case_005": _CASE_005_SEARCH_ILLUSTRATIONS,
+    "case_010": _CASE_010_SEARCH_ILLUSTRATIONS,
+}
+
+
 def location_search_illustration(location_id: str, case_id: str | None = None) -> str | None:
     """Return high-resolution searchable place art for authored locations."""
-    if case_id == "case_001":
-        case_illustration = _CASE_001_SEARCH_ILLUSTRATIONS.get(location_id)
-        if case_illustration:
-            return case_illustration
-    if case_id == "case_002":
-        case_illustration = _CASE_002_SEARCH_ILLUSTRATIONS.get(location_id)
-        if case_illustration:
-            return case_illustration
-    if case_id == "case_004":
-        case_illustration = _CASE_004_SEARCH_ILLUSTRATIONS.get(location_id)
-        if case_illustration:
-            return case_illustration
-    if case_id == "case_005":
-        case_illustration = _CASE_005_SEARCH_ILLUSTRATIONS.get(location_id)
-        if case_illustration:
-            return case_illustration
-    if case_id == "case_010":
-        case_illustration = _CASE_010_SEARCH_ILLUSTRATIONS.get(location_id)
-        if case_illustration:
-            return case_illustration
-    return _REUSABLE_SEARCH_ILLUSTRATIONS.get(location_id)
+    overrides = _CASE_SEARCH_ILLUSTRATIONS.get(case_id, {})
+    return overrides.get(location_id) or _REUSABLE_SEARCH_ILLUSTRATIONS.get(location_id)
 
 
 def location_art_asset(location_id: str, view: str = "external") -> str | None:
