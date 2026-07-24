@@ -354,6 +354,45 @@ const CASE_005_PLACES: PlaceReconstruction[] = [
   },
 ];
 
+const CASE_003_PLACES: PlaceReconstruction[] = [
+  {
+    id: "case-003-clinic-bench",
+    displayName: "The Clinic & Elias's Bench",
+    matchedLine: "The clinic frontage, matched to the bench by the fountain.",
+    exteriorSrc: `${CASE_003_ART}/map/case_003_village_map_afternoon.png`,
+    interiorSrc: `${CASE_003_ART}/rewind/clinic_bench_handoff_hd.png`,
+    focus: { x: 53, y: 38 },
+    description:
+      "Late afternoon closes around the square. From the clinic door, a short walk reaches the bench where a routine handoff became something else.",
+  },
+];
+
+const CASE_006_PLACES: PlaceReconstruction[] = [
+  {
+    id: "case-006-bell-house",
+    displayName: "Bell House & the Fireside Room",
+    matchedLine: "Marcus Bell's house, matched to the chair by the fire.",
+    exteriorSrc: `${CASE_006_ART}/map/case_006_village_map_night.png`,
+    interiorSrc: `${CASE_006_ART}/rewind/marcus_cocoa_fireside_hd.png`,
+    focus: { x: 38, y: 18 },
+    description:
+      "At night the house is one pool of warm light on the square. The public doorstep and the private fireside are one address, not one account.",
+  },
+];
+
+const CASE_007_PLACES: PlaceReconstruction[] = [
+  {
+    id: "case-007-fair-alley",
+    displayName: "The Lantern Fair & Rear Alley",
+    matchedLine: "The lantern-lit square, matched to the unlit service route.",
+    exteriorSrc: `${CASE_007_ART}/map/case_007_village_map_lantern_fair.png`,
+    interiorSrc: `${CASE_007_ART}/rewind/grey_coat_alley_hd.png`,
+    focus: { x: 47, y: 43 },
+    description:
+      "The fair made the square bright and loud. One narrow alley behind the stalls remained just dark enough for a witness to lose a face.",
+  },
+];
+
 const CASE_010_PLACES: PlaceReconstruction[] = [
   {
     id: "case-010-village-storage",
@@ -460,8 +499,14 @@ export default function RewindIntro({
     const places =
       c.case_id === "case_001"
         ? CASE_001_PLACES
+        : c.case_id === "case_003"
+          ? CASE_003_PLACES
         : c.case_id === "case_004"
           ? CASE_004_PLACES
+          : c.case_id === "case_006"
+            ? CASE_006_PLACES
+          : c.case_id === "case_007"
+            ? CASE_007_PLACES
           : c.case_id === "case_005"
             ? CASE_005_PLACES
             : c.case_id === "case_010"
@@ -489,8 +534,14 @@ export default function RewindIntro({
       const places =
         c.case_id === "case_001"
           ? CASE_001_PLACES
+          : c.case_id === "case_003"
+            ? CASE_003_PLACES
           : c.case_id === "case_004"
             ? CASE_004_PLACES
+            : c.case_id === "case_006"
+              ? CASE_006_PLACES
+            : c.case_id === "case_007"
+              ? CASE_007_PLACES
             : c.case_id === "case_005"
               ? CASE_005_PLACES
               : c.case_id === "case_010"

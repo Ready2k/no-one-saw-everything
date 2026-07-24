@@ -1106,6 +1106,47 @@ TOWN_LIGHT_OVERLAYS: list[dict[str, Any]] = [
 ]
 
 
+# Shared authored geography for the HR village map variants.  Cases can change
+# the weather, time and set dressing, but the physical village stays legible.
+CASE_ART_VILLAGE_LOCATIONS: dict[str, dict[str, Any]] = {
+    "loc_village_square": {"x": 515, "y": 250, "width": 420, "height": 230, "layer": "exterior"},
+    "loc_fountain": {"x": 650, "y": 292, "width": 128, "height": 112, "layer": "exterior"},
+    "loc_elias_bench": {"x": 750, "y": 336, "width": 105, "height": 58, "layer": "exterior"},
+    "loc_hobbs_cafe": {"x": 696, "y": 496, "width": 270, "height": 290, "layer": "exterior"},
+    "loc_cafe_kitchen": {"x": 740, "y": 570, "width": 105, "height": 82, "layer": "interior"},
+    "loc_cafe_storage": {"x": 850, "y": 570, "width": 90, "height": 82, "layer": "interior"},
+    "loc_rear_alley": {"x": 610, "y": 430, "width": 78, "height": 260, "layer": "exterior"},
+    "loc_bookshop": {"x": 260, "y": 388, "width": 250, "height": 230, "layer": "exterior"},
+    "loc_bookshop_back": {"x": 320, "y": 468, "width": 105, "height": 85, "layer": "interior"},
+    "loc_clinic": {"x": 885, "y": 280, "width": 190, "height": 170, "layer": "exterior"},
+    "loc_clinic_dispensary": {"x": 955, "y": 338, "width": 75, "height": 70, "layer": "interior"},
+    "loc_marcus_house": {"x": 456, "y": 55, "width": 205, "height": 165, "layer": "exterior"},
+    "loc_marcus_study": {"x": 500, "y": 95, "width": 110, "height": 90, "layer": "interior"},
+    "loc_owen_house": {"x": 1045, "y": 590, "width": 340, "height": 340, "layer": "exterior"},
+    "loc_clara_flat": {"x": 740, "y": 510, "width": 150, "height": 110, "layer": "interior"},
+    "loc_priya_flat": {"x": 180, "y": 700, "width": 180, "height": 155, "layer": "interior"},
+    "loc_nadia_flat": {"x": 380, "y": 650, "width": 150, "height": 165, "layer": "interior"},
+    "loc_elias_house": {"x": 760, "y": 45, "width": 260, "height": 180, "layer": "interior"},
+    "loc_ruth_cottage": {"x": 155, "y": 675, "width": 180, "height": 170, "layer": "exterior"},
+    "loc_solicitors_office": {"x": 380, "y": 670, "width": 150, "height": 155, "layer": "interior"},
+}
+
+
+def case_art_map_definition(case_id: str, image: str, palette: str) -> dict[str, Any]:
+    return {
+        "definition_id": f"{case_id}_shared_village_v1",
+        "asset": f"{case_id}_shared_village_v1",
+        "image": image,
+        "width": 1448,
+        "height": 1086,
+        "tile_size": 32,
+        "grid": {"cols": 45, "rows": 34},
+        "origin": "north_west",
+        "base_palette": palette,
+        "lighting_overlay": "runtime_lightingTint",
+    }
+
+
 CASE_MAPS: dict[str, dict[str, Any]] = {
     "case_001": {
         "mode": "canonical_overworld",
@@ -1147,8 +1188,17 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         },
     },
     "case_003": {
-        "mode": "canonical_overworld",
-        "map": CANONICAL_MAP,
+        "mode": "case_art",
+        "map": case_art_map_definition(
+            "case_003", "/art/case_003/map/case_003_village_map_afternoon.png", "wet_stone_afternoon"
+        ),
+        "location_visuals": {
+            loc_id: CASE_ART_VILLAGE_LOCATIONS[loc_id]
+            for loc_id in [
+                "loc_village_square", "loc_clinic", "loc_clinic_dispensary", "loc_fountain",
+                "loc_hobbs_cafe", "loc_owen_house", "loc_clara_flat", "loc_elias_bench",
+            ]
+        },
         "visible_location_ids": [
             "loc_village_square", "loc_clinic", "loc_clinic_dispensary",
             "loc_fountain", "loc_hobbs_cafe", "loc_owen_house",
@@ -1284,8 +1334,17 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         },
     },
     "case_006": {
-        "mode": "canonical_overworld",
-        "map": CANONICAL_MAP,
+        "mode": "case_art",
+        "map": case_art_map_definition(
+            "case_006", "/art/case_006/map/case_006_village_map_night.png", "wet_indigo_night"
+        ),
+        "location_visuals": {
+            loc_id: CASE_ART_VILLAGE_LOCATIONS[loc_id]
+            for loc_id in [
+                "loc_village_square", "loc_marcus_house", "loc_marcus_study", "loc_ruth_cottage",
+                "loc_bookshop", "loc_clinic", "loc_solicitors_office", "loc_priya_flat",
+            ]
+        },
         "visible_location_ids": [
             "loc_village_square", "loc_marcus_house", "loc_marcus_study",
             "loc_ruth_cottage", "loc_bookshop", "loc_clinic",
@@ -1301,8 +1360,19 @@ CASE_MAPS: dict[str, dict[str, Any]] = {
         },
     },
     "case_007": {
-        "mode": "canonical_overworld",
-        "map": CANONICAL_MAP,
+        "mode": "case_art",
+        "map": case_art_map_definition(
+            "case_007", "/art/case_007/map/case_007_village_map_lantern_fair.png", "lantern_fair_night"
+        ),
+        "location_visuals": {
+            loc_id: CASE_ART_VILLAGE_LOCATIONS[loc_id]
+            for loc_id in [
+                "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
+                "loc_cafe_kitchen", "loc_rear_alley", "loc_bookshop", "loc_bookshop_back",
+                "loc_clinic", "loc_marcus_house", "loc_marcus_study", "loc_owen_house",
+                "loc_clara_flat", "loc_priya_flat", "loc_nadia_flat", "loc_elias_house",
+            ]
+        },
         "visible_location_ids": [
             "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
             "loc_cafe_kitchen", "loc_rear_alley", "loc_bookshop", "loc_bookshop_back",
