@@ -47,7 +47,8 @@
       "height": 96,
       "rotation": 37
     },
-    "visual_layer": "interior"
+    "visual_layer": "interior",
+    "illustration": "/art/case_006/rewind/marcus_cocoa_fireside_hd.png"
   },
   {
     "location_id": "loc_marcus_study",

@@ -124,7 +124,8 @@
       "height": 80,
       "rotation": 48
     },
-    "visual_layer": "interior"
+    "visual_layer": "interior",
+    "illustration": "/art/case_007/rewind/grey_coat_alley_hd.png"
   },
   {
     "location_id": "loc_rear_alley",

@@ -42,7 +42,7 @@ interface SceneArtwork {
 }
 
 interface WitnessReplay {
-  frames: Array<{ src: string; label: string }>;
+  frames: Array<{ src: string; label: string; position?: string }>;
   witness: string;
   observation: string;
   figureLabel: string;
@@ -63,6 +63,9 @@ const CASE_002_INTRO_ART = `${CASE_002_ART}/intro`;
 const CASE_004_ART = "/art/case_004";
 const CASE_004_INTRO_ART = `${CASE_004_ART}/intro`;
 const CASE_005_ART = "/art/case_005";
+const CASE_003_ART = "/art/case_003";
+const CASE_006_ART = "/art/case_006";
+const CASE_007_ART = "/art/case_007";
 const CASE_010_ART = "/art/case_010";
 const TOWN_INTERIORS = "/art/town/interiors_hd";
 const TOWN_INTERIORS_INTRO = `${TOWN_INTERIORS}/intro`;
@@ -87,6 +90,54 @@ const CLINIC_EXTERIOR =
 // hidden camera footage.  A figure stays anonymous unless the public event
 // itself names them, and the motion is illustrative rather than a new clue.
 const WITNESS_REPLAYS: Record<string, Record<string, WitnessReplay>> = {
+  case_003: {
+    ev_0705_nadia_checks_elias: {
+      frames: [
+        { src: `${CASE_003_ART}/rewind/clinic_bench_handoff_hd.png`, label: "the bench", position: "50% 8%" },
+        { src: `${CASE_003_ART}/rewind/clinic_bench_handoff_hd.png`, label: "a navy sleeve", position: "50% 20%" },
+        { src: `${CASE_003_ART}/rewind/clinic_bench_handoff_hd.png`, label: "the organiser", position: "50% 34%" },
+        { src: `${CASE_003_ART}/rewind/clinic_bench_handoff_hd.png`, label: "a flask", position: "50% 48%" },
+        { src: `${CASE_003_ART}/rewind/clinic_bench_handoff_hd.png`, label: "her hand withdraws", position: "50% 64%" },
+        { src: `${CASE_003_ART}/rewind/clinic_bench_handoff_hd.png`, label: "rain on stone", position: "50% 82%" },
+      ],
+      witness: "Ruth's view across the square",
+      observation: "She saw the nurse place something small in Elias's hand. The rest is only the shape the moment left behind.",
+      figureLabel: "the clinic nurse",
+      direction: "away",
+    },
+  },
+  case_006: {
+    ev_2000_priya_passes: {
+      frames: [
+        { src: `${CASE_006_ART}/rewind/isabella_leaves_dusk_hd.png`, label: "the doorway", position: "50% 8%" },
+        { src: `${CASE_006_ART}/rewind/isabella_leaves_dusk_hd.png`, label: "a pale coat", position: "50% 23%" },
+        { src: `${CASE_006_ART}/rewind/isabella_leaves_dusk_hd.png`, label: "wet cobbles", position: "50% 39%" },
+        { src: `${CASE_006_ART}/rewind/isabella_leaves_dusk_hd.png`, label: "her turned shoulder", position: "50% 54%" },
+        { src: `${CASE_006_ART}/rewind/isabella_leaves_dusk_hd.png`, label: "the house light", position: "50% 69%" },
+        { src: `${CASE_006_ART}/rewind/isabella_leaves_dusk_hd.png`, label: "the empty square", position: "50% 84%" },
+      ],
+      witness: "Priya's pass through the square",
+      observation: "Isabella leaves furious — a compelling sight, but two hours before Marcus's death. A memory can make a red herring feel decisive.",
+      figureLabel: "a departing woman",
+      direction: "away",
+    },
+  },
+  case_007: {
+    ev_2044_grey_coat: {
+      frames: [
+        { src: `${CASE_007_ART}/rewind/grey_coat_alley_hd.png`, label: "Ben's van", position: "50% 8%" },
+        { src: `${CASE_007_ART}/rewind/grey_coat_alley_hd.png`, label: "kitchen light", position: "50% 22%" },
+        { src: `${CASE_007_ART}/rewind/grey_coat_alley_hd.png`, label: "a grey coat", position: "50% 38%" },
+        { src: `${CASE_007_ART}/rewind/grey_coat_alley_hd.png`, label: "the raised collar", position: "50% 53%" },
+        { src: `${CASE_007_ART}/rewind/grey_coat_alley_hd.png`, label: "a hand at the door", position: "50% 69%" },
+        { src: `${CASE_007_ART}/rewind/grey_coat_alley_hd.png`, label: "lanterns beyond", position: "50% 84%" },
+      ],
+      witness: "Ben's view from the delivery van",
+      observation: "A long grey coat crossed from the cafe kitchen to the bookshop's rear door. Ben never saw a face.",
+      figureLabel: "grey-coated figure",
+      direction: "toward",
+    },
+  },
   case_005: {
     ev_0700_nadia_glance: {
       frames: [
@@ -126,6 +177,15 @@ export function hasWitnessReplay(caseId: string, eventId: string): boolean {
 }
 
 const WITNESS_TESTIMONY: Record<string, Record<string, { clueId: string; eventId: string }>> = {
+  case_003: {
+    agent_ruth: { clueId: "clue_nadia_pill_handoff", eventId: "ev_0705_nadia_checks_elias" },
+  },
+  case_006: {
+    agent_priya: { clueId: "clue_priya_sees_isabella", eventId: "ev_2000_priya_passes" },
+  },
+  case_007: {
+    agent_ben: { clueId: "clue_ben_grey_coat", eventId: "ev_2044_grey_coat" },
+  },
   case_005: {
     agent_nadia: { clueId: "clue_nadia_sees_owen_alley", eventId: "ev_0700_nadia_glance" },
   },
@@ -389,11 +449,11 @@ export default function RewindIntro({
         events,
         windowStart,
         windowEnd,
-        []
+        replayEventId ? [replayEventId] : []
       )))
       .catch(() => {})
       .finally(() => setLoaded(true));
-  }, [c, windowStart, windowEnd]);
+  }, [c, windowStart, windowEnd, replayEventId]);
 
   useEffect(() => {
     const urls = new Set<string>();
@@ -746,6 +806,7 @@ function WitnessReplayScene({ replay }: { replay: WitnessReplay }) {
           src={frame.src}
           alt={`${frame.label} — ${replay.observation}`}
           draggable={false}
+          style={{ objectPosition: frame.position ?? "50% 50%" }}
         />
       ))}
       <div className="rw-witness-vignette" />
