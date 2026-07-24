@@ -117,6 +117,15 @@ def _sanitise(
     Sanitises LLM text.
     Returns a rejection reason if invalid, else None.
     """
+    # 0. Blank text. A syntactically valid but empty rewritten_text (a model
+    # confused by an adversarial or off-topic question sometimes emits
+    # {"rewritten_text": ""}) trivially passes every other check below —
+    # nothing forbidden appears in an empty string — and would otherwise
+    # reach the player as a blank chat bubble instead of falling back to the
+    # canned deflection.
+    if not text.strip():
+        return "Empty rewrite"
+
     text_lower = text.lower()
     allowed_blob = " ".join(allowed_facts + allowed_context).lower()
 

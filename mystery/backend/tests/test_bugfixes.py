@@ -62,7 +62,7 @@ def test_free_text_challenge_guardrail_returns_fallback(monkeypatch):
     monkeypatch.setattr(
         free_text_api,
         "classify_question",
-        lambda q, c, s: QuestionIntent(
+        lambda q, c, s, agent_id=None: QuestionIntent(
             intent="explicit_challenge",
             confidence=0.9,
             referenced_clue_id="clue_ben_sighting",

@@ -77,6 +77,48 @@ def apply_deflection(agent: Agent) -> str:
             "Let's stay focused on the facts, please."
         ])
 
+def default_small_talk_line(agent: Agent, intent: str) -> str:
+    """A per-agent default for small talk when the case has not authored one
+    (`Agent.small_talk` is empty for most cast members in most cases), built
+    only from fields every agent already has — occupation, first trait, and
+    the numeric temperament dials — never a fixed vocabulary of specific
+    trait words, since traits are freeform text authored per case. Replaces
+    one universal "I don't have much to say about that." shared by every
+    character in every case regardless of who they are."""
+    occupation = agent.occupation.strip()
+    article = "an" if occupation[:1].lower() in "aeiou" else "a"
+    trait = agent.traits[0] if agent.traits else None
+
+    if intent == "occupation":
+        return f"I'm {article} {occupation}."
+    if intent == "favorite_thing":
+        base = f"Can't say I've got much time for hobbies, between the {occupation.lower()} and everything else."
+        if trait:
+            return f"{base} Ask around and people would call me {trait} before anything else."
+        return base
+    if intent == "about_me":
+        first_name = agent.full_name.split()[0]
+        base = f"I'm {first_name}, {article} {occupation.lower()} here."
+        if trait:
+            return f"{base} {trait.capitalize()}, if you ask anyone who knows me."
+        return base
+    if intent == "general_relationships":
+        if agent.conflict_avoidance > 0.65:
+            return "I keep out of most people's business, truth be told."
+        if agent.gossip_tendency > 0.65:
+            return "You hear things, working where I do. I don't chase it, but it finds you."
+        return "I get on well enough with most people around here."
+    if intent == "emotions":
+        if agent.conflict_avoidance > 0.65:
+            return "I'd rather keep things calm than make a show of how I feel."
+        return "I don't make a show of it, but today's been hard on everyone."
+    if intent == "how_are_you":
+        if agent.conflict_avoidance > 0.65:
+            return "As well as can be expected, I suppose. I'd rather just get on with it."
+        return "Shaken, if I'm honest. It's not every day something like this happens."
+    return "I don't have much to say about that."
+
+
 def humanize_response(text: str, agent: Agent, count: int) -> str:
     """Passes deterministic text through humanizing filters."""
     text = apply_repetition_frustration(text, count)
