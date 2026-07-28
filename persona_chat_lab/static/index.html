@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Persona Chat Lab</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0; padding: 0; display: flex; height: 100vh;
+    background: #16181d; color: #e8e8ea;
+  }
+  #sidebar {
+    width: 260px; flex-shrink: 0; border-right: 1px solid #2c2f36;
+    padding: 16px; box-sizing: border-box; overflow-y: auto;
+  }
+  #sidebar h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: #8a8f99; margin: 0 0 12px; }
+  .persona-btn {
+    display: block; width: 100%; text-align: left; padding: 10px 12px; margin-bottom: 8px;
+    border-radius: 8px; border: 1px solid #2c2f36; background: #1d2128; color: #e8e8ea;
+    cursor: pointer; font-size: 14px;
+  }
+  .persona-btn.active { border-color: #5a8dee; background: #223049; }
+  .persona-card { font-size: 12px; color: #9aa0ab; margin-top: 14px; line-height: 1.5; }
+  .persona-card b { color: #cfd3da; }
+  #main { flex: 1; display: flex; flex-direction: column; }
+  #meter-row { padding: 10px 20px; border-bottom: 1px solid #2c2f36; display: flex; align-items: center; gap: 12px; font-size: 13px; color: #9aa0ab; }
+  #meter-bar { flex: 1; height: 8px; border-radius: 4px; background: #2c2f36; overflow: hidden; }
+  #meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4caf6a, #e0b83d, #e05d3d); transition: width .3s ease; }
+  #reset-btn { background: none; border: 1px solid #3a3f48; color: #9aa0ab; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
+  #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { max-width: 70%; padding: 10px 14px; border-radius: 12px; line-height: 1.45; font-size: 14px; }
+  .msg.detective { align-self: flex-end; background: #2a3f66; }
+  .msg.agent { align-self: flex-start; background: #22252c; }
+  .msg .meta { font-size: 11px; color: #767c88; margin-top: 4px; }
+  #input-row { display: flex; padding: 16px; border-top: 1px solid #2c2f36; gap: 10px; }
+  #question { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid #2c2f36; background: #1d2128; color: #e8e8ea; font-size: 14px; }
+  #send-btn { padding: 10px 18px; border-radius: 8px; border: none; background: #5a8dee; color: white; cursor: pointer; font-size: 14px; }
+  #send-btn:disabled { opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h2>Suspects</h2>
+  <button class="persona-btn active" data-persona="owen">Owen Price (keywords)</button>
+  <button class="persona-btn" data-persona="owen_twin">Owen Price (concepts)</button>
+  <button class="persona-btn" data-persona="priya">Priya Shah</button>
+  <div id="persona-card" class="persona-card"></div>
+</div>
+
+<div id="main">
+  <div id="meter-row">
+    <span>Pressure</span>
+    <div id="meter-bar"><div id="meter-fill"></div></div>
+    <span id="meter-label">composed</span>
+    <button id="reset-btn">Reset this suspect</button>
+  </div>
+  <div id="messages"></div>
+  <div id="input-row">
+    <input id="question" type="text" placeholder="Ask a question..." autocomplete="off">
+    <button id="send-btn">Ask</button>
+  </div>
+</div>
+
+<script>
+let currentPersona = "owen";
+let personaMeta = {};
+const messagesByPersona = { owen: [], priya: [], owen_twin: [] };
+
+async function loadPersonas() {
+  const res = await fetch("/api/personas");
+  personaMeta = await res.json();
+  renderCard();
+}
+
+function renderCard() {
+  const p = personaMeta[currentPersona];
+  if (!p) return;
+  document.getElementById("persona-card").innerHTML =
+    `<b>${p.full_name}</b> — ${p.occupation}<br><br>` +
+    `<i>${p.voice_card}</i><br><br>` +
+    `Traits: ${p.traits.join(", ")}`;
+}
+
+function renderMessages() {
+  const box = document.getElementById("messages");
+  box.innerHTML = "";
+  for (const m of messagesByPersona[currentPersona]) {
+    const div = document.createElement("div");
+    div.className = "msg " + (m.speaker === "detective" ? "detective" : "agent");
+    div.textContent = m.text;
+    if (m.meta) {
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = m.meta;
+      div.appendChild(meta);
+    }
+    box.appendChild(div);
+  }
+  box.scrollTop = box.scrollHeight;
+}
+
+function updateMeter(pressure, band) {
+  document.getElementById("meter-fill").style.width = Math.round(pressure * 100) + "%";
+  document.getElementById("meter-label").textContent = band;
+}
+
+document.querySelectorAll(".persona-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".persona-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentPersona = btn.dataset.persona;
+    renderCard();
+    renderMessages();
+  });
+});
+
+document.getElementById("reset-btn").addEventListener("click", async () => {
+  await fetch("/api/reset", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ persona: currentPersona }),
+  });
+  messagesByPersona[currentPersona] = [];
+  renderMessages();
+  updateMeter(0, "composed");
+});
+
+async function sendQuestion() {
+  const input = document.getElementById("question");
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = "";
+  messagesByPersona[currentPersona].push({ speaker: "detective", text: question });
+  renderMessages();
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ persona: currentPersona, question }),
+  });
+  const data = await res.json();
+  messagesByPersona[currentPersona].push({
+    speaker: currentPersona,
+    text: data.answer,
+    meta: `${data.band} (${data.pressure}) · topic: ${data.topic || "unmatched"}`,
+  });
+  renderMessages();
+  updateMeter(data.pressure, data.band);
+}
+
+document.getElementById("send-btn").addEventListener("click", sendQuestion);
+document.getElementById("question").addEventListener("keydown", e => {
+  if (e.key === "Enter") sendQuestion();
+});
+
+loadPersonas();
+</script>
+
+</body>
+</html>
