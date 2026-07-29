@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "pairs": [
+    {
+      "claim_ids": [
+        "claim_owen_deed_genuine",
+        "claim_owen_yard_alibi"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    }
+  ]
+}

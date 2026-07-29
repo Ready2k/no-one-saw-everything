@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "pairs": [
+    {
+      "claim_ids": [
+        "claim_ruth_certificate_shock",
+        "claim_ruth_relationship_revealed"
+      ],
+      "facet": "motive (2/3 concept groups)"
+    }
+  ]
+}

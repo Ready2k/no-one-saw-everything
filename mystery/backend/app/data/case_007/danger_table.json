@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "pairs": [
+    {
+      "claim_ids": [
+        "claim_marcus_bill_legitimate",
+        "claim_marcus_notebook_ignorance"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    },
+    {
+      "claim_ids": [
+        "claim_marcus_bill_legitimate",
+        "claim_marcus_planted"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    },
+    {
+      "claim_ids": [
+        "claim_marcus_kitchen_brief",
+        "claim_marcus_notebook_ignorance"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    },
+    {
+      "claim_ids": [
+        "claim_marcus_kitchen_brief",
+        "claim_marcus_planted"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    },
+    {
+      "claim_ids": [
+        "claim_marcus_notebook_ignorance",
+        "claim_marcus_stall"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    },
+    {
+      "claim_ids": [
+        "claim_marcus_planted",
+        "claim_marcus_stall"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    }
+  ]
+}

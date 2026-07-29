@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "pairs": [
+    {
+      "claim_ids": [
+        "claim_clara_ledger_denial",
+        "claim_clara_morning_prep"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    },
+    {
+      "claim_ids": [
+        "claim_clara_ledger_denial",
+        "claim_clara_weight_ignorance"
+      ],
+      "facet": "motive (2/4 concept groups)"
+    }
+  ]
+}
