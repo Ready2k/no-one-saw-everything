@@ -33,6 +33,32 @@
       ]
     },
     {
+      "clue_id": "clue_storage_impact_pattern",
+      "title": "Single-impact transfer pattern",
+      "clue_type": "physical_evidence",
+      "description": "Raking light reveals a narrow floor smear and sparse directional droplets. A trace swab gives a presumptive blood result. The pattern is consistent with one close-range blunt impact followed by movement toward the kitchen; it establishes method and route, but not the attacker.",
+      "strength": "strong",
+      "reliability": 0.92,
+      "ambiguity": "low",
+      "discoverability": {
+        "method": "inspect",
+        "location_id": "loc_cafe_storage",
+        "x": 48.0,
+        "y": 69.0,
+        "radius": 9.0
+      },
+      "supports_conclusion_ids": [
+        "conc_method"
+      ],
+      "linked_location_ids": [
+        "loc_cafe_storage",
+        "loc_cafe_kitchen"
+      ],
+      "linked_event_ids": [
+        "ev_0756_sound"
+      ]
+    },
+    {
       "clue_id": "clue_overheard_threat",
       "title": "\"You have until tomorrow\"",
       "clue_type": "witness_statement",
@@ -64,8 +90,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_marcus_house",
-        "x": 57.0,
-        "y": 26.0,
+        "x": 33.0,
+        "y": 47.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
@@ -160,7 +186,10 @@
       "ambiguity": "medium",
       "discoverability": {
         "method": "inspect",
-        "location_id": "loc_hobbs_cafe"
+        "location_id": "loc_hobbs_cafe",
+        "x": 58.0,
+        "y": 42.0,
+        "radius": 8.0
       },
       "supports_conclusion_ids": [
         "conc_clara_means",
@@ -187,8 +216,8 @@
         "required_prior_clue_ids": [
           "clue_till_weight_missing"
         ],
-        "x": 77.0,
-        "y": 44.0,
+        "x": 78.0,
+        "y": 83.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
@@ -213,7 +242,7 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_cafe_kitchen",
-        "x": 84.0,
+        "x": 79.0,
         "y": 39.0,
         "radius": 8.0
       },
@@ -239,8 +268,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_clara_flat",
-        "x": 37.0,
-        "y": 46.0,
+        "x": 48.0,
+        "y": 52.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
@@ -310,8 +339,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_marcus_house",
-        "x": 63.0,
-        "y": 71.0,
+        "x": 20.0,
+        "y": 83.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [

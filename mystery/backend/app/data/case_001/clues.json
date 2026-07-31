@@ -90,8 +90,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_marcus_house",
-        "x": 57.0,
-        "y": 26.0,
+        "x": 33.0,
+        "y": 47.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
@@ -187,8 +187,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_hobbs_cafe",
-        "x": 58.0,
-        "y": 37.0,
+        "x": 55.0,
+        "y": 31.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
@@ -216,8 +216,8 @@
         "required_prior_clue_ids": [
           "clue_till_weight_missing"
         ],
-        "x": 77.0,
-        "y": 44.0,
+        "x": 78.0,
+        "y": 83.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
@@ -242,7 +242,7 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_cafe_kitchen",
-        "x": 84.0,
+        "x": 79.0,
         "y": 39.0,
         "radius": 8.0
       },
@@ -268,8 +268,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_clara_flat",
-        "x": 37.0,
-        "y": 46.0,
+        "x": 48.0,
+        "y": 52.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
@@ -339,8 +339,8 @@
       "discoverability": {
         "method": "inspect",
         "location_id": "loc_marcus_house",
-        "x": 63.0,
-        "y": 71.0,
+        "x": 20.0,
+        "y": 83.0,
         "radius": 8.0
       },
       "supports_conclusion_ids": [
