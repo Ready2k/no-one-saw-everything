@@ -1,0 +1,109 @@
+[
+  {
+    "object_id": "obj_letter_opener",
+    "name": "Victorian letter opener",
+    "description": "A heavy brass letter opener with a decorated handle, normally kept upright in a pen pot on Isabella's desk.",
+    "is_weapon": true,
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_bookshop_back",
+    "access_rules": [
+      "staff"
+    ],
+    "touched_by_agent_ids": [
+      "agent_priya",
+      "agent_isabella"
+    ],
+    "last_seen_time": "17:20",
+    "hidden_state": "wiped_and_replaced_in_pot",
+    "clue_relevance": "weapon"
+  },
+  {
+    "object_id": "obj_forged_document",
+    "name": "Forged partnership transfer",
+    "description": "A typewritten document transferring the bookshop expansion rights to Priya Shah, bearing a signature in Isabella's name \u2014 the pen strokes slightly too regular, the 'R' in Reed looping the wrong way.",
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_bookshop_back",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_priya",
+      "agent_isabella"
+    ],
+    "last_seen_time": "17:35",
+    "hidden_state": "locked_in_safe_behind_loose_panel",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_broken_window_glass",
+    "name": "Broken window pane (staged)",
+    "description": "A small pane in the bookshop back room window, broken from the inside \u2014 a scatter of glass lies outside in the alley, but the larger shards and frame splinters remain inside the room.",
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_rear_alley",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_priya"
+    ],
+    "last_seen_time": "17:48",
+    "hidden_state": "glass_shards_on_both_sides_but_majority_inside",
+    "clue_relevance": "staged_scene"
+  },
+  {
+    "object_id": "obj_priya_scarf",
+    "name": "Priya's green scarf",
+    "description": "Priya's emerald wool scarf, often worn on cool evenings. A single green thread was caught on the latch of the bookshop back door.",
+    "normal_location_id": "loc_priya_flat",
+    "final_location_id": "loc_bookshop",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_priya"
+    ],
+    "last_seen_time": "17:48",
+    "hidden_state": "thread_caught_on_door_latch",
+    "clue_relevance": "opportunity"
+  },
+  {
+    "object_id": "obj_solicitor_letter",
+    "name": "Solicitor's letter",
+    "description": "A letter on Isabella's desk from the firm Whittle & Cross confirming their meeting at 18:30 to discuss 'irregularities in the bookshop partnership documents'.",
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_bookshop_back",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_priya",
+      "agent_isabella"
+    ],
+    "last_seen_time": "17:35",
+    "clue_relevance": "motive"
+  },
+  {
+    "object_id": "obj_owen_debt_folder",
+    "name": "Owen's debt correspondence",
+    "description": "A manila folder in Isabella's desk drawer: letters from Owen Price regarding a loan Isabella had called in. Owen was due to repay or face repossession of his yard.",
+    "normal_location_id": "loc_bookshop_back",
+    "final_location_id": "loc_bookshop_back",
+    "access_rules": [
+      "owner"
+    ],
+    "touched_by_agent_ids": [
+      "agent_isabella"
+    ],
+    "last_seen_time": "17:35",
+    "clue_relevance": "red_herring_motive"
+  },
+  {
+    "object_id": "obj_stockroom_invoice",
+    "name": "Signed delivery invoice",
+    "description": "A delivery receipt on the stockroom table signed by Priya at 17:10 \u2014 but the driver's copy records the delivery as complete by 17:05, leaving Priya's time unaccounted from 17:10 to 18:00.",
+    "normal_location_id": "loc_bookshop",
+    "final_location_id": "loc_bookshop",
+    "access_rules": [],
+    "touched_by_agent_ids": [
+      "agent_priya"
+    ],
+    "last_seen_time": "17:10",
+    "clue_relevance": "opportunity"
+  }
+]

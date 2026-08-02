@@ -1,0 +1,22 @@
+{
+  "case_id": "case_002",
+  "case_type": "jealousy",
+  "title": "The Locked Bookshop",
+  "status": "locked",
+  "victim_id": "agent_isabella",
+  "killer_id": "agent_priya",
+  "motive_summary": "Priya killed Isabella after Isabella discovered that Priya had forged her signature on the bookshop expansion documents to accelerate her inheritance of the partnership after Marcus's death.",
+  "method": "blunt_force",
+  "weapon_id": "obj_letter_opener",
+  "murder_location_id": "loc_bookshop_back",
+  "time_of_death": "17:43",
+  "discovery_time": "18:15",
+  "discovered_by": "agent_nadia",
+  "discovery_location_id": "loc_bookshop",
+  "sim_start_time": "16:30",
+  "murder_window": [
+    "17:35",
+    "17:50"
+  ],
+  "overview_text": "18:15 \u2014 Isabella Reed, owner of Reed & Bell Bookshop, found dead in the bookshop back room by Nadia Cole. The back door was ajar and a window pane was broken \u2014 staged to suggest a break-in. Several villagers passed the bookshop between 17:30 and 18:00. The evening hour can be rewound from 16:30."
+}
