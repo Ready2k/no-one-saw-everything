@@ -41,6 +41,22 @@ SMALL_TALK_KEYWORDS = {
 
 BAND_NAMES = {0: "composed", 1: "guarded", 2: "cornered", 3: "breaking"}
 
+
+def _performance_for(persona_key: str, band: str, topic: str | None, emotion: str) -> str | None:
+    """Choose a reviewed Owen performance from player-safe response state.
+
+    This is deliberately a small authored vocabulary, not a random animation
+    loop. It is selected only after the answer is safe to display and does
+    not receive hidden-case information.
+    """
+    if persona_key not in {"owen", "owen_twin"} or topic is None:
+        return None
+    if band in {"cornered", "breaking"} or emotion in {"bristling", "fighting_hard", "defensive"}:
+        return "guarded"
+    if emotion in {"neutral", "weary", "regretful", "grim"}:
+        return "considering"
+    return "answering"
+
 # Layer 6 tension detector (ENGINE_SPEC.md §8): deliberately bounded to the
 # exact time phrasings this case's facts are actually authored with — not a
 # general time parser. Minutes since midnight.
@@ -493,10 +509,18 @@ class PersonaSession:
     def _finish(self, question: str, answer: str, topic: str | None, fact: dict | None = None) -> dict:
         self.history.append(("detective", question))
         self.history.append((self.persona_key, answer))
+        emotion = (fact or {}).get("emotion", "neutral")
+        band = BAND_NAMES[self.pressure_band()]
         return {
             "answer": answer,
             "topic": topic,
             "truthfulness": (fact or {}).get("truthfulness"),
+            # Presentation metadata is deliberately derived only from the
+            # already-selected, player-safe fact and session pressure.  A
+            # face renderer must never receive hidden case state as a handy
+            # shortcut for deciding how a suspect should look.
+            "emotion": emotion,
             "pressure": round(self.pressure, 3),
-            "band": BAND_NAMES[self.pressure_band()],
+            "band": band,
+            "performance": _performance_for(self.persona_key, band, topic, emotion),
         }

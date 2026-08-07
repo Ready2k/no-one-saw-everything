@@ -2,161 +2,66 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Persona Chat Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Persona Chat Lab — Facial Prototype</title>
 <style>
-  :root { color-scheme: light dark; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    margin: 0; padding: 0; display: flex; height: 100vh;
-    background: #16181d; color: #e8e8ea;
-  }
-  #sidebar {
-    width: 260px; flex-shrink: 0; border-right: 1px solid #2c2f36;
-    padding: 16px; box-sizing: border-box; overflow-y: auto;
-  }
-  #sidebar h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: #8a8f99; margin: 0 0 12px; }
-  .persona-btn {
-    display: block; width: 100%; text-align: left; padding: 10px 12px; margin-bottom: 8px;
-    border-radius: 8px; border: 1px solid #2c2f36; background: #1d2128; color: #e8e8ea;
-    cursor: pointer; font-size: 14px;
-  }
-  .persona-btn.active { border-color: #5a8dee; background: #223049; }
-  .persona-card { font-size: 12px; color: #9aa0ab; margin-top: 14px; line-height: 1.5; }
-  .persona-card b { color: #cfd3da; }
-  #main { flex: 1; display: flex; flex-direction: column; }
-  #meter-row { padding: 10px 20px; border-bottom: 1px solid #2c2f36; display: flex; align-items: center; gap: 12px; font-size: 13px; color: #9aa0ab; }
-  #meter-bar { flex: 1; height: 8px; border-radius: 4px; background: #2c2f36; overflow: hidden; }
-  #meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4caf6a, #e0b83d, #e05d3d); transition: width .3s ease; }
-  #reset-btn { background: none; border: 1px solid #3a3f48; color: #9aa0ab; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
-  #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-  .msg { max-width: 70%; padding: 10px 14px; border-radius: 12px; line-height: 1.45; font-size: 14px; }
-  .msg.detective { align-self: flex-end; background: #2a3f66; }
-  .msg.agent { align-self: flex-start; background: #22252c; }
-  .msg .meta { font-size: 11px; color: #767c88; margin-top: 4px; }
-  #input-row { display: flex; padding: 16px; border-top: 1px solid #2c2f36; gap: 10px; }
-  #question { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid #2c2f36; background: #1d2128; color: #e8e8ea; font-size: 14px; }
-  #send-btn { padding: 10px 18px; border-radius: 8px; border: none; background: #5a8dee; color: white; cursor: pointer; font-size: 14px; }
-  #send-btn:disabled { opacity: 0.5; }
+  :root { color-scheme: dark; --line: #303641; --ink: #eff1f5; --muted: #a4abb7; --blue: #75a7ff; --panel: #191c22; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; grid-template-columns: 250px minmax(300px, 560px) minmax(340px, 1fr); background: #101216; color: var(--ink); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  #sidebar, #chat { border-right: 1px solid var(--line); background: var(--panel); }
+  #sidebar { padding: 22px 16px; }
+  h1, h2, p { margin: 0; } h1 { font-size: 15px; letter-spacing: .07em; text-transform: uppercase; } h2 { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; }
+  .persona-btn { width: 100%; text-align: left; color: var(--ink); background: #22262d; border: 1px solid var(--line); border-radius: 9px; padding: 11px; margin-bottom: 8px; cursor: pointer; }
+  .persona-btn.active { border-color: var(--blue); background: #1e2b42; } .persona-btn small { display: block; color: var(--muted); margin-top: 2px; }
+  .note { color: var(--muted); font-size: 12px; }
+  #chat { min-height: 100vh; display: flex; flex-direction: column; }
+  #chat-head { padding: 16px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  #persona-card { color: var(--muted); font-size: 12px; max-width: 310px; } #persona-card b { color: var(--ink); }
+  button { font: inherit; } #reset-btn, #voice-btn { color: var(--muted); border: 1px solid #454d5a; background: transparent; padding: 6px 9px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+  #messages { flex: 1; overflow: auto; padding: 20px; display: flex; flex-direction: column; gap: 13px; }
+  .msg { max-width: 82%; padding: 10px 13px; border-radius: 12px; background: #242831; } .msg.detective { align-self: flex-end; background: #273f68; } .meta { color: var(--muted); margin-top: 5px; font-size: 11px; }
+  #input-row { padding: 16px; display: flex; gap: 9px; border-top: 1px solid var(--line); } #question { min-width: 0; flex: 1; padding: 11px 13px; color: var(--ink); background: #111419; border: 1px solid #3a414c; border-radius: 8px; } #send-btn { border: 0; border-radius: 8px; padding: 10px 16px; color: #07111f; background: var(--blue); font-weight: 700; cursor: pointer; } #send-btn:disabled { opacity: .55; }
+  #stage { min-height: 100vh; display: grid; place-items: center; overflow: hidden; position: relative; background: radial-gradient(circle at 50% 37%, #293242 0, #151922 38%, #0e1015 75%); }
+  #stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.28), transparent 35%, transparent 65%, rgba(0,0,0,.3)); }
+  .face-shell { width: min(90%, 590px); aspect-ratio: 3/4; position: relative; overflow: hidden; border-radius: 18px; background: #252a31; box-shadow: 0 22px 80px #000a; }
+  #portrait, #performance { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: opacity .25s ease, filter .3s ease, transform .35s ease; } #performance { position: absolute; inset: 0; z-index: 2; } #performance[hidden] { display: none; }
+  .face-shell[data-expression="bristling"], .face-shell[data-expression="fighting_hard"] { --tint: rgba(185, 93, 65, .16); } .face-shell[data-expression="raw"], .face-shell[data-band="breaking"] { --tint: rgba(128, 61, 60, .23); } .face-shell[data-expression="regretful"], .face-shell[data-expression="weary"] { --tint: rgba(71, 100, 135, .16); }
+  .face-shell::before { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--tint, transparent); mix-blend-mode: soft-light; pointer-events: none; transition: background .3s ease; }
+  /* A still photograph cannot accept a convincing mouth cut-out.  Keep the
+     live cue restrained until the production viseme renderer is integrated. */
+  .face-shell.speaking #portrait { animation: breath .9s ease-in-out infinite alternate; }
+  .face-shell[data-band="guarded"] #portrait { filter: contrast(1.05) saturate(.9); } .face-shell[data-band="cornered"] #portrait { filter: contrast(1.11) saturate(.82); } .face-shell[data-band="breaking"] #portrait { filter: contrast(1.17) saturate(.68) brightness(.9); }
+  @keyframes breath { to { transform: scale(1.008) translateY(-.25%); } }
+  .stage-caption { position: absolute; z-index: 3; bottom: 26px; left: 26px; right: 26px; display: flex; justify-content: space-between; color: #e7e9ed; text-shadow: 0 1px 4px #000; font-size: 12px; } #expression-readout { color: #d4d9e2; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  @media (max-width: 900px) { body { grid-template-columns: 205px 1fr; } #stage { display: none; } }
 </style>
 </head>
 <body>
-
-<div id="sidebar">
-  <h2>Suspects</h2>
-  <button class="persona-btn active" data-persona="owen">Owen Price (keywords)</button>
-  <button class="persona-btn" data-persona="owen_twin">Owen Price (concepts)</button>
-  <button class="persona-btn" data-persona="priya">Priya Shah</button>
-  <div id="persona-card" class="persona-card"></div>
-</div>
-
-<div id="main">
-  <div id="meter-row">
-    <span>Pressure</span>
-    <div id="meter-bar"><div id="meter-fill"></div></div>
-    <span id="meter-label">composed</span>
-    <button id="reset-btn">Reset this suspect</button>
-  </div>
-  <div id="messages"></div>
-  <div id="input-row">
-    <input id="question" type="text" placeholder="Ask a question..." autocomplete="off">
-    <button id="send-btn">Ask</button>
-  </div>
-</div>
-
+<aside id="sidebar"><h1>Persona Chat Lab</h1><p class="note" style="margin-top:8px">Facial-response prototype</p><h2>Suspects</h2>
+  <button class="persona-btn active" data-persona="owen">Owen Price<small>Literal matcher</small></button>
+  <button class="persona-btn" data-persona="owen_twin">Owen Price<small>Concept matcher</small></button>
+  <button class="persona-btn" data-persona="priya">Priya Shah<small>Literal matcher</small></button>
+  <h2>Prototype contract</h2><p class="note">Portrait state follows pressure; expression comes from the selected, player-safe fact. Speech is optional browser TTS with a local visual speech envelope.</p>
+</aside>
+<main id="chat"><header id="chat-head"><div id="persona-card"></div><div><button id="voice-btn" aria-pressed="false">Voice off</button> <button id="reset-btn">Reset</button></div></header><section id="messages" aria-live="polite"></section><form id="input-row"><input id="question" type="text" placeholder="Ask a question…" autocomplete="off"><button id="send-btn">Ask</button></form></main>
+<section id="stage" aria-label="Facial response"><div class="face-shell" id="face" data-band="composed" data-expression="neutral"><img id="portrait" alt="Owen Price, composed"><video id="performance" muted playsinline hidden aria-label="Owen response performance"></video><div class="stage-caption"><span id="face-name">Owen Price</span><span id="expression-readout">composed · neutral</span></div></div></section>
 <script>
-let currentPersona = "owen";
-let personaMeta = {};
-const messagesByPersona = { owen: [], priya: [], owen_twin: [] };
-
-async function loadPersonas() {
-  const res = await fetch("/api/personas");
-  personaMeta = await res.json();
-  renderCard();
-}
-
-function renderCard() {
-  const p = personaMeta[currentPersona];
-  if (!p) return;
-  document.getElementById("persona-card").innerHTML =
-    `<b>${p.full_name}</b> — ${p.occupation}<br><br>` +
-    `<i>${p.voice_card}</i><br><br>` +
-    `Traits: ${p.traits.join(", ")}`;
-}
-
-function renderMessages() {
-  const box = document.getElementById("messages");
-  box.innerHTML = "";
-  for (const m of messagesByPersona[currentPersona]) {
-    const div = document.createElement("div");
-    div.className = "msg " + (m.speaker === "detective" ? "detective" : "agent");
-    div.textContent = m.text;
-    if (m.meta) {
-      const meta = document.createElement("div");
-      meta.className = "meta";
-      meta.textContent = m.meta;
-      div.appendChild(meta);
-    }
-    box.appendChild(div);
-  }
-  box.scrollTop = box.scrollHeight;
-}
-
-function updateMeter(pressure, band) {
-  document.getElementById("meter-fill").style.width = Math.round(pressure * 100) + "%";
-  document.getElementById("meter-label").textContent = band;
-}
-
-document.querySelectorAll(".persona-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".persona-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentPersona = btn.dataset.persona;
-    renderCard();
-    renderMessages();
-  });
-});
-
-document.getElementById("reset-btn").addEventListener("click", async () => {
-  await fetch("/api/reset", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ persona: currentPersona }),
-  });
-  messagesByPersona[currentPersona] = [];
-  renderMessages();
-  updateMeter(0, "composed");
-});
-
-async function sendQuestion() {
-  const input = document.getElementById("question");
-  const question = input.value.trim();
-  if (!question) return;
-  input.value = "";
-  messagesByPersona[currentPersona].push({ speaker: "detective", text: question });
-  renderMessages();
-
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ persona: currentPersona, question }),
-  });
-  const data = await res.json();
-  messagesByPersona[currentPersona].push({
-    speaker: currentPersona,
-    text: data.answer,
-    meta: `${data.band} (${data.pressure}) · topic: ${data.topic || "unmatched"}`,
-  });
-  renderMessages();
-  updateMeter(data.pressure, data.band);
-}
-
-document.getElementById("send-btn").addEventListener("click", sendQuestion);
-document.getElementById("question").addEventListener("keydown", e => {
-  if (e.key === "Enter") sendQuestion();
-});
-
+let currentPersona = "owen", personaMeta = {}, voiceEnabled = false, speech = null;
+const messagesByPersona = {owen: [], owen_twin: [], priya: []};
+const face = document.getElementById("face"), portrait = document.getElementById("portrait");
+const spokenText = text => text.replace(/\*\[[^\]]+\]\*\s*/g, "");
+function renderCard() { const p = personaMeta[currentPersona]; if (!p) return; document.getElementById("persona-card").innerHTML = `<b>${p.full_name}</b> — ${p.occupation}<br>${p.voice_card}`; updateFace("composed", "neutral"); }
+function updateFace(band, emotion) { const p = personaMeta[currentPersona]; if (!p) return; const video = document.getElementById("performance"); video.pause(); video.hidden = true; face.dataset.band = band; face.dataset.expression = emotion || "neutral"; portrait.src = p.portraits[band]; portrait.alt = `${p.full_name}, ${band}`; document.getElementById("face-name").textContent = p.full_name; document.getElementById("expression-readout").textContent = `${band} · ${(emotion || "neutral").replaceAll("_", " ")}`; }
+function playFacePerformance(performance) { if (!performance || currentPersona !== "owen") return; const video = document.getElementById("performance"); video.src = `/api/animation/${performance}`; video.hidden = false; video.currentTime = 0; video.play().catch(() => { video.hidden = true; }); }
+document.getElementById("performance").addEventListener("ended", () => { document.getElementById("performance").hidden = true; });
+function stopSpeaking() { if (speechSynthesis.speaking) speechSynthesis.cancel(); face.classList.remove("speaking"); face.style.removeProperty("--mouth"); }
+function speak(text) { stopSpeaking(); if (!voiceEnabled || !window.speechSynthesis) return; speech = new SpeechSynthesisUtterance(spokenText(text)); speech.rate = currentPersona === "priya" ? .92 : .98; speech.pitch = currentPersona === "priya" ? 1.08 : .82; speech.onstart = () => face.classList.add("speaking"); speech.onboundary = e => face.style.setProperty("--mouth", [".35", ".65", "1", ".5"][e.charIndex % 4]); speech.onend = speech.onerror = () => { face.classList.remove("speaking"); face.style.removeProperty("--mouth"); }; speechSynthesis.speak(speech); }
+function renderMessages() { const box = document.getElementById("messages"); box.replaceChildren(); for (const m of messagesByPersona[currentPersona]) { const div = document.createElement("div"); div.className = `msg ${m.speaker}`; div.textContent = m.text; if (m.meta) { const meta = document.createElement("div"); meta.className="meta"; meta.textContent=m.meta; div.append(meta); } box.append(div); } box.scrollTop = box.scrollHeight; }
+async function loadPersonas() { personaMeta = await (await fetch("/api/personas")).json(); renderCard(); }
+async function sendQuestion(event) { event?.preventDefault(); const input = document.getElementById("question"), question = input.value.trim(); if (!question) return; stopSpeaking(); input.value=""; document.getElementById("send-btn").disabled=true; messagesByPersona[currentPersona].push({speaker:"detective",text:question}); renderMessages(); try { const data = await (await fetch("/api/chat", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({persona:currentPersona,question})})).json(); messagesByPersona[currentPersona].push({speaker:"agent",text:data.answer,meta:`${data.band} (${data.pressure}) · ${data.emotion || "neutral"} · ${data.topic || "unmatched"}`}); updateFace(data.band, data.emotion); playFacePerformance(data.performance); renderMessages(); speak(data.answer); } finally { document.getElementById("send-btn").disabled=false; input.focus(); } }
+document.querySelectorAll(".persona-btn").forEach(btn => btn.addEventListener("click", () => { stopSpeaking(); document.querySelectorAll(".persona-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); currentPersona=btn.dataset.persona; renderCard(); renderMessages(); }));
+document.getElementById("input-row").addEventListener("submit", sendQuestion); document.getElementById("reset-btn").addEventListener("click", async () => { stopSpeaking(); await fetch("/api/reset", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({persona:currentPersona})}); messagesByPersona[currentPersona]=[]; renderMessages(); updateFace("composed", "neutral"); });
+document.getElementById("voice-btn").addEventListener("click", () => { voiceEnabled=!voiceEnabled; const b=document.getElementById("voice-btn"); b.textContent=voiceEnabled?"Voice on":"Voice off"; b.setAttribute("aria-pressed", voiceEnabled); if (!voiceEnabled) stopSpeaking(); });
 loadPersonas();
-</script>
-
-</body>
-</html>
+</script></body></html>
