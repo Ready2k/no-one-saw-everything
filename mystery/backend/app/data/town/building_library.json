@@ -1,0 +1,606 @@
+{
+  "version": "building_library_v1",
+  "grid": {
+    "tile_size": 32
+  },
+  "buildings": {
+    "cafe_small_v1": {
+      "display_name": "Small Cafe",
+      "function_tag": "cafe",
+      "footprint": {
+        "w": 10,
+        "h": 6
+      },
+      "exterior_asset": "/art/town/buildings/production/cafe_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/cafe_small_v1_interior.avif",
+      "rooms": [
+        "front_room",
+        "kitchen",
+        "storage"
+      ],
+      "entrances": [
+        {
+          "x": 5,
+          "y": 6,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "hedge",
+        "rear": "service_path"
+      },
+      "affordances": [
+        "serve_food",
+        "wait",
+        "search_records"
+      ]
+    },
+    "clinic_small_v1": {
+      "display_name": "Small Clinic",
+      "function_tag": "clinic",
+      "footprint": {
+        "w": 13,
+        "h": 10
+      },
+      "exterior_asset": "/art/town/buildings/production/clinic_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/clinic_small_v1_interior.avif",
+      "rooms": [
+        "reception",
+        "exam_room",
+        "dispensary"
+      ],
+      "entrances": [
+        {
+          "x": 6,
+          "y": 10,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "flowerbed",
+        "rear": "fence"
+      },
+      "affordances": [
+        "treat_patient",
+        "wait",
+        "search_records"
+      ]
+    },
+    "flats_two_storey_v1": {
+      "display_name": "Two-Storey Flats",
+      "function_tag": "flat",
+      "footprint": {
+        "w": 11,
+        "h": 8
+      },
+      "exterior_asset": "/art/town/buildings/production/flats_two_storey_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/flats_two_storey_v1_interior.avif",
+      "rooms": [
+        "ground_flat",
+        "upper_flat",
+        "shared_stair"
+      ],
+      "entrances": [
+        {
+          "x": 5,
+          "y": 8,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "fence",
+        "rear": "hedge"
+      },
+      "affordances": [
+        "enter_home",
+        "wait",
+        "search_personal_space"
+      ]
+    },
+    "pub_small_v1": {
+      "display_name": "Village Pub",
+      "function_tag": "pub",
+      "footprint": {
+        "w": 12,
+        "h": 11
+      },
+      "exterior_asset": "/art/town/buildings/production/pub_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/pub_small_v1_interior.avif",
+      "rooms": [
+        "bar",
+        "public_room",
+        "back_room"
+      ],
+      "entrances": [
+        {
+          "x": 6,
+          "y": 11,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "hedge",
+        "rear": "service_path"
+      },
+      "affordances": [
+        "serve_drinks",
+        "socialise",
+        "search_ledger"
+      ]
+    },
+    "cottage_small_v1": {
+      "display_name": "Small Cottage",
+      "function_tag": "cottage",
+      "footprint": {
+        "w": 8,
+        "h": 7
+      },
+      "exterior_asset": "/art/town/buildings/production/cottage_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/cottage_small_v1_interior.avif",
+      "rooms": [
+        "living_room",
+        "bedroom",
+        "yard"
+      ],
+      "entrances": [
+        {
+          "x": 4,
+          "y": 7,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "hedge",
+        "rear": "garden"
+      },
+      "affordances": [
+        "enter_home",
+        "wait",
+        "search_personal_space"
+      ]
+    },
+    "bookshop_small_v1": {
+      "display_name": "Small Bookshop",
+      "function_tag": "bookshop",
+      "footprint": {
+        "w": 10,
+        "h": 8
+      },
+      "exterior_asset": "/art/town/buildings/production/bookshop_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/bookshop_small_v1_interior.avif",
+      "rooms": [
+        "shop_floor",
+        "back_room",
+        "stockroom"
+      ],
+      "entrances": [
+        {
+          "x": 5,
+          "y": 8,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "hedge",
+        "rear": "service_path"
+      },
+      "affordances": [
+        "browse",
+        "buy_book",
+        "search_stock"
+      ]
+    },
+    "house_small_v1": {
+      "display_name": "Small House",
+      "function_tag": "house",
+      "footprint": {
+        "w": 11,
+        "h": 9
+      },
+      "exterior_asset": "/art/town/buildings/production/house_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/house_small_v1_interior.avif",
+      "rooms": [
+        "sitting_room",
+        "kitchen",
+        "bedroom"
+      ],
+      "entrances": [
+        {
+          "x": 5,
+          "y": 9,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "hedge",
+        "rear": "garden"
+      },
+      "affordances": [
+        "enter_home",
+        "wait",
+        "search_personal_space"
+      ]
+    },
+    "house_large_study_v1": {
+      "display_name": "Large House with Study",
+      "function_tag": "house_with_study",
+      "footprint": {
+        "w": 13,
+        "h": 19
+      },
+      "exterior_asset": "/art/town/buildings/production/house_large_study_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/house_large_study_v1_interior.avif",
+      "rooms": [
+        "sitting_room",
+        "kitchen",
+        "bedroom",
+        "study"
+      ],
+      "entrances": [
+        {
+          "x": 6,
+          "y": 19,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "flowerbed",
+        "rear": "garden"
+      },
+      "affordances": [
+        "enter_home",
+        "sit_by_fire",
+        "search_study"
+      ]
+    },
+    "house_yard_workshop_v1": {
+      "display_name": "House and Builder's Yard",
+      "function_tag": "house_and_yard",
+      "footprint": {
+        "w": 15,
+        "h": 13
+      },
+      "exterior_asset": "/art/town/buildings/production/house_yard_workshop_v1_exterior.avif",
+      "interior_asset": "/art/case_001/owen_house_yard_investigation_v2.avif",
+      "rooms": [
+        "house",
+        "workshop",
+        "timber_yard",
+        "gate"
+      ],
+      "entrances": [
+        {
+          "x": 5,
+          "y": 13,
+          "facing": "south"
+        },
+        {
+          "x": 14,
+          "y": 7,
+          "facing": "east"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "fence",
+        "rear": "service_path"
+      },
+      "affordances": [
+        "enter_home",
+        "work_wood",
+        "search_yard"
+      ]
+    },
+    "solicitors_office_small_v1": {
+      "display_name": "Small Solicitors' Office",
+      "function_tag": "solicitors_office",
+      "footprint": {
+        "w": 9,
+        "h": 6
+      },
+      "exterior_asset": "/art/town/buildings/production/solicitors_office_small_v1_exterior.avif",
+      "interior_asset": "/art/case_001/solicitors_office_investigation_v2.avif",
+      "rooms": [
+        "reception",
+        "office",
+        "records_room"
+      ],
+      "entrances": [
+        {
+          "x": 4,
+          "y": 6,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "flowerbed",
+        "rear": "fence"
+      },
+      "affordances": [
+        "wait",
+        "request_records",
+        "search_documents"
+      ]
+    },
+    "fishery_worksite_v1": {
+      "display_name": "Riverside Fishery",
+      "function_tag": "fishery",
+      "footprint": {
+        "w": 16,
+        "h": 9
+      },
+      "exterior_asset": "/art/town/buildings/production/fishery_worksite_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/fishery_worksite_v1_interior.avif",
+      "rooms": [
+        "cleaning_shed",
+        "catch_table",
+        "river_edge"
+      ],
+      "entrances": [
+        {
+          "x": 8,
+          "y": 9,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "fence",
+        "rear": "water_edge"
+      },
+      "affordances": [
+        "clean_fish",
+        "wait",
+        "search_worksite"
+      ]
+    },
+    "filler_farmhouse_small_v1": {
+      "display_name": "Small Farmhouse",
+      "function_tag": "farmhouse",
+      "filler": true,
+      "investigable": false,
+      "footprint": {
+        "w": 9,
+        "h": 8
+      },
+      "exterior_asset": "/art/town/buildings/production/filler_farmhouse_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/filler_farmhouse_small_v1_interior.avif",
+      "rooms": [],
+      "entrances": [
+        {
+          "x": 4,
+          "y": 8,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "fence",
+        "rear": "garden"
+      },
+      "affordances": []
+    },
+    "filler_barn_medium_v1": {
+      "display_name": "Medium Barn",
+      "function_tag": "barn",
+      "filler": true,
+      "investigable": false,
+      "footprint": {
+        "w": 12,
+        "h": 9
+      },
+      "exterior_asset": "/art/town/buildings/production/filler_barn_medium_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/filler_barn_medium_v1_interior.avif",
+      "rooms": [],
+      "entrances": [
+        {
+          "x": 6,
+          "y": 9,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "fence",
+        "rear": "garden"
+      },
+      "affordances": []
+    },
+    "filler_boathouse_small_v1": {
+      "display_name": "Lakeside Boathouse",
+      "function_tag": "boathouse",
+      "filler": true,
+      "investigable": false,
+      "footprint": {
+        "w": 9,
+        "h": 7
+      },
+      "exterior_asset": "/art/town/buildings/production/filler_boathouse_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/filler_boathouse_small_v1_interior.avif",
+      "rooms": [],
+      "entrances": [
+        {
+          "x": 4,
+          "y": 7,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "fence",
+        "rear": "water_edge"
+      },
+      "affordances": []
+    },
+    "filler_windmill_small_v1": {
+      "display_name": "Small Windmill",
+      "function_tag": "windmill",
+      "filler": true,
+      "investigable": false,
+      "footprint": {
+        "w": 8,
+        "h": 11
+      },
+      "exterior_asset": "/art/town/buildings/production/filler_windmill_small_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/filler_windmill_small_v1_interior.avif",
+      "rooms": [],
+      "entrances": [
+        {
+          "x": 4,
+          "y": 11,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "flowerbed",
+        "rear": "fence"
+      },
+      "affordances": []
+    },
+    "filler_market_stall_v1": {
+      "display_name": "Market Stall",
+      "function_tag": "market_stall",
+      "filler": true,
+      "investigable": false,
+      "footprint": {
+        "w": 5,
+        "h": 4
+      },
+      "exterior_asset": "/art/town/buildings/production/filler_market_stall_v1_exterior.avif",
+      "interior_asset": "/art/town/buildings/production/filler_market_stall_v1_interior.avif",
+      "rooms": [],
+      "entrances": [],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "flowerbed",
+        "rear": "fence"
+      },
+      "affordances": []
+    },
+    "st_alder_church_v1": {
+      "display_name": "St. Alder's Church",
+      "function_tag": "church",
+      "footprint": {
+        "w": 20,
+        "h": 20
+      },
+      "exterior_asset": "/art/town/interiors_hd/expansion_v1/st_alder_church_exterior_map_stamp_hd.avif",
+      "interior_asset": "/art/town/interiors_hd/expansion_v1/st_alder_church_interior_map_hd.avif",
+      "rooms": [
+        "nave",
+        "chancel",
+        "vestry",
+        "bell_tower_stair",
+        "churchyard"
+      ],
+      "entrances": [
+        {
+          "x": 10,
+          "y": 20,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "hedge",
+        "rear": "fence"
+      },
+      "affordances": [
+        "attend_service",
+        "search_records",
+        "inspect_memorials",
+        "access_vestry"
+      ]
+    },
+    "willow_farmhouse_v1": {
+      "display_name": "Willow Farmhouse",
+      "function_tag": "farmhouse",
+      "footprint": {
+        "w": 22,
+        "h": 19
+      },
+      "exterior_asset": "/art/town/interiors_hd/expansion_v1/willow_farmhouse_exterior_map_stamp_hd.avif",
+      "interior_asset": "/art/town/interiors_hd/expansion_v1/willow_farmhouse_interior_map_hd.avif",
+      "rooms": [
+        "kitchen",
+        "parlour",
+        "bedroom",
+        "pantry",
+        "tool_shed",
+        "well_yard",
+        "vegetable_beds"
+      ],
+      "entrances": [
+        {
+          "x": 11,
+          "y": 19,
+          "facing": "south"
+        }
+      ],
+      "surrounding_rules": {
+        "front": "path",
+        "sides": "fence",
+        "rear": "garden"
+      },
+      "affordances": [
+        "prepare_food",
+        "search_personal_space",
+        "inspect_tools",
+        "access_pantry",
+        "draw_water"
+      ]
+    }
+  },
+  "location_bindings": {
+    "loc_hobbs_cafe": "cafe_small_v1",
+    "loc_bookshop": "bookshop_small_v1",
+    "loc_clinic": "clinic_small_v1",
+    "loc_marcus_house": "house_large_study_v1",
+    "loc_owen_house": "house_yard_workshop_v1",
+    "loc_pub": "pub_small_v1",
+    "loc_ben_flat": "flats_two_storey_v1",
+    "loc_priya_flat": "flats_two_storey_v1",
+    "loc_nadia_flat": "flats_two_storey_v1",
+    "loc_clara_flat": "cafe_small_v1",
+    "loc_elias_house": "cottage_small_v1",
+    "loc_ruth_cottage": "cottage_small_v1",
+    "loc_solicitors_office": "solicitors_office_small_v1",
+    "loc_fishery": "fishery_worksite_v1",
+    "loc_st_alder_church": "st_alder_church_v1",
+    "loc_willow_farmhouse": "willow_farmhouse_v1"
+  },
+  "location_variants": {
+    "loc_clara_flat": {
+      "parent_location_id": "loc_hobbs_cafe",
+      "interior_asset": "/art/town/buildings/production/clara_flat_interior_production.avif"
+    },
+    "loc_priya_flat": {
+      "interior_asset": "/art/town/buildings/production/priya_flat_interior_production.avif"
+    },
+    "loc_nadia_flat": {
+      "interior_asset": "/art/town/buildings/production/nadia_flat_interior_production.avif"
+    },
+    "loc_ruth_cottage": {
+      "interior_asset": "/art/case_001/ruth_cottage_investigation_v2.avif"
+    }
+  },
+  "outdoor_place_types": {
+    "loc_village_square": "public_square",
+    "loc_fountain": "fountain",
+    "loc_elias_bench": "bench",
+    "loc_rear_alley": "service_alley",
+    "loc_lake": "lake",
+    "loc_woodland": "woodland",
+    "loc_meadow": "meadow"
+  }
+}

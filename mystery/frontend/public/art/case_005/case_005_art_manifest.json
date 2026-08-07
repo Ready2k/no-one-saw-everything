@@ -1,0 +1,94 @@
+{
+  "case_id": "case_005",
+  "catalogue_status": "compatibility_metadata",
+  "authoritative_registry": "backend/app/data/town/place_art_registry.json",
+  "title": "The Rear Alley Fire",
+  "art_direction": "neo_noir_village_v1",
+  "lighting": "wet indigo dawn with restrained amber practical lights",
+  "palette": ["midnight navy", "charcoal", "damp timber brown", "antique brass", "muted ember orange"],
+  "assets": {
+    "overhead_village": {
+      "path": "/art/case_005/overhead/village_overhead_dawn.png",
+      "role": "player-safe briefing establishing shot",
+      "contains_hidden_evidence": false
+    },
+    "overhead_rear_alley": {
+      "path": "/art/case_005/overhead/rear_alley_overhead_dawn.avif",
+      "role": "player-safe top-down inspection reference",
+      "contains_hidden_evidence": false
+    },
+    "village_map": {
+      "path": "/art/case_005/map/case_005_village_map_dawn.avif",
+      "role": "Case 005 authored playable village map; visual geography only",
+      "contains_hidden_evidence": false
+    },
+    "loc_rear_alley": {
+      "path": "/art/case_005/rear_alley_fire_hd.avif",
+      "role": "player-safe discovery location",
+      "contains_hidden_evidence": false
+    },
+    "loc_village_square": {
+      "path": "/art/case_005/village_square_dawn_hd.avif",
+      "role": "player-safe village square, fountain, and bench location",
+      "contains_hidden_evidence": false
+    },
+    "loc_hobbs_cafe": {
+      "path": "/art/case_005/hobbs_cafe_dawn_hd.avif",
+      "role": "player-safe cafe location",
+      "contains_hidden_evidence": false
+    },
+    "loc_bookshop": {
+      "path": "/art/case_005/bookshop_dawn_hd.avif",
+      "role": "player-safe bookshop location",
+      "contains_hidden_evidence": false
+    },
+    "loc_clinic": {
+      "path": "/art/case_005/clinic_dawn_hd.avif",
+      "role": "player-safe clinic location",
+      "contains_hidden_evidence": false
+    },
+    "loc_back_lane": {
+      "path": "/art/case_005/back_lane_dawn_hd.avif",
+      "role": "player-safe back-lane location",
+      "contains_hidden_evidence": false
+    },
+    "loc_clara_flat": {
+      "path": "/art/case_005/clara_flat_dawn_hd.avif",
+      "role": "player-safe private location",
+      "contains_hidden_evidence": false
+    },
+    "loc_owen_house": {
+      "path": "/art/case_005/owen_yard_dawn_hd.avif",
+      "role": "player-safe yard location",
+      "contains_hidden_evidence": false
+    },
+    "loc_owen_yard_office": {
+      "path": "/art/case_005/owen_yard_office_dawn_hd.avif",
+      "role": "player-safe investigation interior",
+      "contains_hidden_evidence": false
+    },
+    "resolution_rear_alley": {
+      "path": "/art/case_005/rear_alley_after_fire_dawn_hd.png",
+      "role": "spoiler-safe resolution still",
+      "contains_hidden_evidence": false
+    }
+  },
+  "portraits": {
+    "agent_clara": {
+      "calm": "/art/case_005/portraits/clara_wells_calm.avif",
+      "deceased": "/art/case_005/portraits/clara_wells_deceased.avif"
+    },
+    "agent_owen": { "calm": "/art/case_005/portraits/owen_price_calm.avif", "defensive": "/art/case_005/portraits/owen_price_defensive.avif", "cracking": "/art/case_005/portraits/owen_price_cracking.avif" },
+    "agent_ben": { "calm": "/art/case_005/portraits/ben_carter_calm.avif", "defensive": "/art/case_005/portraits/ben_carter_defensive.avif", "cracking": "/art/case_005/portraits/ben_carter_cracking.avif" },
+    "agent_nadia": { "calm": "/art/case_005/portraits/nadia_cole_calm.avif", "defensive": "/art/case_005/portraits/nadia_cole_defensive.avif", "cracking": "/art/case_005/portraits/nadia_cole_cracking.avif" },
+    "agent_elias": { "calm": "/art/case_005/portraits/elias_grant_calm.avif", "defensive": "/art/case_005/portraits/elias_grant_defensive.avif", "cracking": "/art/case_005/portraits/elias_grant_cracking.avif" },
+    "agent_col": { "calm": "/art/case_005/portraits/col_hartley_calm.avif", "defensive": "/art/case_005/portraits/col_hartley_defensive.avif", "cracking": "/art/case_005/portraits/col_hartley_cracking.avif" }
+  },
+  "evidence_plates": {
+    "clue_belt_weapon": "/art/case_005/evidence/builders_belt.avif",
+    "clue_staged_fire": "/art/case_005/evidence/melted_lighter.avif",
+    "clue_clara_committee_note": "/art/case_005/evidence/scorched_letter.avif",
+    "clue_mortgage_deed": "/art/case_005/evidence/mortgage_deed.avif",
+    "clue_owen_ash_boots": "/art/case_005/evidence/ash_mud_boots.avif"
+  }
+}

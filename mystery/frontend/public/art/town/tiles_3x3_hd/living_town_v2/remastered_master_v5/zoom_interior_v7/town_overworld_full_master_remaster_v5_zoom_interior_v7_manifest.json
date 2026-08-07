@@ -1,0 +1,44 @@
+{
+  "version": "living_town_v2_remaster_v5_zoom_interior_v7",
+  "created_from": [
+    "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_B2_living_town_remaster_v5_clean_generated.avif",
+    "/Users/jamescregeen/.codex/generated_images/019f57c1-92bd-7191-9bb0-ff7df0b2670d/call_gmkb5J71edhl9JNjHUD9gdeo.png"
+  ],
+  "tile_size": {
+    "width": 2048,
+    "height": 1536
+  },
+  "grid": {
+    "columns": 3,
+    "rows": 3,
+    "order": [
+      "A1",
+      "A2",
+      "A3",
+      "B1",
+      "B2",
+      "B3",
+      "C1",
+      "C2",
+      "C3"
+    ]
+  },
+  "purpose": "Exterior-B2-driven rebuilt zoom/interior tile: generated directly from the exterior B2 footprint/scale instead of fitting the old interior tile.",
+  "source_generation": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_B2_zoom_interior_v7_external_rebuild_generated_source.png",
+  "scaled_generation": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_B2_zoom_interior_v7_external_rebuild_scaled.png",
+  "edge_locked_b2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_B2_zoom_interior_v7_external_rebuild_edge_locked.png",
+  "edge_mask": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_B2_zoom_interior_v7_edge_mask.png",
+  "master_preview": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_full_master_remaster_v5_zoom_interior_v7.png",
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_full_master_remaster_v5_zoom_interior_v7_contact.png",
+  "tiles": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_A1_living_town_remaster_v5_zoom_interior_v7.avif",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_A2_living_town_remaster_v5_zoom_interior_v7.avif",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_A3_living_town_remaster_v5_zoom_interior_v7.avif",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_B1_living_town_remaster_v5_zoom_interior_v7.avif",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_B2_living_town_remaster_v5_zoom_interior_v7.png",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_B3_living_town_remaster_v5_zoom_interior_v7.avif",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_C1_living_town_remaster_v5_zoom_interior_v7.avif",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_C2_living_town_remaster_v5_zoom_interior_v7.avif",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_C3_living_town_remaster_v5_zoom_interior_v7.avif"
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "case_001": {
+    "title": "The Storage Room Murder",
+    "killer": "Clara Wells",
+    "victim": "Marcus Bell",
+    "beats": [
+      "Marcus found the ledger page proving I had taken money from the cafe till for my mother's care.",
+      "He gave me until morning to confess, then summoned me to the storage room before opening.",
+      "I lied about the fountain, doubled back through the alley, and entered by the rear door.",
+      "Marcus refused to back down. I took the brass till weight and struck him once.",
+      "That was the thud Ben and Priya heard at seven fifty-six. Marcus fell where I hit him.",
+      "I rinsed the weight in the kitchen, then hid it at the bottom of the mop bucket.",
+      "I opened the cafe two minutes late and kept repeating a fountain alibi nobody could confirm.",
+      "I killed Marcus to hide what I stole, but every physical trace led back to me."
+    ],
+    "images": [
+      "art/portraits/clara_cracking.avif",
+      "art/case_010/evidence/ledger_page_case10.avif",
+      "art/case_001/rear_alley_investigation_v2.avif",
+      "art/case_001/cafe_storage_room_hd.avif",
+      "art/case_010/evidence/till_weight_mop_bucket.avif",
+      "art/case_001/cafe_kitchen_hd.avif",
+      "art/case_001/hobbs_cafe_main_hd.avif",
+      "art/portraits/lifelike/marcus_bell_deceased.avif"
+    ]
+  },
+  "case_002": {
+    "title": "The Locked Bookshop",
+    "killer": "Priya Shah",
+    "victim": "Isabella Reed",
+    "beats": [
+      "I forged Isabella's signature on the partnership transfer because I did not trust her to agree.",
+      "The solicitor's letter said she had discovered it and would expose me that afternoon.",
+      "Ben saw us arguing in the bookshop back room, beside Isabella's desk and telephone.",
+      "When she reached for the telephone, I seized the brass letter opener and struck her.",
+      "I smashed the window from inside to make the killing look like an interrupted burglary.",
+      "The glass fell the wrong way. My green scarf also snagged on the rear-door latch.",
+      "I fled through the alley and invented a stockroom alibi, but the invoice timestamp disproved it.",
+      "I killed Isabella to preserve a partnership that had never truly belonged to me."
+    ],
+    "images": [
+      "art/portraits/lifelike/priya_shah_calm.avif",
+      "art/case_010/evidence/isabella_folded_note.avif",
+      "art/case_001/bookshop_back_room_investigation_v2.avif",
+      "art/case_002/reed_bell_bookshop_front_hd.avif",
+      "art/case_001/bookshop_back_room_investigation_v2.avif",
+      "art/case_002/rear_alley_bookshop_hd.avif",
+      "art/case_002/village_square_lunchtime_hd.avif",
+      "art/portraits/lifelike/isabella_reed_deceased.avif"
+    ]
+  },
+  "case_003": {
+    "title": "The Clinic After Hours",
+    "killer": "Nadia Cole",
+    "victim": "Elias Grant",
+    "beats": [
+      "Elias planned to remove the clinic from his will, destroying everything I had built around his bequest.",
+      "At four thirty, I added two digoxin capsules to his Tuesday pill compartment.",
+      "It was four times his safe dose. I altered the dispensary log to conceal the missing capsules.",
+      "At five past five, I delivered the organiser myself, as I always did.",
+      "Ruth saw the handoff. I watched Elias take the pills and left him on the clinic bench.",
+      "His heart condition made the overdose look natural. He was dead by five twenty-one.",
+      "The spilled flask, open organiser, altered log, and my private budgets exposed the plan.",
+      "I poisoned Elias because I valued the clinic he promised me more than his life."
+    ],
+    "images": [
+      "art/case_005/portraits/nadia_cole_cracking.avif",
+      "art/case_001/village_clinic_investigation_v2.avif",
+      "art/case_003/rewind/clinic_bench_handoff_hd.avif",
+      "art/case_003/clinic_bench_dusk_hd.avif",
+      "art/case_003/rewind/clinic_bench_handoff_hd.avif",
+      "art/case_003/clinic_bench_dusk_hd.avif",
+      "art/case_003/map/case_003_village_map_afternoon.avif",
+      "art/portraits/lifelike/elias_grant_deceased.avif"
+    ]
+  },
+  "case_004": {
+    "title": "The Fountain at Midnight",
+    "killer": "Ben Carter",
+    "victim": "Owen Price",
+    "beats": [
+      "I found twelve years of letters proving Owen had blackmailed my father over the village hall fire.",
+      "I cancelled my plans with Priya and crossed the square to confront him at the fountain.",
+      "Owen laughed. He said my father had come to him, as though the extortion meant nothing.",
+      "I seized a loose stone from the fountain coping and struck Owen with it.",
+      "Nadia heard our voices. Elias saw me leave quickly after the blow at the fountain.",
+      "Priya tried to protect me with an alibi, but my cancellation message proved she lied.",
+      "Mud on my jacket and a matching bootprint placed me beside the fountain that night.",
+      "I killed Owen in anger for what he did to my father, then let Priya lie for me."
+    ],
+    "images": [
+      "art/case_005/portraits/ben_carter_cracking.avif",
+      "art/case_004/village_square_moonlight_hd.avif",
+      "art/case_004/fountain_closeup.avif",
+      "art/case_004/fountain_midnight_map.avif",
+      "art/case_004/village_square_moonlight_hd.avif",
+      "art/case_004/fountain_closeup.avif",
+      "art/case_004/case_004_overlay_v1.avif",
+      "art/portraits/lifelike/owen_price_deceased.avif"
+    ]
+  },
+  "case_005": {
+    "title": "The Rear Alley Fire",
+    "killer": "Owen Price",
+    "victim": "Clara Wells",
+    "beats": [
+      "I called Clara at six twenty and told her to meet me in the rear alley at seven.",
+      "I chose it because Elias could not see the alley. I came through the back lane.",
+      "Clara knew I forged the mortgage on Hobbs Cafe. The estate wanted eight thousand pounds.",
+      "I panicked. I pulled my builder's belt around her throat until she stopped fighting.",
+      "I burned the letter and lit the wet crates, hoping the fire would hide what I had done.",
+      "The fire went out. I returned up the lane holding my trousers and made Col lie.",
+      "Page two remained on the cafe counter. It gave me twelve months to put everything right.",
+      "I never read it. I killed Clara for a letter that was trying to save me."
+    ],
+    "images": [
+      "art/case_005/portraits/owen_price_cracking.avif",
+      "art/case_005/back_lane_dawn_hd.avif",
+      "art/case_005/evidence/mortgage_deed.avif",
+      "art/case_005/evidence/builders_belt.avif",
+      "art/case_005/rear_alley_fire_hd.avif",
+      "art/case_005/owen_yard_office_dawn_hd.avif",
+      "art/case_005/evidence/scorched_letter.avif",
+      "art/case_005/portraits/clara_wells_deceased.avif"
+    ]
+  },
+  "case_006": {
+    "title": "The Bell Estate",
+    "killer": "Ruth Calder",
+    "victim": "Marcus Bell",
+    "beats": [
+      "Marcus was my half-brother, though the Bell family refused to acknowledge me for twenty years.",
+      "His new will meant I would have to expose our parentage publicly and fight for everything.",
+      "I harvested foxglove from my garden and extracted the digitalis hidden inside it.",
+      "Using my spare key, I entered Marcus's house at nine while he was away.",
+      "I poured the poison into his prepared cocoa and burned a copy of my birth certificate.",
+      "Marcus drank it later. His heart failed at ten forty, appearing to be natural causes.",
+      "The cracked vial, cut foxgloves, mug residue, and hidden birth certificate exposed me.",
+      "I poisoned my own brother before his will could erase me from the Bell family again."
+    ],
+    "images": [
+      "art/portraits/lifelike/ruth_calder_calm.avif",
+      "art/town/buildings/generated_exteriors_v1/ruth_cottage_foxglove_exterior_variant_alpha.avif",
+      "art/case_006/rewind/marcus_cocoa_fireside_hd.avif",
+      "art/case_001/marcus_study_investigation_v2.avif",
+      "art/case_006/rewind/marcus_cocoa_fireside_hd.avif",
+      "art/case_006/map/case_006_village_map_night.avif",
+      "art/case_001/marcus_study_investigation_v2.avif",
+      "art/portraits/lifelike/marcus_bell_deceased.avif"
+    ]
+  },
+  "case_007": {
+    "title": "The Man Who Saw Everything",
+    "killer": "Marcus Bell",
+    "victim": "Elias Grant",
+    "beats": [
+      "Thirty years ago, I forged Thomas Hobbs's signature and used the bill of sale to take his cafe.",
+      "Elias found his old notebook recording me practising that signature against the schoolhouse glass.",
+      "He ordered me to give the cafe to the village trust before the nine o'clock reading.",
+      "I left the fair on a false cup errand and went through my kitchen to the dark alley.",
+      "Elias left the stockroom door open. When he refused my offer, I struck him from behind.",
+      "I used the cast-iron owl doorstop, wiped it, then hid his notebook beneath my coat.",
+      "I returned before nine, breathless and empty-handed, and hid the notebook with the spare cups.",
+      "I killed the only man who knew what my life stood on, but the village reconstructed every minute."
+    ],
+    "images": [
+      "art/portraits/lifelike/marcus_bell_calm.avif",
+      "art/case_007/map/case_007_village_map_lantern_fair.avif",
+      "art/case_007/rewind/grey_coat_alley_hd.avif",
+      "art/case_001/cafe_kitchen_hd.avif",
+      "art/case_010/cafe_storage_dawn_hd.avif",
+      "art/case_010/cafe_storage_after_dawn_hd.avif",
+      "art/case_001/hobbs_cafe_main_hd.avif",
+      "art/portraits/lifelike/elias_grant_deceased.avif"
+    ]
+  },
+  "case_010": {
+    "title": "The Storage Room Murder",
+    "killer": "Clara Wells",
+    "victim": "Marcus Bell",
+    "beats": [
+      "Marcus found the ledger page proving I had taken money from the cafe till for my mother's care.",
+      "He gave me until morning to confess, then summoned me to the storage room before opening.",
+      "I lied about the fountain, doubled back through the alley, and entered by the rear door.",
+      "Marcus refused to back down. I took the brass till weight and struck him once.",
+      "That was the thud Ben and Priya heard at seven fifty-six. Marcus fell where I hit him.",
+      "I rinsed the weight in the kitchen, then hid it at the bottom of the mop bucket.",
+      "I opened the cafe two minutes late and kept repeating a fountain alibi nobody could confirm.",
+      "I killed Marcus to hide what I stole, but every physical trace led back to me."
+    ],
+    "images": [
+      "art/portraits/clara_cracking.avif",
+      "art/case_010/evidence/ledger_page_case10.avif",
+      "art/case_010/rewind/blue_coat_blur_hd.avif",
+      "art/case_010/cafe_storage_dawn_hd.avif",
+      "art/case_010/evidence/till_weight_mop_bucket.avif",
+      "art/case_010/rewind/mop_bucket_ripple_hd.avif",
+      "art/case_010/hobbs_cafe_dawn_hd.avif",
+      "art/portraits/lifelike/marcus_bell_deceased.avif"
+    ]
+  }
+}

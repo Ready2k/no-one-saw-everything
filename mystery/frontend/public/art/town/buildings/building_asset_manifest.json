@@ -1,0 +1,120 @@
+{
+  "manifest_version": "building_asset_manifest_v1",
+  "source": "generated_and_cleaned_project_owned",
+  "style_reference": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B2_current_village_v2_neutral.avif",
+  "style_contract": "painterly-realistic rural British overhead map; no pixel-art, RPG-sprite, chibi, cartoon, toy-like, or fantasy-medieval treatment",
+  "usage_scope": "map building modules only; never enlarge into cinematic Places artwork",
+  "places_contract": "docs/scene_asset_bible.md",
+  "lighting": "neutral_daylight_runtime_tint",
+  "tile_size": 32,
+  "tile_size_role": "logical placement geometry, not a rendering style target",
+  "assets": [
+    {
+      "id": "cafe_small_v1",
+      "exterior": "production/cafe_small_v1_exterior.avif",
+      "interior": "production/cafe_small_v1_interior.avif"
+    },
+    {
+      "id": "clinic_small_v1",
+      "exterior": "production/clinic_small_v1_exterior.avif",
+      "interior": "production/clinic_small_v1_interior.avif"
+    },
+    {
+      "id": "flats_two_storey_v1",
+      "exterior": "production/flats_two_storey_v1_exterior.avif",
+      "interior": "production/flats_two_storey_v1_interior.avif"
+    },
+    {
+      "id": "pub_small_v1",
+      "exterior": "production/pub_small_v1_exterior.avif",
+      "interior": "production/pub_small_v1_interior.avif"
+    },
+    {
+      "id": "cottage_small_v1",
+      "exterior": "production/cottage_small_v1_exterior.avif",
+      "interior": "production/cottage_small_v1_interior.avif"
+    },
+    {
+      "id": "bookshop_small_v1",
+      "exterior": "production/bookshop_small_v1_exterior.avif",
+      "interior": "production/bookshop_small_v1_interior.avif"
+    },
+    {
+      "id": "house_small_v1",
+      "exterior": "production/house_small_v1_exterior.avif",
+      "interior": "production/house_small_v1_interior.avif"
+    },
+    {
+      "id": "house_large_study_v1",
+      "exterior": "production/house_large_study_v1_exterior.avif",
+      "interior": "production/house_large_study_v1_interior.avif"
+    },
+    {
+      "id": "house_yard_workshop_v1",
+      "exterior": "production/house_yard_workshop_v1_exterior.avif",
+      "interior": "production/house_yard_workshop_v1_interior.png"
+    },
+    {
+      "id": "solicitors_office_small_v1",
+      "exterior": "production/solicitors_office_small_v1_exterior.avif",
+      "interior": "production/solicitors_office_small_v1_interior.png"
+    },
+    {
+      "id": "fishery_worksite_v1",
+      "exterior": "production/fishery_worksite_v1_exterior.avif",
+      "interior": "production/fishery_worksite_v1_interior.avif"
+    },
+    {
+      "id": "clara_flat_variant",
+      "interior": "production/clara_flat_interior_production.avif",
+      "parent_location_id": "loc_hobbs_cafe"
+    },
+    {
+      "id": "priya_flat_variant",
+      "interior": "production/priya_flat_interior_production.avif"
+    },
+    {
+      "id": "nadia_flat_variant",
+      "interior": "production/nadia_flat_interior_production.avif"
+    },
+    {
+      "id": "ruth_cottage_variant",
+      "interior": "production/ruth_cottage_garden_interior_production.png"
+    },
+    {
+      "id": "filler_farmhouse_small_v1",
+      "exterior": "production/filler_farmhouse_small_v1_exterior.avif",
+      "interior": "production/filler_farmhouse_small_v1_interior.avif",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_barn_medium_v1",
+      "exterior": "production/filler_barn_medium_v1_exterior.avif",
+      "interior": "production/filler_barn_medium_v1_interior.avif",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_boathouse_small_v1",
+      "exterior": "production/filler_boathouse_small_v1_exterior.avif",
+      "interior": "production/filler_boathouse_small_v1_interior.avif",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_windmill_small_v1",
+      "exterior": "production/filler_windmill_small_v1_exterior.avif",
+      "interior": "production/filler_windmill_small_v1_interior.avif",
+      "filler": true,
+      "investigable": false
+    },
+    {
+      "id": "filler_market_stall_v1",
+      "exterior": "production/filler_market_stall_v1_exterior.avif",
+      "interior": "production/filler_market_stall_v1_interior.avif",
+      "filler": true,
+      "investigable": false
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "manifest_version": "town_asset_manifest_v2",
+  "asset_id": "town_canonical_v1",
+  "status": "runtime contract mirror",
+  "source_of_truth": {
+    "layout": "backend/app/data/town/town_layout.json",
+    "runtime": "backend/app/town_map.py",
+    "buildings": "backend/app/data/town/building_library.json",
+    "places": "frontend/src/sceneArt.ts"
+  },
+  "source": {
+    "kind": "project_owned_generated_and_cleaned",
+    "generator": "OpenAI image generation plus project cleanup",
+    "license": "project-owned generated artwork",
+    "external_assets": false
+  },
+  "style_contract": {
+    "scope": "overhead Map Replay/Rewind world only",
+    "genre": "painterly-realistic rural British mystery village",
+    "camera": "consistent elevated top-down/isometric map camera",
+    "prohibited_primary_styles": [
+      "pixel art",
+      "RPG sprite art",
+      "chibi",
+      "cartoon",
+      "toy-like dollhouse",
+      "fantasy-medieval exaggeration"
+    ],
+    "tile_size_role": "logical placement geometry only, not a rendering style target",
+    "legacy_character_sheets": "temporary moving-agent markers only",
+    "ambient_spritesheets": "subtle transparent map effects only",
+    "places_rule": "Never use a map tile, building module, glyph, or legacy sprite as a cinematic Places background. Follow docs/scene_asset_bible.md."
+  },
+  "canvas": {
+    "width": 6144,
+    "height": 4608,
+    "tile_size": 32,
+    "grid": {
+      "cols": 192,
+      "rows": 144
+    },
+    "origin": "north_west",
+    "mosaic": {
+      "cols": 3,
+      "rows": 3,
+      "cell_grid": {
+        "cols": 64,
+        "rows": 48
+      },
+      "cell_pixels": {
+        "width": 2048,
+        "height": 1536
+      }
+    }
+  },
+  "runtime_assets": {
+    "directory": "/art/town/tiles_3x3_hd/current_village_v2_neutral",
+    "full_world": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_full_current_village_v2_neutral.avif",
+    "cells": {
+      "A1": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_A1_current_village_v2_neutral.png",
+      "A2": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_A2_current_village_v2_neutral.png",
+      "A3": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_A3_current_village_v2_neutral.png",
+      "B1": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B1_current_village_v2_neutral.png",
+      "B2": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B2_current_village_v2_neutral.avif",
+      "B3": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B3_current_village_v2_neutral.png",
+      "C1": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_C1_current_village_v2_neutral.png",
+      "C2": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_C2_current_village_v2_neutral.png",
+      "C3": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_C3_current_village_v2_neutral.png"
+    },
+    "zoom_swap": {
+      "threshold": 3.2,
+      "cell": "B2",
+      "exterior": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B2_current_village_v2_neutral.avif",
+      "cutaway": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B2_current_village_v2_neutral_cutaway.avif"
+    }
+  },
+  "runtime_consumers": {
+    "case_001": "authored shared HD village",
+    "case_002": "canonical_overworld",
+    "case_003": "authored afternoon case map",
+    "case_004": "canonical_overworld",
+    "case_005": "authored dawn/rear-alley case map",
+    "case_006": "authored night case map",
+    "case_007": "authored lantern-fair case map",
+    "case_010": "authored shared HD village"
+  },
+  "layers": [
+    {
+      "id": "base_map",
+      "runtime": "runtime_assets",
+      "style": "high_resolution_painted"
+    },
+    {
+      "id": "close_cutaway",
+      "runtime": "runtime_assets.zoom_swap",
+      "geometry_locked": true
+    },
+    {
+      "id": "case_overlays",
+      "runtime": "visual.overlays",
+      "discovery_safe": true
+    },
+    {
+      "id": "evidence_markers",
+      "runtime": "visual.object_visuals",
+      "discovery_gated": true
+    },
+    {
+      "id": "global_lighting",
+      "runtime": "lightingTint(minutesOfDay)"
+    },
+    {
+      "id": "local_lights",
+      "runtime": "visual.light_overlays",
+      "time_gated": true
+    },
+    {
+      "id": "ambient_effects",
+      "runtime": "visual.ambient_sprites",
+      "scope": "transparent subtle effects only"
+    }
+  ],
+  "locations": {
+    "loc_village_square": { "bounds": { "x": 88, "y": 52, "w": 22, "h": 13 }, "mode": "exterior" },
+    "loc_fountain": { "bounds": { "x": 97, "y": 54, "w": 5, "h": 5 }, "mode": "exterior" },
+    "loc_marcus_house": { "bounds": { "x": 101, "y": 36, "w": 21, "h": 14 }, "mode": "exterior" },
+    "loc_marcus_study": { "bounds": { "x": 108, "y": 39, "w": 8, "h": 6 }, "mode": "interior" },
+    "loc_hobbs_cafe": { "bounds": { "x": 99, "y": 67, "w": 17, "h": 20 }, "mode": "exterior" },
+    "loc_cafe_kitchen": { "bounds": { "x": 100, "y": 72, "w": 8, "h": 7 }, "mode": "interior" },
+    "loc_cafe_storage": { "bounds": { "x": 109, "y": 72, "w": 6, "h": 7 }, "mode": "interior" },
+    "loc_clinic": { "bounds": { "x": 111, "y": 52, "w": 15, "h": 14 }, "mode": "exterior" },
+    "loc_clinic_dispensary": { "bounds": { "x": 118, "y": 56, "w": 6, "h": 6 }, "mode": "interior" },
+    "loc_bookshop": { "bounds": { "x": 72, "y": 54, "w": 16, "h": 16 }, "mode": "exterior" },
+    "loc_bookshop_back": { "bounds": { "x": 73, "y": 62, "w": 7, "h": 7 }, "mode": "interior" },
+    "loc_rear_alley": { "bounds": { "x": 86, "y": 50, "w": 40, "h": 2 }, "mode": "exterior" },
+    "loc_pub": { "bounds": { "x": 83, "y": 71, "w": 15, "h": 18 }, "mode": "exterior" },
+    "loc_owen_house": { "bounds": { "x": 118, "y": 68, "w": 21, "h": 18 }, "mode": "exterior" },
+    "loc_elias_house": { "bounds": { "x": 99, "y": 92, "w": 17, "h": 13 }, "mode": "exterior" },
+    "loc_clara_flat": { "bounds": { "x": 100, "y": 68, "w": 8, "h": 3 }, "mode": "interior" },
+    "loc_ben_flat": { "bounds": { "x": 64, "y": 72, "w": 8, "h": 12 }, "mode": "interior" },
+    "loc_priya_flat": { "bounds": { "x": 73, "y": 72, "w": 8, "h": 12 }, "mode": "interior" },
+    "loc_nadia_flat": { "bounds": { "x": 128, "y": 54, "w": 12, "h": 12 }, "mode": "interior" },
+    "loc_ruth_cottage": { "bounds": { "x": 126, "y": 35, "w": 18, "h": 17 }, "mode": "exterior" },
+    "loc_solicitors_office": { "bounds": { "x": 86, "y": 36, "w": 14, "h": 14 }, "mode": "exterior" },
+    "loc_elias_bench": { "bounds": { "x": 104, "y": 62, "w": 4, "h": 2 }, "mode": "exterior" },
+    "loc_fishery": { "bounds": { "x": 146, "y": 47, "w": 45, "h": 29 }, "mode": "exterior" },
+    "loc_lake": { "bounds": { "x": 0, "y": 52, "w": 62, "h": 51 }, "mode": "exterior" },
+    "loc_woodland": { "bounds": { "x": 0, "y": 2, "w": 63, "h": 47 }, "mode": "exterior" },
+    "loc_meadow": { "bounds": { "x": 119, "y": 102, "w": 67, "h": 42 }, "mode": "exterior" },
+    "loc_back_lane": { "bounds": { "x": 110, "y": 87, "w": 31, "h": 4 }, "mode": "exterior" },
+    "loc_st_alder_church": { "bounds": { "x": 67, "y": 36, "w": 18, "h": 15 }, "mode": "exterior" },
+    "loc_willow_farmhouse": { "bounds": { "x": 46, "y": 108, "w": 22, "h": 19 }, "mode": "exterior" }
+  },
+  "layout_summary": {
+    "canonical_location_count": 29,
+    "canonical_light_count": 11,
+    "canonical_building_instance_count": 0,
+    "canonical_prop_instance_count": 0,
+    "canonical_ambient_placement_count": 0,
+    "case_override_ids": [
+      "case_001",
+      "case_002",
+      "case_003",
+      "case_004",
+      "case_005",
+      "case_006",
+      "case_007"
+    ],
+    "case_004_object_anchor_count": 9
+  },
+  "evidence_policy": {
+    "source": "visual.object_visuals",
+    "hidden": "never render",
+    "visible_undiscovered": "suppress marker and semantic evidence art",
+    "discovered": "marker or semantic overlay may render",
+    "prohibited": "culprit identity, hidden event, undiscovered clue, or unearned conclusion"
+  },
+  "local_light_assets": {
+    "light_streetlamp_pool": "CSS gradient map overlay",
+    "light_window_warm": "CSS gradient map overlay",
+    "light_window_cool": "CSS gradient map overlay",
+    "light_pub_window_glow": "CSS gradient map overlay",
+    "light_fireplace_glow": "CSS gradient map overlay"
+  }
+}

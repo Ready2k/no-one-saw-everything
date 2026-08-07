@@ -1,0 +1,35 @@
+{
+  "version": "scenario_interior_expansion_v1",
+  "purpose": "Reusable HD interior maps and search scenes for authoring new mystery locations.",
+  "style_references": {
+    "map": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_full_current_village_v2_neutral.avif",
+    "places": "/art/case_001/hobbs_cafe_investigation_v4.avif"
+  },
+  "asset_contract": {
+    "interior_map": "elevated painterly-realistic map camera; docs/town_asset_bible.md",
+    "search_scene": "cinematic eye-level 16:9 HD; docs/scene_asset_bible.md",
+    "anti_regression": "Do not use pixel-art, RPG-sprite, chibi, cartoon, or low-resolution map-module styling. Never substitute one camera type for the other."
+  },
+  "assets": [
+    {
+      "id": "st_alder_church",
+      "display_name": "St. Alder's Church",
+      "suggested_location_id": "loc_st_alder_church",
+      "interior_map": "/art/town/interiors_hd/expansion_v1/st_alder_church_interior_map_hd.avif",
+      "search_scene": "/art/town/interiors_hd/expansion_v1/st_alder_church_search_hd.avif",
+      "rooms": ["nave", "chancel", "vestry", "bell_tower_stair", "churchyard"],
+      "affordances": ["attend_service", "search_records", "inspect_memorials", "access_vestry"],
+      "authoring_notes": "Neutral church interior with several clear evidence surfaces; suitable for records, memorial, alibi, theft, and concealed-object scenarios."
+    },
+    {
+      "id": "willow_farmhouse",
+      "display_name": "Willow Farmhouse",
+      "suggested_location_id": "loc_willow_farmhouse",
+      "interior_map": "/art/town/interiors_hd/expansion_v1/willow_farmhouse_interior_map_hd.avif",
+      "search_scene": "/art/town/interiors_hd/expansion_v1/willow_farmhouse_search_hd.avif",
+      "rooms": ["kitchen", "parlour", "bedroom", "pantry", "tool_shed", "well_yard", "vegetable_beds"],
+      "affordances": ["prepare_food", "search_personal_space", "inspect_tools", "access_pantry", "draw_water"],
+      "authoring_notes": "Neutral rural home and yard with distinct domestic and work surfaces; suitable for inheritance, land, livestock, missing-tool, and family-secret scenarios."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "version": "20260802-farmhouse-footprint-v6",
+  "style": "lifelike_high_resolution_birdseye",
+  "base_lighting": "neutral_daylight_runtime_tint",
+  "master": "town_overworld_full_current_village_v3_neutral_cutaway.avif",
+  "policy": "Generated source plates contribute building interiors only; canonical terrain and tile edges remain authoritative.",
+  "coverage": {
+    "loc_st_alder_church": "cutaway_plate_a2_lifelike_v1.png",
+    "loc_pub": "cutaway_plate_a2_lifelike_v1.png",
+    "loc_marcus_house": "cutaway_plate_a2_lifelike_v1.png",
+    "loc_marcus_study": "cutaway_plate_a2_lifelike_v1.png",
+    "loc_bookshop": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_bookshop_back": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_solicitors_office": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_clinic": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_clinic_dispensary": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_hobbs_cafe": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_cafe_kitchen": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_cafe_storage": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_clara_flat": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_priya_flat": "cutaway_plate_b2_lifelike_v1.png",
+    "loc_owen_house": "cutaway_plate_b3_lifelike_v1.png",
+    "loc_nadia_flat": "cutaway_plate_b3_lifelike_v1.png",
+    "loc_ruth_cottage": "cutaway_plate_a3_lifelike_v1.png",
+    "loc_willow_farmhouse": "cutaway_plate_c1_farmhouse_lifelike_v2.png"
+  }
+}

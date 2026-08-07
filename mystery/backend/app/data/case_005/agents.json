@@ -1,0 +1,488 @@
+[
+  {
+    "agent_id": "agent_clara",
+    "full_name": "Clara Wells",
+    "age": 36,
+    "occupation": "Cafe manager",
+    "traits": [
+      "organised",
+      "exact",
+      "proud"
+    ],
+    "portrait": "🧣",
+    "home_location_id": "loc_clara_flat",
+    "work_location_id": "loc_hobbs_cafe",
+    "routine_summary": "Down by half six to prep the cafe. The linen comes to the rear door at seven and she signs for it herself.",
+    "voice_card": "Precise and clipped; clips her sentences even shorter when defensive, and never volunteers more than was asked. Says the correct thing at the moment it is least welcome.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "adversary",
+        "affinity": -0.8,
+        "trust": 0.0,
+        "tension": 1.0
+      },
+      {
+        "target_agent_id": "agent_ben",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_nadia",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      }
+    ],
+    "observation_skill": 0.7,
+    "memory_reliability": 0.8,
+    "honesty_baseline": 0.7,
+    "is_victim": true,
+    "sprite_asset": "Abigail_Chen.png",
+    "portrait_art": {
+      "calm": "/art/case_005/portraits/clara_wells_calm.avif",
+      "deceased": "/art/case_005/portraits/clara_wells_deceased.avif",
+      "defensive": "/art/case_005/portraits/clara_wells_calm.avif",
+      "cracking": "/art/case_005/portraits/clara_wells_calm.avif"
+    },
+    "sprite_id": "sprite_abigail_chen"
+  },
+  {
+    "agent_id": "agent_owen",
+    "full_name": "Owen Price",
+    "age": 47,
+    "occupation": "Builder",
+    "traits": [
+      "proud",
+      "practical",
+      "keeps his own counsel"
+    ],
+    "portrait": "🔨",
+    "home_location_id": "loc_owen_house",
+    "work_location_id": "loc_owen_house",
+    "routine_summary": "In the timber yard from six, and the last to lock it. Mends things rather than replace them, and will tell you what that has saved him.",
+    "voice_card": "Blunt, short sentences, no hedging; gets louder rather than more careful when pressed. Talks about the yard the way other men talk about their children.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "adversary",
+        "affinity": -0.7,
+        "trust": 0.0,
+        "tension": 1.0
+      },
+      {
+        "target_agent_id": "agent_elias",
+        "relationship_type": "old_acquaintance",
+        "affinity": 0.2,
+        "trust": 0.3,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_col",
+        "relationship_type": "employee",
+        "affinity": 0.5,
+        "trust": 0.6,
+        "tension": 0.0
+      }
+    ],
+    "observation_skill": 0.5,
+    "memory_reliability": 0.7,
+    "honesty_baseline": 0.3,
+    "conflict_avoidance": 0.1,
+    "sprite_asset": "Carlos_Gomez.png",
+    "portrait_art": {
+      "calm": "/art/case_005/portraits/owen_price_calm.avif",
+      "deceased": "/art/portraits/owen_deceased.avif",
+      "defensive": "/art/case_005/portraits/owen_price_defensive.avif",
+      "cracking": "/art/case_005/portraits/owen_price_cracking.avif"
+    },
+    "sprite_id": "sprite_carlos_gomez",
+    "baseline": {
+      "habit_category": "timing",
+      "habit_text": "he leaves a workman's pause before each answer, measuring twice before he commits",
+      "deviation_cue": "The pauses have doubled. He is testing every question for load before he puts any weight on it."
+    }
+  },
+  {
+    "agent_id": "agent_ben",
+    "full_name": "Ben Carter",
+    "age": 29,
+    "occupation": "Delivery driver",
+    "traits": [
+      "easygoing",
+      "chatty",
+      "hopeless with time"
+    ],
+    "portrait": "📦",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "Morning delivery round: the linen to the cafe's rear door at seven, then the square and the lane. He is late perhaps one morning in five, and cheerfully unrepentant about it.",
+    "voice_card": "Rambles cheerfully, over-explains when nervous, and tends to answer a question you didn't ask. Goes very quiet when it matters.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "acquaintance",
+        "affinity": 0.4,
+        "trust": 0.6,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "acquaintance",
+        "affinity": 0.1,
+        "trust": 0.2,
+        "tension": 0.3
+      }
+    ],
+    "observation_skill": 0.6,
+    "memory_reliability": 0.65,
+    "honesty_baseline": 0.75,
+    "gossip_tendency": 0.8,
+    "sprite_asset": "Ryan_Park.png",
+    "portrait_art": {
+      "calm": "/art/case_005/portraits/ben_carter_calm.avif",
+      "deceased": "/art/portraits/ben_deceased.avif",
+      "defensive": "/art/case_005/portraits/ben_carter_defensive.avif",
+      "cracking": "/art/case_005/portraits/ben_carter_cracking.avif"
+    },
+    "sprite_id": "sprite_ryan_park",
+    "baseline": {
+      "habit_category": "hands",
+      "habit_text": "his hands sketch every route and parcel in the air while he talks",
+      "deviation_cue": "His hands have quit the conversation — flat on his knees while his mouth does all the work alone."
+    }
+  },
+  {
+    "agent_id": "agent_nadia",
+    "full_name": "Nadia Cole",
+    "age": 38,
+    "occupation": "Clinic nurse",
+    "traits": [
+      "observant",
+      "practical",
+      "discreet"
+    ],
+    "portrait": "🩺",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_clinic",
+    "routine_summary": "Early shift at the clinic. Crosses the square on her way in, a little before seven.",
+    "voice_card": "Calm, clinical phrasing; states observations like chart notes and avoids speculation.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "neighbour",
+        "affinity": 0.1,
+        "trust": 0.3,
+        "tension": 0.2
+      }
+    ],
+    "observation_skill": 0.85,
+    "memory_reliability": 0.85,
+    "honesty_baseline": 0.85,
+    "gossip_tendency": 0.2,
+    "sprite_asset": "Ayesha_Khan.png",
+    "portrait_art": {
+      "calm": "/art/case_005/portraits/nadia_cole_calm.avif",
+      "deceased": "/art/portraits/nadia_deceased.avif",
+      "defensive": "/art/case_005/portraits/nadia_cole_defensive.avif",
+      "cracking": "/art/case_005/portraits/nadia_cole_cracking.avif"
+    },
+    "sprite_id": "sprite_ayesha_khan",
+    "baseline": {
+      "habit_category": "voice",
+      "habit_text": "her voice carries the unhurried warmth of someone used to talking people back to calm",
+      "deviation_cue": "The warmth has drained out of her voice. The words are the same; the bedside manner is gone."
+    }
+  },
+  {
+    "agent_id": "agent_elias",
+    "full_name": "Elias Grant",
+    "age": 68,
+    "occupation": "Retired schoolteacher",
+    "traits": [
+      "nosy",
+      "certain of himself",
+      "harmless"
+    ],
+    "portrait": "🎩",
+    "home_location_id": "loc_village_square",
+    "work_location_id": "loc_village_square",
+    "routine_summary": "On his bench from twenty to seven, flask of tea, facing the square. Maintains that nothing crosses that square without his knowing.",
+    "voice_card": "Talks like he's lecturing a classroom; fond of rhetorical questions and certain of every detail. His certainty is the most reliable thing about him, and it is not reliable.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_clara",
+        "relationship_type": "acquaintance",
+        "affinity": 0.3,
+        "trust": 0.5,
+        "tension": 0.1
+      },
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "acquaintance",
+        "affinity": -0.2,
+        "trust": 0.3,
+        "tension": 0.3
+      }
+    ],
+    "observation_skill": 0.55,
+    "memory_reliability": 0.5,
+    "honesty_baseline": 0.9,
+    "gossip_tendency": 0.9,
+    "sprite_asset": "Adam_Smith.png",
+    "portrait_art": {
+      "calm": "/art/case_005/portraits/elias_grant_calm.avif",
+      "deceased": "/art/portraits/elias_deceased.avif",
+      "defensive": "/art/case_005/portraits/elias_grant_defensive.avif",
+      "cracking": "/art/case_005/portraits/elias_grant_cracking.avif"
+    },
+    "sprite_id": "sprite_adam_smith",
+    "baseline": {
+      "habit_category": "timing",
+      "habit_text": "he answers before the question has quite finished, a teacher who has heard every excuse in the room",
+      "deviation_cue": "The interruptions have stopped. He waits out the whole question now, and answers only the part he has chosen."
+    }
+  },
+  {
+    "agent_id": "agent_col",
+    "full_name": "Col Hartley",
+    "age": 44,
+    "occupation": "Timber delivery driver",
+    "traits": [
+      "straightforward",
+      "loyal",
+      "easily leaned on"
+    ],
+    "portrait": "🚛",
+    "home_location_id": "loc_owen_house",
+    "work_location_id": "loc_owen_house",
+    "routine_summary": "Owen Price's regular driver for eleven years. Runs the early timber drops and signs the yard docket himself.",
+    "voice_card": "Plain, direct answers; starts repeating himself and looking for reassurance when pressed. Says 'he's been good to me' the way other men say a prayer.",
+    "relationships": [
+      {
+        "target_agent_id": "agent_owen",
+        "relationship_type": "employee",
+        "affinity": 0.4,
+        "trust": 0.4,
+        "tension": 0.5
+      }
+    ],
+    "observation_skill": 0.5,
+    "memory_reliability": 0.6,
+    "honesty_baseline": 0.4,
+    "conflict_avoidance": 0.7,
+    "sprite_asset": "Ethan_Brooks.png",
+    "portrait_art": {
+      "calm": "/art/case_005/portraits/col_hartley_calm.avif",
+      "deceased": "/art/portraits/col_deceased.avif",
+      "defensive": "/art/case_005/portraits/col_hartley_defensive.avif",
+      "cracking": "/art/case_005/portraits/col_hartley_cracking.avif"
+    },
+    "sprite_id": "sprite_ethan_brooks",
+    "baseline": {
+      "habit_category": "posture",
+      "habit_text": "he sits square to the table and answers to the point, like a man reading off his own delivery sheet",
+      "deviation_cue": "The squareness has gone out of him — he answers at an angle now, to the table and to the question both."
+    }
+  },
+  {
+    "agent_id": "agent_bg_rosa",
+    "full_name": "Rosa Fenn",
+    "age": 54,
+    "occupation": "Groundskeeper",
+    "portrait": "🌿",
+    "home_location_id": "loc_hobbs_cafe",
+    "work_location_id": "loc_clinic",
+    "routine_summary": "Tends the fountain flowerbeds at first light, then sweeps the rear paths before the village wakes properly.",
+    "is_background": true,
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/rosa_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Carmen_Ortiz.png",
+    "sprite_id": "sprite_carmen_ortiz"
+  },
+  {
+    "agent_id": "agent_bg_wren",
+    "full_name": "Wren Ashby",
+    "age": 61,
+    "occupation": "Busker",
+    "portrait": "🎻",
+    "home_location_id": "loc_clinic",
+    "work_location_id": "loc_bookshop",
+    "routine_summary": "Tunes the fiddle by the square until her fingers warm up, then follows the smell of coffee to the cafe pitch.",
+    "is_background": true,
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/wren_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Latoya_Williams.png",
+    "sprite_id": "sprite_latoya_williams"
+  },
+  {
+    "agent_id": "agent_bg_sal",
+    "full_name": "Sal Ibori",
+    "age": 54,
+    "occupation": "Milkman",
+    "portrait": "🥛",
+    "home_location_id": "loc_bookshop",
+    "work_location_id": "loc_fountain",
+    "routine_summary": "Runs the milk round in strict order — cafe first, bookshop second — and rates every doorstep in the village by how promptly they bring the empties back.",
+    "is_background": true,
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/sal_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "John_Lin.png",
+    "sprite_id": "sprite_john_lin"
+  },
+  {
+    "agent_id": "agent_bg_min",
+    "full_name": "Min Okafor",
+    "age": 22,
+    "occupation": "Baker's assistant",
+    "portrait": "🥖",
+    "home_location_id": "loc_fountain",
+    "work_location_id": "loc_hobbs_cafe",
+    "routine_summary": "Up before the ovens, delivers the morning loaves to the cafe and the bookshop, and always keeps the misshapen one back for herself.",
+    "is_background": true,
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/min_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Mei_Lin.png",
+    "sprite_id": "sprite_mei_lin"
+  },
+  {
+    "agent_id": "agent_bg_cole",
+    "full_name": "Cole Byrne",
+    "age": 26,
+    "occupation": "Window cleaner",
+    "portrait": "🪟",
+    "home_location_id": "loc_hobbs_cafe",
+    "work_location_id": "loc_clinic",
+    "routine_summary": "Works his ladder clockwise around the square; swears the clinic's windows are the only ones anyone ever thanks him for.",
+    "is_background": true,
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/cole_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Eddy_Lin.png",
+    "sprite_id": "sprite_eddy_lin"
+  },
+  {
+    "agent_id": "agent_bg_dez",
+    "full_name": "Dez Holt",
+    "age": 61,
+    "occupation": "Market stallholder",
+    "portrait": "🧺",
+    "home_location_id": "loc_clinic",
+    "work_location_id": "loc_bookshop",
+    "routine_summary": "Trundles his stall cart around the village testing pitches; has moved 'the perfect spot' four times this year and defends each one loudly.",
+    "is_background": true,
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/dez_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Francisco_Lopez.png",
+    "sprite_id": "sprite_francisco_lopez"
+  },
+  {
+    "agent_id": "agent_bg_birdie",
+    "full_name": "Birdie Voss",
+    "age": 66,
+    "occupation": "Street sweeper",
+    "portrait": "🧹",
+    "home_location_id": "loc_bookshop",
+    "work_location_id": "loc_fountain",
+    "routine_summary": "Sweeps the shopfronts in the order the village wakes — cafe, bookshop, clinic — and knows everyone's doormat better than they do.",
+    "is_background": true,
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/birdie_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Jane_Moreno.png",
+    "sprite_id": "sprite_jane_moreno"
+  },
+  {
+    "agent_id": "agent_bg_tam",
+    "full_name": "Tam Doyle",
+    "age": 47,
+    "occupation": "Postal carrier",
+    "portrait": "📨",
+    "home_location_id": "loc_fountain",
+    "work_location_id": "loc_hobbs_cafe",
+    "routine_summary": "Does the post round through the square, the bookshop and the clinic before most doors have even opened.",
+    "is_background": true,
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/tam_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Arthur_Burton.png",
+    "sprite_id": "sprite_arthur_burton"
+  },
+  {
+    "agent_id": "agent_bg_gus",
+    "full_name": "Gus Farrow",
+    "age": 51,
+    "occupation": "Newspaper seller",
+    "portrait": "📰",
+    "home_location_id": "loc_hobbs_cafe",
+    "work_location_id": "loc_clinic",
+    "routine_summary": "Sets the papers out from the fountain to the cafe and reads every front page aloud to whoever stands still long enough.",
+    "is_background": true,
+    "pronoun": "he",
+    "portrait_art": {
+      "calm": "/art/portraits/gus_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Rajiv_Patel.png",
+    "sprite_id": "sprite_rajiv_patel"
+  },
+  {
+    "agent_id": "agent_bg_effie",
+    "full_name": "Effie Marsh",
+    "age": 46,
+    "occupation": "Dog walker",
+    "portrait": "🐕",
+    "home_location_id": "loc_clinic",
+    "work_location_id": "loc_bookshop",
+    "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; the terrier decides when they stop, and it always stops at the fountain.",
+    "is_background": true,
+    "pronoun": "she",
+    "portrait_art": {
+      "calm": "/art/portraits/effie_calm.avif",
+      "defensive": null,
+      "cracking": null
+    },
+    "sprite_asset": "Hailey_Johnson.png",
+    "sprite_id": "sprite_hailey_johnson"
+  }
+]

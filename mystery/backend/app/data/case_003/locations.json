@@ -1,0 +1,191 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The open heart of the village, with a stone fountain, benches, and a view of the cafe and clinic fronts.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_clinic",
+      "loc_owen_house",
+      "loc_fountain"
+    ],
+    "visibility_type": "public",
+    "camera_coverage": false,
+    "map_position": {
+      "x": 3176,
+      "y": 2344
+    },
+    "map_bounds": {
+      "x": 2928,
+      "y": 2112,
+      "width": 496,
+      "height": 464
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "A small clinic on the square. Waiting room at the front; dispensary and treatment room behind the reception desk.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_clinic_dispensary"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3664,
+      "y": 2232
+    },
+    "map_bounds": {
+      "x": 3533,
+      "y": 2096,
+      "width": 262,
+      "height": 272,
+      "rotation": 6.5
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_clinic_dispensary",
+    "name": "Clinic Dispensary",
+    "description": "A locked room behind the clinic reception. Medication cabinet, prescription log, the sink where pills are prepared.",
+    "connected_location_ids": [
+      "loc_clinic"
+    ],
+    "access_rules": [
+      "nurse",
+      "doctor"
+    ],
+    "visibility_type": "private",
+    "murder_suitable": false,
+    "map_position": {
+      "x": 3696,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 3632,
+      "y": 2256,
+      "width": 128,
+      "height": 160,
+      "rotation": 44
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_fountain",
+    "name": "Bench by the Fountain",
+    "description": "Elias's habitual bench beside the stone fountain \u2014 where he is found collapsed.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "murder_suitable": true,
+    "map_position": {
+      "x": 3152,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 3040,
+      "y": 2240,
+      "width": 224,
+      "height": 192
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_hobbs_cafe",
+    "name": "Hobbs Cafe",
+    "description": "The village cafe. Clara opens at 18:00. The window faces the square bench.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3088,
+      "y": 1912
+    },
+    "map_bounds": {
+      "x": 2976,
+      "y": 1776,
+      "width": 224,
+      "height": 272,
+      "rotation": -42
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_owen_house",
+    "name": "Owen Price's House & Yard",
+    "description": "Owen's house and builder's timber yard on the far side of the square.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 4008,
+      "y": 2456
+    },
+    "map_bounds": {
+      "x": 3824,
+      "y": 2272,
+      "width": 368,
+      "height": 368,
+      "rotation": 2
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_clara_flat",
+    "name": "Flat above Hobbs Cafe",
+    "description": "Clara's flat above the cafe, reached by a side stair.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 3136,
+      "y": 1784
+    },
+    "map_bounds": {
+      "x": 3040,
+      "y": 1712,
+      "width": 192,
+      "height": 144,
+      "rotation": 32
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_elias_bench",
+    "name": "Elias's Bench",
+    "description": "The specific bench in the village square where Elias always sits, facing the clinic and cafe.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_fountain"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_clinic",
+      "loc_hobbs_cafe"
+    ],
+    "map_position": {
+      "x": 2880,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 2832,
+      "y": 2304,
+      "width": 96,
+      "height": 64,
+      "rotation": -55
+    },
+    "visual_layer": "exterior",
+    "illustration": "/art/case_003/rewind/clinic_bench_handoff_hd.avif"
+  }
+]

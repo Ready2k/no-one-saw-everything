@@ -1,0 +1,404 @@
+[
+  {
+    "location_id": "loc_village_square",
+    "name": "Village Square",
+    "description": "The open heart of the village, strung tonight with paper lanterns. Fair stalls line the edges: the cafe's cider stall, Owen's brazier, the tombola, the ceremony table.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_bookshop",
+      "loc_clinic",
+      "loc_rear_alley",
+      "loc_marcus_house",
+      "loc_owen_house",
+      "loc_fountain",
+      "loc_elias_bench"
+    ],
+    "visibility_type": "public",
+    "camera_coverage": false,
+    "map_position": {
+      "x": 3176,
+      "y": 2344
+    },
+    "map_bounds": {
+      "x": 2928,
+      "y": 2112,
+      "width": 496,
+      "height": 464
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_fountain",
+    "name": "Fountain",
+    "description": "The stone fountain at the square's heart. Tonight its basin is afloat with candle lanterns, and the light moves on every face that passes.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3152,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 3040,
+      "y": 2240,
+      "width": 224,
+      "height": 192
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_elias_bench",
+    "name": "Elias's Bench",
+    "description": "The specific bench where Elias always sits, facing the cafe. Even on fair night, nobody else sits there.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_fountain"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "map_position": {
+      "x": 2880,
+      "y": 2336
+    },
+    "map_bounds": {
+      "x": 2832,
+      "y": 2304,
+      "width": 96,
+      "height": 64,
+      "rotation": -55
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_hobbs_cafe",
+    "name": "Hobbs Cafe",
+    "description": "The village cafe, dark tonight \u2014 all the trade is at the stall outside. The name over the door is thirty years older than the man who owns it.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_cafe_kitchen"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_village_square"
+    ],
+    "camera_coverage": false,
+    "map_position": {
+      "x": 3088,
+      "y": 1912
+    },
+    "map_bounds": {
+      "x": 2976,
+      "y": 1776,
+      "width": 224,
+      "height": 272,
+      "rotation": -42
+    },
+    "visual_layer": "exterior"
+  },
+  {
+    "location_id": "loc_cafe_kitchen",
+    "name": "Cafe Kitchen",
+    "description": "The working kitchen behind the cafe counter. Its back door opens onto the rear alley. The cup cupboard is by the sink.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe",
+      "loc_rear_alley"
+    ],
+    "access_rules": [
+      "staff"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "map_position": {
+      "x": 3080,
+      "y": 1912
+    },
+    "map_bounds": {
+      "x": 3024,
+      "y": 1872,
+      "width": 112,
+      "height": 80,
+      "rotation": 48
+    },
+    "visual_layer": "interior",
+    "illustration": "/art/case_007/rewind/grey_coat_alley_hd.avif"
+  },
+  {
+    "location_id": "loc_rear_alley",
+    "name": "Rear Alley",
+    "description": "A narrow service lane running behind the cafe and bookshop, unlit on fair night. Ben's delivery van is parked at the bookshop end.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_cafe_kitchen",
+      "loc_bookshop",
+      "loc_bookshop_back"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_bookshop_back"
+    ],
+    "map_position": {
+      "x": 3416,
+      "y": 1696
+    },
+    "map_bounds": {
+      "x": 3056,
+      "y": 1664,
+      "width": 720,
+      "height": 64,
+      "rotation": 17
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_bookshop",
+    "name": "Reed & Bell Bookshop",
+    "description": "Isabella Reed's bookshop, dark for the fair. The new village archive is boxed up in the stockroom behind the counter, waiting for shelves.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_rear_alley",
+      "loc_bookshop_back"
+    ],
+    "visibility_type": "public",
+    "audible_from_location_ids": [
+      "loc_bookshop_back"
+    ],
+    "map_position": {
+      "x": 2694,
+      "y": 1981
+    },
+    "map_bounds": {
+      "x": 2614,
+      "y": 1917,
+      "width": 160,
+      "height": 128,
+      "rotation": 18
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_bookshop_back",
+    "name": "Bookshop Back Room",
+    "description": "The stockroom behind the bookshop counter, stacked with Elias Grant's archive boxes \u2014 forty years of exercise books labelled by year. A door to the rear alley is propped by a cast-iron owl.",
+    "connected_location_ids": [
+      "loc_bookshop",
+      "loc_rear_alley"
+    ],
+    "access_rules": [
+      "staff",
+      "keyholder"
+    ],
+    "visibility_type": "private",
+    "audible_from_location_ids": [
+      "loc_bookshop",
+      "loc_rear_alley"
+    ],
+    "camera_coverage": false,
+    "murder_suitable": true,
+    "map_position": {
+      "x": 3632,
+      "y": 1984
+    },
+    "map_bounds": {
+      "x": 3568,
+      "y": 1936,
+      "width": 128,
+      "height": 96,
+      "rotation": 35
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_clinic",
+    "name": "Village Clinic",
+    "description": "The small clinic on the square, closed for the evening but never quite off duty while Nadia Cole has the key.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 3664,
+      "y": 2232
+    },
+    "map_bounds": {
+      "x": 3533,
+      "y": 2096,
+      "width": 262,
+      "height": 272,
+      "rotation": 6.5
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_marcus_house",
+    "name": "Marcus Bell's House",
+    "description": "Marcus's house on the edge of the square. The bill of sale for Hobbs Cafe hangs framed in his study, the way other men hang diplomas.",
+    "connected_location_ids": [
+      "loc_village_square",
+      "loc_marcus_study"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 3448,
+      "y": 1872
+    },
+    "map_bounds": {
+      "x": 3344,
+      "y": 1824,
+      "width": 208,
+      "height": 96,
+      "rotation": 37
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_marcus_study",
+    "name": "Marcus's Study",
+    "description": "A small study off the house where Marcus keeps the cafe's books, thirty years of them, ruled and exact.",
+    "connected_location_ids": [
+      "loc_marcus_house"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "visual_layer": "interior",
+    "map_position": {
+      "x": 3472,
+      "y": 1800
+    },
+    "map_bounds": {
+      "x": 3408,
+      "y": 1776,
+      "width": 128,
+      "height": 48,
+      "rotation": 36
+    }
+  },
+  {
+    "location_id": "loc_owen_house",
+    "name": "Owen Price's House & Yard",
+    "description": "Owen's house and builder's timber yard on the far side of the square. The woodpile fed tonight's brazier.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "public",
+    "map_position": {
+      "x": 4008,
+      "y": 2456
+    },
+    "map_bounds": {
+      "x": 3824,
+      "y": 2272,
+      "width": 368,
+      "height": 368,
+      "rotation": 2
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_elias_house",
+    "name": "Elias Grant's House",
+    "description": "The retired schoolteacher's house, small and exact. Until this spring, forty years of notebooks lived here in a fish crate.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 3040,
+      "y": 2821
+    },
+    "map_bounds": {
+      "x": 2912,
+      "y": 2720,
+      "width": 256,
+      "height": 202,
+      "rotation": 29
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_clara_flat",
+    "name": "Flat above Hobbs Cafe",
+    "description": "Clara Wells's small flat above the cafe, reached by a side stair.",
+    "connected_location_ids": [
+      "loc_hobbs_cafe"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 3136,
+      "y": 1784
+    },
+    "map_bounds": {
+      "x": 3040,
+      "y": 1712,
+      "width": 192,
+      "height": 144,
+      "rotation": 32
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_priya_flat",
+    "name": "Priya's Flat",
+    "description": "A small rented flat with more books than furniture, most of them borrowed from the shop and faithfully returned.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 2632,
+      "y": 2802
+    },
+    "map_bounds": {
+      "x": 2480,
+      "y": 2666,
+      "width": 304,
+      "height": 272
+    },
+    "visual_layer": "interior"
+  },
+  {
+    "location_id": "loc_nadia_flat",
+    "name": "Nadia's Flat",
+    "description": "Nadia Cole's neat and tidy apartment.",
+    "connected_location_ids": [
+      "loc_village_square"
+    ],
+    "access_rules": [
+      "owner"
+    ],
+    "visibility_type": "private",
+    "map_position": {
+      "x": 3968,
+      "y": 1864
+    },
+    "map_bounds": {
+      "x": 3872,
+      "y": 1792,
+      "width": 192,
+      "height": 144,
+      "rotation": 36
+    },
+    "visual_layer": "interior"
+  }
+]

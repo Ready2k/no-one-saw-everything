@@ -1,0 +1,1873 @@
+"""Reusable visual-only town map definitions.
+
+This module is deliberately separate from case truth. It maps authoritative
+location/object/clue ids to visual geometry and safe presentation metadata.
+It must never decide discovery, deduction, event visibility, or access rules.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any
+
+from .models import CaseData
+from .place_library import load_building_library
+
+TOWN_LAYOUT_FILE = Path(__file__).parent / "data" / "town" / "town_layout.json"
+
+# The HD overworld mosaic: rows A-C top->bottom, cols 1-3 left->right.
+#
+# The v3 neutral set keeps the seamless v2 countryside geometry while making
+# the Mallet & Crown and Whittle & Cross visually match their canonical plots.
+HD_TILE_CELLS = [f"{row}{col}" for row in ("A", "B", "C") for col in (1, 2, 3)]
+# Runtime tile art is AVIF (~90% smaller than the PNG masters it replaced).
+# PNG stays accepted so legacy tiles and hand-dropped masters still resolve.
+TILE_ART_EXTENSIONS = (".avif", ".png")
+HD_TILE_ART_URL_PREFIX = "/art/town/tiles_3x3_hd/"
+CURRENT_VILLAGE_PREFIX = "/art/town/tiles_3x3_hd/current_village_v3_neutral"
+CURRENT_VILLAGE_ASSET_VERSION = "20260802-farmhouse-footprint-v6"
+
+
+def current_village_url(filename: str) -> str:
+    """Version the mutable authored map so browsers cannot retain old tiles."""
+    return f"{CURRENT_VILLAGE_PREFIX}/{filename}?v={CURRENT_VILLAGE_ASSET_VERSION}"
+
+
+B2_LIVING_TOWN_V2_EXTERNAL_URL = (
+    current_village_url("town_overworld_B2_current_village_v3_neutral.avif")
+)
+B2_LIVING_TOWN_V2_INTERNAL_URL = (
+    current_village_url("town_overworld_B2_current_village_v3_neutral_cutaway.avif")
+)
+LIVING_TOWN_V2_TILE_URLS = {
+    "A1": current_village_url("town_overworld_A1_current_village_v3_neutral.avif"),
+    "A2": current_village_url("town_overworld_A2_current_village_v3_neutral.avif"),
+    "A3": current_village_url("town_overworld_A3_current_village_v3_neutral.avif"),
+    "B1": current_village_url("town_overworld_B1_current_village_v3_neutral.avif"),
+    "B2": B2_LIVING_TOWN_V2_EXTERNAL_URL,
+    "B3": current_village_url("town_overworld_B3_current_village_v3_neutral.avif"),
+    "C1": current_village_url("town_overworld_C1_current_village_v3_neutral.avif"),
+    "C2": current_village_url("town_overworld_C2_current_village_v3_neutral.avif"),
+    "C3": current_village_url("town_overworld_C3_current_village_v3_neutral.avif"),
+}
+LIVING_TOWN_V2_INTERNAL_TILE_URLS = {
+    cell: current_village_url(
+        f"town_overworld_{cell}_current_village_v3_neutral_cutaway.avif"
+    )
+    for cell in HD_TILE_CELLS
+}
+# Dev-only filesystem view of the same directory (Vite serves frontend/public/).
+HD_TILE_ART_DIR = (
+    Path(__file__).resolve().parents[2]
+    / "frontend" / "public" / "art" / "town" / "tiles_3x3_hd"
+)
+
+
+def hd_tile_url(cell: str) -> str:
+    """Default exterior artwork for one HD mosaic cell."""
+    return LIVING_TOWN_V2_TILE_URLS.get(
+        cell,
+        f"/art/town/tiles_3x3_hd/town_overworld_{cell}_hd.png",
+    )
+
+
+def hd_internal_tile_url(cell: str) -> str:
+    """Default roofless artwork for one HD mosaic cell."""
+    return LIVING_TOWN_V2_INTERNAL_TILE_URLS.get(cell, hd_tile_url(cell))
+
+
+ALLOWED_TILES = {
+    "tile_grass", "tile_mud", "tile_cobble", "tile_path", "tile_floor_wood",
+    "tile_floor_stone", "tile_wall_exterior", "tile_wall_interior", "tile_water",
+    "tile_water_edge", "tile_fence", "tile_hedge", "tile_flowerbed", "tile_tree",
+    "tile_shadow_soft"
+}
+
+ALLOWED_PROPS = {
+    "prop_fountain_coping", "prop_lamp", "prop_bench", "prop_cafe_counter",
+    "prop_till", "prop_mop_bucket", "prop_coat_rack", "prop_crate",
+    "prop_bookshop_shelf", "prop_desk", "prop_letter_opener", "prop_broken_window",
+    "prop_clinic_bed", "prop_dispensary_shelf", "prop_medicine_cabinet",
+    "prop_pub_bar", "prop_pub_stool", "prop_pub_ledger", "prop_lighter",
+    "prop_fireplace", "prop_cocoa_mug", "prop_books", "prop_garden_plant",
+    "prop_foxglove", "prop_letters", "prop_documents", "prop_phone", "prop_key",
+    "prop_belt", "prop_boots", "prop_muddy_footprint"
+}
+
+ALLOWED_LAYERS = {
+    "base", "terrain_detail", "paths", "interior_floors", "walls", "structures",
+    "props", "case_overlays", "object_anchors", "evidence_markers", "fog", "debug_bounds",
+    "lights", "ambient"
+}
+
+# Mirrors the semantic_asset_id union in frontend/src/types.ts's MapLightOverlay and
+# the CSS classes in frontend/src/styles.css (.map-light-local.*).
+ALLOWED_LIGHT_ASSETS = {
+    "light_streetlamp_pool", "light_window_warm", "light_window_cool",
+    "light_pub_window_glow", "light_fireplace_glow"
+}
+
+ALLOWED_AMBIENT_ASSETS = {
+    "water_shimmer", "fish_ripple_loop", "chimney_smoke", "lamp_flicker",
+    "drifting_mist", "birds_crossing", "warm_motes"
+}
+
+ALLOWED_NESTING = {
+    ("loc_village_square", "loc_fountain"),
+    ("loc_hobbs_cafe", "loc_cafe_kitchen"),
+    ("loc_hobbs_cafe", "loc_cafe_storage"),
+    ("loc_hobbs_cafe", "loc_clara_flat"),
+    ("loc_cafe_storage", "loc_clara_flat"),
+    ("loc_bookshop", "loc_bookshop_back"),
+    ("loc_clinic", "loc_clinic_dispensary"),
+    ("loc_marcus_house", "loc_marcus_study"),
+    ("loc_village_square", "loc_elias_bench")
+}
+
+def _rect_corners(b: dict[str, Any]) -> list[tuple[float, float]]:
+    """World-space corners of a bounds dict, honouring visual rotation."""
+    import math
+
+    rot = math.radians(b.get("rotation") or 0)
+    cx = b["x"] + b["w"] / 2
+    cy = b["y"] + b["h"] / 2
+    cos = math.cos(rot)
+    sin = math.sin(rot)
+    return [
+        (cx + lx * cos - ly * sin, cy + lx * sin + ly * cos)
+        for lx, ly in (
+            (-b["w"] / 2, -b["h"] / 2),
+            (b["w"] / 2, -b["h"] / 2),
+            (b["w"] / 2, b["h"] / 2),
+            (-b["w"] / 2, b["h"] / 2),
+        )
+    ]
+
+
+def _oriented_overlap(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    """Separating-axis overlap for possibly-rotated bounds. Touching edges do
+    not count as overlap, matching the axis-aligned semantics used before."""
+    ca = _rect_corners(a)
+    cb = _rect_corners(b)
+    for corners in (ca, cb):
+        for i in range(4):
+            x1, y1 = corners[i]
+            x2, y2 = corners[(i + 1) % 4]
+            ax = y2 - y1
+            ay = x1 - x2
+            pa = [ax * px + ay * py for px, py in ca]
+            pb = [ax * px + ay * py for px, py in cb]
+            if max(pa) <= min(pb) + 1e-9 or max(pb) <= min(pa) + 1e-9:
+                return False
+    return True
+
+
+def _point_in_bounds(b: dict[str, Any], px: float, py: float) -> bool:
+    """Point containment honouring visual rotation around the rect centre."""
+    import math
+
+    rot = math.radians(b.get("rotation") or 0)
+    cx = b["x"] + b["w"] / 2
+    cy = b["y"] + b["h"] / 2
+    dx = px - cx
+    dy = py - cy
+    cos = math.cos(-rot)
+    sin = math.sin(-rot)
+    lx = dx * cos - dy * sin
+    ly = dx * sin + dy * cos
+    return abs(lx) <= b["w"] / 2 and abs(ly) <= b["h"] / 2
+
+
+def validate_town_layout_payload(payload: Any) -> list[str]:
+    """Validates the layout payload and returns a list of error strings.
+    If the list is empty, the payload is valid.
+    """
+    errors = []
+    
+    if not isinstance(payload, dict):
+        return ["Payload must be a JSON object"]
+        
+    if payload.get("version") != "town_layout_editor_v2":
+        errors.append("Invalid layout version. Expected 'town_layout_editor_v2'")
+        
+    grid = payload.get("grid")
+    if not isinstance(grid, dict):
+        errors.append("Grid configuration must be a JSON object")
+    else:
+        if grid.get("cols") != 192 or grid.get("rows") != 144:
+            errors.append("Grid size must be exactly 192 columns by 144 rows")
+        if grid.get("tile_size") != 32:
+            errors.append("Tile size must be exactly 32")
+            
+    from .case_store import list_all_cases, get_case
+    try:
+        valid_cases = list_all_cases()
+        valid_case_ids = {c["case_id"] for c in valid_cases}
+    except Exception as e:
+        valid_case_ids = set()
+        errors.append(f"Failed to retrieve list of cases from store: {e}")
+
+    valid_location_ids = set(CANONICAL_LOCATIONS.keys())
+
+    building_instances = payload.get("building_instances", [])
+    building_assets = load_building_library().get("buildings", {})
+    if not isinstance(building_instances, list):
+        errors.append("building_instances must be a list")
+    else:
+        seen_buildings: set[str] = set()
+        for instance in building_instances:
+            if not isinstance(instance, dict):
+                errors.append("Each building instance must be an object")
+                continue
+            instance_id = instance.get("instance_id")
+            asset_id = instance.get("asset_id")
+            if not isinstance(instance_id, str) or not instance_id:
+                errors.append("Building instance is missing instance_id")
+            elif instance_id in seen_buildings:
+                errors.append(f"Duplicate building instance id '{instance_id}'")
+            seen_buildings.add(instance_id)
+            if asset_id not in building_assets:
+                errors.append(f"Unknown building asset id '{asset_id}'")
+            x, y = instance.get("x"), instance.get("y")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y)):
+                errors.append(f"Building instance '{instance_id}' coordinates must be numbers")
+                continue
+            footprint = instance.get("footprint") or building_assets.get(asset_id, {}).get("footprint")
+            if isinstance(footprint, dict) and (x < 0 or y < 0 or x + footprint.get("w", 0) > 192 or y + footprint.get("h", 0) > 144):
+                errors.append(f"Building instance '{instance_id}' footprint must remain within the 192x144 grid")
+    
+    # 1. Validate canonical_locations
+    canonical_locs = payload.get("canonical_locations", {})
+    if not isinstance(canonical_locs, dict):
+        errors.append("canonical_locations must be a JSON object")
+    else:
+        def check_bounds_dict(bounds: Any, label: str) -> dict[str, Any] | None:
+            """Validate one tile-space bounds object; returns it if usable."""
+            x = bounds.get("x")
+            y = bounds.get("y")
+            w = bounds.get("w")
+            h = bounds.get("h")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
+                errors.append(f"{label} coordinates must be numbers (tile coordinates)")
+                return None
+            if w <= 0 or h <= 0:
+                errors.append(f"{label} width and height must be positive")
+            if x < 0 or y < 0 or x + w > 192 or y + h > 144:
+                errors.append(f"{label} must remain within the 192x144 grid")
+            rotation = bounds.get("rotation")
+            if rotation is not None and (not isinstance(rotation, (int, float)) or isinstance(rotation, bool)):
+                errors.append(f"{label} rotation must be a number (degrees)")
+                rotation = 0
+            out = {"x": x, "y": y, "w": w, "h": h}
+            if rotation:
+                out["rotation"] = rotation
+            return out
+
+        def check_overlaps(locs: dict[str, dict[str, Any]], view_label: str) -> None:
+            loc_ids = list(locs.keys())
+            for i in range(len(loc_ids)):
+                for j in range(i + 1, len(loc_ids)):
+                    idA = loc_ids[i]
+                    idB = loc_ids[j]
+                    if (idA, idB) in ALLOWED_NESTING or (idB, idA) in ALLOWED_NESTING:
+                        continue
+                    if _oriented_overlap(locs[idA], locs[idB]):
+                        errors.append(f"Overlap detected between top-level locations '{idA}' and '{idB}'{view_label} without allowed nesting relationship")
+
+        effective_locs = {}
+        # Internal-view overlap checks only compare locations with *authored*
+        # internal bounds. A location without them merely inherits its
+        # external rectangle for display — treating that as an internal-view
+        # footprint produces false positives (e.g. a room repositioned on the
+        # close-up art landing inside the village square's inherited bounds).
+        effective_locs_internal = {}
+        for loc_id, loc_data in canonical_locs.items():
+            if not isinstance(loc_data, dict):
+                errors.append(f"Location data for {loc_id} must be an object")
+                continue
+
+            if loc_id not in valid_location_ids:
+                errors.append(f"Canonical location ID '{loc_id}' is not in the canonical contract")
+
+            bounds = loc_data.get("bounds")
+            if not isinstance(bounds, dict):
+                errors.append(f"Location {loc_id} missing bounds object")
+            else:
+                checked = check_bounds_dict(bounds, f"Bounds for {loc_id}")
+                if checked:
+                    effective_locs[loc_id] = checked
+
+            bounds_internal = loc_data.get("bounds_internal")
+            if bounds_internal is not None:
+                if not isinstance(bounds_internal, dict):
+                    errors.append(f"bounds_internal for {loc_id} must be an object")
+                else:
+                    checked = check_bounds_dict(bounds_internal, f"Internal bounds for {loc_id}")
+                    if checked:
+                        effective_locs_internal[loc_id] = checked
+
+            mode = loc_data.get("mode")
+            if mode not in ("interior", "exterior"):
+                errors.append(f"Location {loc_id} has invalid mode: '{mode}'. Must be 'interior' or 'exterior'")
+
+        # Validate overlaps with nesting rules per view
+        check_overlaps(effective_locs, "")
+        check_overlaps(effective_locs_internal, " in the internal view")
+
+    # 2. Validate case overrides
+    case_overrides = payload.get("case_overrides", {})
+    if not isinstance(case_overrides, dict):
+        errors.append("case_overrides must be a JSON object")
+    else:
+        for case_id, override_data in case_overrides.items():
+            if case_id not in valid_case_ids:
+                errors.append(f"Case ID '{case_id}' in overrides does not exist in the database")
+                continue
+                
+            if not isinstance(override_data, dict):
+                errors.append(f"Override data for {case_id} must be an object")
+                continue
+                
+            try:
+                case_info = get_case(case_id)
+                case_locations = {l.location_id for l in case_info.locations}
+                case_objects = {o.object_id: o for o in case_info.objects}
+            except Exception as e:
+                errors.append(f"Failed to load case data for {case_id} validation: {e}")
+                continue
+                
+            visible_locs = override_data.get("visible_locations", [])
+            if not isinstance(visible_locs, list):
+                errors.append(f"visible_locations in case {case_id} must be a list")
+            else:
+                for loc_id in visible_locs:
+                    if loc_id not in case_locations and loc_id not in valid_location_ids:
+                        errors.append(f"Visible location ID '{loc_id}' in case {case_id} is not valid")
+            
+            loc_bounds = override_data.get("location_bounds", {})
+            effective_case_locs = {}
+            for loc_id in visible_locs:
+                if loc_bounds and loc_id in loc_bounds:
+                    b = loc_bounds[loc_id]
+                    eff = {"x": b.get("x", 0), "y": b.get("y", 0), "w": b.get("w", 1), "h": b.get("h", 1)}
+                    if b.get("rotation"):
+                        eff["rotation"] = b["rotation"]
+                    effective_case_locs[loc_id] = eff
+                elif loc_id in effective_locs:
+                    effective_case_locs[loc_id] = effective_locs[loc_id]
+                elif loc_id in _BOUNDS_TILES:
+                    tx, ty, tw, th = _BOUNDS_TILES[loc_id]
+                    effective_case_locs[loc_id] = {"x": tx, "y": ty, "w": tw, "h": th}
+
+            case_loc_ids = list(effective_case_locs.keys())
+            for i in range(len(case_loc_ids)):
+                for j in range(i + 1, len(case_loc_ids)):
+                    idA = case_loc_ids[i]
+                    idB = case_loc_ids[j]
+                    if (idA, idB) in ALLOWED_NESTING or (idB, idA) in ALLOWED_NESTING:
+                        continue
+                    if _oriented_overlap(effective_case_locs[idA], effective_case_locs[idB]):
+                        errors.append(f"Overlap detected in case {case_id} between locations '{idA}' and '{idB}' without allowed nesting relationship")
+
+            if not isinstance(loc_bounds, dict):
+                errors.append(f"location_bounds override in case {case_id} must be an object")
+            else:
+                for loc_id, bounds in loc_bounds.items():
+                    if loc_id not in case_locations and loc_id not in valid_location_ids:
+                        errors.append(f"Overridden location ID '{loc_id}' in case {case_id} is not valid")
+                    if not isinstance(bounds, dict):
+                        errors.append(f"Overridden bounds for {loc_id} in case {case_id} must be an object")
+                        continue
+                    x = bounds.get("x")
+                    y = bounds.get("y")
+                    w = bounds.get("w")
+                    h = bounds.get("h")
+                    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
+                        errors.append(f"Overridden bounds coordinates for {loc_id} in case {case_id} must be numbers")
+                    else:
+                        if w <= 0 or h <= 0:
+                            errors.append(f"Overridden bounds width and height for {loc_id} in case {case_id} must be positive")
+                        if x < 0 or y < 0 or x + w > 192 or y + h > 144:
+                            errors.append(f"Overridden bounds for {loc_id} in case {case_id} must remain within 192x144 grid")
+            
+            def get_effective_bounds(l_id: str) -> dict[str, int] | None:
+                if l_id in loc_bounds:
+                    return loc_bounds[l_id]
+                if l_id in canonical_locs:
+                    b = canonical_locs[l_id].get("bounds")
+                    if b:
+                        out = {"x": b["x"], "y": b["y"], "w": b["w"], "h": b["h"]}
+                        if b.get("rotation"):
+                            out["rotation"] = b["rotation"]
+                        return out
+                if l_id in _BOUNDS_TILES:
+                    tx, ty, tw, th = _BOUNDS_TILES[l_id]
+                    return {"x": tx, "y": ty, "w": tw, "h": th}
+                return None
+
+            obj_anchors = override_data.get("object_anchors", {})
+            if not isinstance(obj_anchors, dict):
+                errors.append(f"object_anchors in case {case_id} must be an object")
+            else:
+                for obj_id, anchor_data in obj_anchors.items():
+                    if obj_id not in case_objects:
+                        errors.append(f"Object ID '{obj_id}' in case {case_id} does not exist in objects.json")
+                        continue
+                    if not isinstance(anchor_data, dict):
+                        errors.append(f"Anchor data for {obj_id} in case {case_id} must be an object")
+                        continue
+                        
+                    loc_id = anchor_data.get("location_id")
+                    if not loc_id:
+                        errors.append(f"Object '{obj_id}' in case {case_id} lacks location_id")
+                    elif loc_id not in case_locations and loc_id not in valid_location_ids:
+                        errors.append(f"Object '{obj_id}' in case {case_id} assigned to unknown location '{loc_id}'")
+                        
+                    render_policy = anchor_data.get("render_policy")
+                    if render_policy != "debug_only" and loc_id and loc_id not in visible_locs:
+                        errors.append(f"Object anchor '{obj_id}' in case {case_id} is assigned to hidden location '{loc_id}' but render policy is not 'debug_only'")
+
+                    anchor = anchor_data.get("anchor")
+                    if not isinstance(anchor, dict):
+                        errors.append(f"Object '{obj_id}' in case {case_id} lacks anchor coordinate object")
+                    else:
+                        ax = anchor.get("x")
+                        ay = anchor.get("y")
+                        if not isinstance(ax, (int, float)) or isinstance(ax, bool) or not isinstance(ay, (int, float)) or isinstance(ay, bool):
+                            errors.append(f"Anchor coordinates for '{obj_id}' in case {case_id} must be numbers")
+                        else:
+                            if ax < 0 or ay < 0 or ax >= 192 or ay >= 144:
+                                errors.append(f"Anchor coordinates for '{obj_id}' in case {case_id} lie outside grid")
+                                
+                            is_external = anchor_data.get("external", False) or render_policy == "external"
+                            if not is_external and loc_id:
+                                # An anchor is placed against the art, which may
+                                # be aligned in either view: accept containment
+                                # in the external bounds OR the authored
+                                # internal-view bounds, honouring rotation.
+                                eff_bounds = get_effective_bounds(loc_id)
+                                internal_bounds = None
+                                loc_entry = canonical_locs.get(loc_id) if isinstance(canonical_locs, dict) else None
+                                if isinstance(loc_entry, dict) and isinstance(loc_entry.get("bounds_internal"), dict):
+                                    internal_bounds = loc_entry["bounds_internal"]
+                                inside = False
+                                if eff_bounds and _point_in_bounds(eff_bounds, ax, ay):
+                                    inside = True
+                                elif internal_bounds and _point_in_bounds(internal_bounds, ax, ay):
+                                    inside = True
+                                if eff_bounds and not inside:
+                                    errors.append(
+                                        f"Object anchor for '{obj_id}' at ({ax}, {ay}) is outside both the external and "
+                                        f"internal bounds of '{loc_id}' and not marked as external"
+                                    )
+
+                    semantic_asset_id = anchor_data.get("semantic_asset_id")
+                    if semantic_asset_id is not None and not isinstance(semantic_asset_id, str):
+                        errors.append(f"semantic_asset_id for '{obj_id}' in case {case_id} must be a string")
+
+    # 3. Validate tile_layers (Sparse format)
+    tile_layers = payload.get("tile_layers", {})
+    if not isinstance(tile_layers, dict):
+        errors.append("tile_layers must be a JSON object")
+    else:
+        for layer_name, layer_data in tile_layers.items():
+            if layer_name not in ALLOWED_LAYERS:
+                errors.append(f"Unknown layer name '{layer_name}' in tile_layers")
+            if not isinstance(layer_data, dict):
+                errors.append(f"Layer data for '{layer_name}' must be an object")
+                continue
+            tiles_list = layer_data.get("tiles", [])
+            if not isinstance(tiles_list, list):
+                errors.append(f"tiles under layer '{layer_name}' must be a list")
+                continue
+            for tile in tiles_list:
+                if not isinstance(tile, dict):
+                    errors.append(f"Tile entry in '{layer_name}' must be an object")
+                    continue
+                tx = tile.get("x")
+                ty = tile.get("y")
+                tile_id = tile.get("tile_id")
+                if not isinstance(tx, int) or isinstance(tx, bool) or not isinstance(ty, int) or isinstance(ty, bool):
+                    errors.append(f"Tile coordinates under '{layer_name}' must be integers")
+                else:
+                    if tx < 0 or tx >= 192 or ty < 0 or ty >= 144:
+                        errors.append(f"Tile coordinate ({tx}, {ty}) under '{layer_name}' sits outside the 192x144 grid")
+                if tile_id not in ALLOWED_TILES:
+                    errors.append(f"Unknown tile ID '{tile_id}' under layer '{layer_name}'")
+
+    # 4. Validate prop_instances
+    prop_instances = payload.get("prop_instances", {})
+    if not isinstance(prop_instances, dict):
+        errors.append("prop_instances must be a JSON object")
+    else:
+        all_objects = {}
+        for c in valid_cases:
+            try:
+                c_data = get_case(c["case_id"])
+                for o in c_data.objects:
+                    all_objects[o.object_id] = o
+            except Exception:
+                pass
+
+        for scope_id, instances in prop_instances.items():
+            if scope_id != "canonical" and scope_id not in valid_case_ids:
+                errors.append(f"Prop scope ID '{scope_id}' must be 'canonical' or a valid case ID")
+                continue
+            if not isinstance(instances, list):
+                errors.append(f"Prop instances for scope '{scope_id}' must be a list")
+                continue
+            
+            seen_ids = set()
+            for prop in instances:
+                if not isinstance(prop, dict):
+                    errors.append(f"Prop instance entry in scope '{scope_id}' must be an object")
+                    continue
+                instance_id = prop.get("instance_id")
+                asset_id = prop.get("asset_id")
+                location_id = prop.get("location_id")
+                px = prop.get("x")
+                py = prop.get("y")
+                
+                if not instance_id or not asset_id or not location_id or px is None or py is None:
+                    errors.append(f"Prop instance in scope '{scope_id}' is missing required fields (instance_id, asset_id, location_id, x, y)")
+                    continue
+                
+                if not isinstance(instance_id, str):
+                    errors.append(f"instance_id '{instance_id}' under scope '{scope_id}' must be a string")
+                else:
+                    if instance_id in seen_ids:
+                        errors.append(f"Duplicate prop instance ID '{instance_id}' within scope '{scope_id}'")
+                    seen_ids.add(instance_id)
+
+                if asset_id not in ALLOWED_PROPS:
+                    errors.append(f"Unknown prop asset ID '{asset_id}' under scope '{scope_id}'")
+
+                if location_id not in valid_location_ids:
+                    errors.append(f"Prop instance '{instance_id}' is assigned to unknown location '{location_id}'")
+
+                if not isinstance(px, (int, float)) or isinstance(px, bool) or not isinstance(py, (int, float)) or isinstance(py, bool):
+                    errors.append(f"Prop coordinates for '{instance_id}' must be numbers")
+                else:
+                    if px < 0 or px >= 192 or py < 0 or py >= 144:
+                        errors.append(f"Prop coordinate ({px}, {py}) sits outside the 192x144 grid")
+                
+                p_layer = prop.get("layer", "props")
+                if p_layer not in ALLOWED_LAYERS:
+                    errors.append(f"Unknown layer name '{p_layer}' in prop instance '{instance_id}'")
+                
+                r_policy = prop.get("render_policy", "always_visible")
+                if r_policy not in ("always_visible", "case_visible", "discovery_gated", "hidden_until_revealed", "debug_only"):
+                    errors.append(f"Unsupported render policy '{r_policy}' in prop '{instance_id}'")
+
+                obj_id = prop.get("object_id")
+                if r_policy == "discovery_gated" and not obj_id:
+                    errors.append(f"Prop instance '{instance_id}' has policy 'discovery_gated' but lacks a linked object_id")
+                
+                if obj_id:
+                    if obj_id not in all_objects:
+                        errors.append(f"Prop instance '{instance_id}' links to unknown object ID '{obj_id}'")
+
+    # 5. Validate lights (visual-only; never case truth). Global collection —
+    # case scoping happens at read time via `location_id` + visible_location_ids,
+    # not by duplicating entries per case (see resolve_town_lights).
+    lights = payload.get("lights", {})
+    if not isinstance(lights, dict):
+        errors.append("lights must be a JSON object")
+    else:
+        import re
+
+        time_re = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+
+        def check_light_geometry(spec: dict[str, Any], label: str) -> None:
+            x, y, w, h = spec.get("x"), spec.get("y"), spec.get("width"), spec.get("height")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
+                errors.append(f"{label} x/y/width/height must be numbers (tile coordinates)")
+                return
+            if w <= 0 or h <= 0:
+                errors.append(f"{label} width and height must be positive")
+            if x < 0 or y < 0 or x > 192 or y > 144:
+                errors.append(f"{label} centre must lie within the 192x144 grid")
+
+        for light_id, spec in lights.items():
+            if not isinstance(spec, dict):
+                errors.append(f"Light '{light_id}' must be an object")
+                continue
+
+            loc_id = spec.get("location_id")
+            if loc_id not in valid_location_ids:
+                errors.append(f"Light '{light_id}' is assigned to unknown location '{loc_id}'")
+
+            asset_id = spec.get("semantic_asset_id")
+            if asset_id not in ALLOWED_LIGHT_ASSETS:
+                errors.append(f"Light '{light_id}' has unknown semantic_asset_id '{asset_id}'")
+
+            check_light_geometry(spec, f"Light '{light_id}'")
+
+            from_t, to_t = spec.get("from"), spec.get("to")
+            if not (isinstance(from_t, str) and time_re.match(from_t)):
+                errors.append(f"Light '{light_id}' has invalid 'from' time (expected HH:MM)")
+            if not (isinstance(to_t, str) and time_re.match(to_t)):
+                errors.append(f"Light '{light_id}' has invalid 'to' time (expected HH:MM)")
+
+            opacity = spec.get("opacity")
+            if opacity is not None and (not isinstance(opacity, (int, float)) or isinstance(opacity, bool) or not 0 <= opacity <= 1):
+                errors.append(f"Light '{light_id}' opacity must be a number between 0 and 1")
+
+            has_internal = any(
+                spec.get(k) is not None for k in ("x_internal", "y_internal", "width_internal", "height_internal")
+            )
+            if has_internal:
+                check_light_geometry(
+                    {
+                        "x": spec.get("x_internal"), "y": spec.get("y_internal"),
+                        "width": spec.get("width_internal"), "height": spec.get("height_internal"),
+                    },
+                    f"Light '{light_id}' internal-view",
+                )
+
+            asset_id_internal = spec.get("semantic_asset_id_internal")
+            if asset_id_internal is not None and asset_id_internal not in ALLOWED_LIGHT_ASSETS:
+                errors.append(f"Light '{light_id}' has unknown semantic_asset_id_internal '{asset_id_internal}'")
+
+            opacity_internal = spec.get("opacity_internal")
+            if opacity_internal is not None and (
+                not isinstance(opacity_internal, (int, float)) or isinstance(opacity_internal, bool) or not 0 <= opacity_internal <= 1
+            ):
+                errors.append(f"Light '{light_id}' opacity_internal must be a number between 0 and 1")
+
+    # 6. Validate ambient_sprites (visual-only ambient animation placements).
+    ambient_sprites = payload.get("ambient_sprites", {})
+    if not isinstance(ambient_sprites, dict):
+        errors.append("ambient_sprites must be a JSON object")
+    else:
+        import re
+
+        time_re = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+        for sprite_id, spec in ambient_sprites.items():
+            if not isinstance(spec, dict):
+                errors.append(f"Ambient sprite '{sprite_id}' must be an object")
+                continue
+            asset_id = spec.get("asset_id")
+            if asset_id not in ALLOWED_AMBIENT_ASSETS:
+                errors.append(f"Ambient sprite '{sprite_id}' has unknown asset_id '{asset_id}'")
+            x, y, w, h = spec.get("x"), spec.get("y"), spec.get("width"), spec.get("height")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (x, y, w, h)):
+                errors.append(f"Ambient sprite '{sprite_id}' x/y/width/height must be numbers (tile coordinates)")
+            else:
+                if w <= 0 or h <= 0:
+                    errors.append(f"Ambient sprite '{sprite_id}' width and height must be positive")
+                if x < 0 or y < 0 or x > 192 or y > 144:
+                    errors.append(f"Ambient sprite '{sprite_id}' position must lie within the 192x144 grid")
+            opacity = spec.get("opacity")
+            if opacity is not None and (not isinstance(opacity, (int, float)) or isinstance(opacity, bool) or not 0 <= opacity <= 1):
+                errors.append(f"Ambient sprite '{sprite_id}' opacity must be a number between 0 and 1")
+            for key in ("from", "to"):
+                value = spec.get(key)
+                if value is not None and not (isinstance(value, str) and time_re.match(value)):
+                    errors.append(f"Ambient sprite '{sprite_id}' has invalid '{key}' time (expected HH:MM)")
+
+    # 7. Validate underlay_tile_overrides (visual-only per-cell art swaps).
+    # URLs are format-checked but not existence-checked: the layout must stay
+    # loadable on deployments where the frontend assets live elsewhere.
+    tile_overrides = payload.get("underlay_tile_overrides")
+    if tile_overrides is not None:
+        if not isinstance(tile_overrides, dict):
+            errors.append("underlay_tile_overrides must be a JSON object")
+        else:
+            for view, cells in tile_overrides.items():
+                if view not in ("external", "internal"):
+                    errors.append(f"Unknown view '{view}' in underlay_tile_overrides (expected 'external' or 'internal')")
+                    continue
+                if not isinstance(cells, dict):
+                    errors.append(f"underlay_tile_overrides['{view}'] must be a JSON object")
+                    continue
+                for cell, url in cells.items():
+                    if cell not in HD_TILE_CELLS:
+                        errors.append(f"Unknown mosaic cell '{cell}' in underlay_tile_overrides['{view}'] (expected A1..C3)")
+                    if not isinstance(url, str) or not url.startswith("/art/") or not url.endswith(TILE_ART_EXTENSIONS):
+                        errors.append(f"Tile art override for '{cell}' in view '{view}' must be a '/art/...' URL ending in {' or '.join(TILE_ART_EXTENSIONS)}")
+
+    return errors
+
+
+def load_town_layout() -> dict[str, Any] | None:
+    """Loads the town layout from disk and validates it.
+    Returns the validated dictionary, or None if missing or invalid.
+    """
+    if not TOWN_LAYOUT_FILE.exists():
+        return None
+    try:
+        data = json.loads(TOWN_LAYOUT_FILE.read_text())
+        errors = validate_town_layout_payload(data)
+        if errors:
+            import logging
+            logging.getLogger(__name__).warning(f"Loaded layout file contains validation errors: {errors}")
+            return None
+        return data
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Error loading or parsing town layout: {e}")
+        return None
+
+CANONICAL_MAP: dict[str, Any] = {
+    "definition_id": "town_canonical_v1",
+    "asset": "town_canonical_v1",
+    "image": (
+        current_village_url("town_overworld_full_current_village_v3_neutral.avif")
+    ),
+    # HD overworld sliced into a 3x3 mosaic (rows A-C top->bottom, cols 1-3
+    # left->right; B2 is the town centre). Each cell is 2048x1536 = 64x48
+    # tiles. Clients that understand image_tiles should prefer it over the
+    # single `image` above, which is kept as a fallback.
+    "image_tiles": {
+        "cols": 3,
+        "rows": 3,
+        "urls": [
+            [
+                hd_tile_url(f"{row}{col}")
+                for col in (1, 2, 3)
+            ]
+            for row in ("A", "B", "C")
+        ],
+    },
+    # Swap the complete mosaic to its geometry-matched roofless view. Several
+    # northern locations occupy A2, so a B2-only swap leaves roofs visible.
+    "zoom_image_tiles": {
+        "threshold": 3.2,
+        "urls": [
+            [
+                hd_internal_tile_url(f"{row}{col}")
+                for col in (1, 2, 3)
+            ]
+            for row in ("A", "B", "C")
+        ],
+    },
+    "width": 6144,
+    "height": 4608,
+    "tile_size": 32,
+    "grid": {"cols": 192, "rows": 144},
+    "origin": "north_west",
+    "base_palette": "neutral_daylight_soft_ambient",
+    "lighting_overlay": "runtime_lightingTint",
+}
+
+
+def canonical_map_definition(layout: dict[str, Any] | None = None) -> dict[str, Any]:
+    """CANONICAL_MAP with the layout's per-cell tile art overrides applied.
+
+    External-view overrides land in `image_tiles` (zoomed-out mosaic),
+    internal-view overrides in `zoom_image_tiles` (past the zoom threshold).
+    Overrides are visual-only: they swap which artwork a mosaic cell shows and
+    never touch geometry, discovery, or case truth.
+    """
+    if layout is None:
+        layout = load_town_layout()
+    overrides = (layout or {}).get("underlay_tile_overrides") or {}
+    if not overrides:
+        return CANONICAL_MAP
+
+    definition = json.loads(json.dumps(CANONICAL_MAP))
+    for view, key in (("external", "image_tiles"), ("internal", "zoom_image_tiles")):
+        cells = overrides.get(view) or {}
+        urls = definition[key]["urls"]
+        for cell, url in cells.items():
+            if cell not in HD_TILE_CELLS or not isinstance(url, str):
+                continue
+            row = ord(cell[0]) - ord("A")
+            col = int(cell[1]) - 1
+            urls[row][col] = url
+    return definition
+
+
+def list_hd_tile_variants() -> dict[str, list[dict[str, str]]]:
+    """Available artwork files per mosaic cell, discovered from the HD tile
+    directory. Filenames follow town_overworld_<CELL>[_<variant>]_hd.<ext>; any
+    tile image dropped in the folder shows up as a swappable variant in the
+    editor. Runtime art is AVIF; PNG is still accepted so hand-dropped masters
+    and legacy tiles keep working."""
+    variants: dict[str, list[dict[str, str]]] = {cell: [] for cell in HD_TILE_CELLS}
+    if not HD_TILE_ART_DIR.is_dir():
+        return variants
+    for cell in HD_TILE_CELLS:
+        variants[cell].append({
+            "url": f"{HD_TILE_ART_URL_PREFIX}town_overworld_{cell}_blank_hd.png",
+            "label": "blank",
+        })
+    seen_stems: set[str] = set()
+    tile_paths = [
+        p for ext in TILE_ART_EXTENSIONS
+        for p in HD_TILE_ART_DIR.rglob(f"town_overworld_*{ext}")
+    ]
+    for path in sorted(tile_paths, key=lambda p: (p.suffix != ".avif", p.as_posix())):
+        # AVIF first, so a converted tile wins over any leftover PNG twin.
+        key = path.with_suffix("").as_posix()
+        if key in seen_stems:
+            continue
+        seen_stems.add(key)
+        stem = path.stem.removeprefix("town_overworld_").removesuffix("_hd")
+        cell, _, variant = stem.partition("_")
+        if cell not in HD_TILE_CELLS:
+            continue
+        rel = path.relative_to(HD_TILE_ART_DIR).as_posix()
+        url = f"{HD_TILE_ART_URL_PREFIX}{rel}"
+        if any(v["url"] == url for v in variants[cell]):
+            continue
+        variants[cell].append({
+            "url": url,
+            "label": variant.replace("_", " ") if variant else "original",
+        })
+    return variants
+
+# Canonical layout bounds from docs/canonical_town_layout.md, converted from
+# tiles to canonical map pixels. These are visual recommendations only.
+_BOUNDS_TILES: dict[str, tuple[int, int, int, int]] = {
+    # Measured against current_village_v2 (192x144 tiles). Parent locations
+    # cover the painted roof/grounds; child interiors remain nested inside.
+    "loc_village_square": (88, 52, 22, 13),
+    "loc_fountain": (97, 54, 5, 5),
+    "loc_marcus_house": (101, 36, 21, 14),
+    "loc_marcus_study": (108, 39, 8, 6),
+    "loc_hobbs_cafe": (99, 67, 17, 20),
+    "loc_cafe_kitchen": (100, 72, 8, 7),
+    "loc_cafe_storage": (109, 72, 6, 7),
+    "loc_clinic": (111, 52, 15, 14),
+    "loc_clinic_dispensary": (118, 56, 6, 6),
+    "loc_bookshop": (72, 54, 16, 16),
+    "loc_bookshop_back": (73, 62, 7, 7),
+    "loc_rear_alley": (86, 50, 40, 2),
+    "loc_pub": (89, 37, 12, 10),
+    "loc_owen_house": (118, 68, 21, 18),
+    "loc_elias_house": (99, 92, 17, 13),
+    "loc_clara_flat": (100, 68, 8, 3),
+    "loc_ben_flat": (64, 72, 8, 12),
+    "loc_priya_flat": (73, 72, 8, 12),
+    "loc_nadia_flat": (128, 54, 12, 12),
+    "loc_ruth_cottage": (126, 35, 18, 17),
+    "loc_solicitors_office": (88, 65, 9, 10),
+    "loc_elias_bench": (104, 62, 4, 2),
+    "loc_fishery": (145, 42, 39, 29),
+    "loc_lake": (7, 44, 47, 42),
+    "loc_woodland": (120, 101, 51, 38),
+    "loc_meadow": (70, 106, 42, 28),
+    "loc_back_lane": (110, 87, 31, 4),
+    "loc_st_alder_church": (67, 36, 18, 15),
+    "loc_willow_farmhouse": (46, 108, 22, 19),
+}
+
+
+def _tile_bounds(bounds: tuple[int, int, int, int]) -> dict[str, int]:
+    x, y, width, height = bounds
+    return {"x": x * 32, "y": y * 32, "width": width * 32, "height": height * 32}
+
+
+def _center(bounds: dict[str, int]) -> dict[str, int]:
+    return {"x": bounds["x"] + bounds["width"] // 2, "y": bounds["y"] + bounds["height"] // 2}
+
+
+CANONICAL_LOCATIONS: dict[str, dict[str, Any]] = {
+    location_id: {"bounds": _tile_bounds(bounds), "layer": "interior" if location_id in {
+        "loc_cafe_kitchen", "loc_cafe_storage", "loc_bookshop_back",
+        "loc_clinic_dispensary", "loc_marcus_study", "loc_clara_flat",
+        "loc_ben_flat", "loc_priya_flat", "loc_nadia_flat",
+    } else "exterior"}
+    for location_id, bounds in _BOUNDS_TILES.items()
+}
+for _location in CANONICAL_LOCATIONS.values():
+    _location["position"] = _center(_location["bounds"])
+
+
+CANONICAL_ADJACENCY: dict[str, list[str]] = {
+    "loc_village_square": [
+        "loc_fountain", "loc_hobbs_cafe", "loc_bookshop", "loc_clinic",
+        "loc_pub", "loc_marcus_house", "loc_owen_house", "loc_elias_house",
+        "loc_priya_flat", "loc_nadia_flat", "loc_ben_flat", "loc_ruth_cottage",
+        "loc_solicitors_office", "loc_fishery", "loc_lake", "loc_woodland", "loc_meadow",
+        "loc_st_alder_church", "loc_willow_farmhouse",
+    ],
+    "loc_fountain": ["loc_village_square", "loc_elias_bench"],
+    "loc_hobbs_cafe": ["loc_village_square", "loc_cafe_kitchen", "loc_clara_flat"],
+    "loc_cafe_kitchen": ["loc_hobbs_cafe", "loc_cafe_storage"],
+    "loc_cafe_storage": ["loc_cafe_kitchen", "loc_rear_alley"],
+    "loc_rear_alley": ["loc_village_square", "loc_hobbs_cafe", "loc_bookshop", "loc_back_lane"],
+    "loc_bookshop": ["loc_village_square", "loc_bookshop_back", "loc_rear_alley"],
+    "loc_bookshop_back": ["loc_bookshop", "loc_rear_alley"],
+    "loc_clinic": ["loc_village_square", "loc_clinic_dispensary"],
+    "loc_clinic_dispensary": ["loc_clinic"],
+    "loc_marcus_house": ["loc_village_square", "loc_marcus_study"],
+    "loc_marcus_study": ["loc_marcus_house"],
+    "loc_owen_house": ["loc_village_square", "loc_back_lane"],
+    "loc_elias_house": ["loc_village_square"],
+    "loc_elias_bench": ["loc_village_square", "loc_fountain"],
+    "loc_clara_flat": ["loc_hobbs_cafe"],
+    "loc_priya_flat": ["loc_village_square"],
+    "loc_nadia_flat": ["loc_village_square", "loc_clinic"],
+    "loc_ben_flat": ["loc_village_square"],
+    "loc_pub": ["loc_village_square"],
+    "loc_ruth_cottage": ["loc_village_square"],
+    "loc_solicitors_office": ["loc_village_square"],
+    "loc_fishery": ["loc_village_square"],
+    "loc_lake": ["loc_village_square"],
+    "loc_woodland": ["loc_village_square"],
+    "loc_meadow": ["loc_village_square"],
+    "loc_back_lane": ["loc_rear_alley", "loc_owen_house"],
+    "loc_st_alder_church": ["loc_village_square", "loc_rear_alley"],
+    "loc_willow_farmhouse": ["loc_meadow", "loc_lake"],
+}
+
+LOCATION_FUNCTION_TAGS: dict[str, dict[str, Any]] = {
+    "loc_village_square": {"display_name": "Village Square", "function_tag": "public_square", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006", "case_007", "case_010"], "zoom_behavior": "external"},
+    "loc_fountain": {"display_name": "Village Fountain", "function_tag": "fountain", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_007", "case_010"], "zoom_behavior": "external"},
+    "loc_elias_bench": {"display_name": "Elias's Bench", "function_tag": "bench", "building_role": "landmark", "case_ids": ["case_001", "case_002", "case_003", "case_005", "case_007", "case_010"], "zoom_behavior": "external"},
+    "loc_hobbs_cafe": {"display_name": "Hobbs Cafe", "function_tag": "cafe", "building_role": "business", "case_ids": ["case_001", "case_002", "case_003", "case_005", "case_007", "case_010"], "zoom_behavior": "external_to_internal"},
+    "loc_cafe_kitchen": {"display_name": "Cafe Kitchen", "function_tag": "kitchen", "building_role": "service_room", "case_ids": ["case_001", "case_007", "case_010"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_cafe_storage": {"display_name": "Cafe Storage Room", "function_tag": "storage", "building_role": "service_room", "case_ids": ["case_001", "case_010"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_clara_flat": {"display_name": "Clara's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_003", "case_005", "case_007", "case_010"], "parent_location_id": "loc_hobbs_cafe", "zoom_behavior": "internal"},
+    "loc_bookshop": {"display_name": "Reed & Bell Bookshop", "function_tag": "bookshop", "building_role": "business", "case_ids": ["case_001", "case_002", "case_005", "case_006", "case_007", "case_010"], "zoom_behavior": "external_to_internal"},
+    "loc_bookshop_back": {"display_name": "Bookshop Back Room", "function_tag": "back_office", "building_role": "service_room", "case_ids": ["case_002", "case_007"], "parent_location_id": "loc_bookshop", "zoom_behavior": "internal"},
+    "loc_rear_alley": {"display_name": "Rear Alley", "function_tag": "service_alley", "building_role": "exterior_service", "case_ids": ["case_001", "case_002", "case_005", "case_007", "case_010"], "zoom_behavior": "external"},
+    "loc_clinic": {"display_name": "Village Clinic", "function_tag": "clinic", "building_role": "public_service", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006", "case_007", "case_010"], "zoom_behavior": "external_to_internal"},
+    "loc_clinic_dispensary": {"display_name": "Clinic Dispensary", "function_tag": "dispensary", "building_role": "service_room", "case_ids": ["case_003"], "parent_location_id": "loc_clinic", "zoom_behavior": "internal"},
+    "loc_marcus_house": {"display_name": "Marcus Bell's House", "function_tag": "house", "building_role": "residence", "case_ids": ["case_001", "case_006", "case_007", "case_010"], "zoom_behavior": "external_to_internal"},
+    "loc_marcus_study": {"display_name": "Marcus's Study", "function_tag": "study", "building_role": "private_room", "case_ids": ["case_001", "case_006", "case_007", "case_010"], "parent_location_id": "loc_marcus_house", "zoom_behavior": "internal"},
+    "loc_owen_house": {"display_name": "Owen Price's House & Yard", "function_tag": "house_and_yard", "building_role": "residence_workyard", "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_007", "case_010"], "zoom_behavior": "external_to_internal"},
+    "loc_pub": {"display_name": "The Mallet & Crown", "function_tag": "pub", "building_role": "business", "case_ids": ["case_004"], "zoom_behavior": "external_to_internal"},
+    "loc_ben_flat": {"display_name": "Ben's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_004"], "zoom_behavior": "internal"},
+    "loc_priya_flat": {"display_name": "Priya's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_002", "case_004", "case_006", "case_007", "case_010"], "zoom_behavior": "internal"},
+    "loc_nadia_flat": {"display_name": "Nadia's Flat", "function_tag": "flat", "building_role": "residence", "case_ids": ["case_001", "case_007", "case_010"], "zoom_behavior": "internal"},
+    "loc_elias_house": {"display_name": "Elias's Cottage", "function_tag": "cottage", "building_role": "residence", "case_ids": ["case_001", "case_004", "case_007", "case_010"], "zoom_behavior": "external_to_internal"},
+    "loc_ruth_cottage": {"display_name": "Ruth's Cottage", "function_tag": "cottage", "building_role": "residence_garden", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_solicitors_office": {"display_name": "Whittle & Cross Solicitors", "function_tag": "solicitors_office", "building_role": "office", "case_ids": ["case_006"], "zoom_behavior": "external_to_internal"},
+    "loc_fishery": {"display_name": "Fishery", "function_tag": "fishery", "building_role": "exterior_worksite", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_lake": {"display_name": "Lover's Lake", "function_tag": "lake", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_woodland": {"display_name": "Whispering Woodland", "function_tag": "woodland", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_meadow": {"display_name": "Green Meadow", "function_tag": "meadow", "building_role": "landmark", "case_ids": ["case_004"], "zoom_behavior": "external"},
+    "loc_back_lane": {"display_name": "The Back Lane", "function_tag": "service_lane", "building_role": "exterior_service", "case_ids": ["case_005"], "zoom_behavior": "external"},
+    "loc_st_alder_church": {"display_name": "St. Alder's Church", "function_tag": "church", "building_role": "public_landmark", "case_ids": [], "zoom_behavior": "external_to_internal"},
+    "loc_willow_farmhouse": {"display_name": "Willow Farmhouse", "function_tag": "farmhouse", "building_role": "residence_farmstead", "case_ids": [], "zoom_behavior": "external_to_internal"},
+}
+
+
+def _tagged_location_payload(
+    location_id: str,
+    position: dict[str, int],
+    bounds: dict[str, int],
+    layer: str,
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {"bounds": bounds, "position": position, "layer": layer}
+    tag = LOCATION_FUNCTION_TAGS.get(location_id)
+    if tag:
+        payload.update(tag)
+    return payload
+
+
+# Semantic asset IDs are visual-only. Existing object IDs remain the state
+# keys. The renderer can start with glyph/CSS placeholders and later swap in
+# raster prop assets without changing case logic.
+SEMANTIC_ASSETS: dict[str, dict[str, Any]] = {
+    "loc_village_square": {"category": "location", "asset": "struct_village_square"},
+    "loc_fountain": {"category": "location", "asset": "prop_fountain_coping"},
+    "loc_hobbs_cafe": {"category": "location", "asset": "struct_hobbs_cafe_cutaway"},
+    "loc_cafe_kitchen": {"category": "location", "asset": "struct_cafe_kitchen_cutaway"},
+    "loc_cafe_storage": {"category": "location", "asset": "struct_cafe_storage_cutaway"},
+    "loc_fishery": {"category": "location", "asset": "struct_fishery"},
+    "loc_lake": {"category": "location", "asset": "struct_lake"},
+    "loc_woodland": {"category": "location", "asset": "struct_woodland"},
+    "loc_meadow": {"category": "location", "asset": "struct_meadow"},
+    "loc_st_alder_church": {"category": "location", "asset": "struct_st_alder_church"},
+    "loc_willow_farmhouse": {"category": "location", "asset": "struct_willow_farmhouse"},
+    "obj_fountain_stone": {"category": "evidence", "asset": "obj_fountain_coping_stone", "glyph": "◆"},
+    "obj_blackmail_letters": {"category": "evidence", "asset": "obj_blackmail_letters", "glyph": "✉"},
+    "obj_ben_phone": {"category": "evidence", "asset": "obj_phone", "glyph": "☎"},
+    "obj_owen_pub_receipt": {"category": "evidence", "asset": "obj_pub_receipt", "glyph": "▤"},
+    "obj_mud_bootprint": {"category": "evidence", "asset": "obj_muddy_bootprint", "glyph": "●"},
+    "obj_arson_clipping": {"category": "evidence", "asset": "obj_arson_clipping", "glyph": "▤"},
+    "obj_ben_jacket_mud": {"category": "evidence", "asset": "obj_muddy_jacket", "glyph": "◆"},
+    "obj_fred_lighter": {"category": "evidence", "asset": "obj_pub_lighter", "glyph": "✦"},
+    "obj_pub_ledger": {"category": "evidence", "asset": "obj_pub_ledger", "glyph": "▤"},
+}
+
+OBJECT_OVERLAYS: dict[str, list[str]] = {
+    "obj_fountain_stone": ["overlay_missing_coping"],
+    "obj_mud_bootprint": ["overlay_muddy_footprint"],
+}
+
+# Light overlay coordinates are pinned to actual painted windows/lamp posts,
+# measured directly against the art rather than derived from a location's
+# `map_bounds`. A location's bounds box is a loose logical hit-region for the
+# map editor (click targeting, labels, zoom-to) — it is not a tight fit
+# around the building's pixels, so a light positioned as a fraction of that
+# box does not reliably land on a window; an earlier attempt at that produced
+# a light spanning past the pub's own walls onto its neighbours' roofs.
+#
+# The exterior x/y/width/height below are measured against
+# the current B2 external remaster. The `*_internal` overrides are
+# measured separately against the current zoom_interior_v7 B2 image — the
+# roofless close-up art shown past the zoom threshold — because that is a
+# different painted asset where each building is redrawn as an isolated
+# cutaway room, not pixel-aligned with its exterior footprint. Lights without
+# an override (the two streetlamps) sit on outdoor props that are unchanged
+# between the two images, so the exterior coordinates already work in both.
+# If either piece of art is redrawn, or a location's bounds are reassigned to
+# a different building, these will need re-measuring against the new art.
+TOWN_LIGHT_OVERLAYS: list[dict[str, Any]] = [
+    {
+        "id": "square_lamp_west",
+        "semantic_asset_id": "light_streetlamp_pool",
+        "location_id": "loc_village_square",
+        "x": 3003,
+        "y": 2601,
+        "width": 170,
+        "height": 170,
+        "from": "19:30",
+        "to": "06:30",
+        "opacity": 0.55,
+    },
+    {
+        "id": "square_lamp_clinic",
+        "semantic_asset_id": "light_streetlamp_pool",
+        "location_id": "loc_clinic",
+        "x": 3608,
+        "y": 2546,
+        "width": 160,
+        "height": 160,
+        "from": "19:30",
+        "to": "06:30",
+        "opacity": 0.5,
+    },
+    {
+        "id": "pub_window_left",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_pub",
+        "x": 2970,
+        "y": 1376,
+        "width": 100,
+        "height": 65,
+        "from": "17:30",
+        "to": "23:15",
+        "opacity": 0.78,
+        # The pub's lit fireplace, painted directly into the interior art.
+        "semantic_asset_id_internal": "light_fireplace_glow",
+        "x_internal": 2960,
+        "y_internal": 1344,
+        "width_internal": 110,
+        "height_internal": 110,
+        "opacity_internal": 0.8,
+    },
+    {
+        "id": "pub_window_right",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_pub",
+        "x": 3110,
+        "y": 1376,
+        "width": 100,
+        "height": 65,
+        "from": "17:30",
+        "to": "23:15",
+        "opacity": 0.78,
+        # The lit candle on the barrel near the bar, interior art.
+        "x_internal": 3104,
+        "y_internal": 1392,
+        "width_internal": 50,
+        "height_internal": 45,
+        "opacity_internal": 0.55,
+    },
+    {
+        "id": "elias_bedroom_window",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_elias_house",
+        "x": 2740,
+        "y": 2541,
+        "width": 95,
+        "height": 60,
+        "from": "22:00",
+        "to": "05:30",
+        "opacity": 0.7,
+        # A lit window is painted directly into the interior room art here.
+        "x_internal": 2670,
+        "y_internal": 2469,
+        "width_internal": 65,
+        "height_internal": 55,
+        "opacity_internal": 0.72,
+    },
+    {
+        "id": "ben_flat_window",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_ben_flat",
+        "x": 2643,
+        "y": 2154,
+        "width": 90,
+        "height": 58,
+        "from": "21:30",
+        "to": "01:00",
+        "opacity": 0.65,
+        # Centered over the desk in the interior room art.
+        "x_internal": 2707,
+        "y_internal": 2128,
+        "width_internal": 70,
+        "height_internal": 55,
+        "opacity_internal": 0.6,
+    },
+    {
+        "id": "priya_flat_window",
+        "semantic_asset_id": "light_window_warm",
+        "location_id": "loc_priya_flat",
+        "x": 2653,
+        "y": 2306,
+        "width": 90,
+        "height": 58,
+        "from": "21:00",
+        "to": "23:30",
+        "opacity": 0.62,
+        # Centered over the table in the interior room art.
+        "x_internal": 2638,
+        "y_internal": 2296,
+        "width_internal": 70,
+        "height_internal": 55,
+        "opacity_internal": 0.6,
+    },
+    {
+        "id": "clinic_after_hours_light",
+        "semantic_asset_id": "light_window_cool",
+        "location_id": "loc_clinic",
+        "x": 3378,
+        "y": 2376,
+        "width": 75,
+        "height": 60,
+        "from": "18:00",
+        "to": "06:00",
+        "opacity": 0.55,
+        # By the window in the interior exam room art.
+        "x_internal": 3463,
+        "y_internal": 2368,
+        "width_internal": 60,
+        "height_internal": 55,
+        "opacity_internal": 0.5,
+    },
+]
+
+
+# Shared authored geography for the HR village map variants.  Cases can change
+# the weather, time and set dressing, but the physical village stays legible.
+CASE_ART_VILLAGE_LOCATIONS: dict[str, dict[str, Any]] = {
+    "loc_village_square": {"x": 515, "y": 250, "width": 420, "height": 230, "layer": "exterior"},
+    "loc_fountain": {"x": 650, "y": 292, "width": 128, "height": 112, "layer": "exterior"},
+    "loc_elias_bench": {"x": 750, "y": 336, "width": 105, "height": 58, "layer": "exterior"},
+    "loc_hobbs_cafe": {"x": 696, "y": 496, "width": 270, "height": 290, "layer": "exterior"},
+    "loc_cafe_kitchen": {"x": 740, "y": 570, "width": 105, "height": 82, "layer": "interior"},
+    "loc_cafe_storage": {"x": 850, "y": 570, "width": 90, "height": 82, "layer": "interior"},
+    "loc_rear_alley": {"x": 610, "y": 430, "width": 78, "height": 260, "layer": "exterior"},
+    "loc_bookshop": {"x": 260, "y": 388, "width": 250, "height": 230, "layer": "exterior"},
+    "loc_bookshop_back": {"x": 320, "y": 468, "width": 105, "height": 85, "layer": "interior"},
+    "loc_clinic": {"x": 885, "y": 280, "width": 190, "height": 170, "layer": "exterior"},
+    "loc_clinic_dispensary": {"x": 955, "y": 338, "width": 75, "height": 70, "layer": "interior"},
+    "loc_marcus_house": {"x": 456, "y": 55, "width": 205, "height": 165, "layer": "exterior"},
+    "loc_marcus_study": {"x": 500, "y": 95, "width": 110, "height": 90, "layer": "interior"},
+    "loc_owen_house": {"x": 1045, "y": 590, "width": 340, "height": 340, "layer": "exterior"},
+    "loc_clara_flat": {"x": 740, "y": 510, "width": 150, "height": 110, "layer": "interior"},
+    "loc_priya_flat": {"x": 180, "y": 700, "width": 180, "height": 155, "layer": "interior"},
+    "loc_nadia_flat": {"x": 380, "y": 650, "width": 150, "height": 165, "layer": "interior"},
+    "loc_elias_house": {"x": 760, "y": 45, "width": 260, "height": 180, "layer": "interior"},
+    "loc_ruth_cottage": {"x": 155, "y": 675, "width": 180, "height": 170, "layer": "exterior"},
+    "loc_solicitors_office": {"x": 380, "y": 670, "width": 150, "height": 155, "layer": "interior"},
+}
+
+
+def case_art_map_definition(case_id: str, image: str, palette: str) -> dict[str, Any]:
+    return {
+        "definition_id": f"{case_id}_shared_village_v1",
+        "asset": f"{case_id}_shared_village_v1",
+        "image": image,
+        "width": 1448,
+        "height": 1086,
+        "tile_size": 32,
+        "grid": {"cols": 45, "rows": 34},
+        "origin": "north_west",
+        "base_palette": palette,
+        "lighting_overlay": "runtime_lightingTint",
+    }
+
+
+# One HD master village is used by every authored investigation.  Case-specific
+# lighting/evidence remains an overlay, never a competing town illustration.
+STORAGE_ROOM_HD_VILLAGE_IMAGE = "/art/town/shared_hd/unified_village_dawn_v1.avif"
+STORAGE_ROOM_HD_VILLAGE_CUTAWAY_IMAGE = "/art/town/shared_hd/unified_village_dawn_cutaway_v1.avif"
+STORAGE_ROOM_HD_VILLAGE_LOCATIONS: dict[str, dict[str, Any]] = {
+    "loc_village_square": {"x": 515, "y": 250, "width": 420, "height": 230, "layer": "exterior"},
+    "loc_fountain": {"x": 650, "y": 292, "width": 128, "height": 112, "layer": "exterior"},
+    "loc_elias_bench": {"x": 750, "y": 336, "width": 105, "height": 58, "layer": "exterior"},
+    "loc_hobbs_cafe": {"x": 696, "y": 496, "width": 270, "height": 290, "layer": "exterior"},
+    "loc_cafe_kitchen": {"x": 740, "y": 570, "width": 105, "height": 82, "layer": "interior"},
+    "loc_cafe_storage": {"x": 850, "y": 570, "width": 90, "height": 82, "layer": "interior"},
+    "loc_rear_alley": {"x": 610, "y": 430, "width": 78, "height": 260, "layer": "exterior"},
+    "loc_bookshop": {"x": 260, "y": 388, "width": 250, "height": 230, "layer": "exterior"},
+    "loc_clinic": {"x": 885, "y": 280, "width": 190, "height": 170, "layer": "exterior"},
+    "loc_marcus_house": {"x": 456, "y": 55, "width": 205, "height": 165, "layer": "exterior"},
+    "loc_marcus_study": {"x": 500, "y": 95, "width": 110, "height": 90, "layer": "interior"},
+    "loc_owen_house": {"x": 1045, "y": 590, "width": 340, "height": 340, "layer": "exterior"},
+    "loc_clara_flat": {"x": 740, "y": 510, "width": 150, "height": 110, "layer": "interior"},
+    "loc_priya_flat": {"x": 180, "y": 700, "width": 180, "height": 155, "layer": "interior"},
+    "loc_nadia_flat": {"x": 380, "y": 650, "width": 150, "height": 165, "layer": "interior"},
+    "loc_elias_house": {"x": 760, "y": 45, "width": 260, "height": 180, "layer": "interior"},
+}
+# The master artwork expands the Case 5/10 village with these peripheral
+# locations, so no case has to drop back to an older map family.
+STORAGE_ROOM_HD_VILLAGE_LOCATIONS.update({
+    "loc_bookshop_back": {"x": 410, "y": 470, "width": 95, "height": 100, "layer": "interior"},
+    "loc_clinic_dispensary": {"x": 930, "y": 350, "width": 85, "height": 75, "layer": "interior"},
+    "loc_pub": {"x": 1190, "y": 105, "width": 185, "height": 175, "layer": "interior"},
+    "loc_ben_flat": {"x": 295, "y": 625, "width": 185, "height": 165, "layer": "interior"},
+    "loc_ruth_cottage": {"x": 720, "y": 820, "width": 175, "height": 165, "layer": "exterior"},
+    "loc_solicitors_office": {"x": 545, "y": 105, "width": 175, "height": 165, "layer": "interior"},
+    "loc_fishery": {"x": 1200, "y": 435, "width": 175, "height": 165, "layer": "exterior"},
+    "loc_lake": {"x": 45, "y": 390, "width": 230, "height": 355, "layer": "exterior"},
+    "loc_woodland": {"x": 1190, "y": 15, "width": 230, "height": 185, "layer": "exterior"},
+    "loc_meadow": {"x": 470, "y": 875, "width": 300, "height": 170, "layer": "exterior"},
+})
+
+
+def storage_room_hd_map_definition(case_id: str) -> dict[str, Any]:
+    """The shared modern village artwork used by both Storage Room cases."""
+    definition = case_art_map_definition(case_id, STORAGE_ROOM_HD_VILLAGE_IMAGE, "wet_indigo_dawn")
+    # This is a same-frame paired asset: the roads and building footprints do
+    # not move, only roofs reveal the furnished interiors at close zoom.
+    definition["zoom_image"] = {
+        "threshold": 3.2,
+        "url": STORAGE_ROOM_HD_VILLAGE_CUTAWAY_IMAGE,
+    }
+    return definition
+
+
+CASE_MAPS: dict[str, dict[str, Any]] = {
+    "case_001": {
+        "mode": "case_art",
+        "map": storage_room_hd_map_definition("case_001"),
+        "location_visuals": STORAGE_ROOM_HD_VILLAGE_LOCATIONS,
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
+            "loc_cafe_kitchen", "loc_cafe_storage", "loc_rear_alley",
+            "loc_bookshop", "loc_clinic", "loc_marcus_house", "loc_marcus_study",
+            "loc_owen_house", "loc_clara_flat", "loc_priya_flat",
+            "loc_nadia_flat", "loc_elias_house",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_elias_bench": 2.0,
+            "loc_hobbs_cafe": 2.3,
+            "loc_bookshop": 2.3,
+            "loc_clinic": 2.4,
+            "loc_marcus_study": 2.0,
+        },
+    },
+    "case_002": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_bookshop",
+            "loc_bookshop_back", "loc_rear_alley", "loc_hobbs_cafe",
+            "loc_clinic", "loc_owen_house", "loc_priya_flat",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_elias_bench": 2.0,
+            "loc_bookshop": 2.35,
+            "loc_bookshop_back": 2.0,
+            "loc_rear_alley": 2.6,
+        },
+    },
+    "case_003": {
+        "mode": "case_art",
+        "map": case_art_map_definition(
+            "case_003", "/art/case_003/map/case_003_village_map_afternoon.avif", "wet_stone_afternoon"
+        ),
+        "location_visuals": {
+            loc_id: CASE_ART_VILLAGE_LOCATIONS[loc_id]
+            for loc_id in [
+                "loc_village_square", "loc_clinic", "loc_clinic_dispensary", "loc_fountain",
+                "loc_hobbs_cafe", "loc_owen_house", "loc_clara_flat", "loc_elias_bench",
+            ]
+        },
+        "visible_location_ids": [
+            "loc_village_square", "loc_clinic", "loc_clinic_dispensary",
+            "loc_fountain", "loc_hobbs_cafe", "loc_owen_house",
+            "loc_clara_flat", "loc_elias_bench",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_clinic": 2.4,
+            "loc_clinic_dispensary": 2.0,
+            "loc_elias_bench": 2.0,
+        },
+    },
+    "case_004": {
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_pub", "loc_owen_house",
+            "loc_clinic", "loc_elias_house", "loc_priya_flat", "loc_ben_flat",
+            "loc_fishery", "loc_lake", "loc_woodland", "loc_meadow",
+        ],
+        "overlays": [
+            "overlay_case_004_runtime_lighting",
+            "overlay_missing_coping",
+            "overlay_muddy_footprint",
+        ],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_pub": 2.55,
+            "loc_ben_flat": 2.2,
+            "loc_priya_flat": 2.2,
+        },
+    },
+    "case_005": {
+        # Case 005 is a deliberately self-contained village.  Unlike the
+        # reusable town, its visual geography is part of this case's story:
+        # the back lane provides the unseen route between Owen's yard and the
+        # rear alley.  It therefore owns both its map art and coordinates.
+        "mode": "case_art",
+        "map": {
+            "definition_id": "case_005_rear_alley_village_v1",
+            "asset": "case_005_rear_alley_village_v1",
+            "image": "/art/case_005/map/case_005_village_map_dawn.avif",
+            "width": 1448,
+            "height": 1086,
+            "tile_size": 32,
+            "grid": {"cols": 45, "rows": 34},
+            "origin": "north_west",
+            "base_palette": "wet_indigo_dawn",
+            "lighting_overlay": "runtime_lightingTint",
+        },
+        "use_authored_locations": True,
+        # Blue-dawn practicals are player-safe ambience, not evidence.
+        "light_overlays": [
+            {"id": "case_005_square_lamp", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_village_square", "x": 578, "y": 336, "width": 200, "height": 170, "from": "00:00", "to": "08:30", "opacity": 0.66},
+            {"id": "case_005_cafe_windows", "semantic_asset_id": "light_pub_window_glow", "location_id": "loc_hobbs_cafe", "x": 817, "y": 682, "width": 230, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.48},
+            {"id": "case_005_bookshop_windows", "semantic_asset_id": "light_window_warm", "location_id": "loc_bookshop", "x": 388, "y": 502, "width": 170, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.42},
+            {"id": "case_005_clinic_window", "semantic_asset_id": "light_window_cool", "location_id": "loc_clinic", "x": 983, "y": 364, "width": 125, "height": 90, "from": "00:00", "to": "08:30", "opacity": 0.45},
+            {"id": "case_005_yard_security_light", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_owen_house", "x": 1274, "y": 708, "width": 150, "height": 130, "from": "00:00", "to": "07:15", "opacity": 0.38},
+        ],
+        "visible_location_ids": [
+            "loc_village_square", "loc_rear_alley", "loc_hobbs_cafe",
+            "loc_clara_flat", "loc_owen_house", "loc_clinic",
+            "loc_bookshop", "loc_fountain", "loc_back_lane", "loc_elias_bench",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_rear_alley": 2.6,
+            "loc_hobbs_cafe": 2.3,
+            "loc_clara_flat": 2.0,
+            "loc_owen_house": 2.2,
+            "loc_back_lane": 2.4,
+            "loc_elias_bench": 2.0,
+        },
+    },
+    "case_010": {
+        # Case 010 deliberately revisits Case 001 in the same authored
+        # village, so their replay geography remains recognisable.
+        "mode": "case_art",
+        "map": storage_room_hd_map_definition("case_010"),
+        "location_visuals": STORAGE_ROOM_HD_VILLAGE_LOCATIONS,
+        "light_overlays": [
+            {"id": "case_010_square_lamp", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_village_square", "x": 578, "y": 336, "width": 200, "height": 170, "from": "00:00", "to": "08:30", "opacity": 0.66},
+            {"id": "case_010_cafe_windows", "semantic_asset_id": "light_pub_window_glow", "location_id": "loc_hobbs_cafe", "x": 817, "y": 682, "width": 230, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.48},
+            {"id": "case_010_bookshop_windows", "semantic_asset_id": "light_window_warm", "location_id": "loc_bookshop", "x": 388, "y": 502, "width": 170, "height": 105, "from": "00:00", "to": "08:30", "opacity": 0.42},
+            {"id": "case_010_clinic_window", "semantic_asset_id": "light_window_cool", "location_id": "loc_clinic", "x": 983, "y": 364, "width": 125, "height": 90, "from": "00:00", "to": "08:30", "opacity": 0.45},
+            {"id": "case_010_yard_security_light", "semantic_asset_id": "light_streetlamp_pool", "location_id": "loc_owen_house", "x": 1274, "y": 708, "width": 150, "height": 130, "from": "00:00", "to": "07:15", "opacity": 0.38},
+        ],
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
+            "loc_cafe_kitchen", "loc_cafe_storage", "loc_rear_alley", "loc_bookshop",
+            "loc_clinic", "loc_marcus_house", "loc_marcus_study", "loc_owen_house",
+            "loc_clara_flat", "loc_priya_flat", "loc_nadia_flat", "loc_elias_house",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1, "loc_fountain": 2.0, "loc_elias_bench": 2.0,
+            "loc_hobbs_cafe": 2.3, "loc_cafe_kitchen": 2.0, "loc_cafe_storage": 2.0,
+            "loc_rear_alley": 2.6, "loc_bookshop": 2.3, "loc_clinic": 2.4,
+            "loc_marcus_house": 2.2, "loc_marcus_study": 2.0, "loc_owen_house": 2.2,
+        },
+    },
+    "case_006": {
+        "mode": "case_art",
+        "map": case_art_map_definition(
+            "case_006", "/art/case_006/map/case_006_village_map_night.avif", "wet_indigo_night"
+        ),
+        "location_visuals": {
+            loc_id: CASE_ART_VILLAGE_LOCATIONS[loc_id]
+            for loc_id in [
+                "loc_village_square", "loc_marcus_house", "loc_marcus_study", "loc_ruth_cottage",
+                "loc_bookshop", "loc_clinic", "loc_solicitors_office", "loc_priya_flat",
+            ]
+        },
+        "visible_location_ids": [
+            "loc_village_square", "loc_marcus_house", "loc_marcus_study",
+            "loc_ruth_cottage", "loc_bookshop", "loc_clinic",
+            "loc_solicitors_office", "loc_priya_flat",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_marcus_house": 2.2,
+            "loc_marcus_study": 2.0,
+            "loc_ruth_cottage": 2.2,
+            "loc_solicitors_office": 2.2,
+        },
+    },
+    "case_007": {
+        "mode": "case_art",
+        "map": case_art_map_definition(
+            "case_007", "/art/case_007/map/case_007_village_map_lantern_fair.avif", "lantern_fair_night"
+        ),
+        "location_visuals": {
+            loc_id: CASE_ART_VILLAGE_LOCATIONS[loc_id]
+            for loc_id in [
+                "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
+                "loc_cafe_kitchen", "loc_rear_alley", "loc_bookshop", "loc_bookshop_back",
+                "loc_clinic", "loc_marcus_house", "loc_marcus_study", "loc_owen_house",
+                "loc_clara_flat", "loc_priya_flat", "loc_nadia_flat", "loc_elias_house",
+            ]
+        },
+        "visible_location_ids": [
+            "loc_village_square", "loc_fountain", "loc_elias_bench", "loc_hobbs_cafe",
+            "loc_cafe_kitchen", "loc_rear_alley", "loc_bookshop", "loc_bookshop_back",
+            "loc_clinic", "loc_marcus_house", "loc_marcus_study", "loc_owen_house",
+            "loc_clara_flat", "loc_priya_flat", "loc_nadia_flat", "loc_elias_house",
+        ],
+        "overlays": [],
+        "crop_padding_by_location": {
+            "loc_village_square": 2.1,
+            "loc_fountain": 2.0,
+            "loc_elias_bench": 2.0,
+            "loc_hobbs_cafe": 2.3,
+            "loc_bookshop": 2.35,
+            "loc_bookshop_back": 2.0,
+            "loc_rear_alley": 2.6,
+            "loc_clinic": 2.4,
+            "loc_marcus_study": 2.0,
+        },
+    },
+}
+
+# The temporary daylight pilot image is a versioned reference asset, not a
+# canonical tilemap. These bounds are measured in its 1448x1086 image space
+# and scaled to the canonical 2048x1536 response space. This keeps Places and
+# Map Replay aligned with the actual buildings while the full canonical art
+# library is still pending.
+_PILOT_SOURCE_SIZE = (1448, 1086)
+_PILOT_SOURCE_BOUNDS: dict[str, tuple[int, int, int, int]] = {
+    "loc_village_square": (50, 350, 925, 360),
+    "loc_fountain": (605, 420, 245, 205),
+    "loc_pub": (82, 66, 450, 395),
+    "loc_clinic": (760, 16, 375, 320),
+    "loc_owen_house": (975, 350, 300, 390),
+    "loc_elias_house": (205, 710, 190, 245),
+    "loc_priya_flat": (380, 710, 190, 245),
+    "loc_ben_flat": (700, 710, 270, 245),
+}
+
+
+def _scale_pilot_bounds(bounds: tuple[int, int, int, int]) -> dict[str, int]:
+    sx = CANONICAL_MAP["width"] / _PILOT_SOURCE_SIZE[0]
+    sy = CANONICAL_MAP["height"] / _PILOT_SOURCE_SIZE[1]
+    x, y, width, height = bounds
+    return {
+        "x": round(x * sx),
+        "y": round(y * sy),
+        "width": round(width * sx),
+        "height": round(height * sy),
+    }
+
+
+def pilot_location_visuals(
+    location_id: str,
+    case_id: str = "case_004",
+) -> tuple[dict[str, int] | None, dict[str, int] | None, str | None]:
+    # Check if a dynamic validated layout exists
+    layout = load_town_layout()
+    if layout:
+        case_override = layout.get("case_overrides", {}).get(case_id, {})
+        visible_locations = case_override.get("visible_locations", [])
+        if location_id in visible_locations:
+            bounds_override = case_override.get("location_bounds", {}).get(location_id)
+            if bounds_override:
+                px_bounds = _tile_bounds_to_px(bounds_override)
+                px_pos = _center(px_bounds)
+                layer = "exterior"
+                canonical_loc_data = layout.get("canonical_locations", {}).get(location_id)
+                if canonical_loc_data and "mode" in canonical_loc_data:
+                    layer = canonical_loc_data["mode"]
+                elif location_id in {
+                    "loc_cafe_kitchen", "loc_cafe_storage", "loc_bookshop_back",
+                    "loc_clinic_dispensary", "loc_marcus_study", "loc_clara_flat",
+                    "loc_ben_flat", "loc_priya_flat", "loc_nadia_flat"
+                }:
+                    layer = "interior"
+                return px_pos, px_bounds, layer
+                
+            canonical_loc_data = layout.get("canonical_locations", {}).get(location_id)
+            if canonical_loc_data and "bounds" in canonical_loc_data:
+                px_bounds = _tile_bounds_to_px(canonical_loc_data["bounds"])
+                px_pos = _center(px_bounds)
+                layer = canonical_loc_data.get("mode", "exterior")
+                return px_pos, px_bounds, layer
+
+    # Default fallback to existing pilot bounds
+    source_bounds = _PILOT_SOURCE_BOUNDS.get(location_id)
+    if not source_bounds:
+        return canonical_location_visuals(location_id)
+    bounds = _scale_pilot_bounds(source_bounds)
+    return _center(bounds), bounds, "interior" if location_id in {
+        "loc_pub", "loc_ben_flat", "loc_priya_flat", "loc_elias_house"
+    } else "exterior"
+
+
+def _tile_bounds_to_px(b: dict[str, Any]) -> dict[str, Any]:
+    """Convert tile-space editor bounds to image-pixel bounds, carrying the
+    optional visual rotation (degrees) through unchanged."""
+    px: dict[str, Any] = {"x": b["x"] * 32, "y": b["y"] * 32, "width": b["w"] * 32, "height": b["h"] * 32}
+    if b.get("rotation"):
+        px["rotation"] = b["rotation"]
+    return px
+
+
+def pilot_location_bounds_internal(location_id: str) -> dict[str, int] | None:
+    """Pixel bounds for the internal (roofless close-up) map view, or None
+    when the location has no dedicated internal bounds and inherits the
+    external ones."""
+    layout = load_town_layout()
+    if not layout:
+        return None
+    loc_data = layout.get("canonical_locations", {}).get(location_id)
+    if not loc_data:
+        return None
+    b = loc_data.get("bounds_internal")
+    if not b:
+        return None
+    return _tile_bounds_to_px(b)
+
+
+def _light_tile_to_px(light: dict[str, Any]) -> dict[str, Any]:
+    """Convert one editor-authored (tile-space) light spec to the pixel-space
+    shape the frontend's light_overlays contract expects, carrying the
+    optional internal-view override fields through the same conversion."""
+    out: dict[str, Any] = {
+        "semantic_asset_id": light["semantic_asset_id"],
+        "location_id": light["location_id"],
+        "x": round(light["x"] * 32),
+        "y": round(light["y"] * 32),
+        "width": round(light["width"] * 32),
+        "height": round(light["height"] * 32),
+        "from": light["from"],
+        "to": light["to"],
+    }
+    if light.get("opacity") is not None:
+        out["opacity"] = light["opacity"]
+    if light.get("x_internal") is not None and light.get("y_internal") is not None:
+        out["x_internal"] = round(light["x_internal"] * 32)
+        out["y_internal"] = round(light["y_internal"] * 32)
+        out["width_internal"] = round((light.get("width_internal") or light["width"]) * 32)
+        out["height_internal"] = round((light.get("height_internal") or light["height"]) * 32)
+        if light.get("semantic_asset_id_internal") is not None:
+            out["semantic_asset_id_internal"] = light["semantic_asset_id_internal"]
+        if light.get("opacity_internal") is not None:
+            out["opacity_internal"] = light["opacity_internal"]
+    return out
+
+
+def resolve_town_lights(layout: dict[str, Any] | None, visible_location_ids: set[str]) -> list[dict[str, Any]]:
+    """Case-scoped, pixel-space light overlays for the active map.
+
+    Reads the editor-authored `lights` collection (tile-space, global — case
+    scoping happens here via `location_id`, not by duplicating entries per
+    case) when present; falls back to the hardcoded `TOWN_LIGHT_OVERLAYS`
+    default otherwise, same fallback-when-unauthored pattern
+    `pilot_location_visuals` uses for `canonical_locations` vs `_BOUNDS_TILES`.
+    Filtering by `visible_location_ids` keeps a case from showing another
+    case's lights (e.g. case_004's pub windows) merely because they share the
+    same canonical art.
+    """
+    lights_data = (layout or {}).get("lights") or {}
+    if lights_data:
+        resolved = [
+            {"id": light_id, **_light_tile_to_px(spec)}
+            for light_id, spec in lights_data.items()
+        ]
+    else:
+        resolved = TOWN_LIGHT_OVERLAYS
+    return [light for light in resolved if light["location_id"] in visible_location_ids]
+
+
+def _ambient_tile_to_px(sprite: dict[str, Any]) -> dict[str, Any]:
+    out: dict[str, Any] = {
+        "asset_id": sprite["asset_id"],
+        "x": round(sprite["x"] * 32),
+        "y": round(sprite["y"] * 32),
+        "width": round(sprite["width"] * 32),
+        "height": round(sprite["height"] * 32),
+    }
+    if sprite.get("opacity") is not None:
+        out["opacity"] = sprite["opacity"]
+    if sprite.get("from") is not None:
+        out["from"] = sprite["from"]
+    if sprite.get("to") is not None:
+        out["to"] = sprite["to"]
+    return out
+
+
+def resolve_town_ambient_sprites(layout: dict[str, Any] | None) -> list[dict[str, Any]]:
+    """Pixel-space ambient sprite placements authored in the Map Editor."""
+    sprites = (layout or {}).get("ambient_sprites") or {}
+    return [{"id": sprite_id, **_ambient_tile_to_px(spec)} for sprite_id, spec in sprites.items()]
+
+
+def map_config(case_id: str) -> dict[str, Any] | None:
+    """Runtime case configuration on the single canonical village artwork.
+
+    Historical entries retain their narrative rosters and safe overlays, but
+    no longer select separate case-map images or coordinate sets. This keeps
+    every authored case on the same exterior/cutaway mosaic and art style.
+    """
+    authored = CASE_MAPS.get(case_id)
+    if authored is None:
+        return None
+    return {
+        **authored,
+        "mode": "canonical_overworld",
+        "map": CANONICAL_MAP,
+        "location_visuals": {},
+        # Old authored-map light coordinates do not align with the canonical
+        # world; an empty list falls back to canonical location-aware lights.
+        "light_overlays": [],
+    }
+
+
+def map_definition_for_case(case_id: str) -> dict[str, Any]:
+    """Return the map definition appropriate for one case.
+
+    Most migrated cases share the canonical mosaic.  A case may instead own
+    a complete authored backdrop, without changing any investigation truth.
+    """
+    config = map_config(case_id)
+    if config and config.get("map") is not CANONICAL_MAP:
+        return config["map"]
+    return canonical_map_definition()
+
+
+def _clue_ids_by_object(case: CaseData, object_locations: dict[str, str]) -> dict[str, list[str]]:
+    result: dict[str, list[str]] = {}
+    for clue in case.clues:
+        for object_id in clue.linked_object_ids or []:
+            object_location = object_locations.get(object_id)
+            clue_location = clue.discoverability.location_id
+            # Do not let a trail/absence clue reveal the object's rendered
+            # final marker in another room. The object marker belongs to the
+            # clue found at that same visual location.
+            if clue_location and object_location and clue_location != object_location:
+                continue
+            result.setdefault(object_id, []).append(clue.clue_id)
+    return result
+
+
+def pilot_objects(
+    case: CaseData,
+    discovered_clue_ids: set[str],
+    visible_location_ids: set[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Return safe visual object states for cases using the canonical town.
+
+    A visible-but-undiscovered object is deliberately suppressed: the map
+    knows the semantic anchor exists, but the client receives no evidence
+    marker to render. A discovered state is only true when the existing clue
+    discovery session contains one of the object's linked clue IDs.
+    """
+    layout = load_town_layout()
+    if not layout and case.case.case_id not in CASE_MAPS:
+        return []
+
+    overridden_anchors = {}
+    if layout:
+        overridden_anchors = layout.get("case_overrides", {}).get(case.case.case_id, {}).get("object_anchors", {})
+
+    object_locations = {
+        obj.object_id: (obj.final_location_id or obj.normal_location_id or "")
+        for obj in case.objects
+    }
+    for object_id, override in overridden_anchors.items():
+        if isinstance(override, dict) and override.get("location_id"):
+            object_locations[object_id] = override["location_id"]
+
+    clue_ids = _clue_ids_by_object(case, object_locations)
+    objects = []
+    for obj in case.objects:
+        visual = SEMANTIC_ASSETS.get(obj.object_id, {
+            "category": "evidence",
+            "asset": obj.object_id,
+            "glyph": "◆",
+        })
+        override = overridden_anchors.get(obj.object_id)
+        location_id = (
+            override.get("location_id")
+            if isinstance(override, dict) and override.get("location_id")
+            else obj.final_location_id or obj.normal_location_id
+        )
+        location = CANONICAL_LOCATIONS.get(location_id or "")
+        if not location:
+            continue
+        
+        if override and "anchor" in override:
+            ax, ay = override["anchor"]["x"], override["anchor"]["y"]
+            anchor_pos = {"x": ax * 32, "y": ay * 32}
+        else:
+            _, pilot_bounds, _ = pilot_location_visuals(location_id or "")
+            object_bounds = pilot_bounds or location["bounds"]
+            anchor_pos = _object_position(obj.object_id, object_bounds)
+            
+        linked = clue_ids.get(obj.object_id, [])
+        discovered = any(clue_id in discovered_clue_ids for clue_id in linked)
+        location_visible = visible_location_ids is None or location_id in visible_location_ids
+        state = "discovered" if discovered else ("visible" if location_visible else "hidden")
+        marker_state = "active" if discovered else "suppressed"
+        
+        objects.append({
+            "object_id": obj.object_id,
+            "semantic_asset_id": override.get("semantic_asset_id", visual["asset"]) if override else visual["asset"],
+            "category": visual["category"],
+            "location_id": location_id,
+            "anchor": anchor_pos,
+            "position": anchor_pos,
+            "state": state,
+            "marker_state": marker_state,
+            "render_mode": "evidence_marker" if discovered else "suppressed",
+            "safe_to_render": discovered,
+            "glyph": visual.get("glyph"),
+            "clue_ids": linked,
+            "overlay_ids": OBJECT_OVERLAYS.get(obj.object_id, []),
+            "damaged": obj.object_id in {"obj_fountain_stone", "obj_mud_bootprint"},
+        })
+    return objects
+
+
+def _object_position(object_id: str, bounds: dict[str, int]) -> dict[str, int]:
+    offsets = {
+        "obj_fountain_stone": (bounds["width"] - 42, bounds["height"] // 2),
+        "obj_mud_bootprint": (bounds["width"] // 2 + 34, bounds["height"] - 28),
+        "obj_owen_pub_receipt": (bounds["width"] // 2 - 8, bounds["height"] // 2),
+        "obj_fred_lighter": (bounds["width"] // 2 + 28, bounds["height"] + 18),
+        "obj_blackmail_letters": (bounds["width"] // 2 - 20, bounds["height"] // 2),
+        "obj_arson_clipping": (bounds["width"] // 2 + 22, bounds["height"] // 2),
+        "obj_ben_phone": (bounds["width"] - 34, bounds["height"] // 2 - 24),
+        "obj_ben_jacket_mud": (bounds["width"] // 2, bounds["height"] - 24),
+        "obj_pub_ledger": (22, bounds["height"] // 2 - 16),
+    }
+    dx, dy = offsets.get(object_id, (bounds["width"] // 2, bounds["height"] // 2))
+    return {"x": bounds["x"] + dx, "y": bounds["y"] + dy}
+
+
+def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]:
+    """Return the visual-only contract for the active case."""
+    config = map_config(case.case.case_id)
+    if not config:
+        if case.case.case_id.startswith("gen_"):
+            layout = load_town_layout()
+            visible_location_ids_list = [
+                loc.location_id
+                for loc in case.locations
+                if loc.location_id in CANONICAL_LOCATIONS
+            ]
+            visible_location_ids = set(visible_location_ids_list)
+            canonical_locations_dict = {}
+            for loc_id in visible_location_ids_list:
+                pos, bounds, layer = pilot_location_visuals(loc_id, case.case.case_id)
+                if pos and bounds:
+                    canonical_locations_dict[loc_id] = _tagged_location_payload(loc_id, pos, bounds, layer)
+                internal = pilot_location_bounds_internal(loc_id)
+                if internal and loc_id in canonical_locations_dict:
+                    canonical_locations_dict[loc_id]["bounds_internal"] = internal
+            object_visuals = pilot_objects(case, discovered_clue_ids, visible_location_ids)
+            return {
+                "mode": "canonical_overworld",
+                "definition_id": CANONICAL_MAP["definition_id"],
+                "visible_location_ids": visible_location_ids_list,
+                "overlays": [],
+                "light_overlays": resolve_town_lights(layout, visible_location_ids),
+                "ambient_sprites": resolve_town_ambient_sprites(layout),
+                "crop_padding_by_location": {},
+                "object_visuals": object_visuals,
+                "objects": object_visuals,
+                "adjacency": {k: v for k, v in CANONICAL_ADJACENCY.items() if k in visible_location_ids},
+                "canonical_locations": canonical_locations_dict,
+            }
+        return {
+            "mode": "legacy_fallback",
+            "definition_id": "legacy_the_ville",
+            "visible_location_ids": None,
+            "overlays": [],
+            "light_overlays": [],
+            "ambient_sprites": [],
+            "objects": [],
+            "adjacency": {},
+            "canonical_locations": {},
+        }
+        
+    layout = load_town_layout()
+    visible_location_ids_list = config["visible_location_ids"]
+    if layout:
+        case_override = layout.get("case_overrides", {}).get(case.case.case_id, {})
+        if "visible_locations" in case_override:
+            visible_location_ids_list = case_override["visible_locations"]
+
+    visible_location_ids = set(visible_location_ids_list)
+    object_visuals = pilot_objects(case, discovered_clue_ids, visible_location_ids)
+    
+    canonical_locations_dict = {}
+    for loc_id in visible_location_ids_list:
+        authored = (config.get("location_visuals") or {}).get(loc_id)
+        if authored:
+            bounds = {key: authored[key] for key in ("x", "y", "width", "height")}
+            pos = _center(bounds)
+            layer = authored["layer"]
+        else:
+            pos, bounds, layer = pilot_location_visuals(loc_id)
+        if pos and bounds:
+            canonical_locations_dict[loc_id] = _tagged_location_payload(loc_id, pos, bounds, layer)
+        elif loc_id in CANONICAL_LOCATIONS:
+            location = CANONICAL_LOCATIONS[loc_id]
+            canonical_locations_dict[loc_id] = _tagged_location_payload(
+                loc_id,
+                location["position"],
+                location["bounds"],
+                location["layer"],
+            )
+        internal = pilot_location_bounds_internal(loc_id)
+        if internal and loc_id in canonical_locations_dict:
+            canonical_locations_dict[loc_id]["bounds_internal"] = internal
+
+    return {
+        "mode": config["mode"],
+        "definition_id": config["map"]["definition_id"],
+        "visible_location_ids": visible_location_ids_list,
+        "overlays": config["overlays"],
+        "light_overlays": config.get("light_overlays") or resolve_town_lights(layout, visible_location_ids),
+        "ambient_sprites": resolve_town_ambient_sprites(layout),
+        "crop_padding_by_location": config.get("crop_padding_by_location", {}),
+        "object_visuals": object_visuals,
+        "objects": object_visuals,
+        "adjacency": {k: v for k, v in CANONICAL_ADJACENCY.items() if k in visible_location_ids},
+        "canonical_locations": canonical_locations_dict,
+    }
+
+
+def canonical_location_visuals(location_id: str) -> tuple[dict[str, int] | None, dict[str, int] | None, str | None]:
+    location = CANONICAL_LOCATIONS.get(location_id)
+    if not location:
+        return None, None, None
+    return location["position"], location["bounds"], location["layer"]

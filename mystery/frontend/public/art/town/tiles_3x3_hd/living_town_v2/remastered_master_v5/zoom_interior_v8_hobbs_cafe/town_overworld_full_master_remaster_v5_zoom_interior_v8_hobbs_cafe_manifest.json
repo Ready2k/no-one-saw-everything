@@ -1,0 +1,30 @@
+{
+  "version": "living_town_v2_remaster_v5_zoom_interior_v8_hobbs_cafe",
+  "created_from": [
+    "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v7/town_overworld_full_master_remaster_v5_zoom_interior_v7_manifest.json",
+    "/Users/jamescregeen/.codex/generated_images/019f57c1-92bd-7191-9bb0-ff7df0b2670d/exec-4f2be658-d00e-43a0-bbfb-410bc95bae72.png"
+  ],
+  "tile_size": { "width": 2048, "height": 1536 },
+  "grid": {
+    "columns": 3,
+    "rows": 3,
+    "order": ["A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3"]
+  },
+  "purpose": "B2 interior zoom revision restoring the connected Hobbs Cafe ground floor, kitchen/storage evidence area, and flat above.",
+  "tiles": {
+    "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_A1_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png",
+    "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_A2_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png",
+    "A3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_A3_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png",
+    "B1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B1_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png",
+    "B2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B2_zoom_interior_v8_hobbs_cafe_edge_locked.avif",
+    "B3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_B3_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png",
+    "C1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_C1_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png",
+    "C2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_C2_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png",
+    "C3": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/zoom_interior_v8_hobbs_cafe/town_overworld_C3_living_town_remaster_v5_zoom_interior_v8_hobbs_cafe.png"
+  },
+  "hobbs_cafe_content": [
+    "ground-floor cafe seating and service counter",
+    "connected kitchen/storage evidence area with blue coat and bucket",
+    "flat above Hobbs Cafe"
+  ]
+}

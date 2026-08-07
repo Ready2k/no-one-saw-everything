@@ -1,0 +1,142 @@
+/** Player-facing scene art for the 2.5D Places search.
+ *
+ * Case-specific frames take precedence. Recurring village locations fall
+ * back to canonical location art, so every shipped case gets an authored
+ * scene instead of a crop of the overworld map. Places assets follow
+ * docs/scene_asset_bible.md: cinematic HD artwork only. Never substitute a
+ * legacy character sprite, evidence glyph, 32px building module, or map tile.
+ */
+const CANONICAL_SCENES: Record<string, string> = {
+  loc_back_lane: "/art/case_005/back_lane_dawn_hd.avif",
+  loc_ben_flat: "/art/case_001/ben_flat_investigation_v2.avif",
+  loc_bookshop: "/art/case_001/reed_bell_bookshop_investigation_v2.avif",
+  loc_bookshop_back: "/art/case_001/bookshop_back_room_investigation_v2.avif",
+  loc_cafe_kitchen: "/art/case_001/cafe_kitchen_investigation_v4.avif",
+  loc_cafe_storage: "/art/case_001/storage_room_interactive_wide_v1.avif",
+  loc_clara_flat: "/art/case_001/clara_flat_investigation_v4.avif",
+  loc_clinic: "/art/case_001/village_clinic_investigation_v2.avif",
+  loc_clinic_dispensary: "/art/case_001/clinic_dispensary_investigation_v2.avif",
+  loc_elias_bench: "/art/case_001/elias_bench_investigation_v4.avif",
+  loc_elias_house: "/art/case_001/elias_house_investigation_v4.avif",
+  loc_fishery: "/art/case_004/fishery_midnight_investigation_v2.avif",
+  loc_fountain: "/art/case_001/fountain_dawn_investigation_v5.avif",
+  loc_hobbs_cafe: "/art/case_001/hobbs_cafe_investigation_v4.avif",
+  loc_lake: "/art/case_004/lovers_lake_midnight_investigation_v2.avif",
+  loc_marcus_house: "/art/case_001/marcus_house_investigation_v4.avif",
+  loc_marcus_study: "/art/case_001/marcus_study_investigation_v2.avif",
+  loc_meadow: "/art/case_004/green_meadow_midnight_investigation_v2.avif",
+  loc_nadia_flat: "/art/case_001/nadia_flat_investigation_v4.avif",
+  loc_owen_house: "/art/case_001/owen_house_yard_investigation_v2.avif",
+  loc_priya_flat: "/art/case_001/priya_flat_investigation_v4.avif",
+  loc_pub: "/art/case_001/mallet_crown_pub_investigation_v2.avif",
+  loc_rear_alley: "/art/case_001/rear_alley_investigation_v2.avif",
+  loc_ruth_cottage: "/art/case_001/ruth_cottage_investigation_v2.avif",
+  loc_solicitors_office: "/art/case_001/solicitors_office_investigation_v2.avif",
+  loc_village_square: "/art/case_005/village_square_dawn_hd.avif",
+  loc_woodland: "/art/case_004/whispering_woodland_midnight_investigation_v2.avif",
+};
+
+const CASE_SCENES: Record<string, Record<string, string>> = {
+  case_002: {
+    loc_bookshop: "/art/case_002/reed_bell_bookshop_sunset_investigation_v1.avif",
+    loc_bookshop_back: "/art/case_002/bookshop_back_room_sunset_investigation_v1.avif",
+    loc_clinic: "/art/case_002/village_clinic_sunset_investigation_v1.avif",
+    loc_elias_bench: "/art/case_002/elias_bench_sunset_investigation_v1.avif",
+    loc_fountain: "/art/case_002/fountain_sunset_investigation_v1.avif",
+    loc_hobbs_cafe: "/art/case_002/hobbs_cafe_sunset_investigation_v1.avif",
+    loc_owen_house: "/art/case_002/owen_house_yard_sunset_investigation_v1.avif",
+    loc_priya_flat: "/art/case_002/priya_flat_sunset_investigation_v1.avif",
+    loc_rear_alley: "/art/case_002/rear_alley_bookshop_sunset_investigation_v1.avif",
+    loc_village_square: "/art/case_002/village_square_sunset_investigation_v1.avif",
+  },
+  case_003: {
+    loc_clara_flat: "/art/case_003/clara_flat_late_afternoon_investigation_v1.avif",
+    loc_clinic: "/art/case_002/village_clinic_sunset_investigation_v1.avif",
+    loc_clinic_dispensary: "/art/case_003/clinic_dispensary_late_afternoon_investigation_v1.avif",
+    loc_elias_bench: "/art/case_002/elias_bench_sunset_investigation_v1.avif",
+    loc_fountain: "/art/case_002/fountain_sunset_investigation_v1.avif",
+    loc_hobbs_cafe: "/art/case_002/hobbs_cafe_sunset_investigation_v1.avif",
+    loc_owen_house: "/art/case_002/owen_house_yard_sunset_investigation_v1.avif",
+    loc_village_square: "/art/case_003/village_square_afternoon_investigation_v2.avif",
+  },
+  case_004: {
+    loc_ben_flat: "/art/case_004/ben_flat_midnight_investigation_v1.avif",
+    loc_clinic: "/art/case_004/village_clinic_midnight_investigation_v1.avif",
+    loc_elias_house: "/art/case_004/elias_house_midnight_investigation_v1.avif",
+    loc_fishery: "/art/case_004/fishery_midnight_investigation_v2.avif",
+    loc_fountain: "/art/case_004/fountain_midnight_investigation_v2.avif",
+    loc_lake: "/art/case_004/lovers_lake_midnight_investigation_v2.avif",
+    loc_meadow: "/art/case_004/green_meadow_midnight_investigation_v2.avif",
+    loc_owen_house: "/art/case_004/owen_house_yard_midnight_investigation_v1.avif",
+    loc_priya_flat: "/art/case_004/priya_flat_midnight_investigation_v1.avif",
+    loc_pub: "/art/case_004/mallet_crown_pub_midnight_investigation_v1.avif",
+    loc_village_square: "/art/case_004/village_square_midnight_investigation_v2.avif",
+    loc_woodland: "/art/case_004/whispering_woodland_midnight_investigation_v2.avif",
+  },
+  case_005: {
+    loc_back_lane: "/art/case_005/back_lane_dawn_hd.avif",
+    loc_bookshop: "/art/case_005/bookshop_dawn_hd.avif",
+    loc_clara_flat: "/art/case_005/clara_flat_dawn_hd.avif",
+    loc_clinic: "/art/case_005/clinic_dawn_hd.avif",
+    loc_elias_bench: "/art/case_001/elias_bench_investigation_v4.avif",
+    loc_fountain: "/art/case_001/fountain_dawn_investigation_v5.avif",
+    loc_hobbs_cafe: "/art/case_005/hobbs_cafe_dawn_hd.avif",
+    loc_owen_house: "/art/case_005/owen_yard_dawn_hd.avif",
+    loc_rear_alley: "/art/case_005/rear_alley_after_fire_investigation_v2.avif",
+    loc_village_square: "/art/case_005/village_square_dawn_hd.avif",
+  },
+  case_006: {
+    loc_bookshop: "/art/case_005/bookshop_dawn_hd.avif",
+    loc_clinic: "/art/case_005/clinic_dawn_hd.avif",
+    loc_marcus_house: "/art/case_001/marcus_house_investigation_v4.avif",
+    loc_marcus_study: "/art/case_001/marcus_study_investigation_v2.avif",
+    loc_priya_flat: "/art/case_001/priya_flat_investigation_v4.avif",
+    loc_ruth_cottage: "/art/case_001/ruth_cottage_investigation_v2.avif",
+    loc_solicitors_office: "/art/case_001/solicitors_office_investigation_v2.avif",
+    loc_village_square: "/art/case_005/village_square_dawn_hd.avif",
+  },
+  case_007: {
+    loc_bookshop: "/art/case_007/reed_bell_bookshop_fair_evening_v1.avif",
+    loc_bookshop_back: "/art/case_001/bookshop_back_room_investigation_v2.avif",
+    loc_cafe_kitchen: "/art/case_007/cafe_kitchen_fair_evening_v1.avif",
+    loc_clara_flat: "/art/case_007/clara_flat_fair_evening_v1.avif",
+    loc_clinic: "/art/case_004/village_clinic_midnight_investigation_v1.avif",
+    loc_elias_bench: "/art/case_007/elias_bench_lantern_fair_evening_v1.avif",
+    loc_elias_house: "/art/case_004/elias_house_midnight_investigation_v1.avif",
+    loc_fountain: "/art/case_007/fountain_lantern_fair_evening_v1.avif",
+    loc_hobbs_cafe: "/art/case_007/hobbs_cafe_fair_evening_v1.avif",
+    loc_marcus_house: "/art/case_001/marcus_house_investigation_v4.avif",
+    loc_marcus_study: "/art/case_001/marcus_study_investigation_v2.avif",
+    loc_nadia_flat: "/art/case_007/nadia_flat_fair_evening_v1.avif",
+    loc_owen_house: "/art/case_004/owen_house_yard_midnight_investigation_v1.avif",
+    loc_priya_flat: "/art/case_004/priya_flat_midnight_investigation_v1.avif",
+    loc_rear_alley: "/art/case_007/rear_alley_fair_evening_v1.avif",
+    loc_village_square: "/art/case_007/village_square_lantern_fair_evening_v1.avif",
+  },
+  case_010: {
+    loc_back_lane: "/art/case_010/back_lane_dawn_hd.avif",
+    loc_bookshop: "/art/case_010/bookshop_dawn_hd.avif",
+    loc_cafe_kitchen: "/art/case_001/cafe_kitchen_investigation_v4.avif",
+    loc_cafe_storage: "/art/case_010/cafe_storage_dawn_hd.avif",
+    loc_clara_flat: "/art/case_010/clara_flat_dawn_hd.avif",
+    loc_clinic: "/art/case_010/clinic_dawn_hd.avif",
+    loc_elias_bench: "/art/case_001/elias_bench_investigation_v4.avif",
+    loc_elias_house: "/art/case_001/elias_house_investigation_v4.avif",
+    loc_fountain: "/art/case_001/fountain_dawn_investigation_v5.avif",
+    loc_hobbs_cafe: "/art/case_010/hobbs_cafe_dawn_hd.avif",
+    loc_marcus_house: "/art/case_001/marcus_house_investigation_v4.avif",
+    loc_marcus_study: "/art/case_001/marcus_study_investigation_v2.avif",
+    loc_nadia_flat: "/art/case_001/nadia_flat_investigation_v4.avif",
+    loc_owen_house: "/art/case_010/owen_yard_dawn_hd.avif",
+    loc_priya_flat: "/art/case_001/priya_flat_investigation_v4.avif",
+    loc_rear_alley: "/art/case_010/rear_alley_fire_hd.avif",
+    loc_village_square: "/art/case_010/village_square_dawn_hd.avif",
+  },
+};
+
+export function sceneArtFor(caseId: string, locationId: string, authored?: string | null): string | undefined {
+  // Location identity must win. Some older case projections carry stale
+  // illustration values copied from another room/case; treating those as
+  // authoritative is what made several distinct Places show the same image.
+  return CASE_SCENES[caseId]?.[locationId] || CANONICAL_SCENES[locationId] || authored || undefined;
+}

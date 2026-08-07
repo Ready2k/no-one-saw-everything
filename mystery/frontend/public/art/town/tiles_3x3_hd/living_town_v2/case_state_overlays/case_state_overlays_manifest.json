@@ -1,0 +1,282 @@
+{
+  "version": "living_town_v2_case_state_overlays_v1",
+  "purpose": "Transparent case-state overlays for the Living Town V2 B2 tile and full 3x3 map alignment.",
+  "source_exterior": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_B2_living_town_all_cases_v2_fauna.avif",
+  "coordinate_space": {
+    "b2_local": {
+      "width": 2048,
+      "height": 1536,
+      "origin": "B2 tile top-left"
+    },
+    "full_map": {
+      "width": 6144,
+      "height": 4608,
+      "b2_offset": {
+        "x": 2048,
+        "y": 1536
+      }
+    }
+  },
+  "overlays": [
+    {
+      "id": "overlay_police_cordon_square",
+      "title": "Police cordon at village square",
+      "description": "Yellow/black police tape around the square and fountain for active public investigation scenes.",
+      "cases": [
+        "case_001",
+        "case_004",
+        "case_005"
+      ],
+      "location_ids": [
+        "loc_village_square",
+        "loc_fountain"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_police_cordon_square_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_police_cordon_square_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_police_cordon_square_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_police_cordon_hobbs_cafe",
+      "title": "Police cordon at Hobbs Cafe",
+      "description": "Cordon around Hobbs Cafe exterior for cafe-related evidence reconstruction beats.",
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_005"
+      ],
+      "location_ids": [
+        "loc_hobbs_cafe"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_police_cordon_hobbs_cafe_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_police_cordon_hobbs_cafe_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_police_cordon_hobbs_cafe_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_broken_window_bookshop",
+      "title": "Broken Reed & Bell window",
+      "description": "Cracked glass, shards, and broken shopfront highlight for Reed & Bell.",
+      "cases": [
+        "case_002",
+        "case_005",
+        "case_006"
+      ],
+      "location_ids": [
+        "loc_bookshop"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_broken_window_bookshop_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_broken_window_bookshop_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_broken_window_bookshop_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_scorched_rear_alley",
+      "title": "Scorched rear alley",
+      "description": "Soot, char, and scorch marks across the rear service alley.",
+      "cases": [
+        "case_001",
+        "case_002",
+        "case_005"
+      ],
+      "location_ids": [
+        "loc_rear_alley"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_scorched_rear_alley_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_scorched_rear_alley_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_scorched_rear_alley_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_muddy_footprints_square_trail",
+      "title": "Muddy footprint trail",
+      "description": "Dark muddy bootprints leading from the lakeside direction toward the square.",
+      "cases": [
+        "case_004"
+      ],
+      "location_ids": [
+        "loc_lake",
+        "loc_village_square",
+        "loc_pub"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_muddy_footprints_square_trail_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_muddy_footprints_square_trail_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_muddy_footprints_square_trail_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_trampled_meadow",
+      "title": "Trampled meadow grass",
+      "description": "Flattened grass and disturbed meadow surface for outdoor struggle/search beats.",
+      "cases": [
+        "case_004"
+      ],
+      "location_ids": [
+        "loc_meadow"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_trampled_meadow_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_trampled_meadow_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_trampled_meadow_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_disturbed_clinic_flowerbed",
+      "title": "Disturbed clinic flowerbed",
+      "description": "Scuffed flowerbed and small prints outside the clinic.",
+      "cases": [
+        "case_001",
+        "case_003",
+        "case_006"
+      ],
+      "location_ids": [
+        "loc_clinic"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_disturbed_clinic_flowerbed_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_disturbed_clinic_flowerbed_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_disturbed_clinic_flowerbed_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_disturbed_ruth_cottage_garden",
+      "title": "Disturbed Ruth cottage garden",
+      "description": "Disturbed cottage garden/foxglove bed and approach marks.",
+      "cases": [
+        "case_006"
+      ],
+      "location_ids": [
+        "loc_ruth_cottage"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_disturbed_ruth_cottage_garden_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_disturbed_ruth_cottage_garden_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_disturbed_ruth_cottage_garden_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    },
+    {
+      "id": "overlay_police_cordon_pub",
+      "title": "Police cordon at Mallet & Crown",
+      "description": "Cordon around the pub entrance and outside tables.",
+      "cases": [
+        "case_004"
+      ],
+      "location_ids": [
+        "loc_pub"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/overlay_police_cordon_pub_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/overlay_police_cordon_pub_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/overlay_police_cordon_pub_preview.png",
+      "full_map_size": {
+        "width": 6144,
+        "height": 4608
+      },
+      "b2_local_size": {
+        "width": 2048,
+        "height": 1536
+      }
+    }
+  ],
+  "packs": {
+    "case_001_cafe_square": {
+      "overlay_ids": [
+        "overlay_police_cordon_square",
+        "overlay_police_cordon_hobbs_cafe",
+        "overlay_scorched_rear_alley"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/case_001_cafe_square_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/case_001_cafe_square_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/case_001_cafe_square_preview.png"
+    },
+    "case_002_bookshop_alley": {
+      "overlay_ids": [
+        "overlay_broken_window_bookshop",
+        "overlay_scorched_rear_alley",
+        "overlay_police_cordon_hobbs_cafe"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/case_002_bookshop_alley_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/case_002_bookshop_alley_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/case_002_bookshop_alley_preview.png"
+    },
+    "case_004_lake_pub_search": {
+      "overlay_ids": [
+        "overlay_police_cordon_square",
+        "overlay_police_cordon_pub",
+        "overlay_muddy_footprints_square_trail",
+        "overlay_trampled_meadow"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/case_004_lake_pub_search_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/case_004_lake_pub_search_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/case_004_lake_pub_search_preview.png"
+    },
+    "case_006_garden_records": {
+      "overlay_ids": [
+        "overlay_broken_window_bookshop",
+        "overlay_disturbed_clinic_flowerbed",
+        "overlay_disturbed_ruth_cottage_garden"
+      ],
+      "b2_local_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/b2_local/case_006_garden_records_b2.png",
+      "full_map_asset": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/full_map/case_006_garden_records_full_map.png",
+      "preview": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/case_006_garden_records_preview.png"
+    }
+  },
+  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/case_state_overlays/previews/case_state_overlays_contact_sheet.png",
+  "runtime_notes": [
+    "Assets are visual-only and should be selected by case/event state; they do not imply clue discovery or truth exposure.",
+    "Full-map overlays can be layered over the 6144x4608 map; B2-local overlays are easier for crop previews and art review."
+  ]
+}
