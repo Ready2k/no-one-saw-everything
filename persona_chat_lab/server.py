@@ -2,6 +2,12 @@
 
 Run:  python3 server.py
 Open: http://localhost:8765
+
+Layer 7 (LLM claim reasoning, see layer7.py) is off by default. To try it
+against a local Ollama:
+  PERSONA_LAB_CLAIM_REASONING_ENABLED=true python3 server.py
+Optional: PERSONA_LAB_LLM_BASE_URL, PERSONA_LAB_LLM_MODEL (defaults match
+mystery/backend's current llm_settings.json — a local llama3.1:8b).
 """
 
 from __future__ import annotations
@@ -10,6 +16,7 @@ import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import layer7
 from engine import PersonaSession
 from personas import PERSONAS
 
@@ -74,7 +81,28 @@ class Handler(BaseHTTPRequestHandler):
             if persona_key not in SESSIONS:
                 self._send_json({"error": "unknown persona"}, status=404)
                 return
-            result = SESSIONS[persona_key].ask(question)
+            session = SESSIONS[persona_key]
+            result = session.ask(question)
+            # Layer 7 (ENGINE_SPEC.md §9, generative half only — see
+            # layer7.py docstring): only worth a shot when Layer 4 found
+            # nothing to say (topic is None) and there's more than one
+            # already-revealed claim to actually connect. try_claim_reasoning
+            # is a no-op (returns None) when disabled, so this costs nothing
+            # when PERSONA_LAB_CLAIM_REASONING_ENABLED isn't set.
+            if result["topic"] is None:
+                persona = PERSONAS[persona_key]
+                llm_answer = layer7.try_claim_reasoning(
+                    full_name=persona["full_name"],
+                    occupation=persona["occupation"],
+                    voice_card=persona["voice_card"],
+                    claims=session.claim_store.claims,
+                    question=question,
+                )
+                if llm_answer:
+                    result["answer"] = llm_answer
+                    result["topic"] = "layer7"
+                    result["source"] = "layer7"
+                    session.history[-1] = (persona_key, llm_answer)
             self._send_json(result)
             return
 

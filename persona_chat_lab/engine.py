@@ -17,6 +17,7 @@ import secrets
 from dataclasses import dataclass, field
 
 from personas import PERSONAS
+import claims as claims_mod
 import concepts as concepts_mod
 
 CONFRONTATIONAL_WORDS = [
@@ -291,6 +292,12 @@ class PersonaSession:
     # tension detector may only reason over claims the player has already
     # earned, never ones authored-but-unasked.
     claims: dict = field(default_factory=dict)
+    # Layer 2 (ENGINE_SPEC.md §4), finally wired into a running session: the
+    # full claim log (topic + rendered text, not just time), for Layer 7 to
+    # optionally reason over. `subject` is always SELF here — this sandbox
+    # doesn't need Layer 3 entity resolution to log "what was said", only to
+    # resolve "who a third-party question is about", which this never does.
+    claim_store: claims_mod.ClaimStore = field(default_factory=claims_mod.ClaimStore)
 
     @property
     def persona(self):
@@ -470,6 +477,11 @@ class PersonaSession:
             opening = fact["opening"]
             idx = _stable_index((self.session_seed, "opening", topic), len(opening))
             fact_text = opening[idx]
+            # Log the claim once, on first reveal — a repeat restates an
+            # existing claim, it isn't a new one Layer 7 should get to cite
+            # again as if it were freshly earned.
+            fact_obj = claims_mod.fact_from_legacy(fact, subject=claims_mod.SELF)
+            self.claim_store.record(fact_obj, persona["agent_id"], fact_text)
         else:
             repeat_texts = fact["repeat"]
             fact_text = repeat_texts[min(repeat_count - 1, len(repeat_texts) - 1)]
