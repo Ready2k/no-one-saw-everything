@@ -13,7 +13,6 @@
     "C3": "/art/town/tiles_3x3_hd/living_town_v2/town_overworld_C3_living_town_v2_fauna.avif"
   },
   "image": "/art/town/tiles_3x3_hd/living_town_v2/cohesive_preview/town_overworld_living_town_v2_fauna_cohesive_preview.avif",
-  "contact_preview": "/art/town/tiles_3x3_hd/living_town_v2/cohesive_preview/town_overworld_living_town_v2_fauna_cohesive_preview_contact.png",
   "process": [
     "per-tile RGB mean/std normalization toward a tempered B2/global target",
     "single stitched full-map image to remove browser tile edge sampling",

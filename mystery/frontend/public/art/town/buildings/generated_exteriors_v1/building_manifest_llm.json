@@ -26,16 +26,45 @@
     {
       "id": "cafe_small_v1",
       "display_name": "Hobbs Cafe",
-      "location_ids": ["loc_hobbs_cafe", "loc_cafe_kitchen", "loc_cafe_storage", "loc_clara_flat"],
-      "case_ids": ["case_001", "case_002", "case_003", "case_005", "case_007", "case_010"],
+      "location_ids": [
+        "loc_hobbs_cafe",
+        "loc_cafe_kitchen",
+        "loc_cafe_storage",
+        "loc_clara_flat"
+      ],
+      "case_ids": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_005",
+        "case_007",
+        "case_010"
+      ],
       "building_role": "business_with_attached_flat",
-      "function_tags": ["cafe", "kitchen", "storage", "attached_flat"],
+      "function_tags": [
+        "cafe",
+        "kitchen",
+        "storage",
+        "attached_flat"
+      ],
       "interior_asset": "/art/town/buildings/production/cafe_small_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/cafe_small_v1_exterior_canonical_alpha.png",
       "interior_description": "Warm village cafe with teal painted door and wall panelling, large arched street window with curtains, long service counter, brass till, display case, tables, kitchen doorway, shelves, and blue-check cloth details.",
       "exterior_description": "Cream plaster and dark stone cafe with teal arched glass door, large arched curtained front window, blue-and-white checked awning cue, flower boxes, outdoor tables, and side stair/upstairs hint for Clara's flat.",
-      "story_affordances": ["serve food", "public conversations", "staff movement", "rear-door access", "attached-flat privacy", "storage-room concealment"],
-      "continuity_cues": ["teal door/window trim", "arched front window", "blue gingham/check motif", "long counter implies shopfront width", "side stair implies Clara's flat above"],
+      "story_affordances": [
+        "serve food",
+        "public conversations",
+        "staff movement",
+        "rear-door access",
+        "attached-flat privacy",
+        "storage-room concealment"
+      ],
+      "continuity_cues": [
+        "teal door/window trim",
+        "arched front window",
+        "blue gingham/check motif",
+        "long counter implies shopfront width",
+        "side stair implies Clara's flat above"
+      ],
       "runtime_hints": {
         "case_time_tints": {
           "case_001": "early morning neutral/cool tint",
@@ -43,177 +72,320 @@
           "case_003": "late afternoon/evening opening tint",
           "case_005": "damp morning tint with rear-alley smoke/fog handled separately"
         },
-        "base_excludes": ["fire damage", "blood", "discovered evidence markers"]
+        "base_excludes": [
+          "fire damage",
+          "blood",
+          "discovered evidence markers"
+        ]
       }
     },
     {
       "id": "bookshop_small_v1",
       "display_name": "Reed & Bell Bookshop",
-      "location_ids": ["loc_bookshop", "loc_bookshop_back"],
-      "case_ids": ["case_001", "case_002", "case_005", "case_006", "case_007", "case_010"],
+      "location_ids": [
+        "loc_bookshop",
+        "loc_bookshop_back"
+      ],
+      "case_ids": [
+        "case_001",
+        "case_002",
+        "case_005",
+        "case_006",
+        "case_007",
+        "case_010"
+      ],
       "building_role": "business",
-      "function_tags": ["bookshop", "stockroom", "back_office"],
+      "function_tags": [
+        "bookshop",
+        "stockroom",
+        "back_office"
+      ],
       "interior_asset": "/art/town/buildings/production/bookshop_small_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/bookshop_small_v1_exterior_canonical_alpha.png",
       "interior_description": "Narrow bookshop with aisles of tall shelves, display tables, service counter, reading/display areas, and private back-room/stockroom connection.",
       "exterior_description": "Tall, narrow shopfront with slate-blue roof, book-filled display bay, symbolic hanging book sign, flower boxes, and discreet rear service side.",
-      "story_affordances": ["browse books", "private back-room meetings", "stock deliveries", "rear alley access", "document storage"],
-      "continuity_cues": ["visible book display window", "narrower vertical profile than cafe", "rear service side for back room"],
+      "story_affordances": [
+        "browse books",
+        "private back-room meetings",
+        "stock deliveries",
+        "rear alley access",
+        "document storage"
+      ],
+      "continuity_cues": [
+        "visible book display window",
+        "narrower vertical profile than cafe",
+        "rear service side for back room"
+      ],
       "runtime_hints": {
         "case_time_tints": {
           "case_002": "lunchtime daylight tint",
           "case_006": "evening/night tint if used near estate storyline"
         },
-        "base_excludes": ["broken glass", "forced-entry state", "evidence markers"]
+        "base_excludes": [
+          "broken glass",
+          "forced-entry state",
+          "evidence markers"
+        ]
       }
     },
     {
       "id": "clinic_small_v1",
       "display_name": "Village Clinic",
-      "location_ids": ["loc_clinic", "loc_clinic_dispensary"],
-      "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_006", "case_007", "case_010"],
+      "location_ids": [
+        "loc_clinic",
+        "loc_clinic_dispensary"
+      ],
+      "case_ids": [
+        "case_001",
+        "case_002",
+        "case_003",
+        "case_004",
+        "case_005",
+        "case_006",
+        "case_007",
+        "case_010"
+      ],
       "building_role": "public_service",
-      "function_tags": ["clinic", "dispensary", "exam_room"],
+      "function_tags": [
+        "clinic",
+        "dispensary",
+        "exam_room"
+      ],
       "interior_asset": "/art/town/buildings/production/clinic_small_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/clinic_small_v1_exterior_canonical_alpha.png",
       "interior_description": "Calm clinic with reception, waiting bench, exam room, dispensary shelving, treatment bed, sink, and muted blue-green cabinetry.",
       "exterior_description": "Tidy civic/apothecary building with covered stoop, broad reception windows, smaller private-room windows, neat flowerbeds, and mortar-and-pestle/leaf symbolic sign.",
-      "story_affordances": ["medical visits", "records access", "dispensary access control", "public waiting", "professional alibis"],
-      "continuity_cues": ["welcoming public front", "private side/rear rooms", "apothecary sign without real red-cross iconography"],
+      "story_affordances": [
+        "medical visits",
+        "records access",
+        "dispensary access control",
+        "public waiting",
+        "professional alibis"
+      ],
+      "continuity_cues": [
+        "welcoming public front",
+        "private side/rear rooms",
+        "apothecary sign without real red-cross iconography"
+      ],
       "runtime_hints": {
         "case_time_tints": {
           "case_003": "late-afternoon clinic tint",
           "case_004": "night tint with nearby square lamp"
         },
-        "base_excludes": ["specific medication evidence", "red cross icon", "case-only notes"]
+        "base_excludes": [
+          "specific medication evidence",
+          "red cross icon",
+          "case-only notes"
+        ]
       }
     },
     {
       "id": "pub_small_v1",
       "display_name": "The Mallet & Crown",
-      "location_ids": ["loc_pub"],
-      "case_ids": ["case_004"],
+      "location_ids": [
+        "loc_pub"
+      ],
+      "case_ids": [
+        "case_004"
+      ],
       "building_role": "business_social",
-      "function_tags": ["pub", "bar", "public_room", "back_room"],
+      "function_tags": [
+        "pub",
+        "bar",
+        "public_room",
+        "back_room"
+      ],
       "interior_asset": "/art/town/buildings/production/pub_small_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/pub_small_v1_exterior_canonical_alpha.png",
       "interior_description": "Cosy pub interior with long bar, stools, tables, fireplace, shelves of bottles, and small private back room.",
       "exterior_description": "Robust timber-framed village pub with dark stone base, terracotta roof, chimney, benches, barrel planters, and symbolic mallet-and-crown signage.",
-      "story_affordances": ["public drinking", "gossip", "closing-time alibis", "back-room ledgers", "night movement"],
-      "continuity_cues": ["heavier public-house massing", "bench/barrel exterior props", "local warm-window cues for night runtime tint"],
+      "story_affordances": [
+        "public drinking",
+        "gossip",
+        "closing-time alibis",
+        "back-room ledgers",
+        "night movement"
+      ],
+      "continuity_cues": [
+        "heavier public-house massing",
+        "bench/barrel exterior props",
+        "local warm-window cues for night runtime tint"
+      ],
       "runtime_hints": {
         "case_time_tints": {
           "case_004": "night tint with subtle warm window/lamp emphasis"
         },
-        "base_excludes": ["active patrons", "specific lighter/ledger clue markers"]
+        "base_excludes": [
+          "active patrons",
+          "specific lighter/ledger clue markers"
+        ]
       }
     },
     {
       "id": "flats_two_storey_v1",
       "display_name": "Two-Storey Flats",
-      "location_ids": ["loc_priya_flat", "loc_nadia_flat"],
-      "case_ids": ["case_001", "case_002", "case_004", "case_006", "case_007", "case_010"],
+      "location_ids": [
+        "loc_priya_flat",
+        "loc_nadia_flat"
+      ],
+      "case_ids": [
+        "case_001",
+        "case_002",
+        "case_004",
+        "case_006",
+        "case_007",
+        "case_010"
+      ],
       "building_role": "shared_residence",
-      "function_tags": ["flat", "shared_stair", "private_room"],
+      "function_tags": [
+        "flat",
+        "shared_stair",
+        "private_room"
+      ],
       "interior_asset": "/art/town/buildings/production/flats_two_storey_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/flats_two_storey_v1_exterior_canonical_alpha.png",
       "interior_description": "Plain shared-stair building divided into modest flats, with compact rooms and separate residential spaces.",
       "exterior_description": "Modest two-storey residential flats with stone ground floor, cream rendered upper floor, paired windows, shared central stair/entry, simple fence and hedges.",
-      "story_affordances": ["private residence", "shared stair sightings", "neighbour movement", "off-square alibis"],
-      "continuity_cues": ["paired units", "central shared access", "plain residential shell"],
+      "story_affordances": [
+        "private residence",
+        "shared stair sightings",
+        "neighbour movement",
+        "off-square alibis"
+      ],
+      "continuity_cues": [
+        "paired units",
+        "central shared access",
+        "plain residential shell"
+      ],
       "runtime_hints": {
-        "base_excludes": ["tenant-specific clutter", "case evidence", "shop signage"]
+        "base_excludes": [
+          "tenant-specific clutter",
+          "case evidence",
+          "shop signage"
+        ]
       }
     },
     {
       "id": "house_large_study_v1",
       "display_name": "Marcus Bell's House",
-      "location_ids": ["loc_marcus_house", "loc_marcus_study"],
-      "case_ids": ["case_001", "case_006", "case_007", "case_010"],
+      "location_ids": [
+        "loc_marcus_house",
+        "loc_marcus_study"
+      ],
+      "case_ids": [
+        "case_001",
+        "case_006",
+        "case_007",
+        "case_010"
+      ],
       "building_role": "wealthy_residence",
-      "function_tags": ["house_with_study", "sitting_room", "kitchen", "study"],
+      "function_tags": [
+        "house_with_study",
+        "sitting_room",
+        "kitchen",
+        "study"
+      ],
       "interior_asset": "/art/town/buildings/production/house_large_study_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/house_large_study_v1_exterior_canonical_alpha.png",
       "interior_description": "Large home with sitting room, kitchen, bedroom, book-lined study, fireplace areas, and formal domestic layout.",
       "exterior_description": "Grandest private residence in town: Georgian-cottage frontage, symmetrical windows, centered portico door, formal flowerbeds, side/rear wing hinting at kitchen and study.",
-      "story_affordances": ["formal visits", "estate conversations", "study searches", "kitchen preparation", "status contrast"],
-      "continuity_cues": ["symmetry", "larger footprint", "multiple chimneys/windows", "study wing"],
+      "story_affordances": [
+        "formal visits",
+        "estate conversations",
+        "study searches",
+        "kitchen preparation",
+        "status contrast"
+      ],
+      "continuity_cues": [
+        "symmetry",
+        "larger footprint",
+        "multiple chimneys/windows",
+        "study wing"
+      ],
       "runtime_hints": {
         "case_time_tints": {
           "case_006": "evening/night and early morning tints as story shifts"
         },
-        "base_excludes": ["burnt papers", "poison evidence", "body state"]
-      }
-    },
-    {
-      "id": "house_yard_workshop_v1",
-      "display_name": "Owen Price's House & Yard",
-      "location_ids": ["loc_owen_house"],
-      "case_ids": ["case_001", "case_002", "case_003", "case_004", "case_005", "case_007", "case_010"],
-      "building_role": "tradesman_residence_worksite",
-      "function_tags": ["house", "workshop", "timber_yard", "gate"],
-      "interior_asset": "/art/town/buildings/production/house_yard_workshop_v1_interior.png",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/house_yard_workshop_v1_exterior_canonical_alpha.png",
-      "interior_description": "Combined humble house, workshop, open timber yard, workbench, tools, lumber piles, and distinct gate zone.",
-      "exterior_description": "Working tradesman's plot with attached cottage, lean-to workshop, tool racks, packed dirt yard, stacked lumber, tarps, fence, and clearly readable yard gate.",
-      "story_affordances": ["yard sightings", "tool access", "delivery records", "gate-crossing timelines", "worksite alibis"],
-      "continuity_cues": ["rougher utilitarian materials", "visible lumber stacks", "distinct gate", "covered workshop"],
-      "runtime_hints": {
-        "base_excludes": ["specific weapon clue", "body", "blood"]
+        "base_excludes": [
+          "burnt papers",
+          "poison evidence",
+          "body state"
+        ]
       }
     },
     {
       "id": "cottage_small_v1",
       "display_name": "Small Cottage",
-      "location_ids": ["loc_elias_house"],
-      "case_ids": ["case_001", "case_004", "case_007", "case_010"],
+      "location_ids": [
+        "loc_elias_house"
+      ],
+      "case_ids": [
+        "case_001",
+        "case_004",
+        "case_007",
+        "case_010"
+      ],
       "building_role": "humble_residence",
-      "function_tags": ["cottage", "living_room", "bedroom", "yard"],
+      "function_tags": [
+        "cottage",
+        "living_room",
+        "bedroom",
+        "yard"
+      ],
       "interior_asset": "/art/town/buildings/production/cottage_small_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/cottage_small_v1_exterior_canonical_alpha.png",
       "interior_description": "Small modest cottage with living room, bedroom, compact domestic furniture, and small garden/yard.",
       "exterior_description": "Humble single-storey cottage with cream plaster, pale stone, terracotta roof, chimney, simple front door, compact fenced garden, and bedroom-window cue.",
-      "story_affordances": ["private home", "window sightline", "quiet domestic alibis", "small-garden searches"],
-      "continuity_cues": ["smaller than Marcus house", "bedroom window", "simple fenced garden"],
+      "story_affordances": [
+        "private home",
+        "window sightline",
+        "quiet domestic alibis",
+        "small-garden searches"
+      ],
+      "continuity_cues": [
+        "smaller than Marcus house",
+        "bedroom window",
+        "simple fenced garden"
+      ],
       "runtime_hints": {
         "case_time_tints": {
           "case_004": "night tint; bedroom window can support fountain sightline"
         },
-        "base_excludes": ["foxglove-specific garden", "case evidence"]
-      }
-    },
-    {
-      "id": "solicitors_office_small_v1",
-      "display_name": "Whittle & Cross Solicitors",
-      "location_ids": ["loc_solicitors_office"],
-      "case_ids": ["case_006"],
-      "building_role": "professional_office",
-      "function_tags": ["solicitor", "records_room", "office"],
-      "interior_asset": "/art/town/buildings/production/solicitors_office_small_v1_interior.png",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/solicitors_office_small_v1_exterior_canonical_alpha.png",
-      "interior_description": "Small professional office with reception, solicitor desk, document trays, files, and cramped records room.",
-      "exterior_description": "Formal small office with restrained civic frontage, slate roof, neat windows, clipped shrubs, stone steps, and symbolic professional sign.",
-      "story_affordances": ["will storage", "appointments", "records searches", "formal testimony"],
-      "continuity_cues": ["professional but small scale", "records-room side window", "reserved signage"],
-      "runtime_hints": {
-        "base_excludes": ["readable legal names", "specific will/document clue markers"]
+        "base_excludes": [
+          "foxglove-specific garden",
+          "case evidence"
+        ]
       }
     },
     {
       "id": "fishery_worksite_v1",
       "display_name": "Riverside Fishery",
-      "location_ids": ["loc_fishery"],
-      "case_ids": ["case_004"],
+      "location_ids": [
+        "loc_fishery"
+      ],
+      "case_ids": [
+        "case_004"
+      ],
       "building_role": "open_air_worksite",
-      "function_tags": ["fishery", "cleaning_shed", "catch_table", "river_edge"],
+      "function_tags": [
+        "fishery",
+        "cleaning_shed",
+        "catch_table",
+        "river_edge"
+      ],
       "interior_asset": "/art/town/buildings/production/fishery_worksite_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/fishery_worksite_v1_exterior_canonical_alpha.png",
       "interior_description": "Open worksite-like layout with shed, catch table, crates, buckets, rope, and river edge rather than a true enclosed interior.",
       "exterior_description": "Open-air riverside fishery with timber cleaning shed, catch table, nets, crates, rope, jetty, reeds, water edge, and packed dirt work area.",
-      "story_affordances": ["worksite alibis", "river-edge movement", "tool/crate searches", "off-square meetings"],
-      "continuity_cues": ["one exterior scene covers shed/table/river sub-zones", "no separate enclosed cutaway required"],
+      "story_affordances": [
+        "worksite alibis",
+        "river-edge movement",
+        "tool/crate searches",
+        "off-square meetings"
+      ],
+      "continuity_cues": [
+        "one exterior scene covers shed/table/river sub-zones",
+        "no separate enclosed cutaway required"
+      ],
       "runtime_hints": {
-        "base_excludes": ["modern industrial dock", "large boats", "case evidence"]
+        "base_excludes": [
+          "modern industrial dock",
+          "large boats",
+          "case evidence"
+        ]
       }
     },
     {
@@ -222,15 +394,31 @@
       "location_ids": [],
       "case_ids": [],
       "building_role": "future_residence",
-      "function_tags": ["house", "sitting_room", "kitchen", "bedroom"],
+      "function_tags": [
+        "house",
+        "sitting_room",
+        "kitchen",
+        "bedroom"
+      ],
       "interior_asset": "/art/town/buildings/production/house_small_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/house_small_v1_exterior_canonical_alpha.png",
       "interior_description": "Ordinary small house with sitting room, kitchen, bedroom, and compact domestic layout.",
       "exterior_description": "Reusable modest village house with cream plaster, pale stone, timber trim, pitched roof, chimney, small garden path, hedges, and simple flowerbeds.",
-      "story_affordances": ["future resident home", "generic domestic alibi", "background housing", "generated-case expansion"],
-      "continuity_cues": ["ordinary and unremarkable", "no profession-specific signage", "no case-specific props"],
+      "story_affordances": [
+        "future resident home",
+        "generic domestic alibi",
+        "background housing",
+        "generated-case expansion"
+      ],
+      "continuity_cues": [
+        "ordinary and unremarkable",
+        "no profession-specific signage",
+        "no case-specific props"
+      ],
       "runtime_hints": {
-        "base_excludes": ["distinctive plot details", "case evidence"]
+        "base_excludes": [
+          "distinctive plot details",
+          "case evidence"
+        ]
       }
     }
   ],
@@ -239,70 +427,58 @@
       "id": "ruth_cottage_foxglove_variant",
       "display_name": "Ruth's Cottage with Foxglove Garden",
       "base_building_id": "cottage_small_v1",
-      "location_ids": ["loc_ruth_cottage"],
-      "case_ids": ["case_006"],
+      "location_ids": [
+        "loc_ruth_cottage"
+      ],
+      "case_ids": [
+        "case_006"
+      ],
       "variant_type": "placement_identity",
-      "interior_asset": "/art/town/buildings/production/ruth_cottage_garden_interior_production.png",
       "exterior_asset": "/art/town/buildings/generated_exteriors_v1/ruth_cottage_foxglove_exterior_variant_alpha.avif",
       "description": "Small cottage variant with a large attractive foxglove garden: tall purple and pink bell-flower spikes behind a fence, ordinary cottage-garden presentation, no ominous or explicit poison symbolism.",
-      "story_affordances": ["garden visits", "plant knowledge", "domestic trust", "subtle botanical clue surface"],
+      "story_affordances": [
+        "garden visits",
+        "plant knowledge",
+        "domestic trust",
+        "subtle botanical clue surface"
+      ],
       "runtime_hints": {
-        "base_excludes": ["skulls", "poison labels", "evidence marker"],
+        "base_excludes": [
+          "skulls",
+          "poison labels",
+          "evidence marker"
+        ],
         "case_overlay_policy": "harvested or searched plant states should be separate overlays, not baked into this variant"
-      }
-    },
-    {
-      "id": "ben_newsagent_flat_variant",
-      "display_name": "Ben's Flat Above the Newsagent",
-      "base_building_id": "flats_two_storey_v1",
-      "location_ids": ["loc_ben_flat"],
-      "case_ids": ["case_004"],
-      "variant_type": "placement_identity",
-      "interior_asset": "/art/town/interiors_hd/ben_flat_interior_hd.png",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/ben_newsagent_flat_exterior_variant_alpha.png",
-      "description": "Two-storey shop/residence hybrid with modest newsagent shopfront below, unreadable papers/posters, separate stair/door access to an upper flat, and small residential windows above.",
-      "story_affordances": ["upper-flat privacy", "shopfront sightings", "newspaper/post context", "night movement near square"],
-      "runtime_hints": {
-        "case_time_tints": {
-          "case_004": "night tint; shop closed, upper flat potentially lit"
-        },
-        "base_excludes": ["readable headlines", "specific blackmail letter clues"]
       }
     },
     {
       "id": "bookshop_broken_window_variant",
       "display_name": "Reed & Bell Bookshop, Broken Back Window",
       "base_building_id": "bookshop_small_v1",
-      "location_ids": ["loc_bookshop", "loc_bookshop_back"],
-      "case_ids": ["case_002"],
+      "location_ids": [
+        "loc_bookshop",
+        "loc_bookshop_back"
+      ],
+      "case_ids": [
+        "case_002"
+      ],
       "variant_type": "case_state_damage",
       "interior_asset": "/art/town/buildings/production/bookshop_small_v1_interior.avif",
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/bookshop_small_v1_broken_window_exterior_variant_alpha.png",
       "description": "Canonical bookshop exterior with subtle cracked/broken rear or side back-room window and tiny glass shards near the service side, representing staged forced entry.",
-      "story_affordances": ["staged break-in", "rear-alley access", "window damage clue surface"],
+      "story_affordances": [
+        "staged break-in",
+        "rear-alley access",
+        "window damage clue surface"
+      ],
       "runtime_hints": {
         "case_time_tints": {
           "case_002": "lunchtime daylight tint"
         },
-        "base_excludes": ["blood", "police tape", "obvious clue marker"]
-      }
-    },
-    {
-      "id": "rear_alley_fire_damage_variant",
-      "display_name": "Rear Alley, Contained Fire Aftermath",
-      "base_building_id": null,
-      "location_ids": ["loc_rear_alley"],
-      "case_ids": ["case_005"],
-      "variant_type": "case_state_exterior_zone",
-      "interior_asset": null,
-      "exterior_asset": "/art/town/buildings/generated_exteriors_v1/rear_alley_fire_damage_exterior_variant_alpha.png",
-      "description": "Narrow rear service lane behind cafe/bookshop with teal cafe rear-door cues, service doors, bins, crates, linen delivery bay, drain, and contained fire aftermath: soot-blackened crate stack, scorched wall patch, and ash on the ground. No active flames.",
-      "story_affordances": ["rear-door movement", "smoke/fire discovery", "destroyed-evidence attempt", "service-lane witnesses"],
-      "runtime_hints": {
-        "case_time_tints": {
-          "case_005": "damp early morning tint; smoke/fog can be runtime effect"
-        },
-        "base_excludes": ["body", "blood", "active fire", "police tape"]
+        "base_excludes": [
+          "blood",
+          "police tape",
+          "obvious clue marker"
+        ]
       }
     }
   ],

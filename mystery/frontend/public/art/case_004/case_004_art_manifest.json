@@ -26,8 +26,14 @@
     "note": "The runtime base is a full 6144x4608 overworld matching the saved 192x144 canonical world. Saved Case 004 location and evidence coordinates are already full-world coordinates and must be used directly. Subtracting a B2 offset is allowed only when deliberately converting documented legacy B2-local source metadata.",
     "image_width": 6144,
     "image_height": 4608,
-    "image_grid": { "cols": 192, "rows": 144 },
-    "world_tile_offset": { "x": 64, "y": 48 }
+    "image_grid": {
+      "cols": 192,
+      "rows": 144
+    },
+    "world_tile_offset": {
+      "x": 64,
+      "y": 48
+    }
   },
   "case_assets": {
     "places_scenes": {
@@ -36,13 +42,13 @@
       "green_meadow": "/art/case_004/green_meadow_midnight_investigation_v2.avif",
       "lovers_lake": "/art/case_004/lovers_lake_midnight_investigation_v2.avif",
       "whispering_woodland": "/art/case_004/whispering_woodland_midnight_investigation_v2.avif",
-            "fishery": "/art/case_004/fishery_midnight_investigation_v2.avif",
-            "mallet_crown_pub": "/art/case_004/mallet_crown_pub_midnight_investigation_v1.avif",
-            "owen_house_yard": "/art/case_004/owen_house_yard_midnight_investigation_v1.avif",
-            "village_clinic": "/art/case_004/village_clinic_midnight_investigation_v1.avif",
-            "elias_house": "/art/case_004/elias_house_midnight_investigation_v1.avif",
-            "priya_flat": "/art/case_004/priya_flat_midnight_investigation_v1.avif",
-            "ben_flat": "/art/case_004/ben_flat_midnight_investigation_v1.avif"
+      "fishery": "/art/case_004/fishery_midnight_investigation_v2.avif",
+      "mallet_crown_pub": "/art/case_004/mallet_crown_pub_midnight_investigation_v1.avif",
+      "owen_house_yard": "/art/case_004/owen_house_yard_midnight_investigation_v1.avif",
+      "village_clinic": "/art/case_004/village_clinic_midnight_investigation_v1.avif",
+      "elias_house": "/art/case_004/elias_house_midnight_investigation_v1.avif",
+      "priya_flat": "/art/case_004/priya_flat_midnight_investigation_v1.avif",
+      "ben_flat": "/art/case_004/ben_flat_midnight_investigation_v1.avif"
     },
     "places_contract": {
       "width": 3840,
@@ -59,17 +65,7 @@
     "assets": [
       "/art/case_004/fountain_closeup.avif",
       "/art/case_004/village_square_moonlight_hd.avif",
-      "/art/case_004/green_meadow_moonlight_hd.png",
-      "/art/case_004/lovers_lake_moonlight_hd.png",
-      "/art/case_004/whispering_woodland_moonlight_hd.png",
-      "/art/case_004/fishery_moonlight_hd.png",
-      "/art/case_004/fountain_daylight_map.png",
-      "/art/case_004/fountain_midnight_map.avif",
-      "/art/case_004/intro/village_square_moonlight_intro.jpg",
-      "/art/case_004/intro/green_meadow_moonlight_intro.jpg",
-      "/art/case_004/intro/lovers_lake_moonlight_intro.jpg",
-      "/art/case_004/intro/whispering_woodland_moonlight_intro.jpg",
-      "/art/case_004/intro/fishery_moonlight_intro.jpg"
+      "/art/case_004/fountain_midnight_map.avif"
     ]
   },
   "tile_contract": {

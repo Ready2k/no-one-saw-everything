@@ -5,10 +5,15 @@
   "title": "The Rear Alley Fire",
   "art_direction": "neo_noir_village_v1",
   "lighting": "wet indigo dawn with restrained amber practical lights",
-  "palette": ["midnight navy", "charcoal", "damp timber brown", "antique brass", "muted ember orange"],
+  "palette": [
+    "midnight navy",
+    "charcoal",
+    "damp timber brown",
+    "antique brass",
+    "muted ember orange"
+  ],
   "assets": {
     "overhead_village": {
-      "path": "/art/case_005/overhead/village_overhead_dawn.png",
       "role": "player-safe briefing establishing shot",
       "contains_hidden_evidence": false
     },
@@ -68,7 +73,6 @@
       "contains_hidden_evidence": false
     },
     "resolution_rear_alley": {
-      "path": "/art/case_005/rear_alley_after_fire_dawn_hd.png",
       "role": "spoiler-safe resolution still",
       "contains_hidden_evidence": false
     }
@@ -78,11 +82,31 @@
       "calm": "/art/case_005/portraits/clara_wells_calm.avif",
       "deceased": "/art/case_005/portraits/clara_wells_deceased.avif"
     },
-    "agent_owen": { "calm": "/art/case_005/portraits/owen_price_calm.avif", "defensive": "/art/case_005/portraits/owen_price_defensive.avif", "cracking": "/art/case_005/portraits/owen_price_cracking.avif" },
-    "agent_ben": { "calm": "/art/case_005/portraits/ben_carter_calm.avif", "defensive": "/art/case_005/portraits/ben_carter_defensive.avif", "cracking": "/art/case_005/portraits/ben_carter_cracking.avif" },
-    "agent_nadia": { "calm": "/art/case_005/portraits/nadia_cole_calm.avif", "defensive": "/art/case_005/portraits/nadia_cole_defensive.avif", "cracking": "/art/case_005/portraits/nadia_cole_cracking.avif" },
-    "agent_elias": { "calm": "/art/case_005/portraits/elias_grant_calm.avif", "defensive": "/art/case_005/portraits/elias_grant_defensive.avif", "cracking": "/art/case_005/portraits/elias_grant_cracking.avif" },
-    "agent_col": { "calm": "/art/case_005/portraits/col_hartley_calm.avif", "defensive": "/art/case_005/portraits/col_hartley_defensive.avif", "cracking": "/art/case_005/portraits/col_hartley_cracking.avif" }
+    "agent_owen": {
+      "calm": "/art/case_005/portraits/owen_price_calm.avif",
+      "defensive": "/art/case_005/portraits/owen_price_defensive.avif",
+      "cracking": "/art/case_005/portraits/owen_price_cracking.avif"
+    },
+    "agent_ben": {
+      "calm": "/art/case_005/portraits/ben_carter_calm.avif",
+      "defensive": "/art/case_005/portraits/ben_carter_defensive.avif",
+      "cracking": "/art/case_005/portraits/ben_carter_cracking.avif"
+    },
+    "agent_nadia": {
+      "calm": "/art/case_005/portraits/nadia_cole_calm.avif",
+      "defensive": "/art/case_005/portraits/nadia_cole_defensive.avif",
+      "cracking": "/art/case_005/portraits/nadia_cole_cracking.avif"
+    },
+    "agent_elias": {
+      "calm": "/art/case_005/portraits/elias_grant_calm.avif",
+      "defensive": "/art/case_005/portraits/elias_grant_defensive.avif",
+      "cracking": "/art/case_005/portraits/elias_grant_cracking.avif"
+    },
+    "agent_col": {
+      "calm": "/art/case_005/portraits/col_hartley_calm.avif",
+      "defensive": "/art/case_005/portraits/col_hartley_defensive.avif",
+      "cracking": "/art/case_005/portraits/col_hartley_cracking.avif"
+    }
   },
   "evidence_plates": {
     "clue_belt_weapon": "/art/case_005/evidence/builders_belt.avif",

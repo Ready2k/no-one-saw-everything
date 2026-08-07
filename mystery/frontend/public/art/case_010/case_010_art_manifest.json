@@ -9,8 +9,6 @@
   "lighting": "wet indigo dawn with restrained amber practical lights",
   "purpose": "Case 001 replayed in the Case 005 village, with Case 001's dawn timing, residents, and storage-room murder intact.",
   "assets": {
-    "overhead_village": "/art/case_010/overhead/village_overhead_dawn.png",
-    "village_map": "/art/case_010/map/case_010_village_map_dawn.png",
     "loc_village_square": "/art/case_010/village_square_dawn_hd.avif",
     "loc_hobbs_cafe": "/art/case_010/hobbs_cafe_dawn_hd.avif",
     "loc_cafe_storage": "/art/case_010/cafe_storage_dawn_hd.avif",

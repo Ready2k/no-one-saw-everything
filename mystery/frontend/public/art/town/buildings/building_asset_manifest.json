@@ -51,13 +51,11 @@
     },
     {
       "id": "house_yard_workshop_v1",
-      "exterior": "production/house_yard_workshop_v1_exterior.avif",
-      "interior": "production/house_yard_workshop_v1_interior.png"
+      "exterior": "production/house_yard_workshop_v1_exterior.avif"
     },
     {
       "id": "solicitors_office_small_v1",
-      "exterior": "production/solicitors_office_small_v1_exterior.avif",
-      "interior": "production/solicitors_office_small_v1_interior.png"
+      "exterior": "production/solicitors_office_small_v1_exterior.avif"
     },
     {
       "id": "fishery_worksite_v1",
@@ -76,10 +74,6 @@
     {
       "id": "nadia_flat_variant",
       "interior": "production/nadia_flat_interior_production.avif"
-    },
-    {
-      "id": "ruth_cottage_variant",
-      "interior": "production/ruth_cottage_garden_interior_production.png"
     },
     {
       "id": "filler_farmhouse_small_v1",

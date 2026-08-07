@@ -9,9 +9,6 @@
     "cols": 3,
     "rows": 3
   },
-  "source_generation": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_generated_source.png",
-  "clean_generated_master": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_clean_generated_master.png",
-  "contact_sheet": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_full_master_remaster_v5_clean_generated_contact.png",
   "tile_urls": {
     "A1": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A1_living_town_remaster_v5_clean_generated.avif",
     "A2": "/art/town/tiles_3x3_hd/living_town_v2/remastered_master_v5/town_overworld_A2_living_town_remaster_v5_clean_generated.avif",

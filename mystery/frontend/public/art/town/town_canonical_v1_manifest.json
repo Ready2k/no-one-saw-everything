@@ -57,15 +57,7 @@
     "directory": "/art/town/tiles_3x3_hd/current_village_v2_neutral",
     "full_world": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_full_current_village_v2_neutral.avif",
     "cells": {
-      "A1": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_A1_current_village_v2_neutral.png",
-      "A2": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_A2_current_village_v2_neutral.png",
-      "A3": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_A3_current_village_v2_neutral.png",
-      "B1": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B1_current_village_v2_neutral.png",
-      "B2": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B2_current_village_v2_neutral.avif",
-      "B3": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B3_current_village_v2_neutral.png",
-      "C1": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_C1_current_village_v2_neutral.png",
-      "C2": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_C2_current_village_v2_neutral.png",
-      "C3": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_C3_current_village_v2_neutral.png"
+      "B2": "/art/town/tiles_3x3_hd/current_village_v2_neutral/town_overworld_B2_current_village_v2_neutral.avif"
     },
     "zoom_swap": {
       "threshold": 3.2,
@@ -121,35 +113,267 @@
     }
   ],
   "locations": {
-    "loc_village_square": { "bounds": { "x": 88, "y": 52, "w": 22, "h": 13 }, "mode": "exterior" },
-    "loc_fountain": { "bounds": { "x": 97, "y": 54, "w": 5, "h": 5 }, "mode": "exterior" },
-    "loc_marcus_house": { "bounds": { "x": 101, "y": 36, "w": 21, "h": 14 }, "mode": "exterior" },
-    "loc_marcus_study": { "bounds": { "x": 108, "y": 39, "w": 8, "h": 6 }, "mode": "interior" },
-    "loc_hobbs_cafe": { "bounds": { "x": 99, "y": 67, "w": 17, "h": 20 }, "mode": "exterior" },
-    "loc_cafe_kitchen": { "bounds": { "x": 100, "y": 72, "w": 8, "h": 7 }, "mode": "interior" },
-    "loc_cafe_storage": { "bounds": { "x": 109, "y": 72, "w": 6, "h": 7 }, "mode": "interior" },
-    "loc_clinic": { "bounds": { "x": 111, "y": 52, "w": 15, "h": 14 }, "mode": "exterior" },
-    "loc_clinic_dispensary": { "bounds": { "x": 118, "y": 56, "w": 6, "h": 6 }, "mode": "interior" },
-    "loc_bookshop": { "bounds": { "x": 72, "y": 54, "w": 16, "h": 16 }, "mode": "exterior" },
-    "loc_bookshop_back": { "bounds": { "x": 73, "y": 62, "w": 7, "h": 7 }, "mode": "interior" },
-    "loc_rear_alley": { "bounds": { "x": 86, "y": 50, "w": 40, "h": 2 }, "mode": "exterior" },
-    "loc_pub": { "bounds": { "x": 83, "y": 71, "w": 15, "h": 18 }, "mode": "exterior" },
-    "loc_owen_house": { "bounds": { "x": 118, "y": 68, "w": 21, "h": 18 }, "mode": "exterior" },
-    "loc_elias_house": { "bounds": { "x": 99, "y": 92, "w": 17, "h": 13 }, "mode": "exterior" },
-    "loc_clara_flat": { "bounds": { "x": 100, "y": 68, "w": 8, "h": 3 }, "mode": "interior" },
-    "loc_ben_flat": { "bounds": { "x": 64, "y": 72, "w": 8, "h": 12 }, "mode": "interior" },
-    "loc_priya_flat": { "bounds": { "x": 73, "y": 72, "w": 8, "h": 12 }, "mode": "interior" },
-    "loc_nadia_flat": { "bounds": { "x": 128, "y": 54, "w": 12, "h": 12 }, "mode": "interior" },
-    "loc_ruth_cottage": { "bounds": { "x": 126, "y": 35, "w": 18, "h": 17 }, "mode": "exterior" },
-    "loc_solicitors_office": { "bounds": { "x": 86, "y": 36, "w": 14, "h": 14 }, "mode": "exterior" },
-    "loc_elias_bench": { "bounds": { "x": 104, "y": 62, "w": 4, "h": 2 }, "mode": "exterior" },
-    "loc_fishery": { "bounds": { "x": 146, "y": 47, "w": 45, "h": 29 }, "mode": "exterior" },
-    "loc_lake": { "bounds": { "x": 0, "y": 52, "w": 62, "h": 51 }, "mode": "exterior" },
-    "loc_woodland": { "bounds": { "x": 0, "y": 2, "w": 63, "h": 47 }, "mode": "exterior" },
-    "loc_meadow": { "bounds": { "x": 119, "y": 102, "w": 67, "h": 42 }, "mode": "exterior" },
-    "loc_back_lane": { "bounds": { "x": 110, "y": 87, "w": 31, "h": 4 }, "mode": "exterior" },
-    "loc_st_alder_church": { "bounds": { "x": 67, "y": 36, "w": 18, "h": 15 }, "mode": "exterior" },
-    "loc_willow_farmhouse": { "bounds": { "x": 46, "y": 108, "w": 22, "h": 19 }, "mode": "exterior" }
+    "loc_village_square": {
+      "bounds": {
+        "x": 88,
+        "y": 52,
+        "w": 22,
+        "h": 13
+      },
+      "mode": "exterior"
+    },
+    "loc_fountain": {
+      "bounds": {
+        "x": 97,
+        "y": 54,
+        "w": 5,
+        "h": 5
+      },
+      "mode": "exterior"
+    },
+    "loc_marcus_house": {
+      "bounds": {
+        "x": 101,
+        "y": 36,
+        "w": 21,
+        "h": 14
+      },
+      "mode": "exterior"
+    },
+    "loc_marcus_study": {
+      "bounds": {
+        "x": 108,
+        "y": 39,
+        "w": 8,
+        "h": 6
+      },
+      "mode": "interior"
+    },
+    "loc_hobbs_cafe": {
+      "bounds": {
+        "x": 99,
+        "y": 67,
+        "w": 17,
+        "h": 20
+      },
+      "mode": "exterior"
+    },
+    "loc_cafe_kitchen": {
+      "bounds": {
+        "x": 100,
+        "y": 72,
+        "w": 8,
+        "h": 7
+      },
+      "mode": "interior"
+    },
+    "loc_cafe_storage": {
+      "bounds": {
+        "x": 109,
+        "y": 72,
+        "w": 6,
+        "h": 7
+      },
+      "mode": "interior"
+    },
+    "loc_clinic": {
+      "bounds": {
+        "x": 111,
+        "y": 52,
+        "w": 15,
+        "h": 14
+      },
+      "mode": "exterior"
+    },
+    "loc_clinic_dispensary": {
+      "bounds": {
+        "x": 118,
+        "y": 56,
+        "w": 6,
+        "h": 6
+      },
+      "mode": "interior"
+    },
+    "loc_bookshop": {
+      "bounds": {
+        "x": 72,
+        "y": 54,
+        "w": 16,
+        "h": 16
+      },
+      "mode": "exterior"
+    },
+    "loc_bookshop_back": {
+      "bounds": {
+        "x": 73,
+        "y": 62,
+        "w": 7,
+        "h": 7
+      },
+      "mode": "interior"
+    },
+    "loc_rear_alley": {
+      "bounds": {
+        "x": 86,
+        "y": 50,
+        "w": 40,
+        "h": 2
+      },
+      "mode": "exterior"
+    },
+    "loc_pub": {
+      "bounds": {
+        "x": 83,
+        "y": 71,
+        "w": 15,
+        "h": 18
+      },
+      "mode": "exterior"
+    },
+    "loc_owen_house": {
+      "bounds": {
+        "x": 118,
+        "y": 68,
+        "w": 21,
+        "h": 18
+      },
+      "mode": "exterior"
+    },
+    "loc_elias_house": {
+      "bounds": {
+        "x": 99,
+        "y": 92,
+        "w": 17,
+        "h": 13
+      },
+      "mode": "exterior"
+    },
+    "loc_clara_flat": {
+      "bounds": {
+        "x": 100,
+        "y": 68,
+        "w": 8,
+        "h": 3
+      },
+      "mode": "interior"
+    },
+    "loc_ben_flat": {
+      "bounds": {
+        "x": 64,
+        "y": 72,
+        "w": 8,
+        "h": 12
+      },
+      "mode": "interior"
+    },
+    "loc_priya_flat": {
+      "bounds": {
+        "x": 73,
+        "y": 72,
+        "w": 8,
+        "h": 12
+      },
+      "mode": "interior"
+    },
+    "loc_nadia_flat": {
+      "bounds": {
+        "x": 128,
+        "y": 54,
+        "w": 12,
+        "h": 12
+      },
+      "mode": "interior"
+    },
+    "loc_ruth_cottage": {
+      "bounds": {
+        "x": 126,
+        "y": 35,
+        "w": 18,
+        "h": 17
+      },
+      "mode": "exterior"
+    },
+    "loc_solicitors_office": {
+      "bounds": {
+        "x": 86,
+        "y": 36,
+        "w": 14,
+        "h": 14
+      },
+      "mode": "exterior"
+    },
+    "loc_elias_bench": {
+      "bounds": {
+        "x": 104,
+        "y": 62,
+        "w": 4,
+        "h": 2
+      },
+      "mode": "exterior"
+    },
+    "loc_fishery": {
+      "bounds": {
+        "x": 146,
+        "y": 47,
+        "w": 45,
+        "h": 29
+      },
+      "mode": "exterior"
+    },
+    "loc_lake": {
+      "bounds": {
+        "x": 0,
+        "y": 52,
+        "w": 62,
+        "h": 51
+      },
+      "mode": "exterior"
+    },
+    "loc_woodland": {
+      "bounds": {
+        "x": 0,
+        "y": 2,
+        "w": 63,
+        "h": 47
+      },
+      "mode": "exterior"
+    },
+    "loc_meadow": {
+      "bounds": {
+        "x": 119,
+        "y": 102,
+        "w": 67,
+        "h": 42
+      },
+      "mode": "exterior"
+    },
+    "loc_back_lane": {
+      "bounds": {
+        "x": 110,
+        "y": 87,
+        "w": 31,
+        "h": 4
+      },
+      "mode": "exterior"
+    },
+    "loc_st_alder_church": {
+      "bounds": {
+        "x": 67,
+        "y": 36,
+        "w": 18,
+        "h": 15
+      },
+      "mode": "exterior"
+    },
+    "loc_willow_farmhouse": {
+      "bounds": {
+        "x": 46,
+        "y": 108,
+        "w": 22,
+        "h": 19
+      },
+      "mode": "exterior"
+    }
   },
   "layout_summary": {
     "canonical_location_count": 29,
