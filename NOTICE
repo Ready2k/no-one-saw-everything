@@ -1,0 +1,27 @@
+No One Saw Everything
+Copyright 2026 James Cregeen
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this work except in compliance with the License. You may obtain a copy of
+the License in the LICENSE file at the root of this repository, or at
+http://www.apache.org/licenses/LICENSE-2.0
+
+--------------------------------------------------------------------------------
+
+Historical origin
+
+This repository began in 2023 as a fork of "Generative Agents: Interactive
+Simulacra of Human Behavior" (Smallville):
+
+    https://github.com/joonspk-research/generative_agents
+    Copyright 2023 Joon Sung Park
+    Licensed under the Apache License, Version 2.0
+
+No code or assets from that project remain in this repository. The simulation
+code (reverie/, environment/) was removed from every branch, and the last
+derived assets -- the rendered village map and the character sprite sheets --
+were removed on 2026-08-14. The village map and every character likeness that
+ships today are original artwork made for this game.
+
+The upstream code remains present in this repository's git history, and the
+attribution above is retained for that reason.

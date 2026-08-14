@@ -31,3 +31,8 @@ have since been removed too. The village is now the hand-made HD town map
 under `mystery/frontend/public/art/town/`, and every character is drawn from
 this game's own portrait art. Nothing upstream ships in the build; it remains
 recoverable from git history only.
+
+## Licence
+
+Apache License 2.0 — see [`LICENSE`](LICENSE). [`NOTICE`](NOTICE) records the
+copyright and the historical fork above.
