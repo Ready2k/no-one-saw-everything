@@ -13,11 +13,9 @@ from .models import Agent, CaseData, Claim, Clue, Event, GameObject, Location
 from .session import Session
 from .case_store import minutes
 from .dialogue_processor import stall_fillers_for
-from .map_layout import agent_sprite
 
 
 def project_agent(agent: Agent) -> dict[str, Any]:
-    _, sprite_asset = agent_sprite(agent)
     return {
         "agent_id": agent.agent_id,
         "full_name": agent.full_name,
@@ -26,7 +24,6 @@ def project_agent(agent: Agent) -> dict[str, Any]:
         "traits": agent.traits,
         "portrait": agent.portrait,
         "portrait_art": agent.portrait_art.model_dump() if agent.portrait_art else None,
-        "sprite_asset": sprite_asset,
         "home_location_id": agent.home_location_id,
         "work_location_id": agent.work_location_id,
         "routine_summary": agent.routine_summary,
@@ -234,13 +231,7 @@ def project_map_location(loc: Location, case_id: str | None = None) -> dict[str,
 
 
 def project_map_agent(agent: Agent) -> dict[str, Any]:
-    from .map_layout import agent_sprite
-
-    sprite_id, sprite_asset = agent_sprite(agent)
-    projected = project_agent(agent)
-    projected["sprite_id"] = sprite_id
-    projected["sprite_asset"] = sprite_asset
-    return projected
+    return project_agent(agent)
 
 
 def visible_map_events(

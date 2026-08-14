@@ -790,39 +790,21 @@ def map_replay(
     mode=truth returns the true timeline and is only available after an
     accusation has been submitted (the reveal gate).
     """
-    from .map_layout import MAP_ASSET, MAP_HEIGHT, MAP_IMAGE, MAP_WIDTH
-    from .town_map import map_config, map_definition_for_case, map_payload
+    from .town_map import map_definition_for_case, map_payload
 
     start = _validate_time_param(start, "start")
     end = _validate_time_param(end, "end")
     case = case_data()
     sess = session()
 
-    # Migrated cases use the reusable canonical HD map contract; unmigrated
-    # cases preserve the legacy fallback art and coordinates.
-    if map_config(case.case.case_id):
-        map_definition = map_definition_for_case(case.case.case_id)
-        map_asset = map_definition["asset"]
-        map_image = map_definition["image"]
-        map_width = map_definition["width"]
-        map_height = map_definition["height"]
-    else:
-        map_asset = MAP_ASSET
-        map_image = MAP_IMAGE
-        map_width = MAP_WIDTH
-        map_height = MAP_HEIGHT
-        map_definition = {
-            "definition_id": "legacy_the_ville",
-            "asset": map_asset,
-            "image": map_image,
-            "width": map_width,
-            "height": map_height,
-            "tile_size": 32,
-            "grid": {"cols": 140, "rows": 100},
-            "origin": "north_west",
-            "base_palette": "legacy",
-            "lighting_overlay": "runtime_lightingTint",
-        }
+    # Every case renders on the canonical HD town contract. Cases with no
+    # CASE_MAPS entry (procedurally generated ones) reuse canonical loc_* ids,
+    # so map_definition_for_case falls through to the canonical definition.
+    map_definition = map_definition_for_case(case.case.case_id)
+    map_asset = map_definition["asset"]
+    map_image = map_definition["image"]
+    map_width = map_definition["width"]
+    map_height = map_definition["height"]
 
     if mode not in ("player", "truth"):
         raise HTTPException(400, "mode must be 'player' or 'truth'")

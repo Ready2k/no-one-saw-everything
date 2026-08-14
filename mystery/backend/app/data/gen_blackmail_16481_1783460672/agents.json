@@ -9,7 +9,7 @@
       "proud",
       "fair but unforgiving"
     ],
-    "portrait": "\u2615",
+    "portrait": "☕",
     "portrait_art": null,
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_village_square",
@@ -44,9 +44,7 @@
     "gossip_tendency": 0.5,
     "conflict_avoidance": 0.5,
     "is_victim": true,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   },
   {
     "agent_id": "agent_elias",
@@ -58,7 +56,7 @@
       "proud",
       "guarded"
     ],
-    "portrait": "\ud83e\udde3",
+    "portrait": "🧣",
     "portrait_art": null,
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_village_square",
@@ -86,9 +84,7 @@
     "gossip_tendency": 0.5,
     "conflict_avoidance": 0.6,
     "is_victim": false,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   },
   {
     "agent_id": "agent_clara",
@@ -100,7 +96,7 @@
       "chatty",
       "bad at secrets"
     ],
-    "portrait": "\ud83d\udce6",
+    "portrait": "📦",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
@@ -128,9 +124,7 @@
     "gossip_tendency": 0.8,
     "conflict_avoidance": 0.5,
     "is_victim": false,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   },
   {
     "agent_id": "agent_marcus",
@@ -142,7 +136,7 @@
       "wounded",
       "composed"
     ],
-    "portrait": "\ud83d\udcda",
+    "portrait": "📚",
     "portrait_art": null,
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
@@ -170,9 +164,7 @@
     "gossip_tendency": 0.5,
     "conflict_avoidance": 0.5,
     "is_victim": false,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   },
   {
     "agent_id": "agent_priya",
@@ -184,7 +176,7 @@
       "hot-tempered",
       "proud"
     ],
-    "portrait": "\ud83d\udd28",
+    "portrait": "🔨",
     "portrait_art": null,
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
@@ -205,9 +197,7 @@
     "gossip_tendency": 0.5,
     "conflict_avoidance": 0.2,
     "is_victim": false,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   },
   {
     "agent_id": "agent_owen",
@@ -219,7 +209,7 @@
       "kind",
       "conflict-averse"
     ],
-    "portrait": "\ud83c\udf38",
+    "portrait": "🌸",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_bookshop",
@@ -254,9 +244,7 @@
     "gossip_tendency": 0.5,
     "conflict_avoidance": 0.85,
     "is_victim": false,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   },
   {
     "agent_id": "agent_nadia",
@@ -268,7 +256,7 @@
       "practical",
       "discreet"
     ],
-    "portrait": "\ud83e\ude7a",
+    "portrait": "🩺",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_clinic",
@@ -289,9 +277,7 @@
     "gossip_tendency": 0.2,
     "conflict_avoidance": 0.5,
     "is_victim": false,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   },
   {
     "agent_id": "agent_ben",
@@ -303,7 +289,7 @@
       "certain of himself",
       "harmless"
     ],
-    "portrait": "\ud83c\udfa9",
+    "portrait": "🎩",
     "portrait_art": null,
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
@@ -331,8 +317,6 @@
     "gossip_tendency": 0.9,
     "conflict_avoidance": 0.5,
     "is_victim": false,
-    "is_background": false,
-    "sprite_id": null,
-    "sprite_asset": null
+    "is_background": false
   }
 ]

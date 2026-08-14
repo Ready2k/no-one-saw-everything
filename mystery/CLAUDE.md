@@ -249,11 +249,22 @@ handles map projection/assets; `audio.ts` + Howler drive ambient/stinger audio
 The migrated town map is visual-only and must not become case truth. `backend/app/town_map.py`
 owns the `town_canonical_v1` contract: a 6144x4608, 192x144-grid overworld assembled from a
 3x3 mosaic of 2048x1536 HD tiles under `frontend/public/art/town/tiles_3x3_hd/`. All
-hand-authored cases (001–007) are wired to `mode: "canonical_overworld"` via `CASE_MAPS` in
-`town_map.py`; `legacy_fallback` (the old original artwork) only applies to a case with no
-`CASE_MAPS` entry — so a new case must be registered there (visible locations, crop padding)
-and added to the `case_ids` of its `LOCATION_FUNCTION_TAGS`, and should reuse canonical
-`loc_*` IDs rather than inventing new ones that have no HD art.
+hand-authored cases (001–007, plus 010) are wired to `mode: "canonical_overworld"` via
+`CASE_MAPS` in `town_map.py`. There is no longer any second map: the old upstream village
+artwork and its 719x513 coordinate space are gone, so a case with no `CASE_MAPS` entry
+(procedurally generated ones) still renders on the canonical map — `map_definition_for_case`
+falls through to `canonical_map_definition()`, and `map_layout.location_visuals` resolves
+positions via `town_map.canonical_location_visuals`. A new case must still be registered in
+`CASE_MAPS` (visible locations, crop padding) and added to the `case_ids` of its
+`LOCATION_FUNCTION_TAGS`, and should reuse canonical `loc_*` IDs rather than inventing new
+ones that have no HD art.
+
+**Characters carry their own art, never a shared avatar.** `Agent` has no `sprite_id` /
+`sprite_asset`, and no sprite sheets ship with the game. A character's likeness comes from
+`portrait_art` (calm / defensive / cracking / deceased) or the `characterArt.ts` lifelike
+bible keyed by `agent_id`, with a decorative emoji as the last resort. Every agent in every
+authored case must resolve to real portrait art — the victim needs a `deceased` state too,
+since the post-mortem slab renders it.
 
 The centre tile B2 has paired all-cases assets. Zoomed-out views use
 `town_overworld_B2_all_cases_external_hd.png`; zoomed-in views swap B2 to

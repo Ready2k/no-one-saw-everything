@@ -13,7 +13,6 @@ export interface AgentPublic {
   traits: string[];
   portrait: string | null;
   portrait_art: PortraitState | null;
-  sprite_asset: string | null;
   home_location_id: string | null;
   work_location_id: string | null;
   routine_summary: string;
@@ -98,10 +97,7 @@ export interface MapLocation extends LocationPublic {
   visual_layer: "exterior" | "interior" | null;
 }
 
-export interface MapAgent extends AgentPublic {
-  sprite_id: string;
-  sprite_asset: string;
-}
+export type MapAgent = AgentPublic;
 
 export interface MapEvent {
   event_id: string;
@@ -216,7 +212,7 @@ export interface MapAmbientSprite {
 }
 
 export interface MapVisualContract {
-  mode: "canonical_pilot" | "canonical_overworld" | "case_art" | "legacy_fallback";
+  mode: "canonical_pilot" | "canonical_overworld" | "case_art" | "unmapped";
   definition_id: string;
   visible_location_ids: string[] | null;
   overlays: string[];

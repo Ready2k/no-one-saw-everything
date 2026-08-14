@@ -1807,8 +1807,8 @@ def map_payload(case: CaseData, discovered_clue_ids: set[str]) -> dict[str, Any]
                 "canonical_locations": canonical_locations_dict,
             }
         return {
-            "mode": "legacy_fallback",
-            "definition_id": "legacy_the_ville",
+            "mode": "unmapped",
+            "definition_id": "town_canonical_v1",
             "visible_location_ids": None,
             "overlays": [],
             "light_overlays": [],

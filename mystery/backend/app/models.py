@@ -208,9 +208,6 @@ class Agent(BaseModel):
     # Ambient character: appears and moves on the map for flavor, but is not
     # interviewable, accusable, or listed as a suspect.
     is_background: bool = False
-    # Visual-only avatar metadata; the mystery character remains canonical.
-    sprite_id: Optional[str] = None
-    sprite_asset: Optional[str] = None
 
 
 class Location(BaseModel):

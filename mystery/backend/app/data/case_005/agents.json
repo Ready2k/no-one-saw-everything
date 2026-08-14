@@ -41,14 +41,12 @@
     "memory_reliability": 0.8,
     "honesty_baseline": 0.7,
     "is_victim": true,
-    "sprite_asset": "Abigail_Chen.png",
     "portrait_art": {
       "calm": "/art/case_005/portraits/clara_wells_calm.avif",
       "deceased": "/art/case_005/portraits/clara_wells_deceased.avif",
       "defensive": "/art/case_005/portraits/clara_wells_calm.avif",
       "cracking": "/art/case_005/portraits/clara_wells_calm.avif"
-    },
-    "sprite_id": "sprite_abigail_chen"
+    }
   },
   {
     "agent_id": "agent_owen",
@@ -92,14 +90,12 @@
     "memory_reliability": 0.7,
     "honesty_baseline": 0.3,
     "conflict_avoidance": 0.1,
-    "sprite_asset": "Carlos_Gomez.png",
     "portrait_art": {
       "calm": "/art/case_005/portraits/owen_price_calm.avif",
       "deceased": "/art/portraits/owen_deceased.avif",
       "defensive": "/art/case_005/portraits/owen_price_defensive.avif",
       "cracking": "/art/case_005/portraits/owen_price_cracking.avif"
     },
-    "sprite_id": "sprite_carlos_gomez",
     "baseline": {
       "habit_category": "timing",
       "habit_text": "he leaves a workman's pause before each answer, measuring twice before he commits",
@@ -141,14 +137,12 @@
     "memory_reliability": 0.65,
     "honesty_baseline": 0.75,
     "gossip_tendency": 0.8,
-    "sprite_asset": "Ryan_Park.png",
     "portrait_art": {
       "calm": "/art/case_005/portraits/ben_carter_calm.avif",
       "deceased": "/art/portraits/ben_deceased.avif",
       "defensive": "/art/case_005/portraits/ben_carter_defensive.avif",
       "cracking": "/art/case_005/portraits/ben_carter_cracking.avif"
     },
-    "sprite_id": "sprite_ryan_park",
     "baseline": {
       "habit_category": "hands",
       "habit_text": "his hands sketch every route and parcel in the air while he talks",
@@ -190,14 +184,12 @@
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
     "gossip_tendency": 0.2,
-    "sprite_asset": "Ayesha_Khan.png",
     "portrait_art": {
       "calm": "/art/case_005/portraits/nadia_cole_calm.avif",
       "deceased": "/art/portraits/nadia_deceased.avif",
       "defensive": "/art/case_005/portraits/nadia_cole_defensive.avif",
       "cracking": "/art/case_005/portraits/nadia_cole_cracking.avif"
     },
-    "sprite_id": "sprite_ayesha_khan",
     "baseline": {
       "habit_category": "voice",
       "habit_text": "her voice carries the unhurried warmth of someone used to talking people back to calm",
@@ -239,14 +231,12 @@
     "memory_reliability": 0.5,
     "honesty_baseline": 0.9,
     "gossip_tendency": 0.9,
-    "sprite_asset": "Adam_Smith.png",
     "portrait_art": {
       "calm": "/art/case_005/portraits/elias_grant_calm.avif",
       "deceased": "/art/portraits/elias_deceased.avif",
       "defensive": "/art/case_005/portraits/elias_grant_defensive.avif",
       "cracking": "/art/case_005/portraits/elias_grant_cracking.avif"
     },
-    "sprite_id": "sprite_adam_smith",
     "baseline": {
       "habit_category": "timing",
       "habit_text": "he answers before the question has quite finished, a teacher who has heard every excuse in the room",
@@ -281,14 +271,12 @@
     "memory_reliability": 0.6,
     "honesty_baseline": 0.4,
     "conflict_avoidance": 0.7,
-    "sprite_asset": "Ethan_Brooks.png",
     "portrait_art": {
       "calm": "/art/case_005/portraits/col_hartley_calm.avif",
       "deceased": "/art/portraits/col_deceased.avif",
       "defensive": "/art/case_005/portraits/col_hartley_defensive.avif",
       "cracking": "/art/case_005/portraits/col_hartley_cracking.avif"
     },
-    "sprite_id": "sprite_ethan_brooks",
     "baseline": {
       "habit_category": "posture",
       "habit_text": "he sits square to the table and answers to the point, like a man reading off his own delivery sheet",
@@ -310,9 +298,7 @@
       "calm": "/art/portraits/rosa_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Carmen_Ortiz.png",
-    "sprite_id": "sprite_carmen_ortiz"
+    }
   },
   {
     "agent_id": "agent_bg_wren",
@@ -329,9 +315,7 @@
       "calm": "/art/portraits/wren_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Latoya_Williams.png",
-    "sprite_id": "sprite_latoya_williams"
+    }
   },
   {
     "agent_id": "agent_bg_sal",
@@ -348,9 +332,7 @@
       "calm": "/art/portraits/sal_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "John_Lin.png",
-    "sprite_id": "sprite_john_lin"
+    }
   },
   {
     "agent_id": "agent_bg_min",
@@ -367,9 +349,7 @@
       "calm": "/art/portraits/min_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Mei_Lin.png",
-    "sprite_id": "sprite_mei_lin"
+    }
   },
   {
     "agent_id": "agent_bg_cole",
@@ -386,9 +366,7 @@
       "calm": "/art/portraits/cole_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Eddy_Lin.png",
-    "sprite_id": "sprite_eddy_lin"
+    }
   },
   {
     "agent_id": "agent_bg_dez",
@@ -405,9 +383,7 @@
       "calm": "/art/portraits/dez_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Francisco_Lopez.png",
-    "sprite_id": "sprite_francisco_lopez"
+    }
   },
   {
     "agent_id": "agent_bg_birdie",
@@ -424,9 +400,7 @@
       "calm": "/art/portraits/birdie_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Jane_Moreno.png",
-    "sprite_id": "sprite_jane_moreno"
+    }
   },
   {
     "agent_id": "agent_bg_tam",
@@ -443,9 +417,7 @@
       "calm": "/art/portraits/tam_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Arthur_Burton.png",
-    "sprite_id": "sprite_arthur_burton"
+    }
   },
   {
     "agent_id": "agent_bg_gus",
@@ -462,9 +434,7 @@
       "calm": "/art/portraits/gus_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Rajiv_Patel.png",
-    "sprite_id": "sprite_rajiv_patel"
+    }
   },
   {
     "agent_id": "agent_bg_effie",
@@ -481,8 +451,6 @@
       "calm": "/art/portraits/effie_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Hailey_Johnson.png",
-    "sprite_id": "sprite_hailey_johnson"
+    }
   }
 ]

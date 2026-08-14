@@ -41,8 +41,6 @@
     "memory_reliability": 0.9,
     "honesty_baseline": 0.8,
     "is_victim": true,
-    "sprite_asset": "Marcus_Chen.png",
-    "sprite_id": "sprite_marcus_chen",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/marcus_calm.avif",
@@ -96,8 +94,6 @@
     "memory_reliability": 0.8,
     "honesty_baseline": 0.45,
     "conflict_avoidance": 0.6,
-    "sprite_asset": "Abigail_Chen.png",
-    "sprite_id": "sprite_abigail_chen",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/clara_calm.avif",
@@ -156,8 +152,6 @@
     "memory_reliability": 0.65,
     "honesty_baseline": 0.7,
     "gossip_tendency": 0.8,
-    "sprite_asset": "Ryan_Park.png",
-    "sprite_id": "sprite_ryan_park",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/ben_calm.avif",
@@ -215,8 +209,6 @@
     "observation_skill": 0.75,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.6,
-    "sprite_asset": "Isabella_Rodriguez.png",
-    "sprite_id": "sprite_isabella_rodriguez",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/isabella_calm.avif",
@@ -268,8 +260,6 @@
     "memory_reliability": 0.7,
     "honesty_baseline": 0.55,
     "conflict_avoidance": 0.2,
-    "sprite_asset": "Carlos_Gomez.png",
-    "sprite_id": "sprite_carlos_gomez",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/owen_calm.avif",
@@ -335,8 +325,6 @@
     "memory_reliability": 0.8,
     "honesty_baseline": 0.65,
     "conflict_avoidance": 0.85,
-    "sprite_asset": "Priya_Kapoor.png",
-    "sprite_id": "sprite_priya_kapoor",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/priya_calm.avif",
@@ -388,8 +376,6 @@
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
     "gossip_tendency": 0.2,
-    "sprite_asset": "Ayesha_Khan.png",
-    "sprite_id": "sprite_ayesha_khan",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.avif",
@@ -448,8 +434,6 @@
     "memory_reliability": 0.5,
     "honesty_baseline": 0.9,
     "gossip_tendency": 0.9,
-    "sprite_asset": "Adam_Smith.png",
-    "sprite_id": "sprite_adam_smith",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/elias_calm.avif",
@@ -463,7 +447,7 @@
       "deviation_cue": "The interruptions have stopped. He waits out the whole question now, and answers only the part he has chosen."
     },
     "small_talk": {
-      "greeting": "Ah, the authorities. Step into my office\u2014well, my bench.",
+      "greeting": "Ah, the authorities. Step into my office—well, my bench.",
       "how_are_you": "Never better, Detective. The village hasn't seen this much excitement in decades!",
       "occupation": "I'm a retired schoolteacher. Though some say I'm the village historian now.",
       "how_can_help": "Ask me anything! I see everything from this bench, you know. Everyone's business.",
@@ -493,9 +477,7 @@
       "calm": "/art/portraits/rosa_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Carmen_Ortiz.png",
-    "sprite_id": "sprite_carmen_ortiz"
+    }
   },
   {
     "agent_id": "agent_tam",
@@ -517,9 +499,7 @@
       "calm": "/art/portraits/tam_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Arthur_Burton.png",
-    "sprite_id": "sprite_arthur_burton"
+    }
   },
   {
     "agent_id": "agent_bg_min",
@@ -536,9 +516,7 @@
       "calm": "/art/portraits/min_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Mei_Lin.png",
-    "sprite_id": "sprite_mei_lin"
+    }
   },
   {
     "agent_id": "agent_bg_sal",
@@ -555,9 +533,7 @@
       "calm": "/art/portraits/sal_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "John_Lin.png",
-    "sprite_id": "sprite_john_lin"
+    }
   },
   {
     "agent_id": "agent_bg_cole",
@@ -574,9 +550,7 @@
       "calm": "/art/portraits/cole_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Eddy_Lin.png",
-    "sprite_id": "sprite_eddy_lin"
+    }
   },
   {
     "agent_id": "agent_bg_dez",
@@ -593,9 +567,7 @@
       "calm": "/art/portraits/dez_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Francisco_Lopez.png",
-    "sprite_id": "sprite_francisco_lopez"
+    }
   },
   {
     "agent_id": "agent_bg_effie",
@@ -612,9 +584,7 @@
       "calm": "/art/portraits/effie_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Hailey_Johnson.png",
-    "sprite_id": "sprite_hailey_johnson"
+    }
   },
   {
     "agent_id": "agent_bg_gus",
@@ -631,9 +601,7 @@
       "calm": "/art/portraits/gus_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Rajiv_Patel.png",
-    "sprite_id": "sprite_rajiv_patel"
+    }
   },
   {
     "agent_id": "agent_bg_wren",
@@ -650,9 +618,7 @@
       "calm": "/art/portraits/wren_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Latoya_Williams.png",
-    "sprite_id": "sprite_latoya_williams"
+    }
   },
   {
     "agent_id": "agent_bg_birdie",
@@ -669,8 +635,6 @@
       "calm": "/art/portraits/birdie_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Jane_Moreno.png",
-    "sprite_id": "sprite_jane_moreno"
+    }
   }
 ]

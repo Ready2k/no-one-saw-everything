@@ -38,10 +38,13 @@ def test_replay_shape_and_visual_metadata():
         assert loc["map_position"] is not None
         assert 0 <= loc["map_position"]["x"] <= data["map"]["width"]
         assert 0 <= loc["map_position"]["y"] <= data["map"]["height"]
-    # Every agent has a sprite avatar but keeps their canonical name.
+    # Every agent carries a likeness of their own — portrait art, or the
+    # decorative emoji fallback — and keeps their canonical name. No agent
+    # borrows a shared avatar from a pool any more.
     for agent in data["agents"]:
-        assert agent["sprite_asset"], agent["agent_id"]
+        assert agent["portrait_art"] or agent["portrait"], agent["agent_id"]
         assert agent["full_name"]
+        assert "sprite_asset" not in agent
 
 
 def test_replay_does_not_expose_hidden_events():
@@ -145,7 +148,7 @@ def test_generated_case_produces_map_replay():
     for loc in data["locations"]:
         assert loc["map_position"] is not None
     for agent in data["agents"]:
-        assert agent["sprite_asset"]
+        assert "sprite_asset" not in agent
     for e in data["events"]:
         assert e["visibility"] != "hidden"
         assert e["event_type"] != "murder"

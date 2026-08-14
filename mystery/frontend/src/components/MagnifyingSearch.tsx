@@ -56,10 +56,9 @@ function getClueEmoji(title: string): string {
 export function MagnifyingSearch({
   bounds,
   hiddenClues,
-  imageUrl = "/map/the_ville.png",
+  imageUrl,
   mapWidth = 719,
   mapHeight = 513,
-  spriteAsset,
   isIllustration = false,
   isPortrait = false,
   locationId,
@@ -72,7 +71,6 @@ export function MagnifyingSearch({
   imageUrl?: string;
   mapWidth?: number;
   mapHeight?: number;
-  spriteAsset?: string;
   isIllustration?: boolean;
   isPortrait?: boolean;
   locationId?: string;
@@ -99,7 +97,6 @@ export function MagnifyingSearch({
     isPortrait ? "post-mortem-portrait" : "",
   ].filter(Boolean).join(" ");
   const imageRendering = isIllustration || isPortrait ? "auto" : "pixelated";
-  const useSpritePortrait = isPortrait && spriteAsset && !imageUrl;
 
   // Each light tool renders a second, precisely aligned copy of the artwork
   // above the darkened base scene. A feathered mask exposes the true image
@@ -117,34 +114,21 @@ export function MagnifyingSearch({
         left: 0,
       }}
     >
-      {useSpritePortrait ? (
-        <div style={{
+      <img
+        className={imageClassName}
+        src={imageUrl}
+        alt="Map area"
+        onError={(e) => {
+          e.currentTarget.style.display = "none";
+          e.currentTarget.parentElement!.style.backgroundColor = "#2a2a2a";
+        }}
+        style={{
           width: "100%",
           height: "100%",
-          backgroundImage: `url('/map/sprites/${spriteAsset}')`,
-          backgroundSize: isPortrait ? "300% 400%" : "contain",
-          backgroundPosition: isPortrait ? "50% 0%" : "center",
-          backgroundRepeat: "no-repeat",
-          imageRendering: "pixelated",
-          ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)" })
-        }} />
-      ) : (
-        <img
-          className={imageClassName}
-          src={imageUrl}
-          alt="Map area"
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-            e.currentTarget.parentElement!.style.backgroundColor = "#2a2a2a";
-          }}
-          style={{
-            width: "100%",
-            height: "100%",
-            imageRendering,
-            ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
-          }}
-        />
-      )}
+          imageRendering,
+          ...(isPortrait && { filter: "grayscale(80%) brightness(0.6) sepia(20%) hue-rotate(180deg)", objectFit: "cover" })
+        }}
+      />
     </div>
   );
 
@@ -448,7 +432,7 @@ export function MagnifyingSearch({
         {isPortrait && (
           <div className={`morgue-sheet ${sheetFolded ? "folded" : ""}`} aria-hidden="true" />
         )}
-        {isIllustration && (imageUrl.includes("/art/case_005/") || imageUrl.includes("/art/case_010/")) && (
+        {isIllustration && (imageUrl?.includes("/art/case_005/") || imageUrl?.includes("/art/case_010/")) && (
           <CaseAtmosphere
             caseId={imageUrl.includes("/art/case_010/") ? "case_010" : "case_005"}
             scope="place"

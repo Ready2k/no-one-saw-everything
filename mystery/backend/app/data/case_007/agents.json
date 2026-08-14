@@ -9,7 +9,7 @@
       "certain of himself",
       "keeper of records"
     ],
-    "portrait": "\ud83c\udfa9",
+    "portrait": "🎩",
     "home_location_id": "loc_elias_house",
     "work_location_id": "loc_village_square",
     "routine_summary": "First to the square bench every morning with a flask; each evening he fills an exercise book with the day's comings and goings, the way other men keep gardens.",
@@ -42,8 +42,6 @@
     "honesty_baseline": 0.9,
     "gossip_tendency": 0.9,
     "is_victim": true,
-    "sprite_asset": "Adam_Smith.png",
-    "sprite_id": "sprite_adam_smith",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/elias_calm.avif",
@@ -62,7 +60,7 @@
       "proud",
       "keeps his own counsel"
     ],
-    "portrait": "\u2615",
+    "portrait": "☕",
     "home_location_id": "loc_marcus_house",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Opens the cafe at seven sharp, keeps the books himself each evening, and closes the till to the penny before bed.",
@@ -94,8 +92,6 @@
     "memory_reliability": 0.9,
     "honesty_baseline": 0.4,
     "conflict_avoidance": 0.3,
-    "sprite_asset": "Marcus_Chen.png",
-    "sprite_id": "sprite_marcus_chen",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/marcus_calm.avif",
@@ -106,7 +102,7 @@
     "baseline": {
       "habit_category": "voice",
       "habit_text": "his voice runs level and unhurried, like a man reading minutes he wrote himself",
-      "deviation_cue": "The level voice from earlier has gone exact \u2014 times, quantities, the order of events \u2014 precision standing in where ease used to be."
+      "deviation_cue": "The level voice from earlier has gone exact — times, quantities, the order of events — precision standing in where ease used to be."
     }
   },
   {
@@ -119,7 +115,7 @@
       "loyal",
       "guarded"
     ],
-    "portrait": "\ud83e\udde3",
+    "portrait": "🧣",
     "home_location_id": "loc_clara_flat",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Lives above the cafe. Runs the counter from half six, and at village dos she's the one behind whatever urn needs ladling.",
@@ -144,8 +140,6 @@
     "memory_reliability": 0.85,
     "honesty_baseline": 0.55,
     "conflict_avoidance": 0.7,
-    "sprite_asset": "Abigail_Chen.png",
-    "sprite_id": "sprite_abigail_chen",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/clara_calm.avif",
@@ -169,7 +163,7 @@
       "particular",
       "composed"
     ],
-    "portrait": "\ud83d\udcda",
+    "portrait": "📚",
     "home_location_id": "loc_bookshop",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens the bookshop at nine and spends her spare hours cataloguing the new village archive, which she treats as hers because mostly it is.",
@@ -200,8 +194,6 @@
     "observation_skill": 0.75,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.6,
-    "sprite_asset": "Isabella_Rodriguez.png",
-    "sprite_id": "sprite_isabella_rodriguez",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/isabella_calm.avif",
@@ -225,7 +217,7 @@
       "hot-tempered",
       "proud"
     ],
-    "portrait": "\ud83d\udd28",
+    "portrait": "🔨",
     "home_location_id": "loc_owen_house",
     "work_location_id": "loc_owen_house",
     "routine_summary": "In the timber yard from early; at village events he appoints himself keeper of any fire that needs lighting.",
@@ -250,8 +242,6 @@
     "memory_reliability": 0.7,
     "honesty_baseline": 0.55,
     "conflict_avoidance": 0.2,
-    "sprite_asset": "Carlos_Gomez.png",
-    "sprite_id": "sprite_carlos_gomez",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/owen_calm.avif",
@@ -275,7 +265,7 @@
       "kind",
       "notices small things"
     ],
-    "portrait": "\ud83c\udf38",
+    "portrait": "🌸",
     "home_location_id": "loc_priya_flat",
     "work_location_id": "loc_bookshop",
     "routine_summary": "Opens the bookshop stockroom early, shelves the deliveries, and bolts the alley door herself every closing because nobody else remembers.",
@@ -307,8 +297,6 @@
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
     "conflict_avoidance": 0.7,
-    "sprite_asset": "Priya_Kapoor.png",
-    "sprite_id": "sprite_priya_kapoor",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/priya_calm.avif",
@@ -332,7 +320,7 @@
       "chatty",
       "bad at secrets"
     ],
-    "portrait": "\ud83d\udce6",
+    "portrait": "📦",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Delivery rounds through the square and rear alley by day; at village dos he's the unofficial hauler of everything heavy.",
@@ -357,8 +345,6 @@
     "memory_reliability": 0.7,
     "honesty_baseline": 0.7,
     "gossip_tendency": 0.8,
-    "sprite_asset": "Ryan_Park.png",
-    "sprite_id": "sprite_ryan_park",
     "pronoun": "he",
     "portrait_art": {
       "calm": "/art/portraits/ben_calm.avif",
@@ -369,7 +355,7 @@
     "baseline": {
       "habit_category": "hands",
       "habit_text": "his hands sketch every route and parcel in the air while he talks",
-      "deviation_cue": "His hands have quit the conversation \u2014 flat on his knees while his mouth does all the work alone."
+      "deviation_cue": "His hands have quit the conversation — flat on his knees while his mouth does all the work alone."
     }
   },
   {
@@ -382,7 +368,7 @@
       "practical",
       "discreet"
     ],
-    "portrait": "\ud83e\ude7a",
+    "portrait": "🩺",
     "home_location_id": "loc_nadia_flat",
     "work_location_id": "loc_clinic",
     "routine_summary": "Early shift at the clinic; crosses the square a few times each day and keeps other people's business exactly where they left it.",
@@ -407,8 +393,6 @@
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
     "gossip_tendency": 0.2,
-    "sprite_asset": "Ayesha_Khan.png",
-    "sprite_id": "sprite_ayesha_khan",
     "pronoun": "she",
     "portrait_art": {
       "calm": "/art/portraits/nadia_calm.avif",
@@ -431,7 +415,7 @@
       "quiet",
       "early riser"
     ],
-    "portrait": "\ud83c\udf3f",
+    "portrait": "🌿",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_fountain",
     "routine_summary": "Tends the fountain flowerbeds at first light; for the fair she's been floating candle lanterns on the fountain since teatime.",
@@ -442,9 +426,7 @@
       "calm": "/art/portraits/rosa_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Carmen_Ortiz.png",
-    "sprite_id": "sprite_carmen_ortiz"
+    }
   },
   {
     "agent_id": "agent_tam",
@@ -455,7 +437,7 @@
       "brisk",
       "punctual"
     ],
-    "portrait": "\ud83d\udce8",
+    "portrait": "📨",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Does the morning post round through the square; off duty tonight, which he finds harder work than the round.",
@@ -466,16 +448,14 @@
       "calm": "/art/portraits/tam_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Arthur_Burton.png",
-    "sprite_id": "sprite_arthur_burton"
+    }
   },
   {
     "agent_id": "agent_bg_min",
     "full_name": "Min Okafor",
     "age": 22,
     "occupation": "Baker's assistant",
-    "portrait": "\ud83e\udd56",
+    "portrait": "🥖",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_hobbs_cafe",
     "routine_summary": "Up before the ovens most days; tonight she's selling toffee apples off a tray and keeping the misshapen one back for herself.",
@@ -485,16 +465,14 @@
       "calm": "/art/portraits/min_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Mei_Lin.png",
-    "sprite_id": "sprite_mei_lin"
+    }
   },
   {
     "agent_id": "agent_bg_sal",
     "full_name": "Sal Ibori",
     "age": 54,
     "occupation": "Milkman",
-    "portrait": "\ud83e\udd5b",
+    "portrait": "🥛",
     "home_location_id": "loc_hobbs_cafe",
     "work_location_id": "loc_village_square",
     "routine_summary": "Runs the milk round in strict order by day; for the fair he's hauled two churns of cocoa to the square and rates every drinker by how promptly they return the mug.",
@@ -504,16 +482,14 @@
       "calm": "/art/portraits/sal_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "John_Lin.png",
-    "sprite_id": "sprite_john_lin"
+    }
   },
   {
     "agent_id": "agent_bg_cole",
     "full_name": "Cole Byrne",
     "age": 26,
     "occupation": "Window cleaner",
-    "portrait": "\ud83e\ude9f",
+    "portrait": "🪟",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Works his ladder clockwise around the square by day; tonight the committee has him stringing lanterns because he's the only one who'll climb for free.",
@@ -523,16 +499,14 @@
       "calm": "/art/portraits/cole_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Eddy_Lin.png",
-    "sprite_id": "sprite_eddy_lin"
+    }
   },
   {
     "agent_id": "agent_bg_dez",
     "full_name": "Dez Holt",
     "age": 61,
     "occupation": "Market stallholder",
-    "portrait": "\ud83e\uddfa",
+    "portrait": "🧺",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Trundles his stall cart around the village testing pitches; tonight he's running the hoopla and defending its prize table loudly.",
@@ -542,16 +516,14 @@
       "calm": "/art/portraits/dez_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Francisco_Lopez.png",
-    "sprite_id": "sprite_francisco_lopez"
+    }
   },
   {
     "agent_id": "agent_bg_effie",
     "full_name": "Effie Marsh",
     "age": 46,
     "occupation": "Dog walker",
-    "portrait": "\ud83d\udc15",
+    "portrait": "🐕",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_fountain",
     "routine_summary": "Walks three dogs that aren't hers on a route their owners never chose; tonight all three are in ribbon bows nobody asked for either.",
@@ -561,16 +533,14 @@
       "calm": "/art/portraits/effie_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Hailey_Johnson.png",
-    "sprite_id": "sprite_hailey_johnson"
+    }
   },
   {
     "agent_id": "agent_bg_gus",
     "full_name": "Gus Farrow",
     "age": 51,
     "occupation": "Newspaper seller",
-    "portrait": "\ud83d\udcf0",
+    "portrait": "📰",
     "home_location_id": "loc_fountain",
     "work_location_id": "loc_village_square",
     "routine_summary": "Sets the papers out from the fountain to the cafe each morning; tonight he's selling the last editions by lantern light and reading the headlines aloud anyway.",
@@ -580,16 +550,14 @@
       "calm": "/art/portraits/gus_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Rajiv_Patel.png",
-    "sprite_id": "sprite_rajiv_patel"
+    }
   },
   {
     "agent_id": "agent_bg_wren",
     "full_name": "Wren Ashby",
     "age": 61,
     "occupation": "Busker",
-    "portrait": "\ud83c\udfbb",
+    "portrait": "🎻",
     "home_location_id": "loc_village_square",
     "work_location_id": "loc_village_square",
     "routine_summary": "Tunes the fiddle by the square until her fingers warm up; tonight she's leading the fair band from the bandstand and taking requests she then ignores.",
@@ -599,16 +567,14 @@
       "calm": "/art/portraits/wren_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Latoya_Williams.png",
-    "sprite_id": "sprite_latoya_williams"
+    }
   },
   {
     "agent_id": "agent_bg_birdie",
     "full_name": "Birdie Voss",
     "age": 66,
     "occupation": "Street sweeper",
-    "portrait": "\ud83e\uddf9",
+    "portrait": "🧹",
     "home_location_id": "loc_hobbs_cafe",
     "work_location_id": "loc_village_square",
     "routine_summary": "Sweeps the shopfronts in the order the village wakes; tonight she's fighting a losing war against spilt popcorn and enjoying every minute of it.",
@@ -618,8 +584,6 @@
       "calm": "/art/portraits/birdie_calm.avif",
       "defensive": null,
       "cracking": null
-    },
-    "sprite_asset": "Jane_Moreno.png",
-    "sprite_id": "sprite_jane_moreno"
+    }
   }
 ]

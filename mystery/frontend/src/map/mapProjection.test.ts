@@ -14,7 +14,7 @@ function mockData(): MapReplayData {
       { location_id: "loc3", name: "Loc3", description: "", connected_location_ids: [], visibility_type: "private", illustration: null, map_position: { x: 300, y: 300 }, map_bounds: null, visual_layer: "exterior" }
     ],
     agents: [
-      { agent_id: "agent1", full_name: "Agent 1", age: 30, occupation: "", traits: [], portrait: null, portrait_art: null, sprite_asset: "a", home_location_id: "loc1", work_location_id: "loc2", routine_summary: "", is_victim: false, is_background: false, stall_fillers: [], sprite_id: "a" }
+      { agent_id: "agent1", full_name: "Agent 1", age: 30, occupation: "", traits: [], portrait: null, portrait_art: null, home_location_id: "loc1", work_location_id: "loc2", routine_summary: "", is_victim: false, is_background: false, stall_fillers: [] }
     ],
     events: []
   };

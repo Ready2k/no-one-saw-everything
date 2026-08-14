@@ -1570,7 +1570,6 @@ function AutopsyPanel({
               hiddenClues={hidden_clues}
               onDiscover={handleDiscover}
               imageUrl={postMortemPortrait}
-              spriteAsset={postMortemPortrait ? undefined : agent.sprite_asset || undefined}
               isPortrait={true}
               sheetFolded={sheetFolded}
             />

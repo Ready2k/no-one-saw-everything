@@ -42,8 +42,7 @@
     "observation_skill": 0.75,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.6,
-    "is_victim": true,
-    "sprite_asset": "Isabella_Rodriguez.png"
+    "is_victim": true
   },
   {
     "agent_id": "agent_priya",
@@ -86,8 +85,7 @@
     "observation_skill": 0.7,
     "memory_reliability": 0.8,
     "honesty_baseline": 0.4,
-    "conflict_avoidance": 0.85,
-    "sprite_asset": "Priya_Kapoor.png"
+    "conflict_avoidance": 0.85
   },
   {
     "agent_id": "agent_ben",
@@ -123,8 +121,7 @@
     "observation_skill": 0.6,
     "memory_reliability": 0.65,
     "honesty_baseline": 0.7,
-    "gossip_tendency": 0.8,
-    "sprite_asset": "Ryan_Park.png"
+    "gossip_tendency": 0.8
   },
   {
     "agent_id": "agent_owen",
@@ -160,8 +157,7 @@
     "observation_skill": 0.5,
     "memory_reliability": 0.7,
     "honesty_baseline": 0.55,
-    "conflict_avoidance": 0.2,
-    "sprite_asset": "Carlos_Gomez.png"
+    "conflict_avoidance": 0.2
   },
   {
     "agent_id": "agent_nadia",
@@ -197,8 +193,7 @@
     "observation_skill": 0.85,
     "memory_reliability": 0.85,
     "honesty_baseline": 0.85,
-    "gossip_tendency": 0.2,
-    "sprite_asset": "Ayesha_Khan.png"
+    "gossip_tendency": 0.2
   },
   {
     "agent_id": "agent_elias",
@@ -234,8 +229,7 @@
     "observation_skill": 0.55,
     "memory_reliability": 0.5,
     "honesty_baseline": 0.9,
-    "gossip_tendency": 0.9,
-    "sprite_asset": "Adam_Smith.png"
+    "gossip_tendency": 0.9
   },
   {
     "agent_id": "agent_ruth",
@@ -271,8 +265,7 @@
     "observation_skill": 0.75,
     "memory_reliability": 0.8,
     "honesty_baseline": 0.9,
-    "gossip_tendency": 0.3,
-    "sprite_asset": "Sarah_Whitmore.png"
+    "gossip_tendency": 0.3
   },
   {
     "agent_id": "agent_bg_sal",

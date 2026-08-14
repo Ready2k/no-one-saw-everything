@@ -24,7 +24,10 @@ cd mystery
 
 This repository began as a fork of
 [Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442)
-(Smallville). The original simulation code (`reverie/`, `environment/`) has
-been removed from every branch, including `main`; the game keeps only derived
-assets (the rendered village map and sprites) and is otherwise standalone. The
-original code remains recoverable from git history only.
+(Smallville), but no longer carries any of it. The simulation code
+(`reverie/`, `environment/`) was removed from every branch, and the last
+derived assets — the rendered village map and the character sprite sheets —
+have since been removed too. The village is now the hand-made HD town map
+under `mystery/frontend/public/art/town/`, and every character is drawn from
+this game's own portrait art. Nothing upstream ships in the build; it remains
+recoverable from git history only.
